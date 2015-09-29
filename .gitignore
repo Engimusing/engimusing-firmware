@@ -1,0 +1,56 @@
+
+# Object files
+*.elf
+*.ko
+*.lo
+*.o
+*.obj
+*.slo
+
+# Dependency files
+*.d
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Libraries
+*.a
+*.dll
+*.dylib
+*.la
+*.lai
+*.lib
+*.lo
+*.so
+*.so.*
+
+# Executables
+*.app
+*.exe
+*.hex
+*.i*86
+*.out
+*.x86_64
+*.bin
+*.out
+
+
+# Debug files
+*.dSYM/
+*.map
+*.lst
+
+
+# Backup files
+cortex-m0plus/1.0.1/cores/backup_efm32zg222/*
+
+
