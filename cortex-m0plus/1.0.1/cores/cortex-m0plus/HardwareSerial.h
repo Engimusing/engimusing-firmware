@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2015 Arduino LLC.  All right reserved.
+  Copyright (c) 2011 Arduino.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -8,7 +8,7 @@
 
   This library is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
   See the GNU Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
@@ -24,20 +24,20 @@
 #include "Stream.h"
 
 #define HARDSER_PARITY_EVEN (0x1ul)
-#define HARDSER_PARITY_ODD	(0x2ul)
+#define HARDSER_PARITY_ODD  (0x2ul)
 #define HARDSER_PARITY_NONE (0x3ul)
-#define HARDSER_PARITY_MASK	(0xFul)
+#define HARDSER_PARITY_MASK (0xFul)
 
-#define HARDSER_STOP_BIT_1		(0x10ul)
-#define HARDSER_STOP_BIT_1_5	(0x20ul)
-#define HARDSER_STOP_BIT_2	 	(0x30ul)
-#define HARDSER_STOP_BIT_MASK	(0xF0ul)
+#define HARDSER_STOP_BIT_1    (0x10ul)
+#define HARDSER_STOP_BIT_1_5  (0x20ul)
+#define HARDSER_STOP_BIT_2    (0x30ul)
+#define HARDSER_STOP_BIT_MASK (0xF0ul)
 
-#define HARDSER_DATA_5	 	(0x100ul)
-#define HARDSER_DATA_6	 	(0x200ul)
-#define HARDSER_DATA_7	 	(0x300ul)
-#define HARDSER_DATA_8	 	(0x400ul)
-#define HARDSER_DATA_MASK	(0xF00ul)
+#define HARDSER_DATA_5    (0x100ul)
+#define HARDSER_DATA_6    (0x200ul)
+#define HARDSER_DATA_7    (0x300ul)
+#define HARDSER_DATA_8    (0x400ul)
+#define HARDSER_DATA_MASK (0xF00ul)
 
 #define SERIAL_5N1	(HARDSER_STOP_BIT_1 | HARDSER_PARITY_NONE | HARDSER_DATA_5)
 #define SERIAL_6N1	(HARDSER_STOP_BIT_1 | HARDSER_PARITY_NONE | HARDSER_DATA_6)

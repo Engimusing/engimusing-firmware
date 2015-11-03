@@ -20,16 +20,45 @@
 #ifndef _VARIANT_EFM32ZGUSB_
 #define _VARIANT_EFM32ZGUSB_
 
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 
+//#include "Arduino.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
+#define EFMZG_LEUART_CLKDIV 0x59D0
+#define EFMTG_LEUART_CLKDIV 0x77C0
+#define EFMWG_LEUART_CLKDIV 0x77C0
+
+#define LEUART_CLKDIV EFMZG_LEUART_CLKDIV
+
 void pinMode(uint8_t pin, uint8_t mode);
 void digitalWrite(uint8_t pin, uint8_t val);
-int digitalRead(uint8_t pin);
+int  digitalRead(uint8_t pin);
+
+void ledRedOff(void);
+void ledRedOn(void);
+void ledGreenOff(void);
+void ledGreenOn(void);
+void ledBlueOff(void);
+void ledBlueOn(void);
+void ledAllOff(void);
+void ledAllOn(void);
+
+uint32_t readGPIOregs(uint8_t port);
+void print_gpio_regs(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 
 #endif // _VARIANT_EFM32ZGUSB_
 

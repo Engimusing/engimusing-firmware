@@ -73,18 +73,16 @@
 
 #include "efm_pin_config.h"
 
-void GPIO_pinMode(GPIO_Port_TypeDef port, unsigned int pin, GPIO_Mode_TypeDef mode)
+void GPIO_pinMode(GPIO_Port_TypeDef port, uint32_t pin, GPIO_Mode_TypeDef mode)
 {
-  uint32_t mask, val;
+  int shift = (pin & 0x7) << 2;
+  uint32_t mask  = GPIO_MODE_MASK << shift;
+  uint32_t pmode = mode << shift;
 
   if(pin < 8) {
-    mask = GPIO_MODE_MASK << (pin << 2);
-    val = GPIO->P[port].MODEL & ~mask;
-    GPIO->P[port].MODEL = val | mode << (pin << 2);
+    GPIO->P[port].MODEL = (GPIO->P[port].MODEL & ~mask) | pmode;
   } else {
-    mask = GPIO_MODE_MASK << ((pin & 0x7) << 2);
-    val = GPIO->P[port].MODEH & ~mask;
-    GPIO->P[port].MODEH = val | mode << ((pin & 0x7) << 2);
+    GPIO->P[port].MODEH = (GPIO->P[port].MODEH & ~mask) | pmode;
   }
 }
 

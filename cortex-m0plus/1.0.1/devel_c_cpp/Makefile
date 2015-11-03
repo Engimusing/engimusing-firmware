@@ -21,7 +21,7 @@ LST_DIR = lst
 # You might need to do changes to match your system setup          #
 ####################################################################
 
-TOOLDIR    = ../../../../tools/arm-none-eabi-gcc/4.8.3-2014q1
+TOOLDIR    = ~/.arduino15/packages/engimusing/tools/arm-none-eabi-gcc/4.8.3-2014q1
 
 RM         := rm -rf
 NULLDEVICE := /dev/null
@@ -97,12 +97,11 @@ INCLUDEPATHS += \
 # Files                                                            #
 ####################################################################
 
-C_SRC += \
-../variants/EFMUSB/init_efmusb.c
+C_SRC += 
 
 CPP_SRC += \
 ../variants/EFMUSB/variant.cpp \
-test1.cpp
+$(wildcard *.cpp)
 
 s_SRC += 
 
@@ -177,8 +176,7 @@ $(EXE_DIR)/$(PROJECTNAME).bin: $(EXE_DIR)/$(PROJECTNAME).out
 	$(SIZE) $(EXE_DIR)/$(PROJECTNAME).out
 
 prog:
-	~/Documents/Silabs/eACommander/start-eACommander.sh --verify --flash exe/efmusb.bin --reset
-
+	~/Documents/Silabs/eACommander/start-eACommander.sh --verify --address 0x2000 --flash exe/efmusb.bin --reset
 clean:
 ifeq ($(filter $(MAKECMDGOALS),all debug release),)
 	$(RM) $(OBJ_DIR) $(LST_DIR) $(EXE_DIR)

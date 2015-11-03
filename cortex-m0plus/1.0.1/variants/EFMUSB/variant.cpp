@@ -19,13 +19,7 @@
 
 #include "Arduino.h"
 #include "variant.h"
-#include <stdbool.h>
-#include <stdint.h>
-#include "em_device.h"
-#include "em_cmu.h"
-#include "em_emu.h"
-#include "em_gpio.h"
-#include "em_usart.h"
+#include "LEUARTClass.h"
 
 /*
 
@@ -52,11 +46,9 @@ Interrupts:
 
 =======================================================
 
-Pin 1:  Ground
-
 Pin 2:
 	PD4:	ADC0_CH4
-	PC15:	TIM1_CC2 #0	PRS_CH1 #2
+	PC15:	PRS_CH1 #2	TIM1_CC2 #0
 Pin 3:
 	PD6:	ADC0_CH6	TIM1_CC0 #4	PCNT_S0IN #3	ACMP0_O #2
 	PE12:	TIM1_CC2 #1	CMU_CLK1 #2
@@ -77,102 +69,307 @@ Pin 8:
 	PC0:	US1_TX#0	ACMP0_CH0	TIM0_CC1#4	PCNT0_S0IN#2	PRS_CH2 #0
 	PA0:	I2C0_SDA#0	TIM0_CC0	PRS_CH0#0	GPIO_EM4WU0
 Pin 10:
-	PD7:	ADC0_CH7	TIM1_CC1#4	ACMP0_O#2
+	PD7:	ADC0_CH7	TIM1_CC1#4	ACMP0_O#2 CMU_CLK0
 	PC13:	TIM1_CC2#1	CMU_CLK1#2
 	PE13:	GPIO_EM4WU5
 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-uint8_t pins[32], ports[32];
+RingBuffer rx_buffer0;
+RingBuffer tx_buffer0;
+
+LEUARTClass Serial(LEUART0, LEUART0_IRQn, 0, &rx_buffer0, &tx_buffer0, PORTB, 13, 14, LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0);
+
+
+//                          0 1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
+static uint8_t ports[16] = {0,0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE,  9,  9,PORTA,PORTA,PORTA};
+static uint8_t pins[16]  = {0,0, 15,   12,    8,    7,   11,    1,    0,    2,   13,    0,  0,  8,    9,    10};
 
 void pinMode(uint8_t pin, uint8_t mode)
 {
-  switch(pin) {
-  case 0:
-    break;
-  case 1:
-    break;
-  case 2:
-    ports[2] = PORTC;
-    pins[2]  = 15;
-    break;
-  case 3:
-    ports[3] = PORTE;
-    pins[3]  = 12;
-    break;
-  case 4:
-    ports[4] = PORTB;
-    pins[4]  = 8;
-    break;
-  case 5:
-    ports[5] = PORTB;
-    pins[5]  = 7;
-    break;
-  case 6:
-    ports[6] = PORTB;
-    pins[6]  = 11;
-    break;
-  case 7:
-    ports[7] = PORTC;
-    pins[7]  = 1;
-    break;
-  case 8:
-    ports[8] = PORTC;
-    pins[8]  = 0;
-    break;
-  case 9:
-    break;
-  case 10:
-    ports[10] = PORTE;
-    pins[10]  = 13;
-    break;
-  case 11:
-    break;
-  case 12:
-    break;
-  case 13:
-    ports[13] = PORTA;
-    pins[13]  = 8;
-    break;
-  default:
-    break;
+  uint32_t mask, val;
+  if((pin < 2) || (pin == 11) || (pin == 12) || (pin > 15)) {
+    Serial.println("pinMode - bad pin"); delay(1);
+    // Error
+    return;
   }
+  GPIO_config(ports[pin], pins[pin], mode);
 }
+
+
+
 
 void digitalWrite(uint8_t pin, uint8_t val)
 {
-  if(val) {
+  if(val == HIGH) {
     GPIO->P[ports[pin]].DOUTSET = (1 << pins[pin]);
-  } else {
+  } else if (val==LOW) {
     GPIO->P[ports[pin]].DOUTCLR = (1 << pins[pin]);
+  } else {
+    Serial.println("\n\rx");
   }
+}
+
+void ledRedOff(void)   {GPIO->P[PORTA].DOUTSET = (1 <<  8);}
+void ledRedOn(void)    {GPIO->P[PORTA].DOUTCLR = (1 <<  8);}
+void ledGreenOff(void) {GPIO->P[PORTA].DOUTSET = (1 << 10);}
+void ledGreenOn(void)  {GPIO->P[PORTA].DOUTCLR = (1 << 10);}
+void ledBlueOff(void)  {GPIO->P[PORTA].DOUTSET = (1 <<  9);}
+void ledBlueOn(void)   {GPIO->P[PORTA].DOUTCLR = (1 <<  9);}
+
+void ledAllOff(void)
+{
+  GPIO->P[PORTA].DOUTSET = (0x7 <<  8);
+}
+
+void ledAllOn(void)
+{
+  GPIO->P[PORTA].DOUTCLR = (0x7 <<  8);
 }
 
 int digitalRead(uint8_t pin)
 {
+  return (GPIO->P[ports[pin]].DIN >> pins[pin]) & 0x1;
 }
 
-/*
-const void* g_apTCInstances[TCC_INST_NUM+TC_INST_NUM]={ TCC0, TCC1, TCC2, TC3, TC4, TC5 } ;
-
-// Multi-serial objects instantiation
-SERCOM sercom0( SERCOM0 ) ;
-SERCOM sercom1( SERCOM1 ) ;
-SERCOM sercom2( SERCOM2 ) ;
-SERCOM sercom3( SERCOM3 ) ;
-SERCOM sercom4( SERCOM4 ) ;
-SERCOM sercom5( SERCOM5 ) ;
-
-Uart Serial1( &sercom0, PIN_SERIAL1_RX, PIN_SERIAL1_TX, PAD_SERIAL1_RX, PAD_SERIAL1_TX ) ;
-Uart Serial( &sercom5, PIN_SERIAL_RX, PIN_SERIAL_TX, PAD_SERIAL_RX, PAD_SERIAL_TX ) ;
-void SERCOM0_Handler()
+uint32_t readGPIOregs(uint8_t port)
 {
-  Serial1.IrqHandler();
+  return GPIO->P[port].DIN;
 }
 
-void SERCOM5_Handler()
+
+#ifdef __cplusplus
+}
+#endif
+
+
+// LEUART0 Interrupt handler
+void LEUART0_IRQHandler(void)
 {
   Serial.IrqHandler();
 }
+
+static uint32_t mode_reg[18];
+
+void init( void )
+{
+  init_efm32zg();
+
+  GPIO_config(PORTA,  8, OUTPUT);      // Configure Green LED
+  GPIO_config(PORTA,  9, OUTPUT);      // Configure Blue LED
+  GPIO_config(PORTA, 10, OUTPUT);      // Configure Red LED
+  GPIO->P[PORTA].DOUTSET = (1 << 8);   // Green LED off
+  GPIO->P[PORTA].DOUTSET = (1 << 9);   // Blue LED off
+  GPIO->P[PORTA].DOUTSET = (1 << 10);  // Red LED off
+}
+
+
+
+void print_gpio_regs(void)
+{
+  char port[6] = {'A','B','C','D','E','F'};
+  Serial.println("");
+  for(int i = 0; i < 6; i++) {
+    Serial.print("PORT"); Serial.print(port[i]); Serial.println(":"); delay(1);
+    Serial.print(" CTRL = "); Serial.print(GPIO->P[i].CTRL,HEX); delay(1);
+    Serial.print(" MODEL = "); Serial.print(GPIO->P[i].MODEL,HEX); delay(1);
+    Serial.print(" MODEH = "); Serial.print(GPIO->P[i].MODEH,HEX); delay(1);
+    Serial.print(" DOUT = "); Serial.println(GPIO->P[i].DOUT,HEX); delay(1);
+    Serial.print(" DOUTSET = "); Serial.print(GPIO->P[i].DOUTSET,HEX); delay(1);
+    Serial.print(" DOUTCLR = "); Serial.print(GPIO->P[i].DOUTCLR,HEX); delay(1);
+    Serial.print(" DOUTTGL = "); Serial.print(GPIO->P[i].DOUTTGL,HEX); delay(1);
+    Serial.print(" DIN = "); Serial.print(GPIO->P[i].DIN,HEX); delay(1);
+    Serial.print(" PINLOCKN = "); Serial.println(GPIO->P[i].PINLOCKN,HEX); delay(1);
+  }
+}
+
+/*
+  GPIO->P[PORTA].MODEL = 0x22222222;
+  mode_reg[0] = GPIO->P[PORTA].MODEL;
+  GPIO->P[PORTA].MODEH = 0x22222222;
+  mode_reg[1] = GPIO->P[PORTA].MODEH;
+
+  GPIO->P[PORTB].MODEL = 0x22222222;
+  mode_reg[2] = GPIO->P[PORTB].MODEL;
+  GPIO->P[PORTB].MODEH = 0x22222222;
+  mode_reg[3] = GPIO->P[PORTB].MODEH;
+
+  GPIO->P[PORTC].MODEL = 0x22222222;
+  mode_reg[4] = GPIO->P[PORTC].MODEL;
+  GPIO->P[PORTC].MODEH = 0x22222222;
+  mode_reg[5] = GPIO->P[PORTC].MODEH;
+
+  GPIO->P[PORTD].MODEL = 0x22222222;
+  mode_reg[6] = GPIO->P[PORTD].MODEL;
+  GPIO->P[PORTD].MODEH = 0x22222222;
+  mode_reg[7] = GPIO->P[PORTD].MODEH;
+
+  GPIO->P[PORTE].MODEL = 0x2222;
+  mode_reg[8] = GPIO->P[PORTE].MODEL;
+  GPIO->P[PORTE].MODEH = 0x2222;
+  mode_reg[9] = GPIO->P[PORTE].MODEH;
+
+  GPIO->P[PORTF].MODEL = 0x2222;
+  mode_reg[10] = GPIO->P[PORTF].MODEL;
+  GPIO->P[PORTF].MODEH = 0x2222;
+  mode_reg[11] = GPIO->P[PORTF].MODEH;
+  
+  GPIO->P[PORTA].DOUTCLR = 0xFFFF;
+  GPIO->P[PORTB].DOUTCLR = 0xFFFF;
+  GPIO->P[PORTC].DOUTCLR = 0xFFFF;
+  GPIO->P[PORTD].DOUTCLR = 0xFFFF;
+  GPIO->P[PORTE].DOUTCLR = 0xFFFF;
+  GPIO->P[PORTF].DOUTCLR = 0xFFFF;
 */
 
+/*
+  if((pin < 2) || (pin > 13)) {
+    // Error
+  }
+  switch(mode >> 4) {
+  case PIN_MODE_GPIO0:
+  case PIN_MODE_GPIO1:
+    GPIO_config(pins[pin], ports[pin], mode);
+    break;
+  case PIN_MODE_ACMP:
+    ACMPpinMode(pin, mode);
+    break;
+  case PIN_MODE_ADC:
+    ADCpinMode(pin, mode);
+    break;
+  case PIN_MODE_IDAC:
+    IDACpinMode(pin,mode);
+    break;
+  case PIN_MODE_TIMER:
+    TIMERpinMode(pin, mode);
+    break;
+  case PIN_MODE_PRS_PCNT_WAKE:
+    PRSpinMode(pin, mode);
+    break;
+  case PIN_MODE_CMU:
+    CMUpinMode(pin, mode);
+    break;
+  case PIN_MODE_USART:
+    USARTpinMode(pin, mode);
+    break;
+  case PIN_MODE_I2C:
+    I2CpinMode(pin, mode);
+    break;
+  case PIN_MODE_OPAMP_DAC:
+  default:
+    // Error
+  }
+
+void ADCpinMode(uint8_t pin, uint8_t mode)
+{
+
+}
+
+void IDACpinMode(uint8_t pin, uint8_t mode)
+{
+
+}
+
+void TIMERpinMode(uint8_t pin, uint8_t mode)
+{
+
+}
+
+void PRSpinMode(uint8_t pin, uint8_t mode)
+{
+
+}
+
+void CMUpinMode(uint8_t pin, uint8_t mode)
+{
+
+}
+
+void USARTpinMode(uint8_t pin, uint8_t mode)
+{
+
+}
+
+void I2CpinMode(uint8_t pin, uint8_t mode)
+{
+
+}
+
+
+// GPIO Interrupts
+
+
+#define RISING     (0x1)
+#define CHANGE     (0x2)
+#define FALLING    (0x3)
+
+
+typedef void (*voidFuncPtr)(void);
+
+static volatile voidFuncPtr intFunc[16];
+
+static uint8_t iports[14] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA, 0,PORTC,PORTF,PORTF,PORTF};
+static uint8_t ipins[14]  = {0,0,   15,   12,    3,    2,   11,    1,    0, 0,   13,    0,    1,    2};
+
+static uint8_t extIntSel = 0; // this needs to be fixed
+
+void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
+{
+  if((pin < 2) || (pin == 8) || (pin > 13)) {
+    // Error
+    return;
+  }
+  intFunc[pins[pin]] = gpioIntFunc;
+  uint32_t mask = 0xF << (ipins[pin] & 0x7);
+
+  if((mode == RISING) || (mode == CHANGE)) {
+    GPIO->EXTIRISE = 0x1 << ipins[pin];
+  }
+  if((mode == FALLING) || (mode == CHANGE)) {
+    GPIO->EXTIFALL = 0x1 << ipins[pin];
+  }
+  if(extIntSel < 8) {
+    GPIO->EXTIPSELL = (GPIO->EXTIPSELL & ~mask) | iports[pin]; 
+  } else {
+    GPIO->EXTIPSELH = (GPIO->EXTIPSELH & ~mask) | iports[pin];
+  }
+  GPIO->IEN |= 0x1 << ipins[pin];
+}
+
+void detachInterrupt(uint8_t pin)
+{
+  intFunc[ipins[pin]] = 0;
+  uint32_t mask = 0xF << (ipins[pin] & 0x7);
+
+  GPIO->IEN &= ~(0x1 << ipins[pin]);
+
+  if(extIntSel < 8) {
+    GPIO->EXTIPSELL = GPIO->EXTIPSELL & ~mask;
+  } else {
+    GPIO->EXTIPSELH = GPIO->EXTIPSELH & ~mask;
+  }
+}
+
+void GPIO_ODD_IRQHandler(void)
+{
+  for(int i = 0; i < 16; i+=2) {
+    if (GPIO->IF & (0x2 << i)) {
+      GPIO->IFC = (0x2 << i);
+      intFunc[i]();
+    }
+  }
+}
+
+void GPIO_EVEN_IRQHandler(void)
+{
+  for(int i = 0; i < 16; i+=2) {
+    if (GPIO->IF & (0x1 << i)) {
+      GPIO->IFC = (0x1 << i);
+      intFunc[i]();
+    }
+  }  
+}
+*/

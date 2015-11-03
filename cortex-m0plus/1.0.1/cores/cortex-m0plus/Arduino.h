@@ -46,46 +46,32 @@ extern "C"{
 #include "wiring_constants.h"
 #include "efm_pin_config.h"
 
-  /*
-#define clockCyclesPerMicrosecond() ( SystemCoreClock / 1000000L )
-#define clockCyclesToMicroseconds(a) ( ((a) * 1000L) / (SystemCoreClock / 1000L) )
-#define microsecondsToClockCycles(a) ( (a) * (SystemCoreClock / 1000000L) )
-  */
+  void yield( void ) ;
 
-void yield( void ) ;
-
-/* sketch */
-void setup( void ) ;
-void loop( void ) ;
-
-#ifdef __cplusplus
-} // extern "C"
-#endif // __cplusplus
+  void init(void);
 
 #include "variant.h"
 #include "init_efm.h"
-#include "init_efmusb.h"
+#include "wiring_shift.h"
 
+  /* sketch */
+  void setup( void ) ;
+  void loop( void ) ;
 
-// The following headers are for C++ only compilation
 #ifdef __cplusplus
+}
+
   #include "WCharacter.h"
   #include "WString.h"
   #include "Tone.h"
   #include "WMath.h"
   #include "HardwareSerial.h"
-//  #include "pulse.h"
+  #include "RingBuffer.h"
+  #include "LEUARTClass.h"
+  //  #include "pulse.h"
   #include "delay.h"
-//  #include "Uart.h"
+
 #endif // __cplusplus
-
-// Include board variant
-
-//#include "wiring_analog.h"
-//#include "wiring_shift.h"
-//#include "WInterrupts.h"
-
-
 
 // undefine stdlib's abs if encountered
 #ifdef abs

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2014-2015 Engimusing LLC.  All right reserved.
+  Copyright (c) 2014 Arduino.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,21 +16,28 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _INIT_EFMUSB_
-#define _INIT_EFMUSB_
-
+#ifndef _WIRING_SHIFT_
+#define _WIRING_SHIFT_
 
 #ifdef __cplusplus
-extern "C" {
+ extern "C" {
 #endif
 
 
-void init(void);
+/*
+ * \brief
+ */
+extern uint32_t shiftIn( uint32_t ulDataPin, uint32_t ulClockPin, uint32_t ulBitOrder ) ;
+
+
+/*
+ * \brief
+ */
+extern void shiftOut( uint32_t ulDataPin, uint32_t ulClockPin, uint32_t ulBitOrder, uint32_t ulVal ) ;
 
 
 #ifdef __cplusplus
 }
 #endif
 
-
-#endif // _INIT_EFMUSB_
+#endif /* _WIRING_SHIFT_ */

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2014-2015 Engimusing LLC.  All right reserved.
+  Copyright (c) 2015 Arduino LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,25 +16,24 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "init_efm.h"
-#include "efm_pin_config.h"
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
-  void init( void )
-  {
-    init_efm32zg();
-    GPIO_config(PORTA,  8, OUTPUT);
-    GPIO_config(PORTA,  9, OUTPUT);
-    GPIO_config(PORTA, 10, OUTPUT);
-    GPIO->P[PORTA].DOUTSET = (1 << 8);
-    GPIO->P[PORTA].DOUTSET = (1 << 9);
-    GPIO->P[PORTA].DOUTSET = (1 << 10);
-  }
+/*
+ * \brief Measures the length (in microseconds) of a pulse on the pin; state is HIGH
+ * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
+ * to 3 minutes in length, but must be called at least a few dozen microseconds
+ * before the start of the pulse.
+ */
+uint32_t pulseIn(uint32_t pin, uint32_t state, uint32_t timeout);
 
 #ifdef __cplusplus
-}
+// Provides a version of pulseIn with a default argument (C++ only)
+uint32_t pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000000L);
+
+} // extern "C"
 #endif
+

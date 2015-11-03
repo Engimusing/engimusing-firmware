@@ -18,7 +18,7 @@ OBJ_DIR = build
 # You might need to do changes to match your system setup          #
 ####################################################################
 
-TOOLDIR    = ../../../../../tools/arm-none-eabi-gcc/4.8.3-2014q1
+TOOLDIR    = ~/.arduino15/packages/engimusing/tools/arm-none-eabi-gcc/4.8.3-2014q1
 
 RM         := rm -rf
 NULLDEVICE := /dev/null
@@ -101,13 +101,17 @@ em_lib/src/em_i2c.c \
 em_lib/src/em_int.c \
 efm_lib/src/init_efm32zg.c \
 efm_lib/src/efm_pin_config.c \
-delay.c
+delay.c \
+wiring_shift.c
 
 CPP_SRC += \
 main.cpp \
-WString.cpp \
-WMath.cpp 
-#Reset.cpp
+//WString.cpp \
+WMath.cpp \
+Print.cpp \
+Stream.cpp \
+RingBuffer.cpp \
+LEUARTClass.cpp
 
 s_SRC += 
 
