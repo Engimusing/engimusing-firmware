@@ -55,6 +55,13 @@ void ledAllOn(void);
 uint32_t readGPIOregs(uint8_t port);
 void print_gpio_regs(void);
 
+#define RISING     (0x2)
+#define CHANGE     (0x3)
+#define FALLING    (0x4)
+
+void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
+void detachInterrupt(uint8_t pin);
+
 #ifdef __cplusplus
 }
 #endif

@@ -6,6 +6,7 @@ static String test_help = "test01 - GPIO LED Test";
 
 #define PINS_TO_TEST    8
 #define TEST_ITERATIONS 4
+#define LED_DELAY  200
 
 void test01_test(void)
 {
@@ -19,31 +20,30 @@ void test01_test(void)
   for(int i = 0; i < TEST_ITERATIONS; i++) {
     for(int p = 0; p < PINS_TO_TEST; p++) {
       digitalWrite(pins[p], LOW);
-      delay(350);
+      delay(LED_DELAY);
       digitalWrite(pins[p], HIGH);
-      delay(350);
+      delay(LED_DELAY);
     }
   }
   Serial.println("  Test Complete");
 }
 
-
 void test01_desc(void)
 {
-    Serial.println("\n\rTest Description:");
-    Serial.println("  This test is used to test that the 8 connector pins can be driven.");
-    Serial.println("  The DF11_10H_to_DF11_10R_X2 LED logic analyzer board is used to");
-    Serial.println("  visually watch the LEDs go through a test pattern.");
-    Serial.println("  ");
-    Serial.println("  ");
-    Serial.println("  ");
+  delay(2); Serial.println("\n\rTest 01 Description:");
+  delay(2); Serial.println("  This test is used to test that the 8");
+  delay(2); Serial.println("  connector pins can be driven.");
+  delay(2); Serial.println("  The DF11_10H_to_DF11_10R_X2 LED ");
+  delay(2); Serial.println("  logic analyzer board is used to");
+  delay(2); Serial.println("  visually watch the LEDs go through");
+  delay(2); Serial.println("  a test pattern.");
 }
 
 void test01(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    Serial.print(test_help);
+    delay(2); Serial.print(test_help);
     break;
   case DESCRIPTION:
     test01_desc();
@@ -57,4 +57,3 @@ void test01(uint8_t function)
     break;
   }
 }
-

@@ -1,0 +1,58 @@
+#include "Arduino.h"
+#include "test.h"
+
+extern LEUARTClass Serial;
+static String test_help = "test03 - tests delays and system clock read";
+static int err_count = 0;
+
+void test01_test(void)
+{
+  uint32_t a, b;
+
+  a = millis();
+  delay(1000-1); // Arduino counts zero so it is off by one
+  b = millis();
+
+  Serial.print("millis a = "); Serial.println(a);
+  Serial.print("millis b = "); Serial.println(b);
+  if((b-a) != 1000) {
+    Serial.print("  Error: Should be 1000 but is "); Serial.println(b-a);
+    err_count++;
+  }
+  a = millis();
+  delayMicroseconds(10000);
+  b = millis();
+
+  Serial.print("millis a = "); Serial.println(a);
+  Serial.print("millis b = "); Serial.println(b);
+  if((b-a) != 10) {
+    Serial.print("  Error: Should be 1000 but is "); Serial.println(b-a);
+    err_count++;
+  }
+  Serial.print("Error Count = "); Serial.println(err_count);
+}
+
+void test01_desc(void)
+{
+  delay(2); Serial.println("\n\rTest03 Description:");
+  delay(2); Serial.println("  This test tests the millis() function.");
+}
+
+void test01(uint8_t function)
+{
+  switch(function) {
+  case TESTHELP:
+    delay(2); Serial.print(test_help);
+    break;
+  case DESCRIPTION:
+    test01_desc();
+    break;
+  case RUNTEST:
+    Serial.println("\n\rRun test01");
+    test01_test();
+    break;
+  default:
+    Serial.println("\n\rBad Test Function");
+    break;
+  }
+}

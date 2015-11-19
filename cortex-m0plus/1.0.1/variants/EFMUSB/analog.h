@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2015 Arduino LLC.  All right reserved.
+  Copyright (c) 2015 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,24 +16,38 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#pragma once
+#ifndef _ANALOGLP_
+#define _ANALOGLP_
+
+#include "Arduino.h"
+#include "em_cmu.h"
+#include "em_emu.h"
+
+#define INTERNAL1V25 ADC_SINGLECTRL_REF_1V25
+#define INTERNAL2V5  ADC_SINGLECTRL_REF_2V5
+#define DEFAULT      ADC_SINGLECTRL_REF_VDD
+#define EXTERNAL     ADC_SINGLECTRL_REF_EXTSINGLE
+
+class AnalogLP
+{
+public:
+AnalogLP();
+uint32_t analogRead(uint8_t pin);
+uint32_t analogReference(uint32_t ref);
+void analogReadResolution(uint8_t bits);
+private:
+uint32_t adc_reference;
+uint32_t adc_resolution;
+uint32_t adc_oversampling;
+};
+
 
 #ifdef __cplusplus
-extern "C" {
-#endif
-
-/*
- * \brief Measures the length (in microseconds) of a pulse on the pin; state is HIGH
- * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
- * to 3 minutes in length, but must be called at least a few dozen microseconds
- * before the start of the pulse.
- */
-uint32_t pulseIn(uint32_t pin, uint32_t state, uint32_t timeout);
-
-#ifdef __cplusplus
-// Provides a version of pulseIn with a default argument (C++ only)
-uint32_t pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000000L);
+extern "C"{
+void print_adc_regs(void);
 
 } // extern "C"
+
 #endif
 
+#endif /* _ANALOGLP_ */

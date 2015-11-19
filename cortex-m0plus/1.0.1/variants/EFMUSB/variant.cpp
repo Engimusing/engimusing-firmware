@@ -109,7 +109,7 @@ void digitalWrite(uint8_t pin, uint8_t val)
   } else if (val==LOW) {
     GPIO->P[ports[pin]].DOUTCLR = (1 << pins[pin]);
   } else {
-    Serial.println("\n\rx");
+    delay(2); Serial.println("\n\rdigitalWrite bad value");
   }
 }
 
@@ -144,7 +144,6 @@ uint32_t readGPIOregs(uint8_t port)
 #ifdef __cplusplus
 }
 #endif
-
 
 // LEUART0 Interrupt handler
 void LEUART0_IRQHandler(void)
@@ -186,167 +185,74 @@ void print_gpio_regs(void)
   }
 }
 
-/*
-  GPIO->P[PORTA].MODEL = 0x22222222;
-  mode_reg[0] = GPIO->P[PORTA].MODEL;
-  GPIO->P[PORTA].MODEH = 0x22222222;
-  mode_reg[1] = GPIO->P[PORTA].MODEH;
-
-  GPIO->P[PORTB].MODEL = 0x22222222;
-  mode_reg[2] = GPIO->P[PORTB].MODEL;
-  GPIO->P[PORTB].MODEH = 0x22222222;
-  mode_reg[3] = GPIO->P[PORTB].MODEH;
-
-  GPIO->P[PORTC].MODEL = 0x22222222;
-  mode_reg[4] = GPIO->P[PORTC].MODEL;
-  GPIO->P[PORTC].MODEH = 0x22222222;
-  mode_reg[5] = GPIO->P[PORTC].MODEH;
-
-  GPIO->P[PORTD].MODEL = 0x22222222;
-  mode_reg[6] = GPIO->P[PORTD].MODEL;
-  GPIO->P[PORTD].MODEH = 0x22222222;
-  mode_reg[7] = GPIO->P[PORTD].MODEH;
-
-  GPIO->P[PORTE].MODEL = 0x2222;
-  mode_reg[8] = GPIO->P[PORTE].MODEL;
-  GPIO->P[PORTE].MODEH = 0x2222;
-  mode_reg[9] = GPIO->P[PORTE].MODEH;
-
-  GPIO->P[PORTF].MODEL = 0x2222;
-  mode_reg[10] = GPIO->P[PORTF].MODEL;
-  GPIO->P[PORTF].MODEH = 0x2222;
-  mode_reg[11] = GPIO->P[PORTF].MODEH;
-  
-  GPIO->P[PORTA].DOUTCLR = 0xFFFF;
-  GPIO->P[PORTB].DOUTCLR = 0xFFFF;
-  GPIO->P[PORTC].DOUTCLR = 0xFFFF;
-  GPIO->P[PORTD].DOUTCLR = 0xFFFF;
-  GPIO->P[PORTE].DOUTCLR = 0xFFFF;
-  GPIO->P[PORTF].DOUTCLR = 0xFFFF;
-*/
-
-/*
-  if((pin < 2) || (pin > 13)) {
-    // Error
-  }
-  switch(mode >> 4) {
-  case PIN_MODE_GPIO0:
-  case PIN_MODE_GPIO1:
-    GPIO_config(pins[pin], ports[pin], mode);
-    break;
-  case PIN_MODE_ACMP:
-    ACMPpinMode(pin, mode);
-    break;
-  case PIN_MODE_ADC:
-    ADCpinMode(pin, mode);
-    break;
-  case PIN_MODE_IDAC:
-    IDACpinMode(pin,mode);
-    break;
-  case PIN_MODE_TIMER:
-    TIMERpinMode(pin, mode);
-    break;
-  case PIN_MODE_PRS_PCNT_WAKE:
-    PRSpinMode(pin, mode);
-    break;
-  case PIN_MODE_CMU:
-    CMUpinMode(pin, mode);
-    break;
-  case PIN_MODE_USART:
-    USARTpinMode(pin, mode);
-    break;
-  case PIN_MODE_I2C:
-    I2CpinMode(pin, mode);
-    break;
-  case PIN_MODE_OPAMP_DAC:
-  default:
-    // Error
-  }
-
-void ADCpinMode(uint8_t pin, uint8_t mode)
-{
-
-}
-
-void IDACpinMode(uint8_t pin, uint8_t mode)
-{
-
-}
-
-void TIMERpinMode(uint8_t pin, uint8_t mode)
-{
-
-}
-
-void PRSpinMode(uint8_t pin, uint8_t mode)
-{
-
-}
-
-void CMUpinMode(uint8_t pin, uint8_t mode)
-{
-
-}
-
-void USARTpinMode(uint8_t pin, uint8_t mode)
-{
-
-}
-
-void I2CpinMode(uint8_t pin, uint8_t mode)
-{
-
-}
-
 
 // GPIO Interrupts
 
 
-#define RISING     (0x1)
-#define CHANGE     (0x2)
-#define FALLING    (0x3)
-
-
 typedef void (*voidFuncPtr)(void);
 
-static volatile voidFuncPtr intFunc[16];
+static volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+                                         // storage for 16 interrupt functions
+                                         // corresponding to #bits in IEN
 
-static uint8_t iports[14] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA, 0,PORTC,PORTF,PORTF,PORTF};
-static uint8_t ipins[14]  = {0,0,   15,   12,    3,    2,   11,    1,    0, 0,   13,    0,    1,    2};
-
-static uint8_t extIntSel = 0; // this needs to be fixed
+static uint8_t iports[11] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA, 0,PORTC};
+static uint8_t ipins[11]  = {0,0,   15,   12,    3,    2,   11,    1,    0, 0,   13};
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
 {
-  if((pin < 2) || (pin == 8) || (pin > 13)) {
+  if((pin < 2) || (pin == 9) || (pin > 10)) {
     // Error
     return;
   }
-  intFunc[pins[pin]] = gpioIntFunc;
-  uint32_t mask = 0xF << (ipins[pin] & 0x7);
+  GPIO_config(iports[pin], ipins[pin], INPUT_FILTER);
 
+  intFunc[ipins[pin]] = gpioIntFunc;
+  int shift = ((ipins[pin] & 0x7) * 4);
+  uint32_t mask = 0xF << shift;
+
+  if(ipins[pin] < 8) {
+    GPIO->EXTIPSELL = (GPIO->EXTIPSELL & ~mask) | (iports[pin] << shift); 
+  } else {
+    GPIO->EXTIPSELH = (GPIO->EXTIPSELH & ~mask) | (iports[pin] << shift); 
+  }
   if((mode == RISING) || (mode == CHANGE)) {
-    GPIO->EXTIRISE = 0x1 << ipins[pin];
+    GPIO->EXTIRISE |= 0x1 << ipins[pin];
   }
   if((mode == FALLING) || (mode == CHANGE)) {
-    GPIO->EXTIFALL = 0x1 << ipins[pin];
+    GPIO->EXTIFALL |= 0x1 << ipins[pin];
   }
-  if(extIntSel < 8) {
-    GPIO->EXTIPSELL = (GPIO->EXTIPSELL & ~mask) | iports[pin]; 
-  } else {
-    GPIO->EXTIPSELH = (GPIO->EXTIPSELH & ~mask) | iports[pin];
-  }
+  GPIO->IFC = 0x1 << ipins[pin];
   GPIO->IEN |= 0x1 << ipins[pin];
+  /*  
+  Serial.print(" port            = "); Serial.println(iports[pin],HEX); delay(2);
+  Serial.print(" pin             = "); Serial.println(ipins[pin],HEX); delay(2);
+  Serial.print(" mask            = "); Serial.println(mask,HEX); delay(2);
+  Serial.print(" value           = "); Serial.println(iports[pin] << ipins[pin],HEX); delay(2);
+  Serial.print(" GPIO->EXTIPSELL = "); Serial.println(GPIO->EXTIPSELL,HEX); delay(2);
+  Serial.print(" GPIO->EXTIPSELH = "); Serial.println(GPIO->EXTIPSELH,HEX); delay(2);
+  Serial.print(" GPIO->EXTIRISE  = "); Serial.println(GPIO->EXTIRISE,HEX); delay(2);
+  Serial.print(" GPIO->EXTIFALL  = "); Serial.println(GPIO->EXTIFALL,HEX); delay(2);
+  Serial.print(" IEN             = "); Serial.println(GPIO->IEN,HEX); delay(2);
+  Serial.print(" IF              = "); Serial.println(GPIO->IF,HEX); delay(2);
+  Serial.println();
+  */
+  NVIC_EnableIRQ(GPIO_EVEN_IRQn);
+  NVIC_EnableIRQ(GPIO_ODD_IRQn);
 }
 
 void detachInterrupt(uint8_t pin)
 {
   intFunc[ipins[pin]] = 0;
-  uint32_t mask = 0xF << (ipins[pin] & 0x7);
+  int shift = ((ipins[pin] & 0x7) * 4);
+  uint32_t mask = 0xF << shift;
 
-  GPIO->IEN &= ~(0x1 << ipins[pin]);
+  intFunc[ipins[pin]] = 0;
+  GPIO->EXTIRISE &= 0x1 << ipins[pin];
+  GPIO->EXTIFALL &= 0x1 << ipins[pin];
+  GPIO->IFC = 0x1 << ipins[pin];
+  GPIO->IEN &= 0x1 << ipins[pin];
 
-  if(extIntSel < 8) {
+  if(ipins[pin] < 8) {
     GPIO->EXTIPSELL = GPIO->EXTIPSELL & ~mask;
   } else {
     GPIO->EXTIPSELH = GPIO->EXTIPSELH & ~mask;
@@ -355,10 +261,12 @@ void detachInterrupt(uint8_t pin)
 
 void GPIO_ODD_IRQHandler(void)
 {
-  for(int i = 0; i < 16; i+=2) {
-    if (GPIO->IF & (0x2 << i)) {
-      GPIO->IFC = (0x2 << i);
-      intFunc[i]();
+  for(int i = 1; i < 16; i+=2) {
+    if (GPIO->IF & (0x2 << (i-1))) {
+      GPIO->IFC = (0x2 << (i-1));
+      if(intFunc[i]) {
+	intFunc[i]();
+      }
     }
   }
 }
@@ -368,8 +276,11 @@ void GPIO_EVEN_IRQHandler(void)
   for(int i = 0; i < 16; i+=2) {
     if (GPIO->IF & (0x1 << i)) {
       GPIO->IFC = (0x1 << i);
-      intFunc[i]();
+      if(intFunc[i]) {
+	intFunc[i]();
+      }
     }
   }  
 }
-*/
+
+

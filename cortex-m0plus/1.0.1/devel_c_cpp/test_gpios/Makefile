@@ -77,30 +77,32 @@ override ASMFLAGS += -x assembler-with-cpp -D$(DEVICE) -Wall -Wextra -mcpu=corte
 #
 override LDFLAGS += -Xlinker -Map=$(LST_DIR)/$(PROJECTNAME).map \
 -mcpu=cortex-m0 -mthumb \
--T../cores/cortex-m0plus/device/efm32zg.ld \
+-T../../cores/cortex-m0plus/device/efm32zg.ld \
 -Wl,--gc-sections --specs=nano.specs --specs=nosys.specs 
 
-LIBS = -Wl,--start-group -lm ../cores/cortex-m0plus/core.a -Wl,--end-group \
+LIBS = -Wl,--start-group -lm ../../cores/cortex-m0plus/core.a -Wl,--end-group \
 -Wl,--start-group -lgcc -lc -Wl,--end-group \
 
 INCLUDEPATHS += \
 -I.. \
--I../cores/cortex-m0plus/ \
--I../cores/cortex-m0plus/device/inc/ \
--I../cores/cortex-m0plus/cmsis/ \
--I../cores/cortex-m0plus/em_lib/inc/ \
--I../cores/cortex-m0plus/efm_lib/inc/ \
--I../variants/EFMUSB/ \
+-I../../cores/cortex-m0plus/ \
+-I../../cores/cortex-m0plus/device/inc/ \
+-I../../cores/cortex-m0plus/cmsis/ \
+-I../../cores/cortex-m0plus/em_lib/inc/ \
+-I../../cores/cortex-m0plus/efm_lib/inc/ \
+-I../../variants/EFMUSB/ \
 -I.
 
 ####################################################################
 # Files                                                            #
 ####################################################################
 
-C_SRC += 
+C_SRC += \
+
 
 CPP_SRC += \
-../variants/EFMUSB/variant.cpp \
+../../variants/EFMUSB/variant.cpp \
+../../variants/EFMUSB/timer.cpp \
 $(wildcard *.cpp)
 
 s_SRC += 
@@ -137,7 +139,7 @@ vpath %.S $(S_PATHS)
 all:      release corelib
 
 corelib:
-	make -C ../cores/cortex-m0plus/
+	make -C ../../cores/cortex-m0plus/
 
 release:  $(EXE_DIR)/$(PROJECTNAME).bin
 

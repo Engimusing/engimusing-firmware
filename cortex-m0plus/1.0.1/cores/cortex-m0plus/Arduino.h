@@ -68,7 +68,8 @@ extern "C"{
   #include "HardwareSerial.h"
   #include "RingBuffer.h"
   #include "LEUARTClass.h"
-  //  #include "pulse.h"
+  #include "timer.h"
+  #include "analog.h"
   #include "delay.h"
 
 #endif // __cplusplus
