@@ -22,65 +22,7 @@
 RingBuffer::RingBuffer( void )
 {
     memset( _aucBuffer, 0, SERIAL_BUFFER_SIZE ) ;
-    clear();
+    _iHead = 0;
+    _iTail = 0;
 }
 
-void RingBuffer::store_char( uint8_t c )
-{
-  int i = nextIndex(_iHead);
-
-  // if we should be storing the received character into the location
-  // just before the tail (meaning that the head would advance to the
-  // current location of the tail), we're about to overflow the buffer
-  // and so we don't write the character or advance the head.
-  if ( i != _iTail )
-  {
-    _aucBuffer[_iHead] = c ;
-    _iHead = i ;
-  }
-}
-
-void RingBuffer::clear()
-{
-	_iHead = 0;
-	_iTail = 0;
-}
-
-int RingBuffer::read_char()
-{
-	if(_iTail == _iHead)
-		return -1;
-
-	uint8_t value = _aucBuffer[_iTail];
-	_iTail = nextIndex(_iTail);
-
-	return value;
-}
-
-int RingBuffer::available()
-{
-	int delta = _iHead - _iTail;
-
-	if(delta < 0)
-		return SERIAL_BUFFER_SIZE + delta;
-	else
-		return delta;
-}
-
-int RingBuffer::peek()
-{
-	if(_iTail == _iHead)
-		return -1;
-
-	return _aucBuffer[_iTail];
-}
-
-int RingBuffer::nextIndex(int index)
-{
-	return (uint32_t)(index + 1) % SERIAL_BUFFER_SIZE;
-}
-
-bool RingBuffer::isFull()
-{
-	return (nextIndex(_iHead) == _iTail);
-}

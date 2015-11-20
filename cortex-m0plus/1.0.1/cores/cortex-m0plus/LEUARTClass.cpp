@@ -106,7 +106,7 @@ uint32_t LEUARTClass::getInterruptPriority()
 
 int LEUARTClass::available( void )
 {
-  return (uint32_t)(SERIAL_BUFFER_SIZE + _rx_buffer->_iHead - _rx_buffer->_iTail) % SERIAL_BUFFER_SIZE;
+  return (uint32_t)(SERIAL_BUFFER_SIZE + _rx_buffer->_iHead - _rx_buffer->_iTail) & SERIAL_BUFFER_MASK;
 }
 
 int LEUARTClass::availableForWrite(void)
@@ -132,7 +132,7 @@ int LEUARTClass::read( void )
     return -1;
 
   uint8_t uc = _rx_buffer->_aucBuffer[_rx_buffer->_iTail];
-  _rx_buffer->_iTail = (unsigned int)(_rx_buffer->_iTail + 1) % SERIAL_BUFFER_SIZE;
+  _rx_buffer->_iTail = (unsigned int)(_rx_buffer->_iTail + 1) & SERIAL_BUFFER_MASK;
   return uc;
 }
 
@@ -152,7 +152,7 @@ size_t LEUARTClass::write( const uint8_t uc_data )
       (_tx_buffer->_iTail != _tx_buffer->_iHead))
     {
       // If busy we buffer
-      unsigned int l = (_tx_buffer->_iHead + 1) % SERIAL_BUFFER_SIZE;
+      unsigned int l = (_tx_buffer->_iHead + 1) & SERIAL_BUFFER_MASK;
       while (_tx_buffer->_iTail == l)
 	; // Spin locks if we're about to overwrite the buffer. This continues once the data is sent
 
@@ -175,14 +175,18 @@ void LEUARTClass::IrqHandler( void )
 
   // Did we receive data?
   if ((status & LEUART_STATUS_RXDATAV) == LEUART_STATUS_RXDATAV) {
-    _rx_buffer->store_char(_pUart->RXDATA);
+    int i = (uint32_t)(_rx_buffer->_iHead + 1) & SERIAL_BUFFER_MASK;
+    if ( i != _rx_buffer->_iTail ) {
+      _rx_buffer->_aucBuffer[_rx_buffer->_iHead] = _pUart->RXDATA ;
+      _rx_buffer->_iHead = i ;
+    }
   }
   // Do we need to keep sending data?
   if ((status & LEUART_STATUS_TXBL) == LEUART_STATUS_TXBL) 
     {
       if (_tx_buffer->_iTail != _tx_buffer->_iHead) {
 	_pUart->TXDATA = _tx_buffer->_aucBuffer[_tx_buffer->_iTail];
-	_tx_buffer->_iTail = (unsigned int)(_tx_buffer->_iTail + 1) % SERIAL_BUFFER_SIZE;
+	_tx_buffer->_iTail = (unsigned int)(_tx_buffer->_iTail + 1) & SERIAL_BUFFER_MASK;
       }
       else
 	{

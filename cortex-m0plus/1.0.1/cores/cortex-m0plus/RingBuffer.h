@@ -26,25 +26,15 @@
 // to which to write the next incoming character and tail is the index of the
 // location from which to read.
 #define SERIAL_BUFFER_SIZE 64
+#define SERIAL_BUFFER_MASK 0x003F;
 
 class RingBuffer
 {
-  public:
-    uint8_t _aucBuffer[SERIAL_BUFFER_SIZE] ;
-    int _iHead ;
-    int _iTail ;
-
-  public:
-    RingBuffer( void ) ;
-    void store_char( uint8_t c ) ;
-	void clear();
-	int read_char();
-	int available();
-	int peek();
-	bool isFull();
-
-  private:
-	int nextIndex(int index);
+ public:
+  volatile uint8_t _aucBuffer[SERIAL_BUFFER_SIZE] ;
+  volatile uint16_t _iHead ;
+  volatile uint16_t _iTail ;
+  RingBuffer( void ) ;
 } ;
 
 #endif /* _RING_BUFFER_ */
