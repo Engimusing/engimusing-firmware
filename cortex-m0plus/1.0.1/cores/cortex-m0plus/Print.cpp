@@ -23,6 +23,7 @@
 #include "Arduino.h"
 
 #include "Print.h"
+#include <stdarg.h>
 
 // Public Methods //////////////////////////////////////////////////////////////
 
@@ -252,3 +253,4 @@ size_t Print::printFloat(double number, uint8_t digits)
 
   return n;
 }
+

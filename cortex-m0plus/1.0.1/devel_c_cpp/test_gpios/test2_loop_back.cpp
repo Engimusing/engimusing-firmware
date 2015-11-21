@@ -87,24 +87,24 @@ void test02_test(void)
 
 void test02_desc(void)
 {
-  delay(2); Serial.println("\n\rTest02 Description:");
-  delay(2); Serial.println("  This test performs a loop back test");
-  delay(2); Serial.println("  on the 8 connector pins. It requires");
-  delay(2); Serial.println("  a 10 pin connector with 4 wires");
-  delay(2); Serial.println("  Connected Pins:");
-  delay(2); Serial.println("    Pin 2 to Pin  6");
-  delay(2); Serial.println("    Pin 3 to Pin  7");
-  delay(2); Serial.println("    Pin 4 to Pin  8");
-  delay(2); Serial.println("    Pin 5 to Pin 10");
-  delay(2); Serial.println("  The cable assembly is labeled:");
-  delay(2); Serial.println("    GPIO LOOPBACK");
+  Serial.println("\n\rTest02 Description:");
+  Serial.println("  This test performs a loop back test");
+  Serial.println("  on the 8 connector pins. It requires");
+  Serial.println("  a 10 pin connector with 4 wires");
+  Serial.println("  Connected Pins:");
+  Serial.println("    Pin 2 to Pin  6");
+  Serial.println("    Pin 3 to Pin  7");
+  Serial.println("    Pin 4 to Pin  8");
+  Serial.println("    Pin 5 to Pin 10");
+  Serial.println("  The cable assembly is labeled:");
+  Serial.println("    GPIO LOOPBACK");
 }
 
 void test02(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test02_desc();

@@ -33,17 +33,17 @@ void test03_test(void)
 void test03_desc(void)
 {
   Serial.println("\n\rTest 4 Description:");
-  delay(2); Serial.println("  Run test5 on another board before this one.");
-  delay(2); Serial.println("  The second board captures the data");
-  delay(2); Serial.println("  sent by shiftOut() by this board.");
-  delay(2); Serial.println("  The two boards are connected with a 1 to 1 cable");
+  Serial.println("  Run test5 on another board before this one.");
+  Serial.println("  The second board captures the data");
+  Serial.println("  sent by shiftOut() by this board.");
+  Serial.println("  The two boards are connected with a 1 to 1 cable");
 }
 
 void test03(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test03_desc();

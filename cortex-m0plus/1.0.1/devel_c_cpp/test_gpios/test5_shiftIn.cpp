@@ -36,29 +36,29 @@ void test05_test(void)
     delayMicroseconds(50);
   }
   for(int w = 0; w < 8; w++) {
-    delay(2); Serial.print("data = "); Serial.println(indata[w],HEX);
-    delay(2); Serial.print("cdata = "); Serial.println(data[w],HEX);
+    Serial.print("data = "); Serial.println(indata[w],HEX);
+    Serial.print("cdata = "); Serial.println(data[w],HEX);
     if(indata[w] != data[w]) {
       err_count++;
     }
   }
-  delay(2); Serial.print("err_count = "); Serial.println(err_count);
+  Serial.print("err_count = "); Serial.println(err_count);
 }
 
 void test05_desc(void)
 {
-  delay(2); Serial.println("\n\rTest 6 Description:");
-  delay(2); Serial.println("  This tests the shiftIn() function.");
-  delay(2); Serial.println("  It requires a second board to generate the data.");
-  delay(2); Serial.println("  The second board should be started before this board.");
-  delay(2); Serial.println("  The boards are connected with a 1 to 1 cable.");
+  Serial.println("\n\rTest 6 Description:");
+  Serial.println("  This tests the shiftIn() function.");
+  Serial.println("  It requires a second board to generate the data.");
+  Serial.println("  The second board should be started before this board.");
+  Serial.println("  The boards are connected with a 1 to 1 cable.");
 }
 
 void test05(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test05_desc();

@@ -18,7 +18,7 @@ void test03_test(void)
   digitalWrite(10, HIGH);
 
   delay(2000);
-  delay(2); Serial.println("\n\rArmed");
+  Serial.println("\n\rArmed");
   while(digitalRead(2) == HIGH);
   digitalWrite(10, LOW);
   Timers.delay_us(150);
@@ -49,7 +49,7 @@ void test03_test(void)
   //  Timers.delay_ms(1000);
   digitalWrite(8, LOW);
 
-  delay(2); Serial.println("\n\pulses sent");
+  Serial.println("\n\pulses sent");
   digitalWrite(3, HIGH);
   digitalWrite(5, HIGH);
   digitalWrite(8, HIGH);
@@ -59,18 +59,18 @@ void test03_test(void)
 
 void test03_desc(void)
 {
-  delay(2); Serial.println("\n\rTest 03 Description:");
-  delay(2); Serial.println("  Run this test before test05");
-  delay(2); Serial.println("  It waits for pin 2 to go low before");
-  delay(2); Serial.println("  it sends pulses. Then it sends pulses");
-  delay(2); Serial.println("  on each edge of pin 2 it detects.");
+  Serial.println("\n\rTest 03 Description:");
+  Serial.println("  Run this test before test05");
+  Serial.println("  It waits for pin 2 to go low before");
+  Serial.println("  it sends pulses. Then it sends pulses");
+  Serial.println("  on each edge of pin 2 it detects.");
 }
 
 void test03(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test03_desc();

@@ -50,22 +50,22 @@ void test06_test(void)
 
   }
   digitalWrite(4,LOW);
-  delay(2); Serial.println("shiftIn done");
+  Serial.println("shiftIn done");
 }
 
 void test06_desc(void)
 {
   Serial.println("\n\rTest 7 Description:");
-  delay(2); Serial.println("  This test generates data for the shiftIn() function");
-  delay(2); Serial.println("  It needs to be run on a second board connected with");
-  delay(2); Serial.println("  a 1 to 1 cable.");
+  Serial.println("  This test generates data for the shiftIn() function");
+  Serial.println("  It needs to be run on a second board connected with");
+  Serial.println("  a 1 to 1 cable.");
 }
 
 void test06(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test06_desc();

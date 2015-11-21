@@ -29,28 +29,28 @@ void test04_test(void)
     indata[w] = sftdata;
   }
   for(int w = 0; w < 8; w++) {
-    delay(2); Serial.print("data = "); Serial.println(indata[w],HEX);
+    Serial.print("data = "); Serial.println(indata[w],HEX);
     if(indata[w] != data[w]) {
       err_count++;
     }
   }
-  delay(2); Serial.print("err_count = "); Serial.println(err_count);
+  Serial.print("err_count = "); Serial.println(err_count);
 }
 
 void test04_desc(void)
 {
-  delay(2); Serial.println("\n\rTest 5 Description:");
-  delay(2); Serial.println("  Companion to Test 4 - Run this on first then Test 5.");
-  delay(2); Serial.println("  This runs on a second board and captures the data");
-  delay(2); Serial.println("  sent by shiftOut() on the first board.");
-  delay(2); Serial.println("  The two boards are connected with a 1 to 1 cable");
+  Serial.println("\n\rTest 5 Description:");
+  Serial.println("  Companion to Test 4 - Run this on first then Test 5.");
+  Serial.println("  This runs on a second board and captures the data");
+  Serial.println("  sent by shiftOut() on the first board.");
+  Serial.println("  The two boards are connected with a 1 to 1 cable");
 }
 
 void test04(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test04_desc();

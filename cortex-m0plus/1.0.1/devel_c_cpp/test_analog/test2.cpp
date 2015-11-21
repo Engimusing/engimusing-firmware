@@ -35,16 +35,16 @@ void test02_test(void)
 
 void test02_desc(void)
 {
-  delay(2); Serial.println("\n\rTest 02 Description:");
-  delay(2); Serial.println("  Read from ADC once per second in single mode");
-  delay(2); Serial.println("  Vary resolution through the 4 basic options.");
+  Serial.println("\n\rTest 02 Description:");
+  Serial.println("  Read from ADC once per second in single mode");
+  Serial.println("  Vary resolution through the 4 basic options.");
 }
 
 void test02(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test02_desc();

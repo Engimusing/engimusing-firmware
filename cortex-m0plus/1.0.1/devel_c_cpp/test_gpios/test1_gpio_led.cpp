@@ -30,20 +30,20 @@ void test01_test(void)
 
 void test01_desc(void)
 {
-  delay(2); Serial.println("\n\rTest 01 Description:");
-  delay(2); Serial.println("  This test is used to test that the 8");
-  delay(2); Serial.println("  connector pins can be driven.");
-  delay(2); Serial.println("  The DF11_10H_to_DF11_10R_X2 LED ");
-  delay(2); Serial.println("  logic analyzer board is used to");
-  delay(2); Serial.println("  visually watch the LEDs go through");
-  delay(2); Serial.println("  a test pattern.");
+  Serial.println("\n\rTest 01 Description:");
+  Serial.println("  This test is used to test that the 8");
+  Serial.println("  connector pins can be driven.");
+  Serial.println("  The DF11_10H_to_DF11_10R_X2 LED ");
+  Serial.println("  logic analyzer board is used to");
+  Serial.println("  visually watch the LEDs go through");
+  Serial.println("  a test pattern.");
 }
 
 void test01(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test01_desc();

@@ -70,7 +70,7 @@ timer_counter TimersLP::enable(void (*isr)(), uint8_t timer_req)
     *T1.wake = 0;
     return T1;
   }
-  delay(2); Serial.println("Timer enable attempted but all timers already in use");
+  Serial.println("Timer enable attempted but all timers already in use");
   return TX;
 }
 
@@ -90,7 +90,7 @@ void TimersLP::disable(int timer)
     CMU_ClockEnable(cmuClock_TIMER1, false);
     timer1_free = true;
   } else {
-    delay(2); Serial.println("Attempted to disable invalid timer");
+    Serial.println("Attempted to disable invalid timer");
   }
 }
 
@@ -126,7 +126,7 @@ void TimersLP::delay_us(uint32_t dly)
   }
   uint32_t time = dly * US_PRESCALE_1;
   if(time > 65535) {
-    delay(2); Serial.println("Delay time exceeds counter size (3120 max)");
+    Serial.println("Delay time exceeds counter size (3120 max)");
     return;
   }
   timer_counter T = enable(wake_only,REQ_TIMER);
@@ -186,8 +186,8 @@ void TimersLP::tone(uint32_t pin, uint32_t frequency, uint32_t duration)
 
   // validate pin
   if((pin > 10) || (pin < 2) || (pin == 8)) {
-    delay(2); Serial.print("Invalid pin = "); Serial.println(pin);
-    delay(2); Serial.println("Must be 2-8 or 10");
+    Serial.print("Invalid pin = "); Serial.println(pin);
+    Serial.println("Must be 2-8 or 10");
     return;
   }
   // acquire timer
@@ -265,14 +265,14 @@ void TimersLP::analogWrite(uint32_t pin, uint32_t value, uint32_t prescale)
 
   // validate pin
   if((pin > 10) || (pin < 2) || (pin == 8)) {
-    delay(2); Serial.print("Invalid pin = "); Serial.println(pin);
-    delay(2); Serial.println("Must be 2-8 or 10");
+    Serial.print("Invalid pin = "); Serial.println(pin);
+    Serial.println("Must be 2-8 or 10");
     return;
   }
   // validate prescale
   if(prescale > 10) {
-    delay(2); Serial.print("Invalid prescale = "); Serial.println(prescale);
-    delay(2); Serial.println("Must be 0 to 10");
+    Serial.print("Invalid prescale = "); Serial.println(prescale);
+    Serial.println("Must be 0 to 10");
     return;
   }
   // acquire timer
@@ -314,7 +314,7 @@ uint32_t TimersLP::tone_active(uint8_t pin)
   } else if(ptimer[pin] == 2) {
     return *T1.wake;
   } else {
-    delay(2); Serial.print("Invalid pin = "); Serial.println(pin);
+    Serial.print("Invalid pin = "); Serial.println(pin);
   }
 }
 
@@ -384,8 +384,8 @@ uint32_t TimersLP::pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000
 
   // validate pin
   if(!((pin == 3) || (pin == 5) || (pin == 8))) {
-    delay(2); Serial.print("Invalid pin = "); Serial.println(pin);
-    delay(2); Serial.println("Must be 3,5 or 8");
+    Serial.print("Invalid pin = "); Serial.println(pin);
+    Serial.println("Must be 3,5 or 8");
     return 0;
   }
   // acquire timer
@@ -415,7 +415,7 @@ uint32_t TimersLP::pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000
   digitalWrite(4,LOW);
   while(((GPIO->P[ports[pin]].DIN >> pins[pin]) & 0x1) == level) {
     if(cnt-- <= 0) {
-      delay(2); Serial.println("Timeout - starting level wrong");
+      Serial.println("Timeout - starting level wrong");
       disable(PULSE.index);
       return 0;
     }
@@ -457,9 +457,9 @@ uint32_t TimersLP::pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000
 	} else { // timeout occurred
 	  pulse_count = 0;
 	  if(edge_received) {
-	    delay(2); Serial.println("Timeout - pulse did not end ");
+	    Serial.println("Timeout - pulse did not end ");
 	  } else {
-	    delay(2); Serial.println("Timeout - pulse did not start");
+	    Serial.println("Timeout - pulse did not start");
 	  }
 	  break;
 	}
@@ -576,18 +576,18 @@ void print_timer_regs(int timer)
 
   if(timer == 0) {
     if((CMU->HFPERCLKEN0 & CMU_HFPERCLKEN0_TIMER0) == 0) {
-      delay(2); Serial.println("Enabled TIMER0 clock - You may want to do this in your code");
+      Serial.println("Enabled TIMER0 clock - You may want to do this in your code");
       CMU_ClockEnable(cmuClock_TIMER0, true);
     }
     TIMER = TIMER0;
   } else if(timer == 1) {
     if((CMU->HFPERCLKEN0 & CMU_HFPERCLKEN0_TIMER1) == 0) {
-      delay(2); Serial.println("Enabled TIMER1 clock - You may want to do this in your code");
+      Serial.println("Enabled TIMER1 clock - You may want to do this in your code");
       CMU_ClockEnable(cmuClock_TIMER1, true);
     }
     TIMER = TIMER1;
   } else {
-    delay(2); Serial.print("Invalid Timer = "); Serial.println(timer);
+    Serial.print("Invalid Timer = "); Serial.println(timer);
     return;
   }
 
@@ -620,41 +620,41 @@ void print_timer_regs(int timer)
   regs[22] = TIMER->CC[2].CCVB;
 
   uint32_t timer_freq = CMU_ClockFreqGet(cmuClock_HFPER);
-  delay(2); Serial.print("Timer Frequency HFPER Clock = "); Serial.println(timer_freq);
+  Serial.print("Timer Frequency HFPER Clock = "); Serial.println(timer_freq);
 
-  delay(2); Serial.println("");
-  delay(2); Serial.print("TIMER"); Serial.print(timer); Serial.println(" Registers:"); delay(1);
+  Serial.println("");
+  Serial.print("TIMER"); Serial.print(timer); Serial.println(" Registers:");
 
-  delay(2); Serial.print(" CTRL   = "); Serial.println(regs[0],HEX); delay(1);
-  delay(2); Serial.print(" CMD    = "); Serial.println(regs[1],HEX); delay(1);
-  delay(2); Serial.print(" STATUS = "); Serial.println(regs[2],HEX); delay(1);
-  delay(2); Serial.print(" IEN    = "); Serial.println(regs[3],HEX); delay(1);
+  Serial.print(" CTRL   = "); Serial.println(regs[0],HEX);
+  Serial.print(" CMD    = "); Serial.println(regs[1],HEX);
+  Serial.print(" STATUS = "); Serial.println(regs[2],HEX);
+  Serial.print(" IEN    = "); Serial.println(regs[3],HEX);
 
-  delay(2); Serial.print(" IF     = "); Serial.println(regs[4],HEX); delay(1);
-  delay(2); Serial.print(" IFS    = "); Serial.println(regs[5],HEX); delay(1);
-  delay(2); Serial.print(" IFC    = "); Serial.println(regs[6],HEX); delay(1);
-  delay(2); Serial.print(" TOP    = "); Serial.println(regs[7],HEX); delay(1);
+  Serial.print(" IF     = "); Serial.println(regs[4],HEX);
+  Serial.print(" IFS    = "); Serial.println(regs[5],HEX);
+  Serial.print(" IFC    = "); Serial.println(regs[6],HEX);
+  Serial.print(" TOP    = "); Serial.println(regs[7],HEX);
 
-  delay(2); Serial.print(" TOPB   = "); Serial.println(regs[8],HEX); delay(1);
-  delay(2); Serial.print(" CNT    = "); Serial.println(regs[9],HEX); delay(1);
-  delay(2); Serial.print(" ROUTE  = "); Serial.println(regs[10],HEX); delay(1);
-  delay(2); Serial.println("");
+  Serial.print(" TOPB   = "); Serial.println(regs[8],HEX);
+  Serial.print(" CNT    = "); Serial.println(regs[9],HEX);
+  Serial.print(" ROUTE  = "); Serial.println(regs[10],HEX);
+  Serial.println("");
 
-  delay(2); Serial.print(" CC[0].CTRL = "); Serial.print(regs[11],HEX); delay(1);
-  delay(2); Serial.print("\t\tCC[1].CTRL = "); Serial.print(regs[12],HEX); delay(1);
-  delay(2); Serial.print("\t\tCC[2].CTRL = "); Serial.println(regs[13],HEX); delay(1);
+  Serial.print(" CC[0].CTRL = "); Serial.print(regs[11],HEX);
+  Serial.print("\t\tCC[1].CTRL = "); Serial.print(regs[12],HEX);
+  Serial.print("\t\tCC[2].CTRL = "); Serial.println(regs[13],HEX);
 
-  delay(2); Serial.print(" CC[0].CCV  = ");  Serial.print(regs[14],HEX); delay(1);
-  delay(2); Serial.print("\t\tCC[1].CCV  = ");  Serial.print(regs[15],HEX); delay(1);
-  delay(2); Serial.print("\t\tCC[2].CCV  = ");  Serial.println(regs[16],HEX); delay(1);
+  Serial.print(" CC[0].CCV  = ");  Serial.print(regs[14],HEX);
+  Serial.print("\t\tCC[1].CCV  = ");  Serial.print(regs[15],HEX);
+  Serial.print("\t\tCC[2].CCV  = ");  Serial.println(regs[16],HEX);
 
-  delay(2); Serial.print(" CC[0].CCVP = "); Serial.print(regs[17],HEX); delay(1);
-  delay(2); Serial.print("\t\tCC[1].CCVP = "); Serial.print(regs[18],HEX); delay(1);
-  delay(2); Serial.print("\t\tCC[2].CCVP = "); Serial.println(regs[19],HEX); delay(1);
+  Serial.print(" CC[0].CCVP = "); Serial.print(regs[17],HEX);
+  Serial.print("\t\tCC[1].CCVP = "); Serial.print(regs[18],HEX);
+  Serial.print("\t\tCC[2].CCVP = "); Serial.println(regs[19],HEX);
 
-  delay(2); Serial.print(" CC[0].CCVB = "); Serial.print(regs[20],HEX); delay(1);
-  delay(2); Serial.print("\t\tCC[1].CCVB = "); Serial.print(regs[21],HEX); delay(1);
-  delay(2); Serial.print("\t\tCC[2].CCVB = "); Serial.println(regs[22],HEX); delay(1);
+  Serial.print(" CC[0].CCVB = "); Serial.print(regs[20],HEX);
+  Serial.print("\t\tCC[1].CCVB = "); Serial.print(regs[21],HEX);
+  Serial.print("\t\tCC[2].CCVB = "); Serial.println(regs[22],HEX);
 
   Serial.println("");
 }

@@ -13,10 +13,9 @@ void test04_test(void)
   digitalWrite(10,INPUT);
   pinMode(2,OUTPUT);
   pinMode(10,INPUT);
-  delay(1);
 
   if(digitalRead(10) == LOW) {
-    delay(2); Serial.println("\n\rTransmitter already triggered");
+    Serial.println("\n\rTransmitter already triggered");
   }
   digitalWrite(2,LOW);
   while(digitalRead(10) == HIGH);
@@ -38,30 +37,30 @@ void test04_test(void)
   f = micros();
 
   digitalWrite(2,HIGH);
-  delay(1); Serial.print("delta-micros = "); Serial.println(b-a);
-  delay(1); Serial.print("pulse width 1 = "); Serial.println(dly1); Serial.println("");
+  Serial.print("delta-micros = "); Serial.println(b-a);
+  Serial.print("pulse width 1 = "); Serial.println(dly1); Serial.println("");
 
-  delay(1); Serial.print("delta-micros = "); Serial.println(d-c);
-  delay(1); Serial.print("pulse width 2 = "); Serial.println(dly2); Serial.println("");
+  Serial.print("delta-micros = "); Serial.println(d-c);
+  Serial.print("pulse width 2 = "); Serial.println(dly2); Serial.println("");
 
-  delay(1); Serial.print("delta-micros = "); Serial.println(f-e);
-  delay(1); Serial.print("pulse width 3 = "); Serial.println(dly3); Serial.println("");
+  Serial.print("delta-micros = "); Serial.println(f-e);
+  Serial.print("pulse width 3 = "); Serial.println(dly3); Serial.println("");
 }
 
 void test04_desc(void)
 {
-  delay(2); Serial.println("\n\rTest 04 Description:");
-  delay(2); Serial.println("  This tests pulseIn() for various pulses received");
-  delay(2); Serial.println("  from a board running test03. It asserts pin 2 low");
-  delay(2); Serial.println("  when it is ready for the first pulse and then toggles");
-  delay(2); Serial.println("  pin 2 when it is ready for subsequent pulses.");
+  Serial.println("\n\rTest 04 Description:");
+  Serial.println("  This tests pulseIn() for various pulses received");
+  Serial.println("  from a board running test03. It asserts pin 2 low");
+  Serial.println("  when it is ready for the first pulse and then toggles");
+  Serial.println("  pin 2 when it is ready for subsequent pulses.");
 }
 
 void test04(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test04_desc();

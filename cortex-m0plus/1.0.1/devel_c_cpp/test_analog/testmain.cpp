@@ -27,23 +27,23 @@ void setup(void)
 void printHelp(void)
 {
   Serial.println("Tests:");
-  delay(1);  Serial.print("  "); test01(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test02(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test03(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test04(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test05(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test06(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test07(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test08(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test09(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test10(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test11(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test12(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test13(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test14(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test15(TESTHELP); Serial.println();
-  delay(1);  Serial.print("  "); test16(TESTHELP); Serial.println();
-  delay(1);  Serial.println();
+   Serial.print("  "); test01(TESTHELP); Serial.println();
+   Serial.print("  "); test02(TESTHELP); Serial.println();
+   Serial.print("  "); test03(TESTHELP); Serial.println();
+   Serial.print("  "); test04(TESTHELP); Serial.println();
+   Serial.print("  "); test05(TESTHELP); Serial.println();
+   Serial.print("  "); test06(TESTHELP); Serial.println();
+   Serial.print("  "); test07(TESTHELP); Serial.println();
+   Serial.print("  "); test08(TESTHELP); Serial.println();
+   Serial.print("  "); test09(TESTHELP); Serial.println();
+   Serial.print("  "); test10(TESTHELP); Serial.println();
+   Serial.print("  "); test11(TESTHELP); Serial.println();
+   Serial.print("  "); test12(TESTHELP); Serial.println();
+   Serial.print("  "); test13(TESTHELP); Serial.println();
+   Serial.print("  "); test14(TESTHELP); Serial.println();
+   Serial.print("  "); test15(TESTHELP); Serial.println();
+   Serial.print("  "); test16(TESTHELP); Serial.println();
+   Serial.println();
 }
 
 void delay_tty(int dly)

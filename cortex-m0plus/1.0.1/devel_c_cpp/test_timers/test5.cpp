@@ -23,22 +23,22 @@ void test05_test(void)
   Timers.tone(2,10000,3);
 
   while(Timers.tone_active(2) > 0);
-  delay(2); Serial.println("Done");
+  Serial.println("Done");
 }
 
 void test05_desc(void)
 {
-  delay(2); Serial.println("\n\rTest 05 Description:");
-  delay(2); Serial.println("  Generate tones at various frequencies and");
-  delay(2); Serial.println("  check frequency with a logic analyzer");
-  delay(2); Serial.println("  ");
+  Serial.println("\n\rTest 05 Description:");
+  Serial.println("  Generate tones at various frequencies and");
+  Serial.println("  check frequency with a logic analyzer");
+  Serial.println("  ");
 }
 
 void test05(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test05_desc();

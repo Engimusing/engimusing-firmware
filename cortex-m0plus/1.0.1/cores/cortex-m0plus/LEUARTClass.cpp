@@ -169,6 +169,7 @@ size_t LEUARTClass::write( const uint8_t uc_data )
   return 1;
 }
 
+
 void LEUARTClass::IrqHandler( void )
 {
   uint32_t status = _pUart->STATUS;

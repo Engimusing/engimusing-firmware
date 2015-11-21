@@ -10,16 +10,16 @@ void test05_test(void)
 
 void test05_desc(void)
 {
-  delay(2); Serial.println("\n\rTest 05 Description:");
-  delay(2); Serial.println("  Long multi-line description of the test");
-  delay(2); Serial.println("  ");
+  Serial.println("\n\rTest 05 Description:");
+  Serial.println("  Long multi-line description of the test");
+  Serial.println("  ");
 }
 
 void test05(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
-    delay(2); Serial.print(test_help);
+    Serial.print(test_help);
     break;
   case DESCRIPTION:
     test05_desc();

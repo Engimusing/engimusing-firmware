@@ -31,7 +31,7 @@
 class RingBuffer
 {
  public:
-  volatile uint8_t _aucBuffer[SERIAL_BUFFER_SIZE] ;
+  uint8_t _aucBuffer[SERIAL_BUFFER_SIZE] ;
   volatile uint16_t _iHead ;
   volatile uint16_t _iTail ;
   RingBuffer( void ) ;

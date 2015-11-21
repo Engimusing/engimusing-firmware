@@ -49,8 +49,8 @@ uint32_t AnalogLP::analogRead(uint8_t pin)
 {
   // validate pin
   if(!((pin == 2) || (pin == 3) || (pin == 10))) {
-    delay(2); Serial.print("Invalid pin = "); Serial.println(pin);
-    delay(2); Serial.println("Must be 2,3 or 10");
+    Serial.print("Invalid pin = "); Serial.println(pin);
+    Serial.println("Must be 2,3 or 10");
     return 0;
   }
   // Enable clock for ADC0
@@ -127,20 +127,20 @@ void print_adc_regs(void)
   regs[13] = ADC0->CAL;
   regs[14] = ADC0->BIASPROG;
 
-  delay(2); Serial.print(" CTRL        = "); Serial.println(regs[0],HEX); delay(1);
-  delay(2); Serial.print(" CMD         = "); Serial.println(regs[1],HEX); delay(1);
-  delay(2); Serial.print(" STATUS      = "); Serial.println(regs[2],HEX); delay(1);
-  delay(2); Serial.print(" SINGLECTRL  = "); Serial.println(regs[3],HEX); delay(1);
-  delay(2); Serial.print(" SCANCTRL    = "); Serial.println(regs[4],HEX); delay(1);
-  delay(2); Serial.print(" IEN         = "); Serial.println(regs[5],HEX); delay(1);
-  delay(2); Serial.print(" IF          = "); Serial.println(regs[6],HEX); delay(1);
-  delay(2); Serial.print(" IFS         = "); Serial.println(regs[7],HEX); delay(1);
-  delay(2); Serial.print(" IFC         = "); Serial.println(regs[8],HEX); delay(1);
-  delay(2); Serial.print(" SINGLEDATA  = "); Serial.println(regs[9],HEX); delay(1);
-  delay(2); Serial.print(" SCANDATA    = "); Serial.println(regs[10],HEX); delay(1);
-  delay(2); Serial.print(" SINGLEDATAP = "); Serial.println(regs[11],HEX); delay(1);
-  delay(2); Serial.print(" SCANDATAP   = "); Serial.println(regs[12],HEX); delay(1);
-  delay(2); Serial.print(" CAL         = "); Serial.println(regs[13],HEX); delay(1);
-  delay(2); Serial.print(" BIASPROG    = "); Serial.println(regs[14],HEX); delay(1);
-  delay(2); Serial.println("");
+  Serial.print(" CTRL        = "); Serial.println(regs[0],HEX);
+  Serial.print(" CMD         = "); Serial.println(regs[1],HEX);
+  Serial.print(" STATUS      = "); Serial.println(regs[2],HEX);
+  Serial.print(" SINGLECTRL  = "); Serial.println(regs[3],HEX);
+  Serial.print(" SCANCTRL    = "); Serial.println(regs[4],HEX);
+  Serial.print(" IEN         = "); Serial.println(regs[5],HEX);
+  Serial.print(" IF          = "); Serial.println(regs[6],HEX);
+  Serial.print(" IFS         = "); Serial.println(regs[7],HEX);
+  Serial.print(" IFC         = "); Serial.println(regs[8],HEX);
+  Serial.print(" SINGLEDATA  = "); Serial.println(regs[9],HEX);
+  Serial.print(" SCANDATA    = "); Serial.println(regs[10],HEX);
+  Serial.print(" SINGLEDATAP = "); Serial.println(regs[11],HEX);
+  Serial.print(" SCANDATAP   = "); Serial.println(regs[12],HEX);
+  Serial.print(" CAL         = "); Serial.println(regs[13],HEX);
+  Serial.print(" BIASPROG    = "); Serial.println(regs[14],HEX);
+  Serial.println("");
 }
