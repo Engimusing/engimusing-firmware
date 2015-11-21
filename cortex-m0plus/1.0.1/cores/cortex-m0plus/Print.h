@@ -24,6 +24,9 @@
 
 #include "WString.h"
 #include "Printable.h"
+#include <stdarg.h>
+
+#define PRINTF_BUF 120 // define the tmp buffer size (change if desired)
 
 #define DEC 10
 #define HEX 16
@@ -79,7 +82,21 @@ class Print
   size_t println(const Printable&);
   size_t println(void);
 
-  void printf(char *fmt, ...);
+  void printf(const char *format, ...)
+  {
+    char buf[PRINTF_BUF];
+    va_list ap;
+    va_start(ap, format);
+    vsnprintf(buf, sizeof(buf), format, ap);
+    for(char *p = &buf[0]; *p; p++) // emulate cooked mode for newlines
+      {
+	if(*p == '\n')
+	  write('\r');
+	write(*p);
+      }
+    va_end(ap);
+  }
+
 };
 
 
