@@ -78,7 +78,6 @@ INCLUDEPATHS += \
 -Idevice/inc/ \
 -Icmsis/ \
 -Iem_lib/inc/ \
--Iefm_lib/inc/ \
 -Iefm_lib/ \
 -I../../variants/EFMUSB/ \
 -I.
@@ -101,7 +100,7 @@ em_lib/src/em_i2c.c \
 em_lib/src/em_int.c \
 efm_lib/system_efm32zg.c \
 efm_lib/init_efm32zg.c \
-efm_lib/src/efm_pin_config.c \
+efm_lib/efm_pin_config.c \
 delay.c \
 wiring_shift.c
 

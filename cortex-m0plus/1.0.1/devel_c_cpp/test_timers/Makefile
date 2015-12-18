@@ -89,7 +89,6 @@ INCLUDEPATHS += \
 -I../../cores/cortex-m0plus/device/inc/ \
 -I../../cores/cortex-m0plus/cmsis/ \
 -I../../cores/cortex-m0plus/em_lib/inc/ \
--I../../cores/cortex-m0plus/efm_lib/inc/ \
 -I../../cores/cortex-m0plus/efm_lib/ \
 -I../../variants/EFMUSB/ \
 -I.
