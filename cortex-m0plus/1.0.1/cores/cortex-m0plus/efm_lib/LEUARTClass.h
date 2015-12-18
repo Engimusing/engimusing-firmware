@@ -22,8 +22,8 @@
 
 #include "RingBuffer.h"
 #include "HardwareSerial.h"
-#include "io_types.h"
-#include "../device/inc/efm32zg222f32.h"
+#include "efm_lib/io_types.h"
+#include "device/inc/efm32zg222f32.h"
 
 typedef struct
 {

@@ -229,7 +229,7 @@ typedef enum IRQn
 #include "efm32zg_gpio.h"
 #include "efm32zg_vcmp.h"
 #include "efm32zg_adc.h"
-#include "efm32zg_leuart.h"
+  //#include "efm32zg_leuart.h"
 #include "efm32zg_pcnt.h"
 #include "efm32zg_i2c.h"
 #include "efm32zg_rtc.h"
@@ -261,7 +261,7 @@ typedef enum IRQn
 #define GPIO_BASE         (0x40006000UL) /**< GPIO base address  */
 #define VCMP_BASE         (0x40000000UL) /**< VCMP base address  */
 #define ADC0_BASE         (0x40002000UL) /**< ADC0 base address  */
-#define LEUART0_BASE      (0x40084000UL) /**< LEUART0 base address  */
+  //#define LEUART0_BASE      (0x40084000UL) /**< LEUART0 base address  */
 #define PCNT0_BASE        (0x40086000UL) /**< PCNT0 base address  */
 #define I2C0_BASE         (0x4000A000UL) /**< I2C0 base address  */
 #define RTC_BASE          (0x40080000UL) /**< RTC base address  */
@@ -294,7 +294,7 @@ typedef enum IRQn
 #define GPIO         ((GPIO_TypeDef *) GPIO_BASE)           /**< GPIO base pointer */
 #define VCMP         ((VCMP_TypeDef *) VCMP_BASE)           /**< VCMP base pointer */
 #define ADC0         ((ADC_TypeDef *) ADC0_BASE)            /**< ADC0 base pointer */
-#define LEUART0      ((LEUART_TypeDef *) LEUART0_BASE)      /**< LEUART0 base pointer */
+  //#define LEUART0      ((LEUART_TypeDef *) LEUART0_BASE)      /**< LEUART0 base pointer */
 #define PCNT0        ((PCNT_TypeDef *) PCNT0_BASE)          /**< PCNT0 base pointer */
 #define I2C0         ((I2C_TypeDef *) I2C0_BASE)            /**< I2C0 base pointer */
 #define RTC          ((RTC_TypeDef *) RTC_BASE)             /**< RTC base pointer */

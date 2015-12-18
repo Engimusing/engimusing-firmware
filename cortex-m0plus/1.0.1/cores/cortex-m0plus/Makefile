@@ -69,7 +69,7 @@ override ASMFLAGS += -x assembler-with-cpp -D$(DEVICE) -Wall -Wextra -mcpu=corte
 # NOTE: The -Wl,--gc-sections flag may interfere with debugging using gdb.
 #
 override LDFLAGS += -Xlinker -Map=$(LST_DIR)/$(PROJECTNAME).map -mcpu=cortex-m0 -mthumb \
--T../cores/cortex-m0plus/device/efm32zg.ld -Wl,--gc-sections
+-T../cores/cortex-m0plus/efm_lib/efm32zg.ld -Wl,--gc-sections
 
 LIBS = -Wl,--start-group -lgcc -lc -Wl,--end-group
 
@@ -79,6 +79,7 @@ INCLUDEPATHS += \
 -Icmsis/ \
 -Iem_lib/inc/ \
 -Iefm_lib/inc/ \
+-Iefm_lib/ \
 -I../../variants/EFMUSB/ \
 -I.
 
@@ -88,7 +89,6 @@ INCLUDEPATHS += \
 
 
 C_SRC += \
-device/src/system_efm32zg.c \
 cmsis/ \
 em_lib/src/em_assert.c \
 em_lib/src/em_cmu.c \
@@ -99,7 +99,8 @@ em_lib/src/em_usart.c \
 em_lib/src/em_wdog.c \
 em_lib/src/em_i2c.c \
 em_lib/src/em_int.c \
-efm_lib/src/init_efm32zg.c \
+efm_lib/system_efm32zg.c \
+efm_lib/init_efm32zg.c \
 efm_lib/src/efm_pin_config.c \
 delay.c \
 wiring_shift.c
@@ -111,12 +112,14 @@ WMath.cpp \
 Print.cpp \
 Stream.cpp \
 RingBuffer.cpp \
-LEUARTClass.cpp
+efm_lib/analog.cpp \
+efm_lib/timer.cpp \
+efm_lib/LEUARTClass.cpp
 
 s_SRC += 
 
 S_SRC += \
-device/src/startup_efm32zg.S
+efm_lib/startup_efm32zg.S
 
 ####################################################################
 # Rules                                                            #

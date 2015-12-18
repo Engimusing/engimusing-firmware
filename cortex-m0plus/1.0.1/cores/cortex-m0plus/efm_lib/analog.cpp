@@ -20,7 +20,6 @@
 #include <Arduino.h>
 #include "em_cmu.h"
 #include "analog.h"
-#include "test.h"
 
 extern LEUARTClass Serial;
 AnalogLP Analog;

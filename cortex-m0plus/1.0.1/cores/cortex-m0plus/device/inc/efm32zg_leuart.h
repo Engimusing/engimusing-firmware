@@ -34,33 +34,6 @@
  * @{
  * @brief EFM32ZG_LEUART Register Declaration
  *****************************************************************************/
-typedef struct
-{
-  __IO uint32_t CTRL;          /**< Control Register  */
-  __IO uint32_t CMD;           /**< Command Register  */
-  __I uint32_t  STATUS;        /**< Status Register  */
-  __IO uint32_t CLKDIV;        /**< Clock Control Register  */
-  __IO uint32_t STARTFRAME;    /**< Start Frame Register  */
-  __IO uint32_t SIGFRAME;      /**< Signal Frame Register  */
-  __I uint32_t  RXDATAX;       /**< Receive Buffer Data Extended Register  */
-  __I uint32_t  RXDATA;        /**< Receive Buffer Data Register  */
-  __I uint32_t  RXDATAXP;      /**< Receive Buffer Data Extended Peek Register  */
-  __IO uint32_t TXDATAX;       /**< Transmit Buffer Data Extended Register  */
-  __IO uint32_t TXDATA;        /**< Transmit Buffer Data Register  */
-  __I uint32_t  IF;            /**< Interrupt Flag Register  */
-  __IO uint32_t IFS;           /**< Interrupt Flag Set Register  */
-  __IO uint32_t IFC;           /**< Interrupt Flag Clear Register  */
-  __IO uint32_t IEN;           /**< Interrupt Enable Register  */
-  __IO uint32_t PULSECTRL;     /**< Pulse Control Register  */
-
-  __IO uint32_t FREEZE;        /**< Freeze Register  */
-  __I uint32_t  SYNCBUSY;      /**< Synchronization Busy Register  */
-
-  uint32_t      RESERVED0[3];  /**< Reserved for future use **/
-  __IO uint32_t ROUTE;         /**< I/O Routing Register  */
-  uint32_t      RESERVED1[21]; /**< Reserved for future use **/
-  __IO uint32_t INPUTREG;         /**< LEUART Input Register  */
-} LEUART_TypeDef;              /** @} */
 
 /**************************************************************************//**
  * @defgroup EFM32ZG_LEUART_BitFields
