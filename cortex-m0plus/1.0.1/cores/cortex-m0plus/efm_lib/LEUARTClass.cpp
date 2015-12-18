@@ -17,13 +17,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "LEUARTClass.h"
-#include "Arduino.h"
-#include "RingBuffer.h"
-#include "HardwareSerial.h"
+#include "variant.h"
 
 
 // Constructors ////////////////////////////////////////////////////////////////
