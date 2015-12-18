@@ -54,16 +54,16 @@ TimersLP::TimersLP()
 
 timer_counter TimersLP::enable(void (*isr)(), uint8_t timer_req)
 {
-  timer_freq = CMU_ClockFreqGet(cmuClock_HFPER);
+  timer_freq = cmu_hfper_freq_get();
   if(timer0_free && ((timer_req == REQ_TIMER) || (timer_req == REQ_TIMER0))) {
-    CMU_ClockEnable(cmuClock_TIMER0, true);
+    CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_TIMER0;
     timer0_free = false;
     isr0Callback = isr;
     *T0.wake = 0;
     return T0;
   }
   if(timer1_free && ((timer_req == REQ_TIMER) || (timer_req == REQ_TIMER1))) {
-    CMU_ClockEnable(cmuClock_TIMER1, true);
+    CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_TIMER1;
     timer1_free = false;
     isr1Callback = isr;
     *T1.wake = 0;
@@ -80,13 +80,13 @@ void TimersLP::disable(int timer)
     T0.ptr->CMD = TIMER_CMD_STOP;  // stop the timer counting
     NVIC_EnableIRQ(TIMER0_IRQn);
     T0.ptr->IEN = 0;
-    CMU_ClockEnable(cmuClock_TIMER0, false);
+    CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_TIMER0;
     timer0_free = true;
   } else if(timer == 1) {
     T1.ptr->CMD = TIMER_CMD_STOP;  // stop the timer counting
     NVIC_EnableIRQ(TIMER1_IRQn);
     T1.ptr->IEN = 0;
-    CMU_ClockEnable(cmuClock_TIMER1, false);
+    CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_TIMER1;
     timer1_free = true;
   } else {
     Serial.println("Attempted to disable invalid timer");
@@ -323,7 +323,7 @@ void tone0_isr(void)
     T0.ptr->CMD = TIMER_CMD_STOP;  // stop the timer counting
     NVIC_EnableIRQ(TIMER0_IRQn);
     T0.ptr->IEN = 0;
-    CMU_ClockEnable(cmuClock_TIMER0, false);
+    CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_TIMER0;
     Timers.timer0_free = true;
   }
   *T0.wake = toggleCount[0];
@@ -336,7 +336,7 @@ void tone1_isr(void)
     T1.ptr->CMD = TIMER_CMD_STOP;  // stop the timer counting
     NVIC_EnableIRQ(TIMER1_IRQn);
     T1.ptr->IEN = 0;
-    CMU_ClockEnable(cmuClock_TIMER1, false);
+    CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_TIMER1;
     Timers.timer1_free = true;
   }
   *T1.wake = toggleCount[1];
@@ -475,9 +475,18 @@ uint32_t TimersLP::pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000
 
 uint32_t TimersLP::get_timer_frequency(void)
 {
-  return CMU_ClockFreqGet(cmuClock_HFPER);
+  return cmu_hfper_freq_get();
 }
 
+void tone(uint32_t _pin, uint32_t frequency, uint32_t duration)
+{
+  Timers.tone(_pin, frequency, duration);
+}
+
+void noTone(uint32_t _pin)
+{
+  Timers.noTone(_pin);
+}
 
 
 /*
@@ -576,13 +585,13 @@ void print_timer_regs(int timer)
   if(timer == 0) {
     if((CMU->HFPERCLKEN0 & CMU_HFPERCLKEN0_TIMER0) == 0) {
       Serial.println("Enabled TIMER0 clock - You may want to do this in your code");
-      CMU_ClockEnable(cmuClock_TIMER0, true);
+      CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_TIMER0;
     }
     TIMER = TIMER0;
   } else if(timer == 1) {
     if((CMU->HFPERCLKEN0 & CMU_HFPERCLKEN0_TIMER1) == 0) {
       Serial.println("Enabled TIMER1 clock - You may want to do this in your code");
-      CMU_ClockEnable(cmuClock_TIMER1, true);
+      CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_TIMER1;
     }
     TIMER = TIMER1;
   } else {
@@ -618,7 +627,7 @@ void print_timer_regs(int timer)
   regs[21] = TIMER->CC[1].CCVB;
   regs[22] = TIMER->CC[2].CCVB;
 
-  uint32_t timer_freq = CMU_ClockFreqGet(cmuClock_HFPER);
+  uint32_t timer_freq = cmu_hfper_freq_get();
   Serial.print("Timer Frequency HFPER Clock = "); Serial.println(timer_freq);
 
   Serial.println("");

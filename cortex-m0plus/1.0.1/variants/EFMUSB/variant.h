@@ -47,25 +47,26 @@ extern const uint8_t dacPins[];
 
 typedef void (*voidFuncPtr)(void);
 extern volatile voidFuncPtr intFunc[];
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void ledRedOff(void);
-void ledRedOn(void);
-void ledGreenOff(void);
-void ledGreenOn(void);
-void ledBlueOff(void);
-void ledBlueOn(void);
-void ledAllOff(void);
-void ledAllOn(void);
+  void ledRedOff(void);
+  void ledRedOn(void);
+  void ledGreenOff(void);
+  void ledGreenOn(void);
+  void ledBlueOff(void);
+  void ledBlueOn(void);
+  void ledAllOff(void);
+  void ledAllOn(void);
 
-uint32_t readGPIOregs(uint8_t port);
-void print_gpio_regs(void);
+  uint32_t readGPIOregs(uint8_t port);
+  void print_gpio_regs(void);
 
-void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
-void detachInterrupt(uint8_t pin);
+  void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
+  void detachInterrupt(uint8_t pin);
+  int valid_pin(uint8_t pin);
+  uint32_t cmu_hfper_freq_get(void);
 
 #ifdef __cplusplus
 }

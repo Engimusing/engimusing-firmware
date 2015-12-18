@@ -1,4 +1,5 @@
 
+#include <stdint.h>
 
 // ACMP0_CH0 PC0  Pin 8
 // ACMP0_CH1 PC1  Pin 7

@@ -24,18 +24,6 @@
 extern LEUARTClass Serial;
 AnalogLP Analog;
 
-//                             0 1   2     3    4 5 6 7 8 9  10   
-static uint8_t adcports[11]  = {0,0,PORTD,PORTD,0,0,0,0,0,0,PORTD};
-static uint8_t adcpins[11]   = {0,0,  4,    6,  0,0,0,0,0,0,  7  };
-
-//                              0 1 2 3   4     5     6     7     8   9  10   
-static uint8_t acmpports[11] = {0,0,0,0,PORTC,PORTC,PORTC,PORTC,PORTC,0,PORTE};
-static uint8_t acmppins[11]  = {0,0,0,0,  3,    2,    4,    1,    0,  0, 13  };
-
-//                             0 1 2 3 4 5   6   7 8 9 10   
-static uint8_t dacports[11] = {0,0,0,0,0,0,PORTB,0,0,0, 0};
-static uint8_t dacpins[11]  = {0,0,0,0,0,0,  11, 0,0,0, 0};
-
 
 AnalogLP::AnalogLP()
 {
@@ -46,41 +34,35 @@ AnalogLP::AnalogLP()
 
 uint32_t AnalogLP::analogRead(uint8_t pin)
 {
-  // validate pin
-  if(!((pin == 2) || (pin == 3) || (pin == 10))) {
-    Serial.print("Invalid pin = "); Serial.println(pin);
-    Serial.println("Must be 2,3 or 10");
+  if(valid_pin(pin)) {
+    // Enable clock for ADC0
+    CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_ADC0;      // Enable clock for ADC0
+
+    uint32_t hfperFreq = cmu_hfper_freq_get();
+    hfperFreq += 999999;
+    hfperFreq /= 1000000;
+    hfperFreq -= 1;
+
+    ADC0->CTRL = ADC_CTRL_WARMUPMODE_NORMAL
+      | ADC_CTRL_LPFMODE_BYPASS
+      | (3 << _ADC_CTRL_PRESC_SHIFT)  // set ADC frequency = HFPerClk divided by 3
+      | (hfperFreq <<  _ADC_CTRL_TIMEBASE_SHIFT)
+      | adc_oversampling; // oversampling rate if enabled
+
+    ADC0->SINGLECTRL = adc_resolution
+      | (adcPins[pin] << _ADC_SINGLECTRL_INPUTSEL_SHIFT)
+      | adc_reference
+      | ADC_SINGLECTRL_AT_32CYCLES;
+
+    ADC0->CMD = ADC_CMD_SINGLESTART;
+    while (ADC0->STATUS & ADC_STATUS_SINGLEACT) ;  // Wait while conversion is active
+
+    uint32_t data = ADC0->SINGLEDATA;
+    CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_ADC0;
+    return data;
+  } else {
     return 0;
   }
-  // Enable clock for ADC0
-  CMU_ClockEnable(cmuClock_ADC0, true);
-
-  uint32_t hfperFreq = CMU_ClockFreqGet(cmuClock_HFPER);
-  hfperFreq += 999999;
-  hfperFreq /= 1000000;
-  hfperFreq -= 1;
-
-  ADC0->CTRL = ADC_CTRL_WARMUPMODE_NORMAL
-    | ADC_CTRL_LPFMODE_BYPASS
-    | (3 << _ADC_CTRL_PRESC_SHIFT)  // set ADC frequency = HFPerClk divided by 3
-    | (hfperFreq <<  _ADC_CTRL_TIMEBASE_SHIFT)
-    | adc_oversampling; // oversampling rate if enabled
-
-  ADC0->SINGLECTRL = ADC_SINGLECTRL_REP_DEFAULT
-    | ADC_SINGLECTRL_ADJ_RIGHT
-    | adc_resolution
-    | (adcpins[pin] << _ADC_SINGLECTRL_INPUTSEL_SHIFT)
-    | adc_reference
-    | ADC_SINGLECTRL_AT_32CYCLES;
-
-  ADC0->CMD = ADC_CMD_SINGLESTART;
-  while (ADC0->STATUS & ADC_STATUS_SINGLEACT) ;  // Wait while conversion is active
-
-  uint32_t data = ADC0->SINGLEDATA;
-
-  CMU_ClockEnable(cmuClock_ADC0, false);
-
-  return data;
 }
 
 

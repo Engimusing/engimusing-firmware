@@ -10,7 +10,7 @@
 ####################################################################
 
 DEVICE = EFM32ZG222F32
-PROJECTNAME = efmusb
+PROJECTNAME = analog_tests
 
 OBJ_DIR = build
 EXE_DIR = exe
@@ -177,7 +177,7 @@ $(EXE_DIR)/$(PROJECTNAME).bin: $(EXE_DIR)/$(PROJECTNAME).out
 	$(SIZE) $(EXE_DIR)/$(PROJECTNAME).out
 
 prog:
-	~/Documents/Silabs/eACommander/start-eACommander.sh --verify --address 0x2000 --flash exe/efmusb.bin --reset
+	~/Documents/Silabs/eACommander/start-eACommander.sh --verify --address 0x2000 --flash exe/analog_tests.bin --reset
 clean:
 ifeq ($(filter $(MAKECMDGOALS),all debug release),)
 	$(RM) $(OBJ_DIR) $(LST_DIR) $(EXE_DIR)
