@@ -258,7 +258,7 @@ typedef enum IRQn
 #define USART1_BASE       (0x4000C400UL) /**< USART1 base address  */
 #define PRS_BASE          (0x400CC000UL) /**< PRS base address  */
 #define IDAC0_BASE        (0x40004000UL) /**< IDAC0 base address  */
-#define GPIO_BASE         (0x40006000UL) /**< GPIO base address  */
+  //#define GPIO_BASE         (0x40006000UL) /**< GPIO base address  */
 #define VCMP_BASE         (0x40000000UL) /**< VCMP base address  */
 #define ADC0_BASE         (0x40002000UL) /**< ADC0 base address  */
   //#define LEUART0_BASE      (0x40084000UL) /**< LEUART0 base address  */
@@ -291,7 +291,7 @@ typedef enum IRQn
 #define USART1       ((USART_TypeDef *) USART1_BASE)        /**< USART1 base pointer */
 #define PRS          ((PRS_TypeDef *) PRS_BASE)             /**< PRS base pointer */
 #define IDAC0        ((IDAC_TypeDef *) IDAC0_BASE)          /**< IDAC0 base pointer */
-#define GPIO         ((GPIO_TypeDef *) GPIO_BASE)           /**< GPIO base pointer */
+  //#define GPIO         ((GPIO_TypeDef *) GPIO_BASE)           /**< GPIO base pointer */
 #define VCMP         ((VCMP_TypeDef *) VCMP_BASE)           /**< VCMP base pointer */
 #define ADC0         ((ADC_TypeDef *) ADC0_BASE)            /**< ADC0 base pointer */
   //#define LEUART0      ((LEUART_TypeDef *) LEUART0_BASE)      /**< LEUART0 base pointer */

@@ -25,24 +25,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-//#include "Arduino.h"
-
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "Arduino.h"
 
 #define VARIANT_MCK 21000000
 
 #define EFMZG_LEUART_CLKDIV 0x59D0
 #define EFMTG_LEUART_CLKDIV 0x77C0
 #define EFMWG_LEUART_CLKDIV 0x77C0
-
 #define LEUART_CLKDIV EFMZG_LEUART_CLKDIV
 
-void pinMode(uint8_t pin, uint8_t mode);
-void digitalWrite(uint8_t pin, uint8_t val);
-int  digitalRead(uint8_t pin);
+extern const uint8_t dPins[];
+extern const uint8_t dPorts[];
+extern const uint8_t iPorts[];
+extern const uint8_t iPins[];
+extern const uint8_t adcPorts[];
+extern const uint8_t adcPins[];
+extern const uint8_t acmpPorts[];
+extern const uint8_t acmpPins[];
+extern const uint8_t dacPorts[];
+extern const uint8_t dacPins[];
+
+typedef void (*voidFuncPtr)(void);
+extern volatile voidFuncPtr intFunc[];
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 void ledRedOff(void);
 void ledRedOn(void);
@@ -55,10 +63,6 @@ void ledAllOn(void);
 
 uint32_t readGPIOregs(uint8_t port);
 void print_gpio_regs(void);
-
-#define RISING     (0x2)
-#define CHANGE     (0x3)
-#define FALLING    (0x4)
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
 void detachInterrupt(uint8_t pin);

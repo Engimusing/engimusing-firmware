@@ -63,6 +63,7 @@ extern "C"{
 
   #include "WCharacter.h"
   #include "WString.h"
+  #include "wiring_digital.h"
   #include "Tone.h"
   #include "WMath.h"
   #include "HardwareSerial.h"

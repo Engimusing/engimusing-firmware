@@ -85,6 +85,7 @@ INCLUDEPATHS += \
 ####################################################################
 # Files                                                            #
 ####################################################################
+#em_lib/src/em_gpio.c \
 
 
 C_SRC += \
@@ -92,7 +93,6 @@ cmsis/ \
 em_lib/src/em_assert.c \
 em_lib/src/em_cmu.c \
 em_lib/src/em_emu.c \
-em_lib/src/em_gpio.c \
 em_lib/src/em_system.c \
 em_lib/src/em_usart.c \
 em_lib/src/em_wdog.c \

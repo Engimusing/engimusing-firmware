@@ -34,30 +34,6 @@
  * @{
  * @brief EFM32ZG_GPIO Register Declaration
  *****************************************************************************/
-typedef struct
-{
-  GPIO_P_TypeDef P[6];          /**< Port configuration bits */
-
-  uint32_t       RESERVED0[10]; /**< Reserved for future use **/
-  __IO uint32_t  EXTIPSELL;     /**< External Interrupt Port Select Low Register  */
-  __IO uint32_t  EXTIPSELH;     /**< External Interrupt Port Select High Register  */
-  __IO uint32_t  EXTIRISE;      /**< External Interrupt Rising Edge Trigger Register  */
-  __IO uint32_t  EXTIFALL;      /**< External Interrupt Falling Edge Trigger Register  */
-  __IO uint32_t  IEN;           /**< Interrupt Enable Register  */
-  __I uint32_t   IF;            /**< Interrupt Flag Register  */
-  __IO uint32_t  IFS;           /**< Interrupt Flag Set Register  */
-  __IO uint32_t  IFC;           /**< Interrupt Flag Clear Register  */
-
-  __IO uint32_t  ROUTE;         /**< I/O Routing Register  */
-  __IO uint32_t  INSENSE;       /**< Input Sense Register  */
-  __IO uint32_t  LOCK;          /**< Configuration Lock Register  */
-  __IO uint32_t  CTRL;          /**< GPIO Control Register  */
-  __IO uint32_t  CMD;           /**< GPIO Command Register  */
-  __IO uint32_t  EM4WUEN;       /**< EM4 Wake-up Enable Register  */
-  __IO uint32_t  EM4WUPOL;      /**< EM4 Wake-up Polarity Register  */
-  __I uint32_t   EM4WUCAUSE;    /**< EM4 Wake-up Cause Register  */
-} GPIO_TypeDef;                 /** @} */
-
 /**************************************************************************//**
  * @defgroup EFM32ZG_GPIO_BitFields
  * @{

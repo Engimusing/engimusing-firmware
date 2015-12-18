@@ -72,6 +72,37 @@
 // 43     - Alternate use of A0 (DAC output)
 
 #include "efm_pin_config.h"
+#include "cmsis.h"
+#include "variant.h"
+
+void pinMode(uint32_t pin, uint32_t mode)
+{
+  if(valid_pin(pin)) {
+    GPIO_config(dPorts[pin], dPins[pin], mode);
+  }
+}
+
+void digitalWrite(uint32_t pin, uint32_t val)
+{
+  if(valid_pin(pin)) {
+    if(val == HIGH) {
+      GPIO->P[dPorts[pin]].DOUTSET = (1 << dPins[pin]);
+    } else {
+      GPIO->P[dPorts[pin]].DOUTCLR = (1 << dPins[pin]);
+    }
+  }
+}
+
+int digitalRead(uint32_t pin)
+{
+  if(valid_pin(pin)) {
+    return (GPIO->P[dPorts[pin]].DIN >> dPins[pin]) & 0x1;
+  }
+}
+
+
+
+
 
 void GPIO_pinMode(GPIO_Port_TypeDef port, uint32_t pin, GPIO_Mode_TypeDef mode)
 {
@@ -213,3 +244,113 @@ void pinDrive(GPIO_Port_TypeDef port, GPIO_DriveMode_TypeDef ulDrive)
 {
   GPIO->P[port].CTRL = ulDrive;
 }
+
+
+
+// GPIO Interrupts
+
+void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
+{
+  if(valid_pin(pin)) {
+    GPIO_config(iPorts[pin], iPins[pin], INPUT_FILTER);
+
+    intFunc[iPins[pin]] = gpioIntFunc;
+    int shift = ((iPins[pin] & 0x7) * 4);
+    uint32_t mask = 0xF << shift;
+
+    if(iPins[pin] < 8) {
+      GPIO->EXTIPSELL = (GPIO->EXTIPSELL & ~mask) | (iPorts[pin] << shift); 
+    } else {
+      GPIO->EXTIPSELH = (GPIO->EXTIPSELH & ~mask) | (iPorts[pin] << shift); 
+    }
+    if((mode == RISING) || (mode == CHANGE)) {
+      GPIO->EXTIRISE |= 0x1 << iPins[pin];
+    }
+    if((mode == FALLING) || (mode == CHANGE)) {
+      GPIO->EXTIFALL |= 0x1 << iPins[pin];
+    }
+    GPIO->IFC = 0x1 << iPins[pin];
+    GPIO->IEN |= 0x1 << iPins[pin];
+    /*  
+	Serial.print(" port            = "); Serial.println(iPorts[pin],HEX);
+	Serial.print(" pin             = "); Serial.println(iPins[pin],HEX);
+	Serial.print(" mask            = "); Serial.println(mask,HEX);
+	Serial.print(" value           = "); Serial.println(iPorts[pin] << iPins[pin],HEX);
+	Serial.print(" GPIO->EXTIPSELL = "); Serial.println(GPIO->EXTIPSELL,HEX);
+	Serial.print(" GPIO->EXTIPSELH = "); Serial.println(GPIO->EXTIPSELH,HEX);
+	Serial.print(" GPIO->EXTIRISE  = "); Serial.println(GPIO->EXTIRISE,HEX);
+	Serial.print(" GPIO->EXTIFALL  = "); Serial.println(GPIO->EXTIFALL,HEX);
+	Serial.print(" IEN             = "); Serial.println(GPIO->IEN,HEX);
+	Serial.print(" IF              = "); Serial.println(GPIO->IF,HEX);
+	Serial.println();
+    */
+    NVIC_EnableIRQ(GPIO_EVEN_IRQn);
+    NVIC_EnableIRQ(GPIO_ODD_IRQn);
+  }
+}
+
+void detachInterrupt(uint8_t pin)
+{
+  if(valid_pin(pin)) {
+    intFunc[iPins[pin]] = 0;
+    int shift = ((iPins[pin] & 0x7) * 4);
+    uint32_t mask = 0xF << shift;
+
+    intFunc[iPins[pin]] = 0;
+    GPIO->EXTIRISE &= 0x1 << iPins[pin];
+    GPIO->EXTIFALL &= 0x1 << iPins[pin];
+    GPIO->IFC = 0x1 << iPins[pin];
+    GPIO->IEN &= 0x1 << iPins[pin];
+
+    if(iPins[pin] < 8) {
+      GPIO->EXTIPSELL = GPIO->EXTIPSELL & ~mask;
+    } else {
+      GPIO->EXTIPSELH = GPIO->EXTIPSELH & ~mask;
+    }
+  }
+}
+
+void GPIO_ODD_IRQHandler(void)
+{
+  for(int i = 1; i < 16; i+=2) {
+    if (GPIO->IF & (0x2 << (i-1))) {
+      GPIO->IFC = (0x2 << (i-1));
+      if(intFunc[i]) {
+	intFunc[i]();
+      }
+    }
+  }
+}
+
+void GPIO_EVEN_IRQHandler(void)
+{
+  for(int i = 0; i < 16; i+=2) {
+    if (GPIO->IF & (0x1 << i)) {
+      GPIO->IFC = (0x1 << i);
+      if(intFunc[i]) {
+	intFunc[i]();
+      }
+    }
+  }  
+}
+
+
+/*
+void print_gpio_regs(void)
+{
+  char port[6] = {'A','B','C','D','E','F'};
+  Serial.println("");
+  for(int i = 0; i < 6; i++) {
+    Serial.print("PORT"); Serial.print(port[i]); Serial.println(":");
+    Serial.print(" CTRL = "); Serial.print(GPIO->P[i].CTRL,HEX);
+    Serial.print(" MODEL = "); Serial.print(GPIO->P[i].MODEL,HEX);
+    Serial.print(" MODEH = "); Serial.print(GPIO->P[i].MODEH,HEX);
+    Serial.print(" DOUT = "); Serial.println(GPIO->P[i].DOUT,HEX);
+    Serial.print(" DOUTSET = "); Serial.print(GPIO->P[i].DOUTSET,HEX);
+    Serial.print(" DOUTCLR = "); Serial.print(GPIO->P[i].DOUTCLR,HEX);
+    Serial.print(" DOUTTGL = "); Serial.print(GPIO->P[i].DOUTTGL,HEX);
+    Serial.print(" DIN = "); Serial.print(GPIO->P[i].DIN,HEX);
+    Serial.print(" PINLOCKN = "); Serial.println(GPIO->P[i].PINLOCKN,HEX);
+  }
+}
+*/

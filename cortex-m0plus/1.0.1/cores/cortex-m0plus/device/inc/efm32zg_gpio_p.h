@@ -32,16 +32,4 @@
 /**************************************************************************//**
  * @brief GPIO_P EFM32ZG GPIO P
  *****************************************************************************/
-typedef struct
-{
-  __IO uint32_t CTRL;     /**< Port Control Register  */
-  __IO uint32_t MODEL;    /**< Port Pin Mode Low Register  */
-  __IO uint32_t MODEH;    /**< Port Pin Mode High Register  */
-  __IO uint32_t DOUT;     /**< Port Data Out Register  */
-  __O uint32_t  DOUTSET;  /**< Port Data Out Set Register  */
-  __O uint32_t  DOUTCLR;  /**< Port Data Out Clear Register  */
-  __O uint32_t  DOUTTGL;  /**< Port Data Out Toggle Register  */
-  __I uint32_t  DIN;      /**< Port Data In Register  */
-  __IO uint32_t PINLOCKN; /**< Port Unlocked Pins Register  */
-} GPIO_P_TypeDef;
 

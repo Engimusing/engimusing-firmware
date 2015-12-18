@@ -83,35 +83,48 @@ RingBuffer tx_buffer0;
 
 LEUARTClass Serial(LEUART0, LEUART0_IRQn, 0, &rx_buffer0, &tx_buffer0, PORTB, 13, 14, LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0);
 
+// ----------------- Pin and Port Arrays -----------------------------------------------------------------------
+// Digital Pins             0  1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
+const uint8_t dPorts[]   = {0, 0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE,  9,  9,PORTA,PORTA,PORTA};
+const uint8_t dPins[]    = {0, 0, 15,   12,    8,    7,   11,    1,    0,    2,   13,    0,  0,  8,    9,    10};
+
+// GPIO Interrupt Pins      0 1   2     3     4     5     6     7     8     9    10
+const uint8_t iPorts[11] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA,  0,  PORTC};
+const uint8_t iPins[11]  = {0,0, 15,   12,    3,    2,   11,    1,    0,    0,   13};
+
+// ADC Pins                     0 1   2     3    4  5  6  7  8  9   10
+const uint8_t adcPorts[11]  = {0,0,PORTD,PORTD, 0, 0, 0, 0, 0, 0, PORTD};
+const uint8_t adcPins[11]   = {0,0,  4,    6,   0, 0, 0, 0, 0, 0,   7  };
+
+// ACMP Pins                    0  1  2  3   4     5     6     7     8    9  10   
+const uint8_t acmpPorts[11] = {0, 0, 0, 0,PORTC,PORTC,PORTC,PORTC,PORTC, 0,PORTE};
+const uint8_t acmpPins[11]  = {0, 0, 0, 0,  3,    2,    4,    1,    0,   0, 13  };
+
+// DAC Pins                    0  1  2  3  4  5   6    7  8  9 10   
+const uint8_t dacPorts[11] = {0, 0, 0, 0, 0, 0,PORTB, 0, 0, 0, 0};
+const uint8_t dacPins[11]  = {0, 0, 0, 0, 0, 0,  11,  0, 0, 0, 0};
+
+
+// GPIO Interrupts
+volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+// storage for 16 interrupt functions
+// corresponding to #bits in IEN
+
 
 //                          0 1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
 static uint8_t ports[16] = {0,0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE,  9,  9,PORTA,PORTA,PORTA};
 static uint8_t pins[16]  = {0,0, 15,   12,    8,    7,   11,    1,    0,    2,   13,    0,  0,  8,    9,    10};
 
-void pinMode(uint8_t pin, uint8_t mode)
-{
-  uint32_t mask, val;
-  if((pin < 2) || (pin == 11) || (pin == 12) || (pin > 15)) {
-    Serial.println("pinMode - bad pin");
-    // Error
-    return;
+  // This function verifies the pin is valid for this variant
+  int valid_pin(uint8_t pin) {
+    if((pin < 2) || (pin == 11) || (pin == 12) || (pin > 15)) {
+      Serial.println("pinMode - pin not support for this board"); // Error
+      return 0;
+    } else {
+      return 1;
+    }
   }
-  GPIO_config(ports[pin], pins[pin], mode);
-}
 
-
-
-
-void digitalWrite(uint8_t pin, uint8_t val)
-{
-  if(val == HIGH) {
-    GPIO->P[ports[pin]].DOUTSET = (1 << pins[pin]);
-  } else if (val==LOW) {
-    GPIO->P[ports[pin]].DOUTCLR = (1 << pins[pin]);
-  } else {
-    Serial.println("\n\rdigitalWrite bad value");
-  }
-}
 
 void ledRedOff(void)   {GPIO->P[PORTA].DOUTSET = (1 <<  8);}
 void ledRedOn(void)    {GPIO->P[PORTA].DOUTCLR = (1 <<  8);}
@@ -130,16 +143,15 @@ void ledAllOn(void)
   GPIO->P[PORTA].DOUTCLR = (0x7 <<  8);
 }
 
-int digitalRead(uint8_t pin)
-{
-  return (GPIO->P[ports[pin]].DIN >> pins[pin]) & 0x1;
-}
-
 uint32_t readGPIOregs(uint8_t port)
 {
   return GPIO->P[port].DIN;
 }
 
+  uint32_t cmu_hfper_freq_get(void)
+  {
+    return VARIANT_MCK >> (CMU->HFPERCLKDIV & 0xF);
+  }
 
 #ifdef __cplusplus
 }
@@ -184,103 +196,4 @@ void print_gpio_regs(void)
     Serial.print(" PINLOCKN = "); Serial.println(GPIO->P[i].PINLOCKN,HEX);
   }
 }
-
-
-// GPIO Interrupts
-
-
-typedef void (*voidFuncPtr)(void);
-
-static volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-                                         // storage for 16 interrupt functions
-                                         // corresponding to #bits in IEN
-
-static uint8_t iports[11] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA, 0,PORTC};
-static uint8_t ipins[11]  = {0,0,   15,   12,    3,    2,   11,    1,    0, 0,   13};
-
-void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
-{
-  if((pin < 2) || (pin == 9) || (pin > 10)) {
-    // Error
-    return;
-  }
-  GPIO_config(iports[pin], ipins[pin], INPUT_FILTER);
-
-  intFunc[ipins[pin]] = gpioIntFunc;
-  int shift = ((ipins[pin] & 0x7) * 4);
-  uint32_t mask = 0xF << shift;
-
-  if(ipins[pin] < 8) {
-    GPIO->EXTIPSELL = (GPIO->EXTIPSELL & ~mask) | (iports[pin] << shift); 
-  } else {
-    GPIO->EXTIPSELH = (GPIO->EXTIPSELH & ~mask) | (iports[pin] << shift); 
-  }
-  if((mode == RISING) || (mode == CHANGE)) {
-    GPIO->EXTIRISE |= 0x1 << ipins[pin];
-  }
-  if((mode == FALLING) || (mode == CHANGE)) {
-    GPIO->EXTIFALL |= 0x1 << ipins[pin];
-  }
-  GPIO->IFC = 0x1 << ipins[pin];
-  GPIO->IEN |= 0x1 << ipins[pin];
-  /*  
-  Serial.print(" port            = "); Serial.println(iports[pin],HEX);
-  Serial.print(" pin             = "); Serial.println(ipins[pin],HEX);
-  Serial.print(" mask            = "); Serial.println(mask,HEX);
-  Serial.print(" value           = "); Serial.println(iports[pin] << ipins[pin],HEX);
-  Serial.print(" GPIO->EXTIPSELL = "); Serial.println(GPIO->EXTIPSELL,HEX);
-  Serial.print(" GPIO->EXTIPSELH = "); Serial.println(GPIO->EXTIPSELH,HEX);
-  Serial.print(" GPIO->EXTIRISE  = "); Serial.println(GPIO->EXTIRISE,HEX);
-  Serial.print(" GPIO->EXTIFALL  = "); Serial.println(GPIO->EXTIFALL,HEX);
-  Serial.print(" IEN             = "); Serial.println(GPIO->IEN,HEX);
-  Serial.print(" IF              = "); Serial.println(GPIO->IF,HEX);
-  Serial.println();
-  */
-  NVIC_EnableIRQ(GPIO_EVEN_IRQn);
-  NVIC_EnableIRQ(GPIO_ODD_IRQn);
-}
-
-void detachInterrupt(uint8_t pin)
-{
-  intFunc[ipins[pin]] = 0;
-  int shift = ((ipins[pin] & 0x7) * 4);
-  uint32_t mask = 0xF << shift;
-
-  intFunc[ipins[pin]] = 0;
-  GPIO->EXTIRISE &= 0x1 << ipins[pin];
-  GPIO->EXTIFALL &= 0x1 << ipins[pin];
-  GPIO->IFC = 0x1 << ipins[pin];
-  GPIO->IEN &= 0x1 << ipins[pin];
-
-  if(ipins[pin] < 8) {
-    GPIO->EXTIPSELL = GPIO->EXTIPSELL & ~mask;
-  } else {
-    GPIO->EXTIPSELH = GPIO->EXTIPSELH & ~mask;
-  }
-}
-
-void GPIO_ODD_IRQHandler(void)
-{
-  for(int i = 1; i < 16; i+=2) {
-    if (GPIO->IF & (0x2 << (i-1))) {
-      GPIO->IFC = (0x2 << (i-1));
-      if(intFunc[i]) {
-	intFunc[i]();
-      }
-    }
-  }
-}
-
-void GPIO_EVEN_IRQHandler(void)
-{
-  for(int i = 0; i < 16; i+=2) {
-    if (GPIO->IF & (0x1 << i)) {
-      GPIO->IFC = (0x1 << i);
-      if(intFunc[i]) {
-	intFunc[i]();
-      }
-    }
-  }  
-}
-
 
