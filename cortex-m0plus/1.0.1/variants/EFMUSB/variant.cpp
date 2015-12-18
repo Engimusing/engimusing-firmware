@@ -72,10 +72,6 @@
   PE13:	GPIO_EM4WU5
 */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
   // Required CMSIS global variable that must be kept up-to-date.
   uint32_t SystemCoreClock = VARIANT_MCK;
 
@@ -109,14 +105,14 @@ extern "C" {
 
   // -------------------------------------------------------------------------------------------------------------
 
-
-
   // GPIO Interrupts
   volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
   // storage for 16 interrupt functions
   // corresponding to #bits in IEN
 
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 
   // This function verifies the pin is valid for this variant
   int valid_pin(uint8_t pin) {
@@ -127,8 +123,6 @@ extern "C" {
       return 1;
     }
   }
-
-
 
   void ledRedOff(void)   {GPIO->P[PORTA].DOUTSET = (1 <<  8);}
   void ledRedOn(void)    {GPIO->P[PORTA].DOUTCLR = (1 <<  8);}
@@ -157,17 +151,14 @@ extern "C" {
     return VARIANT_MCK >> (CMU->HFPERCLKDIV & 0xF);
   }
 
-
   // System initialize function called in startup_efm32zg.S
   void SystemInit(void)
   {
   }
 
-
 #ifdef __cplusplus
 }
 #endif
-
 
 // LEUART0 Interrupt handler
 void LEUART0_IRQHandler(void)
@@ -189,8 +180,3 @@ void init( void )
   GPIO->P[PORTA].DOUTSET = (1 << 10);  // Red LED off
 }
 
-
-
-//                          0 1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
-static uint8_t ports[16] = {0,0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE,  9,  9,PORTA,PORTA,PORTA};
-static uint8_t pins[16]  = {0,0, 15,   12,    8,    7,   11,    1,    0,    2,   13,    0,  0,  8,    9,    10};
