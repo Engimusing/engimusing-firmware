@@ -199,13 +199,6 @@ typedef struct
  * @brief
  *   Enter energy mode 1 (EM1).
  ******************************************************************************/
-__STATIC_INLINE void EMU_EnterEM1(void)
-{
-  /* Just enter Cortex-M3 sleep mode */
-  SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
-  __WFI();
-}
-
 
 void EMU_EnterEM2(bool restore);
 void EMU_EnterEM3(bool restore);

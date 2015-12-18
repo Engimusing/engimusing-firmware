@@ -32,11 +32,4 @@
 /**************************************************************************//**
  * @brief TIMER_CC EFM32ZG TIMER CC
  *****************************************************************************/
-typedef struct
-{
-  __IO uint32_t CTRL; /**< CC Channel Control Register  */
-  __IO uint32_t CCV;  /**< CC Channel Value Register  */
-  __I uint32_t  CCVP; /**< CC Channel Value Peek Register  */
-  __IO uint32_t CCVB; /**< CC Channel Buffer Register  */
-} TIMER_CC_TypeDef;
 

@@ -73,6 +73,7 @@ override LDFLAGS += -Xlinker -Map=$(LST_DIR)/$(PROJECTNAME).map -mcpu=cortex-m0 
 
 LIBS = -Wl,--start-group -lgcc -lc -Wl,--end-group
 
+
 INCLUDEPATHS += \
 -I.. \
 -Idevice/inc/ \
@@ -86,17 +87,7 @@ INCLUDEPATHS += \
 # Files                                                            #
 ####################################################################
 
-
 C_SRC += \
-cmsis/ \
-em_lib/src/em_assert.c \
-em_lib/src/em_cmu.c \
-em_lib/src/em_emu.c \
-em_lib/src/em_system.c \
-em_lib/src/em_usart.c \
-em_lib/src/em_wdog.c \
-em_lib/src/em_i2c.c \
-em_lib/src/em_int.c \
 efm_lib/init_efm32zg.c \
 efm_lib/efm_pin_config.c \
 delay.c \
