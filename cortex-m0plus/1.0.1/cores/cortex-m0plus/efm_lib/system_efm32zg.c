@@ -255,23 +255,6 @@ void SystemHFXOClockSet(uint32_t freq)
 
 /**************************************************************************//**
  * @brief
- *   Initialize the system.
- *
- * @details
- *   Do required generic HW system init.
- *
- * @note
- *   This function is invoked during system init, before the main() routine
- *   and any data has been initialized. For this reason, it cannot do any
- *   initialization of variables etc.
- *****************************************************************************/
-void SystemInit(void)
-{
-}
-
-
-/**************************************************************************//**
- * @brief
  *   Get low frequency RC oscillator clock frequency for target system.
  *
  * @note
