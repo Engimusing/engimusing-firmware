@@ -85,7 +85,6 @@ INCLUDEPATHS += \
 ####################################################################
 # Files                                                            #
 ####################################################################
-#em_lib/src/em_gpio.c \
 
 
 C_SRC += \
@@ -98,7 +97,6 @@ em_lib/src/em_usart.c \
 em_lib/src/em_wdog.c \
 em_lib/src/em_i2c.c \
 em_lib/src/em_int.c \
-efm_lib/system_efm32zg.c \
 efm_lib/init_efm32zg.c \
 efm_lib/efm_pin_config.c \
 delay.c \

@@ -1488,30 +1488,6 @@ void CMU_ClockSelectSet(CMU_Clock_TypeDef clock, CMU_Select_TypeDef ref)
     case cmuSelect_HFXO:
       select = CMU_CMD_HFCLKSEL_HFXO;
       osc    = cmuOsc_HFXO;
-#if defined( CMU_CTRL_HFLE )
-      /* Adjust HFXO buffer current for high frequencies, enable HFLE for */
-      /* frequencies above CMU_MAX_FREQ_HFLE. */
-      if(SystemHFXOClockGet() > CMU_MAX_FREQ_HFLE)
-      {
-        CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_HFXOBUFCUR_MASK) |
-          CMU_CTRL_HFXOBUFCUR_BOOSTABOVE32MHZ |
-          /* Must have HFLE enabled to access some LE peripherals >=32MHz */
-          CMU_CTRL_HFLE;
-
-        /* Set HFLE and DIV4 factor for peripheral clock if HFCORE clock for
-           LE is enabled. */
-        if (CMU->HFCORECLKEN0 & CMU_HFCORECLKEN0_LE)
-        {
-          BITBAND_Peripheral(&(CMU->HFCORECLKDIV),
-                             _CMU_HFCORECLKDIV_HFCORECLKLEDIV_SHIFT, 1);
-        }
-      } else {
-        /* This can happen if the user configures the EFM32_HFXO_FREQ to */
-        /* use another oscillator frequency */
-        CMU->CTRL = (CMU->CTRL & ~_CMU_CTRL_HFXOBUFCUR_MASK) |
-          CMU_CTRL_HFXOBUFCUR_BOOSTUPTO32MHZ;
-      }
-#endif
       break;
 
     case cmuSelect_HFRCO:
