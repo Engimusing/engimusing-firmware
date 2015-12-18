@@ -1,6 +1,5 @@
 #include "Arduino.h"
 #include "test.h"
-#include "em_timer.h"
 #include "timer.h"
 
 extern TimersLP Timers;

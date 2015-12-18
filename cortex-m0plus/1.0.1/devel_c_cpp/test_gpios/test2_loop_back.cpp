@@ -1,27 +1,14 @@
-#include "Arduino.h"
 #include "test.h"
+
 
 extern LEUARTClass Serial;
 static String test_help = "test02 - Loop back test to verify inputs";
 static int err_count = 0;
 
-void printGPIOinputs(uint8_t outPin, uint8_t inPin)
-{
-  //  Serial.print("GPIO Registers - outPin = "); Serial.print(outPin);  Serial.print(" inPin = "); Serial.println(inPin); 
-  delay(10);
-  Serial.print("A=");  Serial.print((readGPIOregs(PORTA) & 0xF8FF), HEX);
-  Serial.print(" B="); Serial.print((readGPIOregs(PORTB) & 0x9FFF), HEX);
-  Serial.print(" C="); Serial.print(readGPIOregs(PORTC), HEX);
-  Serial.print(" D="); Serial.print(readGPIOregs(PORTD), HEX);
-  Serial.print(" E="); Serial.print(readGPIOregs(PORTE), HEX);
-  Serial.println("");
-}
-
 void testPinIn(uint8_t outPin, uint8_t inPin)
 {
   digitalWrite(outPin,LOW);
   delay(1);
-  //printGPIOinputs(outPin, inPin);
   if(digitalRead(inPin) != LOW) {
     Serial.println("LOW Error");
     err_count++;
@@ -29,7 +16,6 @@ void testPinIn(uint8_t outPin, uint8_t inPin)
   delay(5);  
   digitalWrite(outPin,HIGH);
   delay(1);
-  //printGPIOinputs(outPin, inPin);
   if(digitalRead(inPin) != HIGH) {
     Serial.println("HIGH Error");
     err_count++;
