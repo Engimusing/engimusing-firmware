@@ -16,10 +16,11 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-#include <Arduino.h>
-#include "em_cmu.h"
+#include "variant.h"
 #include "timer.h"
+#include "Tone.h"
+#include "LEUARTClass.h"
+
 extern LEUARTClass Serial;
 
 TimersLP Timers;

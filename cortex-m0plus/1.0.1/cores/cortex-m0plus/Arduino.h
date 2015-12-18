@@ -44,13 +44,11 @@ extern "C"{
 #endif // __cplusplus
 
 #include "wiring_constants.h"
-#include "efm_pin_config.h"
 
   void yield( void ) ;
 
   void init(void);
 
-#include "variant.h"
 #include "init_efm.h"
 #include "wiring_shift.h"
 
@@ -61,17 +59,19 @@ extern "C"{
 #ifdef __cplusplus
 }
 
-  #include "WCharacter.h"
-  #include "WString.h"
-  #include "wiring_digital.h"
-  #include "Tone.h"
-  #include "WMath.h"
-  #include "HardwareSerial.h"
-  #include "RingBuffer.h"
-  #include "LEUARTClass.h"
-  #include "timer.h"
-  #include "analog.h"
-  #include "delay.h"
+#include "WCharacter.h"
+#include "WString.h"
+#include "Tone.h"
+#include "WMath.h"
+#include "HardwareSerial.h"
+#include "RingBuffer.h"
+#include "wiring_digital.h"
+#include "delay.h"
+
+#include "efm_lib/LEUARTClass.h"
+#include "efm_lib/timer.h"
+#include "efm_lib/analog.h"
+
 
 #endif // __cplusplus
 

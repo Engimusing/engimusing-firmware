@@ -47,6 +47,7 @@ extern const uint8_t dacPins[];
 
 typedef void (*voidFuncPtr)(void);
 extern volatile voidFuncPtr intFunc[];
+
 #ifdef __cplusplus
 extern "C" {
 #endif
