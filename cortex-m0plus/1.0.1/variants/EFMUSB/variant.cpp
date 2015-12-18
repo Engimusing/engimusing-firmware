@@ -83,7 +83,7 @@ extern "C" {
   RingBuffer tx_buffer0;
 
   LEUARTClass Serial(LEUART0, LEUART0_IRQn, 0, &rx_buffer0, &tx_buffer0, PORTB, 13, 14,
-		     LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0);
+		     LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0, LEUART_CLKDIV);
 
   // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
   // Digital Pins             0  1   2     3     4     5     6     7     8     9    10    11  12  13    14    15

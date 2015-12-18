@@ -221,7 +221,7 @@ typedef LEUART_TypeDef Leuart;
 class LEUARTClass : public HardwareSerial
 {
  public:
-  LEUARTClass(Leuart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *pRx_buffer, RingBuffer *pTx_buffer, uint8_t port, uint8_t txpin, uint8_t rxpin, uint32_t location, uint32_t cmu_clken);
+  LEUARTClass(Leuart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *pRx_buffer, RingBuffer *pTx_buffer, uint8_t port, uint8_t txpin, uint8_t rxpin, uint32_t location, uint32_t cmu_clken, uint32_t leuart_clkdiv);
 
   void   begin(const uint32_t dwBaudRate);
   void   begin(const uint32_t dwBaudRate, uint8_t config);
@@ -255,6 +255,7 @@ class LEUARTClass : public HardwareSerial
   uint8_t _rxpin;
   uint32_t _location;
   uint32_t _cmu_clken;
+  uint32_t _clkdiv;
 
 };
 

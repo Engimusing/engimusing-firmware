@@ -22,16 +22,15 @@
 #include <string.h>
 #include "LEUARTClass.h"
 #include "Arduino.h"
-
 #include "RingBuffer.h"
-
-
 #include "HardwareSerial.h"
 
 
 // Constructors ////////////////////////////////////////////////////////////////
 
-LEUARTClass::LEUARTClass(Leuart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *pRx_buffer, RingBuffer *pTx_buffer, uint8_t port, uint8_t txpin, uint8_t rxpin, uint32_t location, uint32_t cmu_clken)
+LEUARTClass::LEUARTClass(Leuart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *pRx_buffer,
+			 RingBuffer *pTx_buffer, uint8_t port, uint8_t txpin, uint8_t rxpin,
+			 uint32_t location, uint32_t cmu_clken, uint32_t leuart_clkdiv)
 {
   _rx_buffer = pRx_buffer;
   _tx_buffer = pTx_buffer;
@@ -44,6 +43,7 @@ LEUARTClass::LEUARTClass(Leuart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuff
   _rxpin     = rxpin;
   _location  = location;
   _cmu_clken = cmu_clken;
+  _clkdiv = leuart_clkdiv;
 }
 
 // Public Methods //////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ void LEUARTClass::init(const uint32_t dwBaudRate, uint8_t config)
   _pUart->IEN |= LEUART_IEN_RXDATAV;    // enable ints
   NVIC_EnableIRQ(_dwIrq);
   NVIC_ClearPendingIRQ(_dwIrq);
-  _pUart->CLKDIV = LEUART_CLKDIV;
+  _pUart->CLKDIV = _clkdiv;
   _pUart->ROUTE  = _location | LEUART_ROUTE_RXPEN | LEUART_ROUTE_TXPEN;
   _pUart->CMD    = LEUART_CMD_RXEN | LEUART_CMD_TXEN;
 
