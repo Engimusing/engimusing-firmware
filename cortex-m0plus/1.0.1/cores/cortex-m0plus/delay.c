@@ -17,73 +17,106 @@
 */
 
 #include "delay.h"
+#include "variant.h"
+#include "efm_lib/cmsis.h"
+
+// Tick Counter united by ms
+static volatile uint32_t _ulTickCount = 0;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** Tick Counter united by ms */
-static volatile uint32_t _ulTickCount=0 ;
-
-uint32_t millis( void )
-{
-// todo: ensure no interrupts
-  return _ulTickCount ;
-}
-
-// Interrupt-compatible version of micros
-// Theory: repeatedly take readings of SysTick counter, millis counter and SysTick interrupt pending flag.
-// When it appears that millis counter and pending is stable and SysTick hasn't rolled over, use these
-// values to calculate micros. If there is a pending SysTick, add one to the millis counter in the calculation.
-uint32_t micros( void )
-{
-  uint32_t ticks, ticks2;
-  uint32_t pend, pend2;
-  uint32_t count, count2;
-
-  ticks2  = SysTick->VAL;
-  pend2   = !!(SCB->ICSR & SCB_ICSR_PENDSTSET_Msk)  ;
-  count2  = _ulTickCount ;
-
-  do
+  uint32_t millis( void )
   {
-    ticks=ticks2;
-    pend=pend2;
-    count=count2;
+    // todo: ensure no interrupts
+    return _ulTickCount ;
+  }
+
+  // Interrupt-compatible version of micros
+  // Theory: repeatedly take readings of SysTick counter, millis counter and SysTick interrupt pending flag.
+  // When it appears that millis counter and pending is stable and SysTick hasn't rolled over, use these
+  // values to calculate micros. If there is a pending SysTick, add one to the millis counter in the calculation.
+  uint32_t micros( void )
+  {
+    uint32_t ticks, ticks2;
+    uint32_t pend, pend2;
+    uint32_t count, count2;
+
     ticks2  = SysTick->VAL;
     pend2   = !!(SCB->ICSR & SCB_ICSR_PENDSTSET_Msk)  ;
     count2  = _ulTickCount ;
-  } while ((pend != pend2) || (count != count2) || (ticks < ticks2));
 
-  return ((count+pend) * 1000) + (((SysTick->LOAD  - ticks)*(1048576/(VARIANT_MCK/1000000)))>>20) ;
-  // this is an optimization to turn a runtime division into two compile-time divisions and
-  // a runtime multiplication and shift, saving a few cycles
-}
+    do {
+      ticks   = ticks2;
+      pend    = pend2;
+      count   = count2;
+      ticks2  = SysTick->VAL;
+      pend2   = !!(SCB->ICSR & SCB_ICSR_PENDSTSET_Msk)  ;
+      count2  = _ulTickCount ;
+    } while ((pend != pend2) || (count != count2) || (ticks < ticks2));
 
-void yield(void) {}
-
-void delay( uint32_t ms )
-{
-  if ( ms == 0 )
-  {
-    return ;
+    return ((count+pend) * 1000) + (((SysTick->LOAD  - ticks)*(1048576/(VARIANT_MCK/1000000)))>>20) ;
+    // this is an optimization to turn a runtime division into two compile-time divisions and
+    // a runtime multiplication and shift, saving a few cycles
   }
 
-  uint32_t start = _ulTickCount ;
-
-  do
+  void delayMicroseconds( uint32_t usec )
   {
-    yield() ;
-  } while ( _ulTickCount - start <= ms ) ;
-}
+    if ( usec == 0 )
+      {
+	return ;
+      }
+
+    /*
+     *  The following loop:
+     *
+     *    for (; ul; ul--) {
+     *      __asm__ volatile("");
+     *    }
+     *
+     *  produce the following assembly code:
+     *
+     *    loop:
+     *      subs r3, #1        // 1 Core cycle
+     *      bne.n loop         // 1 Core cycle + 1 if branch is taken
+     */
+
+    // VARIANT_MCK / 1000000 == cycles needed to delay 1uS
+    //                     3 == cycles used in a loop
+    uint32_t n = usec * (VARIANT_MCK / 1000000) / 3;
+    __asm__ __volatile__(
+			 "1:              \n"
+			 "   sub %0, #1   \n" // substract 1 from %0 (n)
+			 "   bne 1b       \n" // if result is not 0 jump to 1
+			 : "+r" (n)           // '%0' is n variable with RW constraints
+			 :                    // no input
+			 :                    // no clobber
+			 );
+    // https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
+    // https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Volatile
+  }
+
+  void yield(void) {}
+
+  void delay( uint32_t ms )
+  {
+    uint32_t start = _ulTickCount ;
+
+    if ( ms == 0 ) {
+      return ;
+    }
+    do {
+      yield() ;
+    } while ( _ulTickCount - start <= ms ) ;
+  }
 
 
-void SysTick_Handler(void)
-{
-  // Increment tick count each ms
-  _ulTickCount++;
-  //  tickReset();
-}
+  void SysTick_Handler(void)
+  {
+    _ulTickCount++;    // Increment tick count each ms
+    //  tickReset();
+  }
 
 #ifdef __cplusplus
 }

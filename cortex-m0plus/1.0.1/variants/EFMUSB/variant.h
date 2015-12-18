@@ -32,6 +32,7 @@
 extern "C" {
 #endif
 
+#define VARIANT_MCK 21000000
 
 #define EFMZG_LEUART_CLKDIV 0x59D0
 #define EFMTG_LEUART_CLKDIV 0x77C0
