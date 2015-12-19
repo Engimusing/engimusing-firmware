@@ -151,22 +151,6 @@ void TimersLP::delay_us(uint32_t dly)
   disable(T.index);
 }
 
-//                             0 1   2     3     4     5     6     7     8   9   10   
-static uint8_t ports[11]    = {0,0,PORTC,PORTD,PORTB,PORTB,PORTB,PORTA,PORTA,0,PORTE};
-static uint8_t pins[11]     = {0,0, 15,    6,    8,    7,   11,    0,    0,  0,   13};
-static uint8_t ptimer[11]   = {9,9,  2,    2,    2,    2,    2,    1,    1,  9,    2};
-static uint8_t ccindex[11]  = {9,9,  2,    0,    1,    0,    2,    1,    0,  9,    2};
-static uint32_t troutes[11] = {0, // 0
-			       0, // 1
-			       TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC2PEN, // 2: PC15 - TIM1_CC2 #0
-			       TIMER_ROUTE_LOCATION_LOC4 | TIMER_ROUTE_CC0PEN, // 3: PD6  - TIM1_CC0 #4
-			       TIMER_ROUTE_LOCATION_LOC3 | TIMER_ROUTE_CC1PEN, // 4: PB8  - TIM1_CC1 #3
-			       TIMER_ROUTE_LOCATION_LOC3 | TIMER_ROUTE_CC0PEN, // 5: PB7  - TIM1_CC0 #3
-			       TIMER_ROUTE_LOCATION_LOC3 | TIMER_ROUTE_CC2PEN, // 6: PB11 - TIM1_CC2 #3
-			       TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC1PEN, // 7: PA1  - TIM0_CC1 #0/1
-			       TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC0PEN, // 8: PA0  - TIM0_CC0 #0/1/4
-			       0, // 9
-			       TIMER_ROUTE_LOCATION_LOC4 | TIMER_ROUTE_CC1PEN};//10: PD7  - TIM1_CC1 #4
 
 
 #define TONE_TC_TOP     0xFFFF
@@ -191,16 +175,16 @@ void TimersLP::tone(uint32_t pin, uint32_t frequency, uint32_t duration)
     return;
   }
   // acquire timer
-  if(ptimer[pin] == 1) {
-    TONE = enable(tone0_isr,ptimer[pin]);
-  } else if(ptimer[pin] == 2) {
-    TONE = enable(tone1_isr,ptimer[pin]);
+  if(timerPinMap[pin] == 1) {
+    TONE = enable(tone0_isr,timerPinMap[pin]);
+  } else if(timerPinMap[pin] == 2) {
+    TONE = enable(tone1_isr,timerPinMap[pin]);
   }
   if(TONE.index < 0) return;
 
   // set up pin
-  TONE.ptr->ROUTE = troutes[pin];
-  GPIO_config(ports[pin], pins[pin], OUTPUT);
+  TONE.ptr->ROUTE = timerRoutes[pin];
+  GPIO_config(timerPorts[pin], timerPins[pin], OUTPUT);
 
   // Set counter TOP based on frequency
   ccValue = toneMaxFrequency / frequency - 1;
@@ -254,7 +238,7 @@ void TimersLP::tone(uint32_t pin, uint32_t frequency, uint32_t duration)
     TONE.ptr->IEN = TIMER_IEN_OF;
     NVIC_EnableIRQ(TONE.IRQn);
   }
-  TONE.ptr->CC[ccindex[pin]].CTRL = TIMER_CC_CTRL_MODE_OUTPUTCOMPARE | TIMER_CC_CTRL_COFOA_TOGGLE;
+  TONE.ptr->CC[timerCCindex[pin]].CTRL = TIMER_CC_CTRL_MODE_OUTPUTCOMPARE | TIMER_CC_CTRL_COFOA_TOGGLE;
   TONE.ptr->CMD = TIMER_CMD_START;  // start the timer counting
 }
 
@@ -276,42 +260,42 @@ void TimersLP::analogWrite(uint32_t pin, uint32_t value, uint32_t prescale)
     return;
   }
   // acquire timer
-  if((ptimer[pin] == 1) && (timer_active[0] == 0)) {
-    PWM = enable(wake_only,ptimer[pin]);
+  if((timerPinMap[pin] == 1) && (timer_active[0] == 0)) {
+    PWM = enable(wake_only,timerPinMap[pin]);
     timer_active[0] = pin;
-  } else if((ptimer[pin] == 2) && (timer_active[1] == 0)) {
-    PWM = enable(wake_only,ptimer[pin]);
+  } else if((timerPinMap[pin] == 2) && (timer_active[1] == 0)) {
+    PWM = enable(wake_only,timerPinMap[pin]);
     timer_active[1] = pin;
   }
   if(PWM.index < 0) return;
 
   if(PWM.index >= 0) {
     // set up pin
-    PWM.ptr->ROUTE = troutes[pin];
-    GPIO_config(ports[pin], pins[pin], OUTPUT);
+    PWM.ptr->ROUTE = timerRoutes[pin];
+    GPIO_config(timerPorts[pin], timerPins[pin], OUTPUT);
 
     PWM.ptr->TOP = 255;
     PWM.ptr->CNT = 0;
     PWM.ptr->CTRL = TIMER_CTRL_MODE_UP | (prescale << _TIMER_CTRL_PRESC_SHIFT);
 
-    PWM.ptr->CC[ccindex[pin]].CTRL = TIMER_CC_CTRL_MODE_PWM | TIMER_CC_CTRL_CMOA_TOGGLE | TIMER_CC_CTRL_ICEDGE_BOTH;
-    PWM.ptr->CC[ccindex[pin]].CCV = value;
+    PWM.ptr->CC[timerCCindex[pin]].CTRL = TIMER_CC_CTRL_MODE_PWM | TIMER_CC_CTRL_CMOA_TOGGLE | TIMER_CC_CTRL_ICEDGE_BOTH;
+    PWM.ptr->CC[timerCCindex[pin]].CCV = value;
     PWM.ptr->CMD = TIMER_CMD_START;  // start the timer counting
   }
 }
 
 void TimersLP::noPWM (uint32_t pin)
 {
-  disable(ptimer[pin] - 1);
-  GPIO->P[ports[pin]].DOUTSET = (1 << pins[pin]);
+  disable(timerPinMap[pin] - 1);
+  GPIO->P[timerPorts[pin]].DOUTSET = (1 << timerPins[pin]);
 }
 
 
 uint32_t TimersLP::tone_active(uint8_t pin)
 {
-  if(ptimer[pin] == 1) {
+  if(timerPinMap[pin] == 1) {
     return *T0.wake;
-  } else if(ptimer[pin] == 2) {
+  } else if(timerPinMap[pin] == 2) {
     return *T1.wake;
   } else {
     Serial.print("Invalid pin = "); Serial.println(pin);
@@ -345,8 +329,8 @@ void tone1_isr(void)
 
 void TimersLP::noTone (uint32_t pin)
 {
-  disable(ptimer[pin] - 1);
-  GPIO->P[ports[pin]].DOUTSET = (1 << pins[pin]);
+  disable(timerPinMap[pin] - 1);
+  GPIO->P[timerPorts[pin]].DOUTSET = (1 << timerPins[pin]);
 }
 
 void TIMER0_IRQHandler(void)
@@ -389,12 +373,12 @@ uint32_t TimersLP::pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000
     return 0;
   }
   // acquire timer
-  PULSE = enable(wake_only,ptimer[pin]);
+  PULSE = enable(wake_only,timerPinMap[pin]);
   if(PULSE.index < 0) return 0;
 
   // set up pin
-  PULSE.ptr->ROUTE = troutes[pin];
-  GPIO_config(ports[pin], pins[pin], INPUT);
+  PULSE.ptr->ROUTE = timerRoutes[pin];
+  GPIO_config(timerPorts[pin], timerPins[pin], INPUT);
 
   PULSE.ptr->CTRL = TIMER_CTRL_MODE_UP;
 
@@ -413,7 +397,7 @@ uint32_t TimersLP::pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000
   }
   uint32_t cnt = PULSE_INC * US_PRESCALE_1 * 10;
   digitalWrite(4,LOW);
-  while(((GPIO->P[ports[pin]].DIN >> pins[pin]) & 0x1) == level) {
+  while(((GPIO->P[timerPorts[pin]].DIN >> timerPins[pin]) & 0x1) == level) {
     if(cnt-- <= 0) {
       Serial.println("Timeout - starting level wrong");
       disable(PULSE.index);
@@ -428,7 +412,7 @@ uint32_t TimersLP::pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000
   PULSE.ptr->IEN = TIMER_IEN_OF | TIMER_IEN_CC0;
   NVIC_EnableIRQ(PULSE.IRQn);
   PULSE.ptr->CMD = TIMER_CMD_START;  // start the timer counting
-  PULSE.ptr->CC[ccindex[pin]].CTRL = TIMER_CC_CTRL_MODE_INPUTCAPTURE | TIMER_CC_CTRL_ICEDGE_BOTH;
+  PULSE.ptr->CC[timerCCindex[pin]].CTRL = TIMER_CC_CTRL_MODE_INPUTCAPTURE | TIMER_CC_CTRL_ICEDGE_BOTH;
 
   // triggers on the start of the timer
   while(1) {
@@ -438,12 +422,12 @@ uint32_t TimersLP::pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000
 	*PULSE.wake = 0;
 	if(edge_received) {
 	  digitalWrite(6,HIGH);
-	  trailing_edge_cnt = (uint16_t)PULSE.ptr->CC[ccindex[pin]].CCV;
+	  trailing_edge_cnt = (uint16_t)PULSE.ptr->CC[timerCCindex[pin]].CCV;
 	  pulse_count += trailing_edge_cnt - leading_edge_cnt;
 	  pulse_count /= US_PRESCALE_1;
 	  break;
 	} else {
-	  leading_edge_cnt = (uint16_t)PULSE.ptr->CC[ccindex[pin]].CCV;
+	  leading_edge_cnt = (uint16_t)PULSE.ptr->CC[timerCCindex[pin]].CCV;
 	  if(leading_edge_cnt > 10) {
 	    digitalWrite(6,LOW);
 	    edge_received = true;

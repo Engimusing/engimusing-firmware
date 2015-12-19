@@ -72,43 +72,59 @@
   PE13:	GPIO_EM4WU5
 */
 
-  // Required CMSIS global variable that must be kept up-to-date.
-  uint32_t SystemCoreClock = VARIANT_MCK;
+// Required CMSIS global variable that must be kept up-to-date.
+uint32_t SystemCoreClock = VARIANT_MCK;
 
-  RingBuffer rx_buffer0;
-  RingBuffer tx_buffer0;
+RingBuffer rx_buffer0;
+RingBuffer tx_buffer0;
 
-  LEUARTClass Serial(LEUART0, LEUART0_IRQn, 0, &rx_buffer0, &tx_buffer0, PORTB, 13, 14,
-		     LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0, LEUART_CLKDIV);
+LEUARTClass Serial(LEUART0, LEUART0_IRQn, 0, &rx_buffer0, &tx_buffer0, PORTB, 13, 14,
+		   LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0, LEUART_CLKDIV);
 
-  // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
-  // Digital Pins             0  1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
-  const uint8_t dPorts[]   = {0, 0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE,  9,  9,PORTA,PORTA,PORTA};
-  const uint8_t dPins[]    = {0, 0, 15,   12,    8,    7,   11,    1,    0,    2,   13,    0,  0,  8,    9,    10};
+// ----------------- Pin and Port Arrays -----------------------------------------------------------------------
+// Digital Pins             0  1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
+const uint8_t dPorts[]   = {0, 0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE,  9,  9,PORTA,PORTA,PORTA};
+const uint8_t dPins[]    = {0, 0, 15,   12,    8,    7,   11,    1,    0,    2,   13,    0,  0,  8,    9,    10};
 
-  // GPIO Interrupt Pins      0 1   2     3     4     5     6     7     8     9    10
-  const uint8_t iPorts[11] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA,  0,  PORTC};
-  const uint8_t iPins[11]  = {0,0, 15,   12,    3,    2,   11,    1,    0,    0,   13};
+// GPIO Interrupt Pins      0 1   2     3     4     5     6     7     8     9    10
+const uint8_t iPorts[11] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA,  0,  PORTC};
+const uint8_t iPins[11]  = {0,0, 15,   12,    3,    2,   11,    1,    0,    0,   13};
 
-  // ADC Pins                     0 1   2     3    4  5  6  7  8  9   10
-  const uint8_t adcPorts[11]  = {0,0,PORTD,PORTD, 0, 0, 0, 0, 0, 0, PORTD};
-  const uint8_t adcPins[11]   = {0,0,  4,    6,   0, 0, 0, 0, 0, 0,   7  };
+// ADC Pins                     0 1   2     3    4  5  6  7  8  9   10
+const uint8_t adcPorts[11]  = {0,0,PORTD,PORTD, 0, 0, 0, 0, 0, 0, PORTD};
+const uint8_t adcPins[11]   = {0,0,  4,    6,   0, 0, 0, 0, 0, 0,   7  };
 
-  // ACMP Pins                    0  1  2  3   4     5     6     7     8    9  10   
-  const uint8_t acmpPorts[11] = {0, 0, 0, 0,PORTC,PORTC,PORTC,PORTC,PORTC, 0,PORTE};
-  const uint8_t acmpPins[11]  = {0, 0, 0, 0,  3,    2,    4,    1,    0,   0, 13  };
+// ACMP Pins                    0  1  2  3   4     5     6     7     8    9  10   
+const uint8_t acmpPorts[11] = {0, 0, 0, 0,PORTC,PORTC,PORTC,PORTC,PORTC, 0,PORTE};
+const uint8_t acmpPins[11]  = {0, 0, 0, 0,  3,    2,    4,    1,    0,   0, 13  };
 
-  // DAC Pins                    0  1  2  3  4  5   6    7  8  9 10   
-  const uint8_t dacPorts[11] = {0, 0, 0, 0, 0, 0,PORTB, 0, 0, 0, 0};
-  const uint8_t dacPins[11]  = {0, 0, 0, 0, 0, 0,  11,  0, 0, 0, 0};
+// DAC Pins                    0  1  2  3  4  5   6    7  8  9 10   
+const uint8_t dacPorts[11] = {0, 0, 0, 0, 0, 0,PORTB, 0, 0, 0, 0};
+const uint8_t dacPins[11]  = {0, 0, 0, 0, 0, 0,  11,  0, 0, 0, 0};
 
+// Timer Pins                      0 1   2     3     4     5     6     7     8   9   10   
+const uint8_t timerPorts[11]    = {0,0,PORTC,PORTD,PORTB,PORTB,PORTB,PORTA,PORTA,0,PORTE};
+const uint8_t timerPins[11]     = {0,0, 15,    6,    8,    7,   11,    0,    0,  0,  13};
+const uint8_t timerPinMap[11]   = {9,9,  2,    2,    2,    2,    2,    1,    1,  9,   2};
+const uint8_t timerCCindex[11]  = {9,9,  2,    0,    1,    0,    2,    1,    0,  9,   2};
+const uint32_t timerRoutes[11] = {0, // 0
+				  0, // 1
+				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC2PEN, // 2: PC15 - TIM1_CC2 #0
+				  TIMER_ROUTE_LOCATION_LOC4 | TIMER_ROUTE_CC0PEN, // 3: PD6  - TIM1_CC0 #4
+				  TIMER_ROUTE_LOCATION_LOC3 | TIMER_ROUTE_CC1PEN, // 4: PB8  - TIM1_CC1 #3
+				  TIMER_ROUTE_LOCATION_LOC3 | TIMER_ROUTE_CC0PEN, // 5: PB7  - TIM1_CC0 #3
+				  TIMER_ROUTE_LOCATION_LOC3 | TIMER_ROUTE_CC2PEN, // 6: PB11 - TIM1_CC2 #3
+				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC1PEN, // 7: PA1  - TIM0_CC1 #0/1
+				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC0PEN, // 8: PA0  - TIM0_CC0 #0/1/4
+				  0, // 9
+				  TIMER_ROUTE_LOCATION_LOC4 | TIMER_ROUTE_CC1PEN};//10: PD7  - TIM1_CC1 #4
 
-  // -------------------------------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------------------------
 
-  // GPIO Interrupts
-  volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-  // storage for 16 interrupt functions
-  // corresponding to #bits in IEN
+// GPIO Interrupts
+volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+// storage for 16 interrupt functions
+// corresponding to #bits in IEN
 
 #ifdef __cplusplus
 extern "C" {

@@ -24,6 +24,7 @@
 #include "efm_emu.h"
 #include "wiring_digital.h"
 #include "cmsis.h"
+#include "variant.h"
 
 // TIMER_CC EFM32ZG TIMER CC
 typedef struct
