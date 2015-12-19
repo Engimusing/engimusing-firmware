@@ -91,6 +91,7 @@ typedef struct
 #define TIMER_CTRL_CLKSEL_TIMEROUF          (0x2 << 16)          // Shifted mode TIMEROUF for TIMER_CTRL
 
 
+#define _TIMER_CTRL_PRESC_SHIFT                     24           // Shift for TIMER_PRESC
 #define _TIMER_CTRL_PRESC_MASK              0xF000000UL          // Bit mask for TIMER_PRESC
 #define TIMER_CTRL_PRESC_DEFAULT            (0x0 << 24)          // Shifted mode DEFAULT for TIMER_CTRL
 #define TIMER_CTRL_PRESC_DIV1               (0x0 << 24)          // Shifted mode DIV1 for TIMER_CTRL
