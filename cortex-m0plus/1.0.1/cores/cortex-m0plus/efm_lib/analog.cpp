@@ -16,10 +16,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-#include <Arduino.h>
-#include "em_cmu.h"
 #include "analog.h"
+#include "variant.h"
 
 extern LEUARTClass Serial;
 AnalogLP Analog;

@@ -76,9 +76,6 @@ LIBS = -Wl,--start-group -lgcc -lc -Wl,--end-group
 
 INCLUDEPATHS += \
 -I.. \
--Idevice/inc/ \
--Icmsis/ \
--Iem_lib/inc/ \
 -Iefm_lib/ \
 -I../../variants/EFMUSB/ \
 -I.
