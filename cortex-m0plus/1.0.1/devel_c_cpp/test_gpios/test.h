@@ -2,7 +2,6 @@
 #define _EFMUSB_TESTH_
 
 #include "efm_pin_config.h"
-#include "init_efm.h"
 
 #include "Arduino.h"
 

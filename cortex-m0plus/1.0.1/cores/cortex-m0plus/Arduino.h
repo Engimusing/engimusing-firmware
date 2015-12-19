@@ -49,7 +49,6 @@ extern "C"{
 
   void init(void);
 
-#include "init_efm.h"
 #include "wiring_shift.h"
 
   /* sketch */

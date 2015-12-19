@@ -69,6 +69,8 @@ extern "C" {
   int valid_pin(uint8_t pin);
   uint32_t cmu_hfper_freq_get(void);
 
+  void init_efm32zg(void);
+
 #ifdef __cplusplus
 }
 #endif
