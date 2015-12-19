@@ -174,7 +174,7 @@ extern "C" {
 #define ARM_MATH_CM0PLUS
   //#include "arm_math.h"       /* To get __CLZ definitions etc. */
   //#include "core_cm0plus.h"   /* Cortex-M0+ processor and core peripherals */
-#include "system_efm32zg.h" /* System Header */
+  //#include "system_efm32zg.h" /* System Header */
 
 /**************************************************************************//**
  * @defgroup EFM32ZG222F32_Peripheral_TypeDefs EFM32ZG222F32 Peripheral TypeDefs
@@ -182,33 +182,33 @@ extern "C" {
  * @brief Device Specific Peripheral Register Structures
  *****************************************************************************/
 
-#include "efm32zg_aes.h"
-#include "efm32zg_dma_ch.h"
-#include "efm32zg_dma.h"
-#include "efm32zg_msc.h"
+  //#include "efm32zg_aes.h"
+//#include "efm32zg_dma_ch.h"
+//#include "efm32zg_dma.h"
+//#include "efm32zg_msc.h"
 #include "efm32zg_emu.h"
-#include "efm32zg_rmu.h"
+//#include "efm32zg_rmu.h"
 #include "efm32zg_cmu.h"
-#include "efm32zg_timer_cc.h"
-#include "efm32zg_timer.h"
-#include "efm32zg_acmp.h"
-#include "efm32zg_usart.h"
-#include "efm32zg_prs_ch.h"
-#include "efm32zg_prs.h"
-#include "efm32zg_idac.h"
-#include "efm32zg_gpio_p.h"
-#include "efm32zg_gpio.h"
-#include "efm32zg_vcmp.h"
+//#include "efm32zg_timer_cc.h"
+//#include "efm32zg_timer.h"
+//#include "efm32zg_acmp.h"
+//#include "efm32zg_usart.h"
+//#include "efm32zg_prs_ch.h"
+//#include "efm32zg_prs.h"
+//#include "efm32zg_idac.h"
+//#include "efm32zg_gpio_p.h"
+//#include "efm32zg_gpio.h"
+//#include "efm32zg_vcmp.h"
 #include "efm32zg_adc.h"
   //#include "efm32zg_leuart.h"
-#include "efm32zg_pcnt.h"
-#include "efm32zg_i2c.h"
-#include "efm32zg_rtc.h"
-#include "efm32zg_wdog.h"
-#include "efm32zg_dma_descriptor.h"
-#include "efm32zg_devinfo.h"
-#include "efm32zg_romtable.h"
-#include "efm32zg_calibrate.h"
+//#include "efm32zg_pcnt.h"
+//#include "efm32zg_i2c.h"
+//#include "efm32zg_rtc.h"
+//#include "efm32zg_wdog.h"
+//#include "efm32zg_dma_descriptor.h"
+//#include "efm32zg_devinfo.h"
+//#include "efm32zg_romtable.h"
+//#include "efm32zg_calibrate.h"
 
 /** @} End of group EFM32ZG222F32_Peripheral_TypeDefs */
 
@@ -281,9 +281,9 @@ extern "C" {
  * @{
  *****************************************************************************/
 
-#include "efm32zg_prs_signals.h"
-#include "efm32zg_dmareq.h"
-#include "efm32zg_dmactrl.h"
+  //#include "efm32zg_prs_signals.h"
+  //#include "efm32zg_dmareq.h"
+  //#include "efm32zg_dmactrl.h"
 
 /**************************************************************************//**
  * @defgroup EFM32ZG222F32_UNLOCK EFM32ZG222F32 Unlock Codes
@@ -304,8 +304,8 @@ extern "C" {
  * @{
  *****************************************************************************/
 
-#include "efm32zg_af_ports.h"
-#include "efm32zg_af_pins.h"
+  //#include "efm32zg_af_ports.h"
+  //#include "efm32zg_af_pins.h"
 
 /** @} End of group EFM32ZG222F32_Alternate_Function */
 
