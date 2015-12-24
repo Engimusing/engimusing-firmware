@@ -4,7 +4,7 @@
 extern LEUARTClass Serial;
 static String test_help = "test04 - Tests shiftOut()";
 
-void test03_test(void)
+void test04_test(void)
 {
   static uint8_t data[8] = {0xAA,0x55,0x33,0xCC,0x77,0x88,0xF0,0x0F};
   static int err_count = 0;
@@ -30,7 +30,7 @@ void test03_test(void)
   }
 }
 
-void test03_desc(void)
+void test04_desc(void)
 {
   Serial.println("\n\rTest 4 Description:");
   Serial.println("  Run test5 on another board before this one.");
@@ -39,18 +39,18 @@ void test03_desc(void)
   Serial.println("  The two boards are connected with a 1 to 1 cable");
 }
 
-void test03(uint8_t function)
+void test04(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
     Serial.print(test_help);
     break;
   case DESCRIPTION:
-    test03_desc();
+    test04_desc();
     break;
   case RUNTEST:
-    Serial.println("\n\rRun test03");
-    test03_test();
+    Serial.println("\n\rRun test04");
+    test04_test();
     break;
   default:
     Serial.println("\n\rBad Test Function");

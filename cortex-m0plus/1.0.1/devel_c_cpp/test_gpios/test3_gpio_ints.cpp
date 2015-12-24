@@ -2,7 +2,7 @@
 #include "test.h"
 
 extern LEUARTClass Serial;
-static String test_help = "test07 - GPIO Interrupt test";
+static String test_help = "test03 - GPIO Interrupt test";
 
 static int intA_cnt = 0;
 static int intB_cnt = 0;
@@ -36,12 +36,12 @@ void isrD(void)
 }
 
 void print_int_cnts(void) {
-  Serial.print("intA_cnt = "); Serial.println(intA_cnt);
-  Serial.print("intB_cnt = "); Serial.println(intB_cnt);
-  Serial.print("intC_cnt = "); Serial.println(intC_cnt);
-  Serial.print("intD_cnt = "); Serial.println(intD_cnt);
-  Serial.print("int_cntr = "); Serial.println(int_cntr);
-  Serial.print("err_cntr = "); Serial.println(err_cntr); Serial.println();
+  Serial.printf("intA_cnt = %d\r\n",intA_cnt);
+  Serial.printf("intB_cnt = %d\r\n",intB_cnt);
+  Serial.printf("intC_cnt = %d\r\n",intC_cnt);
+  Serial.printf("intD_cnt = %d\r\n",intD_cnt);
+  Serial.printf("int_cntr = %d\r\n",int_cntr);
+  Serial.printf("err_cntr = %d\r\n\r\n",err_cntr);
 }
 
 void pulse_pin_low(uint8_t pin)
@@ -53,7 +53,7 @@ void pulse_pin_low(uint8_t pin)
 }
 
 
-void test07_test(void)
+void test03_test(void)
 {
   digitalWrite(2,HIGH);
   digitalWrite(3,HIGH);
@@ -165,9 +165,9 @@ void test07_test(void)
 
 
 
-void test07_desc(void)
+void test03_desc(void)
 {
-  Serial.println("\n\rTest 07 Description:");
+  Serial.println("\n\rTest 03 Description:");
   Serial.println("  This test performs a GPIO interrupt");
   Serial.println("  loop back test on the 8 connector pins.");
   Serial.println("  It requires a 10 pin connector with 4 wires");
@@ -180,18 +180,18 @@ void test07_desc(void)
   Serial.println("    GPIO LOOPBACK");
 }
 
-void test07(uint8_t function)
+void test03(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
     Serial.print(test_help);
     break;
   case DESCRIPTION:
-    test07_desc();
+    test03_desc();
     break;
   case RUNTEST:
-    Serial.println("\n\rRun test07");
-    test07_test();
+    Serial.println("\n\rRun test03");
+    test03_test();
     break;
   default:
     Serial.println("\n\rBad Test Function");

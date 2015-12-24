@@ -11,10 +11,6 @@ void test03_test(void)
 void test03_desc(void)
 {
   Serial.println("\n\rTest 03 Description:");
-  Serial.println("  A long line of text that will hang on a print ---------------------------------------");
-  Serial.println("  A long line of text that will hang on a print ---------------------------------------");
-  Serial.println("  A long line of text that will hang on a print ---------------------------------------");
-  Serial.println("  A long line of text that will hang on a print ---------------------------------------");
 }
 
 void test03(uint8_t function)

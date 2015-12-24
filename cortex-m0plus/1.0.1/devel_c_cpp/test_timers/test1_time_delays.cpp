@@ -10,7 +10,7 @@ static String test_help = "test01 - Timer";
 
 void print_error(char m[], uint32_t expected, uint32_t start, uint32_t end)
 {
-  Serial.print(m); Serial.print("  delay = "); Serial.print(end-start);
+  Serial.printf("%s  delay = %d",m,end-start);
   if((end-start) == expected) {
     Serial.println(" - PASSED\n\r");
   } else {
@@ -26,37 +26,37 @@ void test01_test(void)
   start = millis();
   Timers.delay_ms(5);
   end = millis();
-  print_error("delay_ms(5):", 5, start, end); delay(5); 
+  print_error("delay_ms(5):", 5, start, end);
 
   start = micros();
   Timers.delay_us(3000);
   end = micros();
-  print_error("delay_us(3000):", 3000, start, end); delay(5); 
+  print_error("delay_us(3000):", 3000, start, end);
 
   start = micros();
   Timers.delay_us(200);
   end = micros();
-  print_error("delay_us(200):",200, start, end); delay(5); 
+  print_error("delay_us(200):",200, start, end);
 
   start = micros();
   Timers.delay_us(50);
   end = micros();
-  print_error("delay_us(50):",50, start, end); delay(5); 
+  print_error("delay_us(50):",50, start, end);
 
   start = micros();
   Timers.delay_us(5);
   end = micros();
-  print_error("delay_us(5):",5, start, end); delay(5); 
+  print_error("delay_us(5):",5, start, end);
 
   start = micros();
   while(micros() < start + 5);
   end = micros();
-  print_error("delay_us(5):",5, start, end); delay(5); 
+  print_error("delay_us(5):",5, start, end);
 
   start = micros();
   delayMicroseconds(5);
   end = micros();
-  print_error("delay_us(5):",5, start, end); delay(5); 
+  print_error("delay_us(5):",5, start, end);
 
 }
 

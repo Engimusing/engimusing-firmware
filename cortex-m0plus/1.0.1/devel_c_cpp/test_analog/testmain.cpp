@@ -21,7 +21,7 @@ void setup(void)
 
   Serial.begin(115200);
 
-  Serial.println("\n\r\n\rUnit Test Framework" );
+  Serial.println("\n\r\n\rAnalog - Unit Test Framework" );
 }
 
 void printHelp(void)

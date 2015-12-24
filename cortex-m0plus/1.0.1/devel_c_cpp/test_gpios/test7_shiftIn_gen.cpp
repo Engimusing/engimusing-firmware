@@ -8,7 +8,7 @@ static String test_help = "test07 - shiftIn() data generation";
 // (SI DATA) Pin 4 to Pin  8 (US1_TX)
 // (US1_CK)  Pin 5 to Pin 10 (SI CLK)
 
-void test06_test(void)
+void test07_test(void)
 {
   static int pins[8] = {2,3,4,5,6,7,8,10};
   static uint8_t data[8] = {0xAA,0x55,0x33,0xCC,0x77,0x88,0xF0,0x0F};
@@ -19,7 +19,7 @@ void test06_test(void)
     pinMode(pins[i], INPUT_PULLDOWN);
   }
   delay(25);
-  // Send 8 bytes to test06 in response to shiftIn()
+  // Send 8 bytes to test07 in response to shiftIn()
   err_count = 0;
   pinMode(4, OUTPUT);
   digitalWrite(4,LOW);
@@ -53,7 +53,7 @@ void test06_test(void)
   Serial.println("shiftIn done");
 }
 
-void test06_desc(void)
+void test07_desc(void)
 {
   Serial.println("\n\rTest 7 Description:");
   Serial.println("  This test generates data for the shiftIn() function");
@@ -61,18 +61,18 @@ void test06_desc(void)
   Serial.println("  a 1 to 1 cable.");
 }
 
-void test06(uint8_t function)
+void test07(uint8_t function)
 {
   switch(function) {
   case TESTHELP:
     Serial.print(test_help);
     break;
   case DESCRIPTION:
-    test06_desc();
+    test07_desc();
     break;
   case RUNTEST:
-    Serial.println("\n\rRun test06");
-    test06_test();
+    Serial.println("\n\rRun test07");
+    test07_test();
     break;
   default:
     Serial.println("\n\rBad Test Function");
