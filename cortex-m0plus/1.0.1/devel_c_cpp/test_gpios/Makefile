@@ -98,6 +98,7 @@ INCLUDEPATHS += \
 ####################################################################
 
 C_SRC += \
+../../variants/EFMUSB/pins_arduino.c \
 
 
 CPP_SRC += \
@@ -106,8 +107,11 @@ $(wildcard *.cpp)
 
 s_SRC += 
 
-
 S_SRC += 
+
+INO_SRC += \
+$(wildcard *.ino)
+
 
 ####################################################################
 # Rules                                                            #
@@ -115,33 +119,59 @@ S_SRC +=
 
 C_FILES = $(notdir $(C_SRC) )
 CPP_FILES = $(notdir $(CPP_SRC) )
+INO_FILES = $(notdir $(INO_SRC) )
 S_FILES = $(notdir $(S_SRC) $(s_SRC) )
 
 #make list of source paths, sort also removes duplicates
 C_PATHS = $(sort $(dir $(C_SRC) ) )
 CPP_PATHS = $(sort $(dir $(CPP_SRC) ) )
+INO_PATHS = $(sort $(dir $(INO_SRC) ) )
 S_PATHS = $(sort $(dir $(S_SRC) $(s_SRC) ) )
+
+INO_CPPS = $(INO_FILES:.ino=.cpp)
 
 C_OBJS = $(addprefix $(OBJ_DIR)/, $(C_FILES:.c=.o))
 CPP_OBJS = $(addprefix $(OBJ_DIR)/, $(CPP_FILES:.cpp=.o))
+INO_OBJS = $(addprefix $(OBJ_DIR)/, $(INO_FILES:.ino.cpp=.o))
 S_OBJS = $(if $(S_SRC), $(addprefix $(OBJ_DIR)/, $(S_FILES:.S=.o)))
 s_OBJS = $(if $(s_SRC), $(addprefix $(OBJ_DIR)/, $(S_FILES:.s=.o)))
 C_DEPS = $(addprefix $(OBJ_DIR)/, $(C_FILES:.c=.d))
+
+
 OBJS = $(C_OBJS) $(CPP_OBJS) $(S_OBJS) $(s_OBJS)
 
 vpath %.c $(C_PATHS)
 vpath %.cpp $(CPP_PATHS)
+vpath %.ino $(INO_PATHS)
 vpath %.s $(S_PATHS)
 vpath %.S $(S_PATHS)
 
 # Default build is debug build
-all:      release corelib
+all:	print release corelib
+
+print:
+	@echo
+	@echo "OBJ files: $(OBJS)"
+	@echo
 
 corelib:
 	make -C ../../cores/cortex-m0plus/
 
 release:  $(EXE_DIR)/$(PROJECTNAME).bin
 
+
+# Create cpp files from ino files
+%ino.cpp: %.ino
+	@echo
+	@echo
+	@echo
+	@echo "--------------------- copying ino file -------------------------"
+	cp $< $<.cpp
+	@echo
+	$(CPP) $(CPPFLAGS) $(INCLUDEPATHS) -c -o $@ $<
+	@echo
+	@echo
+	@echo
 
 # Create objects from C SRC files
 $(OBJ_DIR)/%.o: %.c

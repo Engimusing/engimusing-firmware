@@ -1,23 +1,22 @@
 #include "Arduino.h"
 #include "test.h"
 
-extern LEUARTClass Serial;
-
 String inputString = "";         // a string to hold incoming data
 
-static int pins[8] = {2,3,4,5,6,7,8,10};
+static int pins[8] = {2, 3, 4, 5, 6, 7, 8, 10};
 
 #define PINS_TO_TEST    8
 #define LED_DELAY  200
 
-void setup(void)
-{
+
+void setup() {
   pinMode(13, OUTPUT);
   pinMode(14, OUTPUT);
   pinMode(15, OUTPUT);
 
   // reserve 200 bytes for the inputString:
   inputString.reserve(16);
+  inputString = "";
 
   Serial.begin(115200);
 
@@ -46,26 +45,23 @@ void delay_tty(int dly)
     if (Serial.available()) {
       char c = (char)Serial.read(); // get the new byte:
       if( ((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || ((c >= '0') && (c <= '9'))) {
-	Serial.print(c);
-	inputString += c;             // add it to the inputString:
-	charCnt++;
+  Serial.print(c);
+  inputString += c;             // add it to the inputString:
+  charCnt++;
       } else {
-	if((charCnt > 0) && (charCnt < 16)) {
-	  parse_cmd(inputString);
-	} else {
-	  Serial.print("\n\rBad Command: "); Serial.println(inputString);
-	}
-	charCnt = 0;
-	inputString = "";
+  if((charCnt > 0) && (charCnt < 16)) {
+    parse_cmd(inputString);
+  } else {
+    Serial.print("\n\rBad Command: "); Serial.println(inputString);
+  }
+  charCnt = 0;
+  inputString = "";
       }
     }
   }
 }
 
-
-void loop(void)
-{
-
+void loop() {
   digitalWrite(13, LOW);   // turn the LED on (LOW is the voltage level)
   delay_tty(500);          // wait for a second
   digitalWrite(13, HIGH);  // turn the LED off by making the voltage HIGH
@@ -80,9 +76,7 @@ void loop(void)
   delay_tty(500);          // wait for a second
   digitalWrite(15, HIGH);  // turn the LED off by making the voltage HIGH
   delay_tty(500);          // wait for a second
-
 }
-
 
 void parse_cmd(String str)
 {

@@ -39,9 +39,9 @@ void test07_test(void)
     for(int i = 1; i < 8; i++) {
       while((GPIO->P[PORTB].DIN & 0x80) == 0x80);
       if(data[w] & (1 << (7-i))) {
-	GPIO->P[PORTB].DOUTSET = 0x100;
+  GPIO->P[PORTB].DOUTSET = 0x100;
       } else {
-	GPIO->P[PORTB].DOUTCLR = 0x100;
+  GPIO->P[PORTB].DOUTCLR = 0x100;
       }
       while((GPIO->P[PORTB].DIN & 0x80) == 0x00);
     }
@@ -79,3 +79,4 @@ void test07(uint8_t function)
     break;
   }
 }
+
