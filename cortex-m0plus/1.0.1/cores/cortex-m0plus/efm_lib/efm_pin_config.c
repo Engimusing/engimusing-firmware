@@ -72,8 +72,8 @@
 // 43     - Alternate use of A0 (DAC output)
 
 #include "efm_pin_config.h"
+#include "pins_arduino.h"
 #include "cmsis.h"
-#include "variant.h"
 
 void pinMode(uint32_t pin, uint32_t mode)
 {

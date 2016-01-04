@@ -56,23 +56,31 @@ extern "C"{
   void loop( void ) ;
 
 #ifdef __cplusplus
-}
+} // extern "C"
+#endif
 
+// The following headers are for C++ only compilation
+#ifdef __cplusplus
 #include "WCharacter.h"
 #include "WString.h"
 #include "Tone.h"
 #include "WMath.h"
 #include "HardwareSerial.h"
 #include "RingBuffer.h"
-#include "wiring_digital.h"
+#endif
+
 #include "delay.h"
 
+#ifdef __cplusplus
 #include "efm_lib/LEUARTClass.h"
 #include "efm_lib/timer.h"
 #include "efm_lib/analog.h"
+#endif
 
+#include "variant.h"
 
-#endif // __cplusplus
+#include "wiring_digital.h"
+
 
 // undefine stdlib's abs if encountered
 #ifdef abs

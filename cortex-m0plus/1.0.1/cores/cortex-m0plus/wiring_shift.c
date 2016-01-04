@@ -18,8 +18,9 @@
 
 #include <stdint.h>
 
-#include "Arduino.h"
 #include "wiring_shift.h"
+#include "wiring_digital.h"
+#include "wiring_constants.h"
 
 #ifdef __cplusplus
 extern "C"{

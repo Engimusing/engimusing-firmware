@@ -17,7 +17,9 @@
 */
 
 #include "analog.h"
-#include "variant.h"
+extern "C" {
+#include "pins_arduino.h"
+}
 
 extern LEUARTClass Serial;
 AnalogLP Analog;

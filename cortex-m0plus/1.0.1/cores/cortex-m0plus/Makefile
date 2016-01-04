@@ -87,6 +87,7 @@ INCLUDEPATHS += \
 C_SRC += \
 efm_lib/init_efm32zg.c \
 efm_lib/efm_pin_config.c \
+efm_lib/leds.c \
 delay.c \
 wiring_shift.c
 

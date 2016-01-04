@@ -20,7 +20,6 @@
 #define _DELAY_
 
 #include <stdint.h>
-#include "variant.h"
 
 #ifdef __cplusplus
 extern "C" {

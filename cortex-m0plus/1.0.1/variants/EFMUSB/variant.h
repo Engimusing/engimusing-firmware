@@ -26,59 +26,27 @@
 #include <string.h>
 
 #include "Arduino.h"
-
-#define VARIANT_MCK 21000000
+#include "../../cores/cortex-m0plus/efm_lib/LEUARTClass.h"
+#include "../../cores/cortex-m0plus/efm_lib/timer.h"
 
 #define EFMZG_LEUART_CLKDIV 0x59D0
 #define EFMTG_LEUART_CLKDIV 0x77C0
 #define EFMWG_LEUART_CLKDIV 0x77C0
 #define LEUART_CLKDIV EFMZG_LEUART_CLKDIV
 
-extern const uint8_t dPins[];
-extern const uint8_t dPorts[];
-extern const uint8_t iPorts[];
-extern const uint8_t iPins[];
-extern const uint8_t adcPorts[];
-extern const uint8_t adcPins[];
-extern const uint8_t acmpPorts[];
-extern const uint8_t acmpPins[];
-extern const uint8_t dacPorts[];
-extern const uint8_t dacPins[];
-extern const uint8_t timerPorts[];
-extern const uint8_t timerPins[];
-extern const uint8_t timerPinMap[];
-extern const uint8_t timerCCindex[];
-extern const uint32_t timerRoutes[];
 
-typedef void (*voidFuncPtr)(void);
-extern volatile voidFuncPtr intFunc[];
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+extern LEUARTClass Serial;
+extern TimersLP Timers;
 
-  void ledRedOff(void);
-  void ledRedOn(void);
-  void ledGreenOff(void);
-  void ledGreenOn(void);
-  void ledBlueOff(void);
-  void ledBlueOn(void);
-  void ledAllOff(void);
-  void ledAllOn(void);
 
-  uint32_t readGPIOregs(uint8_t port);
   void print_gpio_regs(void);
 
   void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
   void detachInterrupt(uint8_t pin);
-  int valid_pin(uint8_t pin);
   uint32_t cmu_hfper_freq_get(void);
 
   void init_efm32zg(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 
 #endif // _VARIANT_EFM32ZGUSB_

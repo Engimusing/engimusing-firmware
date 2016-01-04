@@ -24,7 +24,6 @@
 #include "efm_emu.h"
 #include "wiring_digital.h"
 #include "cmsis.h"
-#include "variant.h"
 
 // TIMER_CC EFM32ZG TIMER CC
 typedef struct
@@ -186,16 +185,6 @@ typedef struct
 #define TIMER_IEN_ICBOF1                   (0x1UL << 9)          // CC Channel 1 Input Capture Buffer Overflow IE
 #define TIMER_IEN_ICBOF2                  (0x1UL << 10)          // CC Channel 2 Input Capture Buffer Overflow IE
 
-#define TIMER_ROUTE_CC0PEN                 (0x1UL << 0)          // CC Channel 0 Pin Enable
-#define TIMER_ROUTE_CC1PEN                 (0x1UL << 1)          // CC Channel 1 Pin Enable
-#define TIMER_ROUTE_CC2PEN                 (0x1UL << 2)          // CC Channel 2 Pin Enable
-#define _TIMER_ROUTE_LOCATION_MASK            0x70000UL          // Bit mask for TIMER_LOCATION
-#define TIMER_ROUTE_LOCATION_LOC0           (0x0 << 16)          // Shifted mode LOC0 for TIMER_ROUTE
-#define TIMER_ROUTE_LOCATION_LOC1           (0x1 << 16)          // Shifted mode LOC1 for TIMER_ROUTE
-#define TIMER_ROUTE_LOCATION_LOC2           (0x2 << 16)          // Shifted mode LOC2 for TIMER_ROUTE
-#define TIMER_ROUTE_LOCATION_LOC3           (0x3 << 16)          // Shifted mode LOC3 for TIMER_ROUTE
-#define TIMER_ROUTE_LOCATION_LOC4           (0x4 << 16)          // Shifted mode LOC4 for TIMER_ROUTE
-#define TIMER_ROUTE_LOCATION_LOC5           (0x5 << 16)          // Shifted mode LOC5 for TIMER_ROUTE
 
 // Variant stuff:
 
