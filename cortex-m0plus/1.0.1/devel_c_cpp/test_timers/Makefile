@@ -98,7 +98,7 @@ INCLUDEPATHS += \
 ####################################################################
 
 C_SRC += \
-
+../../variants/EFMUSB/pins_arduino.c
 
 CPP_SRC += \
 ../../variants/EFMUSB/variant.cpp \
