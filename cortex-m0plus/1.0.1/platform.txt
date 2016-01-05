@@ -58,24 +58,21 @@ compiler.S.extra_flags=
 compiler.ar.extra_flags=
 compiler.elf2hex.extra_flags=
 
-compiler.arm.cmsis.path="-I{runtime.hardware.path}/../../tools/EFM_CMSIS/3.20-silabs/Include/"
-compiler.arm.device.path="-I{runtime.hardware.path}/../../tools/EFM_DEVICE/2.0-silabs/EFM32ZG/Include/"
-compiler.arm.emlib.path="-I{runtime.hardware.path}/../../tools/EFM_EMLIB/2.0-silabs/inc/"
 
 # Compile patterns
 # ----------------
 
 ## Compile c files
-recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.device} {compiler.c.flags} {compiler.c.extra_flags} {build.extra_flags} {compiler.arm.cmsis.path} {compiler.arm.device.path} {compiler.arm.emlib.path} {includes} "{source_file}" -o "{object_file}"
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.device} {compiler.c.flags} {compiler.c.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
 
 ## Compile c++ files
-recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.device} {compiler.cpp.flags} {compiler.cpp.extra_flags} {build.extra_flags} {compiler.arm.cmsis.path} {compiler.arm.device.path} {compiler.arm.emlib.path} {includes} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.device} {compiler.cpp.flags} {compiler.cpp.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
 
 ## Compile S files
-recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.device} {compiler.S.flags} {compiler.S.extra_flags} {build.extra_flags} {compiler.arm.cmsis.path} {compiler.arm.device.path} {compiler.arm.emlib.path} {includes} "{source_file}" -o "{object_file}"
+recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.device} {compiler.S.flags} {compiler.S.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
 
 ## Create archives
-recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{build.path}/{archive_file}" "{object_file}"
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"
 
 ## Combine gc-sections, archives, and objects
 recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}"  "-L{build.path}" {compiler.c.elf.flags} {compiler.c.elf.extra_flags} "-T{runtime.hardware.path}/1.0.1/cores/cortex-m0plus/efm_lib/efm32zg.ld" "-Wl,-Map,{build.path}/{build.project_name}.map" --specs=nano.specs --specs=nosys.specs {compiler.ldflags} -o "{build.path}/{build.project_name}.elf" {object_files} -Wl,--start-group -lm "{build.path}/{archive_file}" -Wl,--end-group

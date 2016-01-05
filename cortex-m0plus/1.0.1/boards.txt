@@ -18,7 +18,7 @@
 engimusing_efm32zgusb.name=Engimusing EFM32ZGUSB
 engimusing_efm32zgusb.upload.tool=efm_upload
 engimusing_efm32zgusb.upload.protocol=xmodem
-engimusing_efm32zgusb.upload.maximum_size=32768
+engimusing_efm32zgusb.upload.maximum_size=16384
 engimusing_efm32zgusb.bootloader.tool=efm_bootloader
 engimusing_efm32zgusb.bootloader.file=efm32zg222_usb_l0.bin
 engimusing_efm32zgusb.build.mcu=cortex-m0plus
