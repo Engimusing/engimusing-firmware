@@ -7,11 +7,11 @@ extern TimersLP Timers;
 
 void test03_test(void)
 {
-  pinMode(2,INPUT);
-  pinMode(10,OUTPUT);
-  pinMode(3,OUTPUT);
-  pinMode(5,OUTPUT);
-  pinMode(8,OUTPUT);
+  pinMode(2, INPUT);
+  pinMode(10, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(8, OUTPUT);
   digitalWrite(3, HIGH);
   digitalWrite(5, LOW);
   digitalWrite(8, LOW);
@@ -19,7 +19,7 @@ void test03_test(void)
 
   delay(2000);
   Serial.println("\n\rArmed");
-  while(digitalRead(2) == HIGH);
+  while (digitalRead(2) == HIGH);
   digitalWrite(10, LOW);
   Timers.delay_us(150);
 
@@ -29,7 +29,7 @@ void test03_test(void)
   //  Timers.delay_us(20);
   digitalWrite(3, HIGH);
   Timers.delay_us(50);
-  while(digitalRead(2) == LOW);
+  while (digitalRead(2) == LOW);
   digitalWrite(10, HIGH);
   Timers.delay_us(150);
 
@@ -39,7 +39,7 @@ void test03_test(void)
   delayMicroseconds(1000);
   digitalWrite(5, LOW);
   Timers.delay_us(50);
-  while(digitalRead(2) == HIGH);
+  while (digitalRead(2) == HIGH);
   digitalWrite(10, LOW);
   Timers.delay_us(250);
 
@@ -53,7 +53,7 @@ void test03_test(void)
   digitalWrite(3, HIGH);
   digitalWrite(5, HIGH);
   digitalWrite(8, HIGH);
-  digitalWrite(10,HIGH);
+  digitalWrite(10, HIGH);
 }
 
 
@@ -68,19 +68,20 @@ void test03_desc(void)
 
 void test03(uint8_t function)
 {
-  switch(function) {
-  case TESTHELP:
-    Serial.print(test_help);
-    break;
-  case DESCRIPTION:
-    test03_desc();
-    break;
-  case RUNTEST:
-    Serial.println("\n\rRun test03");
-    test03_test();
-    break;
-  default:
-    Serial.println("\n\rBad Test Function");
-    break;
+  switch (function) {
+    case TESTHELP:
+      Serial.print(test_help);
+      break;
+    case DESCRIPTION:
+      test03_desc();
+      break;
+    case RUNTEST:
+      Serial.println("\n\rRun test03");
+      test03_test();
+      break;
+    default:
+      Serial.println("\n\rBad Test Function");
+      break;
   }
 }
+

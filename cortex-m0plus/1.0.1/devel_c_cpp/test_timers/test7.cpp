@@ -17,19 +17,20 @@ void test07_desc(void)
 
 void test07(uint8_t function)
 {
-  switch(function) {
-  case TESTHELP:
-    Serial.print(test_help);
-    break;
-  case DESCRIPTION:
-    test07_desc();
-    break;
-  case RUNTEST:
-    Serial.println("\n\rRun test07");
-    test07_test();
-    break;
-  default:
-    Serial.println("\n\rBad Test Function");
-    break;
+  switch (function) {
+    case TESTHELP:
+      Serial.print(test_help);
+      break;
+    case DESCRIPTION:
+      test07_desc();
+      break;
+    case RUNTEST:
+      Serial.println("\n\rRun test07");
+      test07_test();
+      break;
+    default:
+      Serial.println("\n\rBad Test Function");
+      break;
   }
 }
+

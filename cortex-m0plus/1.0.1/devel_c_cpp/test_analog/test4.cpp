@@ -33,3 +33,4 @@ void test04(uint8_t function)
     break;
   }
 }
+

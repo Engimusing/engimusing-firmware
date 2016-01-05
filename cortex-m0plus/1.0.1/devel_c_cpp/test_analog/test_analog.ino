@@ -14,13 +14,12 @@ void setup() {
   pinMode(14, OUTPUT);
   pinMode(15, OUTPUT);
 
-  // reserve 200 bytes for the inputString:
+  // reserve 16 bytes for the inputString:
   inputString.reserve(16);
-  inputString = "";
 
   Serial.begin(115200);
 
-  Serial.println("\n\r\n\rGPIO - Unit Test Framework" );
+  Serial.println("\n\r\n\rAnalog - Unit Test Framework 0.1" );
 }
 
 void printHelp(void)
@@ -32,7 +31,6 @@ void printHelp(void)
    Serial.print("  "); test04(TESTHELP); Serial.println();
    Serial.print("  "); test05(TESTHELP); Serial.println();
    Serial.print("  "); test06(TESTHELP); Serial.println();
-   Serial.print("  "); test07(TESTHELP); Serial.println();
    Serial.println();
 }
 
@@ -87,7 +85,6 @@ void parse_cmd(String str)
   else if(str == "t4") {test04(RUNTEST);}
   else if(str == "t5") {test05(RUNTEST);}
   else if(str == "t6") {test06(RUNTEST);}
-  else if(str == "t7") {test07(RUNTEST);}
 
   else if(str == "d1") {test01(DESCRIPTION);}
   else if(str == "d2") {test02(DESCRIPTION);}
@@ -95,8 +92,10 @@ void parse_cmd(String str)
   else if(str == "d4") {test04(DESCRIPTION);}
   else if(str == "d5") {test05(DESCRIPTION);}
   else if(str == "d6") {test06(DESCRIPTION);}
-  else if(str == "d7") {test07(DESCRIPTION);}
 
   else {Serial.print("\n\rBad Command: "); Serial.println(str);}
 }
+
+
+
 

@@ -14,13 +14,13 @@ void setup() {
   pinMode(14, OUTPUT);
   pinMode(15, OUTPUT);
 
-  // reserve 200 bytes for the inputString:
+  // reserve 16 bytes for the inputString:
   inputString.reserve(16);
   inputString = "";
 
   Serial.begin(115200);
 
-  Serial.println("\n\r\n\rGPIO - Unit Test Framework" );
+  Serial.println("\n\r\n\rTimer - Unit Test Framework" );
 }
 
 void printHelp(void)
@@ -33,6 +33,7 @@ void printHelp(void)
   Serial.print("  "); test05(TESTHELP); Serial.println();
   Serial.print("  "); test06(TESTHELP); Serial.println();
   Serial.print("  "); test07(TESTHELP); Serial.println();
+  Serial.print("  "); test08(TESTHELP); Serial.println();
   Serial.println();
 }
 
@@ -62,7 +63,6 @@ void delay_tty(int dly)
 }
 
 void loop() {
-  digitalWrite(13, LOW);   // turn the LED on (LOW is the voltage level)
   delay_tty(500);          // wait for a second
   digitalWrite(13, HIGH);  // turn the LED off by making the voltage HIGH
   delay_tty(500);          // wait for a second
@@ -132,4 +132,7 @@ void parse_cmd(String str)
     Serial.println(str);
   }
 }
+
+
+
 

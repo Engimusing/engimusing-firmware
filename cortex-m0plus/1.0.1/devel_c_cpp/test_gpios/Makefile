@@ -86,9 +86,6 @@ LIBS = -Wl,--start-group -lm ../../cores/cortex-m0plus/core.a -Wl,--end-group \
 INCLUDEPATHS += \
 -I.. \
 -I../../cores/cortex-m0plus/ \
--I../../cores/cortex-m0plus/device/inc/ \
--I../../cores/cortex-m0plus/cmsis/ \
--I../../cores/cortex-m0plus/em_lib/inc/ \
 -I../../cores/cortex-m0plus/efm_lib/ \
 -I../../variants/EFMUSB/ \
 -I.

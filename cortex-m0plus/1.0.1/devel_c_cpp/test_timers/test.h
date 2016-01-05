@@ -1,8 +1,6 @@
 #ifndef _EFMUSB_TESTH_
 #define _EFMUSB_TESTH_
 
-#include "efm_pin_config.h"
-
 #include "Arduino.h"
 
 void parse_cmd(String);
@@ -62,4 +60,5 @@ void test49(uint8_t);
 #define RUNTEST     (0x02)
 
 #endif
+
 

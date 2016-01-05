@@ -60,12 +60,12 @@ DEPFLAGS = -MMD -MP -MF $(@:.o=.d)
 #
 # Add -Wa,-ahld=$(LST_DIR)/$(@F:.o=.lst) to CFLAGS to produce assembly list files
 #
-override CFLAGS +=  -D$(DEVICE) -mcpu=cortex-m0 -mthumb -c -g -Os -w -std=gnu11 \
+override CFLAGS +=  -mcpu=cortex-m0 -mthumb -c -g -Os -w -std=gnu11 \
 -ffunction-sections -fdata-sections \
 -nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -MMD \
 -fno-rtti -fno-exceptions
 
-override CPPFLAGS +=  -D$(DEVICE) -mcpu=cortex-m0 -mthumb -c -g -Os -w -std=gnu++11 \
+override CPPFLAGS +=  -mcpu=cortex-m0 -mthumb -c -g -Os -w -std=gnu++11 \
 -ffunction-sections -fdata-sections -fno-threadsafe-statics \
 -nostdlib --param max-inline-insns-single=500 -MMD \
 -fno-rtti -fno-exceptions
@@ -86,9 +86,6 @@ LIBS = -Wl,--start-group -lm ../../cores/cortex-m0plus/core.a -Wl,--end-group \
 INCLUDEPATHS += \
 -I.. \
 -I../../cores/cortex-m0plus/ \
--I../../cores/cortex-m0plus/device/inc/ \
--I../../cores/cortex-m0plus/cmsis/ \
--I../../cores/cortex-m0plus/em_lib/inc/ \
 -I../../cores/cortex-m0plus/efm_lib/ \
 -I../../variants/EFMUSB/ \
 -I.
@@ -102,12 +99,15 @@ C_SRC += \
 
 CPP_SRC += \
 ../../variants/EFMUSB/variant.cpp \
+../main.cpp \
 $(wildcard *.cpp)
 
 s_SRC += 
 
-
 S_SRC += 
+
+INO_SRC += \
+$(wildcard *.ino)
 
 ####################################################################
 # Rules                                                            #
@@ -115,22 +115,26 @@ S_SRC +=
 
 C_FILES = $(notdir $(C_SRC) )
 CPP_FILES = $(notdir $(CPP_SRC) )
+INO_FILES = $(notdir $(INO_SRC) )
 S_FILES = $(notdir $(S_SRC) $(s_SRC) )
 
 #make list of source paths, sort also removes duplicates
 C_PATHS = $(sort $(dir $(C_SRC) ) )
 CPP_PATHS = $(sort $(dir $(CPP_SRC) ) )
+INO_PATHS = $(sort $(dir $(INO_SRC) ) )
 S_PATHS = $(sort $(dir $(S_SRC) $(s_SRC) ) )
 
 C_OBJS = $(addprefix $(OBJ_DIR)/, $(C_FILES:.c=.o))
 CPP_OBJS = $(addprefix $(OBJ_DIR)/, $(CPP_FILES:.cpp=.o))
+INO_OBJS = $(addprefix $(OBJ_DIR)/, $(INO_FILES:.ino=.o))
 S_OBJS = $(if $(S_SRC), $(addprefix $(OBJ_DIR)/, $(S_FILES:.S=.o)))
 s_OBJS = $(if $(s_SRC), $(addprefix $(OBJ_DIR)/, $(S_FILES:.s=.o)))
 C_DEPS = $(addprefix $(OBJ_DIR)/, $(C_FILES:.c=.d))
-OBJS = $(C_OBJS) $(CPP_OBJS) $(S_OBJS) $(s_OBJS)
+OBJS = $(INO_OBJS) $(C_OBJS) $(CPP_OBJS) $(S_OBJS) $(s_OBJS)
 
 vpath %.c $(C_PATHS)
 vpath %.cpp $(CPP_PATHS)
+vpath %.ino $(INO_PATHS)
 vpath %.s $(S_PATHS)
 vpath %.S $(S_PATHS)
 
@@ -142,7 +146,6 @@ corelib:
 
 release:  $(EXE_DIR)/$(PROJECTNAME).bin
 
-
 # Create objects from C SRC files
 $(OBJ_DIR)/%.o: %.c
 	@echo "Building file: $<"
@@ -152,6 +155,11 @@ $(OBJ_DIR)/%.o: %.c
 $(OBJ_DIR)/%.o: %.cpp
 	@echo "Building file: $<"
 	$(CPP) $(CPPFLAGS) $(INCLUDEPATHS) -c -o $@ $<
+
+# Create objects from ino files
+$(OBJ_DIR)/%.o: %.ino
+	@echo "Building file: $<"
+	$(CPP) -x c++ $(CPPFLAGS) $(INCLUDEPATHS) -c -o $@ $<
 
 # Assemble .s/.S files
 $(OBJ_DIR)/%.o: %.s
