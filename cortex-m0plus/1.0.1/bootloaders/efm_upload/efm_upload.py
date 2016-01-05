@@ -53,6 +53,8 @@ s = serial.Serial(port="/dev/" + args[1],
 
 if(s.isOpen() == False):
     s.open()
+    print "/dev/" + args[1] + " is open already"
+    sys.exit(0)
 
 print "Send Break"
 s.sendBreak(0.25)
@@ -60,36 +62,52 @@ print "Send Reset"
 s.write('r')
 
 # loop waiting for question mark, send r and ' ' again after timeout
-print "Send Space"
-s.write(' ')
+print "Send Spaces - wait for ?"
 
-print "Send u"
+ch = 0
+mustend = time.time() + 35
+while ((ch != '?') and (time.time() < mustend)):
+    s.write(' ')
+    ch = s.read()
+    if (ch != 0) and (ch != '?'):
+        sys.stdout.write(ch)
+
+if(ch == '?'):
+    print "? received"
+else:
+    print "Timed out waiting for ?"
+    sys.exit(0)
+
+print "Send u and wait for flash erase"
+
 s.write('u')
-
-print "Wait for flash erase"
 # loop while flash erase printing ....
-if(wait_until(s, '.', 10) == False):
+ch = 0
+mustend = time.time() + 35
+while ((ch != '.') and (time.time() < mustend)):
+    ch = s.read()
+    if ch == '.' or ch == '#':
+        sys.stdout.write(ch)
+    if(ch == '#'):
+        break
+    ch = 0
+
+if ch == '#':
+    print "\r\nFlash Erase Complete"
+else:
     print "Flash Erase Error"
     s.close()
     sys.exit(0)
 
-print "found ."
-
-ch = 0
-mustend = time.time() + 35
-while ((ch != '#') and (time.time() < mustend)):
-    ch = s.read()
-    sys.stdout.write(ch)
-
-print "found #"
 
 # timeout if C doesn't come
+ch = 0
 while ((ch != 'C') and (time.time() < mustend)):
     ch = s.read()
     print ch
 
 if(ch == 'C'):
-    print "C received - start transfer"
+    print "Start transfer"
 else:
     s.close()
     sys.exit(0)

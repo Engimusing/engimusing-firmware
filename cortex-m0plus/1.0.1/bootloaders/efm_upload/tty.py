@@ -5,7 +5,11 @@ import time
 def wait_until(s, ch, timeout):
     mustend = time.time() + timeout
     while time.time() < mustend:
-        if (s.read() == ch): return True
+        c = s.read()
+        if (c == ch):
+            return True
+        sys.stdout.write(ch)
+        c = 0
     return False
 
 def checkAck(s):
