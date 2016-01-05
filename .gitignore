@@ -6,6 +6,7 @@
 *.o
 *.obj
 *.slo
+*.pyc
 
 # Dependency files
 *.d
