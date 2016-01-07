@@ -31,11 +31,9 @@
  *
  ******************************************************************************/
 
-#include <stdbool.h>
-#include "xmodem.h"
-#include "em_device.h"
-#include "boot.h"
 #include "config.h"
+#include "xmodem.h"
+#include "boot.h"
 #include "serial.h"
 
 extern const uint32_t bootloader_size;
@@ -44,45 +42,48 @@ extern const uint32_t bootloader_size;
 #define CPU_USER_PROGRAM_VECTABLE_OFFSET  ((uint32_t)bootloader_size)
 #define SCB_VTOR    (*((volatile uint32_t *) 0xE000ED08))
 
+static uint32_t x[128];
 
 // Boots the application
 void BOOT_boot()
 {
   void (*pProgResetHandler)(void);
 
-  WDOG->CTRL = 0;
+  for(int i = 0; i < 128; i++) {
+    x[i] += x[i>>1];
+  }
 
   NVIC->ICER[0] = 0xFFFFFFFF;
   //  NVIC->ICER[1] = 0xFFFFFFFF;
-  RTC->CTRL  = _RTC_CTRL_RESETVALUE;
-  RTC->COMP0 = _RTC_COMP0_RESETVALUE;
-  RTC->IEN   = _RTC_IEN_RESETVALUE;
+  RTC->CTRL  = RTC_CTRL_RESETVALUE;
+  RTC->COMP0 = RTC_COMP0_RESETVALUE;
+  RTC->IEN   = RTC_IEN_RESETVALUE;
 
   // Reset GPIO settings
-  CMU->LFACLKEN0 = _CMU_LFACLKEN0_RESETVALUE;
-  CMU->LFCLKSEL  = _CMU_LFCLKSEL_RESETVALUE;
+  CMU->LFACLKEN0    = CMU_LFACLKEN0_RESETVALUE;
+  CMU->LFCLKSEL     = CMU_LFCLKSEL_RESETVALUE;
   // Disable LFRCO
-  CMU->OSCENCMD = CMU_OSCENCMD_LFRCODIS;
+  CMU->OSCENCMD     = CMU_OSCENCMD_LFRCODIS;
   // Disable LE interface
-  CMU->HFCORECLKEN0 = _CMU_HFCORECLKEN0_RESETVALUE;
+  CMU->HFCORECLKEN0 = CMU_HFCORECLKEN0_RESETVALUE;
   // Reset clocks
-  CMU->HFPERCLKDIV = _CMU_HFPERCLKDIV_RESETVALUE;
-  CMU->HFPERCLKEN0 = _CMU_HFPERCLKEN0_RESETVALUE;
+  CMU->HFPERCLKDIV  = CMU_HFPERCLKDIV_RESETVALUE;
+  CMU->HFPERCLKEN0  = CMU_HFPERCLKEN0_RESETVALUE;
 
   SCB_VTOR = CPU_USER_PROGRAM_VECTABLE_OFFSET & (uint32_t)0x1FFFFF80;
   pProgResetHandler = (void(*)(void))(*((uint32_t*)CPU_USER_PROGRAM_STARTADDR_PTR));
   pProgResetHandler();
 }
 
-void checkForValidApp(uint8_t uartID, uint32_t flashSize)
+void checkForValidApp(uint32_t flashSize)
 {
   uint32_t pc, sp;
 
   sp = *((uint32_t *) bootloader_size);
   pc = *((uint32_t *) bootloader_size + 1);
   if (pc > flashSize) {
-    if(uartID == 0) printf0("\r\nApplication pc > flash size\r\n"); else printf1("\r\nApplication pc > flash size\r\n");
+    printf1("\r\nApplication pc > flash size\r\n");
   }
-  if(uartID == 0) printf0("\r\n%x %x\r\n",sp,pc); else printf1("\r\n%x %x\r\n",sp,pc);
+  printf1("\r\n%x %x\r\n",sp,pc);
 }
 

@@ -31,16 +31,10 @@
  *
  ***************************************************************************/
 
-#include <stdbool.h>
-#include <stdint.h>
-#include "em_device.h"
-#include "em_cmu.h"
-#include "em_emu.h"
-#include "em_gpio.h"
-#include "em_usart.h"
 #include "config.h"
 #include "serial.h"
 #include "flash.h"
+#include "efm_gpio.h"
 
 const uint32_t bootloader_size = BOOTLOADER_SIZE;
 
@@ -68,7 +62,7 @@ void io_init()
 
   leuart_clkdiv = EFMZG_LEUART_CLKDIV;
   // Change to 21MHz internal osciallator to increase speed of bootloader
-  tuning = ((DEVINFO->HFRCOCAL1 & _DEVINFO_HFRCOCAL1_BAND21_MASK) >> _DEVINFO_HFRCOCAL1_BAND21_SHIFT);
+  tuning = ((DEVINFO->HFRCOCAL1 & DEVINFO_HFRCOCAL1_BAND21_MASK) >> DEVINFO_HFRCOCAL1_BAND21_SHIFT);
   CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_21MHZ | tuning;
 
   FLASH_CalcPageSize();  // Figure out correct flash page size
@@ -80,8 +74,8 @@ void io_init()
   // TTY1 - LEUART0
   GPIO->P[1].DOUT  = (1 << 13);  // To avoid false start, configure output LEU0_TX as high on PB13
   GPIO->P[1].MODEH = GPIO_P_MODEH_MODE13_WIREDANDPULLUP | GPIO_P_MODEH_MODE14_WIREDANDPULLUP;
-  GPIO->P[1].MODEH = (GPIO->P[1].MODEH & ~_GPIO_P_MODEH_MODE13_MASK) | GPIO_P_MODEH_MODE13_PUSHPULL;
-  GPIO->P[1].MODEH = (GPIO->P[1].MODEH & ~_GPIO_P_MODEH_MODE14_MASK) | GPIO_P_MODEH_MODE14_INPUT;
+  GPIO->P[1].MODEH = (GPIO->P[1].MODEH & ~GPIO_P_MODEH_MODE13_MASK) | GPIO_P_MODEH_MODE13_PUSHPULL;
+  GPIO->P[1].MODEH = (GPIO->P[1].MODEH & ~GPIO_P_MODEH_MODE14_MASK) | GPIO_P_MODEH_MODE14_INPUT;
   CMU->LFBCLKEN0 |=  CMU_LFBCLKEN_LEUART0;
   TTY1 = ((unsigned long *) LEUART0_BASE_ADDR);      // LEUART0
   TTY1[LEUART_IFC_REG] = LEUART_IFC_MASK;  // clear ints
@@ -106,18 +100,6 @@ void led_on_off(uint8_t on, uint8_t port, uint8_t pin)
 
 #define PUSHPULL  0x00000004UL
 
-
-void Pleds(uint8_t g)
-{
-  led_on_off(patterns[g] & 0x01, PD, 4); // PD4
-  led_on_off(patterns[g] & 0x02, PB, 8); // PB8
-  led_on_off(patterns[g] & 0x04, PC, 4); // PC4
-  led_on_off(patterns[g] & 0x08, PD, 6); // PD6
-  led_on_off(patterns[g] & 0x10, PB, 7); // PB7
-  led_on_off(patterns[g] & 0x20, PC, 1); // PC1
-  led_on_off(patterns[g] & 0x40, PC, 0); // PC0
-  led_on_off(patterns[g] & 0x80, PD, 7); // PD7
-}
 
 void GPIO_pinMode(GPIO_Port_TypeDef port, unsigned int pin, GPIO_Mode_TypeDef mode)
 {

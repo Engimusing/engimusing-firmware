@@ -39,6 +39,6 @@
 
 void BOOT_boot(void);
 bool BOOT_checkFirmwareIsValid(void);
-void checkForValidApp(uint8_t, uint32_t);
+void checkForValidApp(uint32_t);
 
 #endif

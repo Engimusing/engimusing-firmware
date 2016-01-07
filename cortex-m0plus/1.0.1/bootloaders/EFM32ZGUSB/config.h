@@ -39,14 +39,13 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "em_cmu.h"
-#include "em_device.h"
-#include "em_device.h"
-#include "em_emu.h"
-#include "em_gpio.h"
-#include "em_wdog.h"
-#include "em_i2c.h"
-#include "em_timer.h"
+#include "io_types.h"
+#include "cmsis.h"
+#include "efm_cmu_config.h"
+#include "efm_devinfo.h"
+#include "efm_emu.h"
+#include "efm_wdog.h"
+#include "leds.h"
 
 #include "boot.h"
 #include "crc.h"
@@ -55,8 +54,10 @@
 #include "rtc.h"
 #include "serial.h"
 #include "xmodem.h"
-#include "i2c.h"
 #include "timer.h"
+#include "efm_gpio.h"
+#include "efm_leuart.h"
+
 
 void io_init(void);
 void setup_gpios(unsigned int, unsigned int, unsigned int);
@@ -127,7 +128,6 @@ void tfp_printf1(char *fmt, ...);
 
 #define ROUTE_RXPEN_TXPEN   0x0003
 
-#define LEUART_STATUS_TXBL	(0x1UL << 4)
 #define USART_STATUS_TXBL	(0x1UL << 6)
 
 #define RXDATAXP_FERRP    (0x1UL << 15)
@@ -157,17 +157,6 @@ void tfp_printf1(char *fmt, ...);
 
 /** The size of the bootloader flash image */
 #define BOOTLOADER_SIZE      0x2000
-
-void ledRedOn(void);
-void ledRedOff(void);
-void ledGreenOn(void);
-void ledGreenOff(void);
-void ledBlueOn(void);
-void ledBlueOff(void);
-void ledOff(void);
-void ledOn(void);
-void ledAllOff(void);
-void ledAllOn(void);
 
 #define PORTA    0
 #define PORTB    1
@@ -240,7 +229,6 @@ void ledAllOn(void);
 
 void init_connector_test(void);
 void p_test(void);
-void Pleds(uint8_t);
 void test_inputs(void);
 void print_txparams(void);
 void delayt(uint32_t val);

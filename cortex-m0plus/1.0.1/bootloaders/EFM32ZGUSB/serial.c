@@ -31,9 +31,6 @@
  *
  ***************************************************************************/
 
-#include "em_emu.h"
-#include <stdbool.h>
-#include <stdint.h>
 #include "config.h"
 #include "serial.h"
 
@@ -47,17 +44,6 @@ volatile struct circularBuffer
 } rxBuf0, txBuf0, rxBuf1, txBuf1 = { {0}, 0, 0, 0, false };
 
 
-void tty0_rx_data(uint8_t rxData)
-{
-  rxBuf0.data[rxBuf0.wrI] = rxData;
-  rxBuf0.wrI = (rxBuf0.wrI + 1) % BUFFERSIZE;
-  rxBuf0.pendingBytes++;
-  if (rxBuf0.pendingBytes > BUFFERSIZE)    // Flag Rx overflow
-    {
-      rxBuf0.overflow = true;
-    }
-}
-
 void tty1_rx_data(uint8_t rxData)
 {
   rxBuf1.data[rxBuf1.wrI] = rxData;
@@ -69,25 +55,12 @@ void tty1_rx_data(uint8_t rxData)
     }
 }
 
-uint8_t tty0_get_pending_byte(void)
-{
-  uint8_t data = txBuf0.data[txBuf0.rdI];      // Transmit pending character
-  txBuf0.rdI = (txBuf0.rdI + 1) % BUFFERSIZE;
-  txBuf0.pendingBytes--;
-  return data;
-}
-
 uint8_t tty1_get_pending_byte(void)
 {
   uint8_t data = txBuf1.data[txBuf1.rdI];      // Transmit pending character
   txBuf1.rdI = (txBuf1.rdI + 1) % BUFFERSIZE;
   txBuf1.pendingBytes--;
   return data;
-}
-
-uint32_t tty0_get_number_pendingBytes(void)
-{
-  return txBuf0.pendingBytes;
 }
 
 uint32_t tty1_get_number_pendingBytes(void)
@@ -97,20 +70,8 @@ uint32_t tty1_get_number_pendingBytes(void)
 
 
 // Transmit single byte
-void SERIAL_txByte(uint8_t uartID, uint8_t data)
+void SERIAL_txByte(uint8_t data)
 {
-  if(uartID == 0) {
-    if ((txBuf0.pendingBytes + 1) > BUFFERSIZE)  // Check if Tx queue has room for new data
-      {
-	while ((txBuf0.pendingBytes + 1) > BUFFERSIZE) ;    // Wait until there is room in queue
-      }
-    txBuf0.data[txBuf0.wrI] = data;  // Copy ch into txBuffer
-    txBuf0.wrI             = (txBuf0.wrI + 1) % BUFFERSIZE;
-    tty0_disable_tx_ints();
-    txBuf0.pendingBytes++;  // Increment pending byte counter
-    tty0_enable_tx_ints();
-    tty0_enable_tx_int();
-  } else {
     if ((txBuf1.pendingBytes + 1) > BUFFERSIZE)  // Check if Tx queue has room for new data
       {
 	while ((txBuf1.pendingBytes + 1) > BUFFERSIZE) ;    // Wait until there is room in queue
@@ -121,86 +82,43 @@ void SERIAL_txByte(uint8_t uartID, uint8_t data)
     txBuf1.pendingBytes++;  // Increment pending byte counter
     tty1_enable_tx_ints();
     tty1_enable_tx_int();
-  }
 }
 
-uint8_t SERIAL_rxByte(uint8_t uartID)
+uint8_t SERIAL_rxByte(void)
 {
   uint8_t ch;
   // Check if there is a byte that is ready to be fetched. If no byte is ready, wait for incoming data
-  if(uartID == 0) {
-    if (rxBuf0.pendingBytes < 1) {
-	while (rxBuf0.pendingBytes < 1) ;
-	EMU_EnterEM1();
-    }
-    ch = rxBuf0.data[rxBuf0.rdI];    // Copy data from buffer
-    rxBuf0.rdI = (rxBuf0.rdI + 1) % BUFFERSIZE;
-    tty0_disable_rx_ints();
-    rxBuf0.pendingBytes--;    // Decrement pending byte counter
-    tty0_enable_rx_ints();
-    return ch;
- } else {
-    if (rxBuf1.pendingBytes < 1) {
-	while (rxBuf1.pendingBytes < 1) ;
-	EMU_EnterEM1();
-    }
+  if (rxBuf1.pendingBytes < 1) {
+    while (rxBuf1.pendingBytes < 1) ;
+    EMU_EnterEM1();
+  }
+  ch = rxBuf1.data[rxBuf1.rdI];    // Copy data from buffer
+  rxBuf1.rdI = (rxBuf1.rdI + 1) % BUFFERSIZE;
+  tty1_disable_rx_ints();
+  rxBuf1.pendingBytes--;    // Decrement pending byte counter
+  tty1_enable_rx_ints();
+  return ch;
+}
+
+uint8_t SERIAL_check_rxByte(void)
+{
+  uint8_t ch;
+  if (rxBuf1.pendingBytes > 0) {
     ch = rxBuf1.data[rxBuf1.rdI];    // Copy data from buffer
     rxBuf1.rdI = (rxBuf1.rdI + 1) % BUFFERSIZE;
     tty1_disable_rx_ints();
     rxBuf1.pendingBytes--;    // Decrement pending byte counter
     tty1_enable_rx_ints();
     return ch;
-   }
-  return 0;  
-}
-
-uint8_t SERIAL_check_rxByte(uint8_t uartID)
-{
-  uint8_t ch;
-  if(uartID == 0)  {
-    if (rxBuf0.pendingBytes > 0) {
-      ch = rxBuf0.data[rxBuf0.rdI];    // Copy data from buffer
-      rxBuf0.rdI = (rxBuf0.rdI + 1) % BUFFERSIZE;
-      tty0_disable_rx_ints();
-      rxBuf0.pendingBytes--;    // Decrement pending byte counter
-      tty0_enable_rx_ints();
-      return ch;
-    }
-  } else {
-    if (rxBuf1.pendingBytes > 0) {
-      ch = rxBuf1.data[rxBuf1.rdI];    // Copy data from buffer
-      rxBuf1.rdI = (rxBuf1.rdI + 1) % BUFFERSIZE;
-      tty1_disable_rx_ints();
-      rxBuf1.pendingBytes--;    // Decrement pending byte counter
-      tty1_enable_rx_ints();
-      return ch;
-    }
   }
   return 0;
 }
 
-uint8_t SERIAL_rx_ready(uint8_t uartID)
+uint8_t SERIAL_rx_ready(void)
 {
-  if(uartID == 0)
-    return (rxBuf0.pendingBytes);
-  else
-    return (rxBuf1.pendingBytes);
-  return 0;  
+  return (rxBuf1.pendingBytes);
 }
 
-
-void putc0(void* p, char ch)
-{
-  (void) p;
-
-  while ((txBuf0.pendingBytes + 1) > BUFFERSIZE) ;    // Wait until there is room in queue
-  txBuf0.data[txBuf0.wrI] = ch;  // Copy ch into txBuffer
-  txBuf0.wrI = (txBuf0.wrI + 1) % BUFFERSIZE;
-  tty0_disable_tx_ints();
-  txBuf0.pendingBytes++;  // Increment pending byte counter
-  tty0_enable_tx_ints();
-  tty0_enable_tx_int();
-}
 
 void putc1(void* p, char ch)
 {

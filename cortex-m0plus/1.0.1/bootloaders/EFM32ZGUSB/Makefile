@@ -21,7 +21,7 @@ LST_DIR = lst
 # You might need to do changes to match your system setup          #
 ####################################################################
 
-TOOLDIR    = ../tools/arm-2013.05
+TOOLDIR    = ~/.arduino15/packages/engimusing/tools/arm-none-eabi-gcc/4.8.3-2014q1
 
 RM         := rm -rf
 NULLDEVICE := /dev/null
@@ -41,6 +41,7 @@ ifeq (clean,$(findstring clean, $(MAKECMDGOALS)))
 endif
 
 CC      = $(QUOTE)$(TOOLDIR)/bin/arm-none-eabi-gcc$(QUOTE)
+CPP     = $(QUOTE)$(TOOLDIR)/bin/arm-none-eabi-g++$(QUOTE)
 LD      = $(QUOTE)$(TOOLDIR)/bin/arm-none-eabi-ld$(QUOTE)
 AR      = $(QUOTE)$(TOOLDIR)/bin/arm-none-eabi-ar$(QUOTE)
 OBJCOPY = $(QUOTE)$(TOOLDIR)/bin/arm-none-eabi-objcopy$(QUOTE)
@@ -51,66 +52,59 @@ SIZE    = $(QUOTE)$(TOOLDIR)/bin/arm-none-eabi-size$(QUOTE)
 # Flags                                                            #
 ####################################################################
 
-# -MMD : Don't generate dependencies on system header files.
-# -MP  : Add phony targets, useful when a h-file is removed from a project.
-# -MF  : Specify a file to write the dependencies to.
-DEPFLAGS = -MMD -MP -MF $(@:.o=.d)
 
-#
-# Add -Wa,-ahld=$(LST_DIR)/$(@F:.o=.lst) to CFLAGS to produce assembly list files
-#
-override CFLAGS += -D$(DEVICE) -Wall -Wextra -mcpu=cortex-m0 -mthumb -ffunction-sections \
--fdata-sections -ldrd -fomit-frame-pointer -std=c99 \
-$(DEPFLAGS)
+override CFLAGS +=  -w -mcpu=cortex-m0 -mthumb -c -g -Os -std=gnu11 \
+-ffunction-sections -fdata-sections \
+-nostdlib --param max-inline-insns-single=500 -fno-rtti -fno-exceptions -MMD \
+-fno-rtti -fno-exceptions
 
-override ASMFLAGS += -x assembler-with-cpp -D$(DEVICE) -Wall -Wextra -mcpu=cortex-m0 -mthumb
+override CPPFLAGS += -w -mcpu=cortex-m0 -mthumb -c -g -Os -std=gnu++11 \
+-ffunction-sections -fdata-sections -fno-threadsafe-statics \
+-nostdlib --param max-inline-insns-single=500 -MMD \
+-fno-rtti -fno-exceptions
+
+override ASMFLAGS += -x assembler-with-cpp -Wall -Wextra -mcpu=cortex-m0 -mthumb
 
 #
 # NOTE: The -Wl,--gc-sections flag may interfere with debugging using gdb.
 #
-override LDFLAGS += -Xlinker -Map=$(LST_DIR)/$(PROJECTNAME).map -mcpu=cortex-m0 \
--mthumb -T../lib/Device/SiliconLabs/EFM32ZG/Source/G++/efm32zg.ld -Wl,--gc-sections
+override LDFLAGS += -Xlinker -Map=$(LST_DIR)/$(PROJECTNAME).map \
+-mcpu=cortex-m0 -mthumb \
+-Tefm32zg.ld \
+-Wl,--gc-sections --specs=nano.specs --specs=nosys.specs 
 
-LIBS = -Wl,--start-group -lgcc -lc -lcs3 -lcs3unhosted -Wl,--end-group
+LIBS = -Wl,--start-group -lm ../../cores/cortex-m0plus/core.a -Wl,--end-group \
+-Wl,--start-group -lgcc -lc -Wl,--end-group \
 
 INCLUDEPATHS += \
 -I.. \
--I../lib/CMSIS/Include \
--I../lib/Device/SiliconLabs/EFM32ZG/Include \
--I../lib/emlib/inc \
--I../lib \
--I../src \
+-I../../cores/cortex-m0plus/efm_lib/ \
+-I../../cores/cortex-m0plus/ \
 -I.
 
 ####################################################################
 # Files                                                            #
 ####################################################################
 
-#src/init.c \
-#src/jumptable.c \
-
-C_SRC +=  \
-../lib/Device/SiliconLabs/EFM32ZG/Source/system_efm32zg.c \
-../lib/emlib/src/em_assert.c \
-../lib/emlib/src/em_cmu.c \
-../lib/emlib/src/em_emu.c \
-../lib/emlib/src/em_gpio.c \
-../lib/emlib/src/em_system.c \
-../lib/emlib/src/em_usart.c \
-../lib/emlib/src/em_wdog.c \
-../src/crc.c \
-../src/boot.c \
-../src/flash.c \
-../src/main.c \
-../src/printf.c \
-../src/serial.c \
-../src/rtc.c \
-../src/timer.c \
+C_SRC += \
+../../cores/cortex-m0plus/efm_lib/efm_wdog.c \
+boot.c \
+clk.c \
+config.c \
+crc.c \
+flash.c \
+led.c \
+printf.c \
+rtc.c \
+serial.c \
+timer.c \
 xmodem.c \
-config.c
+main.c
 
-s_SRC +=  \
-../lib/Device/SiliconLabs/EFM32ZG/Source/G++/startup_efm32zg.s
+CPP_SRC += \
+
+s_SRC += 
+
 
 S_SRC += 
 
@@ -119,48 +113,64 @@ S_SRC +=
 ####################################################################
 
 C_FILES = $(notdir $(C_SRC) )
+CPP_FILES = $(notdir $(CPP_SRC) )
 S_FILES = $(notdir $(S_SRC) $(s_SRC) )
+
 #make list of source paths, sort also removes duplicates
 C_PATHS = $(sort $(dir $(C_SRC) ) )
+CPP_PATHS = $(sort $(dir $(CPP_SRC) ) )
 S_PATHS = $(sort $(dir $(S_SRC) $(s_SRC) ) )
 
 C_OBJS = $(addprefix $(OBJ_DIR)/, $(C_FILES:.c=.o))
+CPP_OBJS = $(addprefix $(OBJ_DIR)/, $(CPP_FILES:.cpp=.o))
 S_OBJS = $(if $(S_SRC), $(addprefix $(OBJ_DIR)/, $(S_FILES:.S=.o)))
 s_OBJS = $(if $(s_SRC), $(addprefix $(OBJ_DIR)/, $(S_FILES:.s=.o)))
 C_DEPS = $(addprefix $(OBJ_DIR)/, $(C_FILES:.c=.d))
-OBJS = $(C_OBJS) $(S_OBJS) $(s_OBJS)
+OBJS = $(C_OBJS) $(CPP_OBJS) $(S_OBJS) $(s_OBJS)
 
 vpath %.c $(C_PATHS)
+vpath %.cpp $(CPP_PATHS)
 vpath %.s $(S_PATHS)
 vpath %.S $(S_PATHS)
 
 # Default build is debug build
 all:      release
 
-release:  CFLAGS += -g3 -Os
 release:  $(EXE_DIR)/$(PROJECTNAME).bin
+
 
 # Create objects from C SRC files
 $(OBJ_DIR)/%.o: %.c
+	@echo
 	@echo "Building file: $<"
 	$(CC) $(CFLAGS) $(INCLUDEPATHS) -c -o $@ $<
 
+# Create objects from cpp files
+$(OBJ_DIR)/%.o: %.cpp
+	@echo
+	@echo "Building file: $<"
+	$(CPP) $(CPPFLAGS) $(INCLUDEPATHS) -c -o $@ $<
+
 # Assemble .s/.S files
 $(OBJ_DIR)/%.o: %.s
+	@echo
 	@echo "Assembling $<"
 	$(CC) $(ASMFLAGS) $(INCLUDEPATHS) -c -o $@ $<
 
 $(OBJ_DIR)/%.o: %.S
+	@echo
 	@echo "Assembling $<"
 	$(CC) $(ASMFLAGS) $(INCLUDEPATHS) -c -o $@ $<
 
 # Link
 $(EXE_DIR)/$(PROJECTNAME).out: $(OBJS)
+	@echo
 	@echo "Linking target: $@"
 	$(CC) $(LDFLAGS) $(OBJS) $(LIBS) -o $(EXE_DIR)/$(PROJECTNAME).out
 
 # Create binary file
 $(EXE_DIR)/$(PROJECTNAME).bin: $(EXE_DIR)/$(PROJECTNAME).out
+	@echo
 	@echo "Creating binary file"
 	$(OBJCOPY) -O binary $(EXE_DIR)/$(PROJECTNAME).out $(EXE_DIR)/$(PROJECTNAME).bin
 # Uncomment next line to produce assembly listing of entire program
@@ -170,7 +180,6 @@ $(EXE_DIR)/$(PROJECTNAME).bin: $(EXE_DIR)/$(PROJECTNAME).out
 
 prog:
 	~/Documents/Silabs/eACommander/start-eACommander.sh --verify --flash exe/efmusb.bin --reset
-
 clean:
 ifeq ($(filter $(MAKECMDGOALS),all debug release),)
 	$(RM) $(OBJ_DIR) $(LST_DIR) $(EXE_DIR)
@@ -180,3 +189,4 @@ endif
 ifneq (clean,$(findstring clean, $(MAKECMDGOALS)))
 -include $(C_DEPS)
 endif
+

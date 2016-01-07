@@ -31,9 +31,8 @@
  *
  ******************************************************************************/
 
-#include "em_device.h"
-#include "flash.h"
 #include "config.h"
+#include "flash.h"
 
 // DMA Control block. We only need 1 block for transfers.
 // This control block needs to be aligned to 256 byte boundaries.

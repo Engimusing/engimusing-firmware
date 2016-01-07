@@ -31,13 +31,11 @@
  *
  ******************************************************************************/
 
-#include "em_device.h"
-#include "em_wdog.h"
+#include "config.h"
 #include "xmodem.h"
 #include "serial.h"
 #include "flash.h"
 #include "crc.h"
-#include "config.h"
 
 const uint8_t dot[]    = ".";
 
@@ -100,11 +98,10 @@ int XMODEM_download(uint32_t baseAddress, uint32_t endAddress)
   // Note: This is a fairly long delay between retransmissions(~6 s).
 
   while(1) {
-    SERIAL_txByte(1, XMODEM_NCG);
-    SERIAL_txByte(1, XMODEM_NCG);
+    SERIAL_txByte(XMODEM_NCG);
     for (i = 0; i < 100000; i++) {
       WDOG_Feed();
-      if(SERIAL_rx_ready(1))
+      if(SERIAL_rx_ready())
 	goto xmodem_transfer;
     }
   }
@@ -115,10 +112,10 @@ int XMODEM_download(uint32_t baseAddress, uint32_t endAddress)
     pkt = (XMODEM_packet *) rawPacket[sequenceNumber & 1];
 
     // Fetch the first byte of the packet explicitly, as it defines the rest of the packet
-    pkt->header = SERIAL_rxByte(1);
+    pkt->header = SERIAL_rxByte();
 
     if (pkt->header == XMODEM_EOT)  {     // Check for end of transfer
-      SERIAL_txByte(1, XMODEM_ACK);  // Acknowledget End of transfer
+      SERIAL_txByte(XMODEM_ACK);  // Acknowledget End of transfer
       break;
     }
     printf1("%");
@@ -130,13 +127,13 @@ int XMODEM_download(uint32_t baseAddress, uint32_t endAddress)
     // Fill the remaining bytes packet
     // Byte 0 is padding, byte 1 is header
     for (byte = 2; byte < sizeof(XMODEM_packet); byte++) {
-      *(((uint8_t *) pkt) + byte) = SERIAL_rxByte(1);
+      *(((uint8_t *) pkt) + byte) = SERIAL_rxByte();
     }
 
     if (XMODEM_verifyPacketChecksum(pkt, sequenceNumber) != 0) {
       // On a malformed packet, we send a NAK, and start over
       //SERIAL_printString(1, s12);
-      SERIAL_txByte(1, XMODEM_NAK);
+      SERIAL_txByte(XMODEM_NAK);
       continue;
     }
     // Write data to flash
@@ -146,7 +143,7 @@ int XMODEM_download(uint32_t baseAddress, uint32_t endAddress)
 		     (uint8_t const *) pkt->data);
 
     sequenceNumber++;
-    SERIAL_txByte(1, XMODEM_ACK);    // Send ACK
+    SERIAL_txByte(XMODEM_ACK);    // Send ACK
   }
   WDOG_Feed();
   while (DMA->CHENS & DMA_CHENS_CH0ENS) ;  // Wait for the last DMA transfer to finish.

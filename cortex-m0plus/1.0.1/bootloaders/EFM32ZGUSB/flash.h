@@ -34,12 +34,12 @@
 #ifndef FLASH_H
 #define FLASH_H
 
-/*
- * Flash programming hardware interface
- *
- */
+#include "efm_msc.h"
+#include "efm_dma.h"
 
-/* Helper functions */
+// Flash programming hardware interface
+
+// Helper functions
 void FLASH_writeWord(uint32_t address, uint32_t data);
 void FLASH_writeBlock(void *block_start,
                                 uint32_t offset_into_block,

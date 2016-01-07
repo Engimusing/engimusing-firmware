@@ -34,16 +34,13 @@
 #ifndef _SERIAL_H
 #define _SERIAL_H
 
-#include <stdbool.h>
-#include "em_usart.h"
+void    SERIAL_txByte(uint8_t data);
+uint8_t SERIAL_rxByte(void);
+uint8_t SERIAL_check_rxByte(void);
+uint8_t SERIAL_rx_ready(void);
 
-void    SERIAL_txByte(uint8_t uartID, uint8_t data);
-uint8_t SERIAL_rxByte(uint8_t uartID);
-uint8_t SERIAL_check_rxByte(uint8_t uartID);
-uint8_t SERIAL_rx_ready(uint8_t uartID);
-
-void    SERIAL_printString(uint8_t uartID, const uint8_t *string);
-void    SERIAL_printHex(uint8_t uartID, uint32_t integer);
+void    SERIAL_printString(const uint8_t *string);
+void    SERIAL_printHex(uint32_t integer);
 
 void tty0_enable_rx_ints(void);
 void tty0_disable_rx_ints(void);

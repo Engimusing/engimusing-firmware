@@ -32,9 +32,7 @@
  ******************************************************************************/
 
 
-#include <stdbool.h>
-#include "em_device.h"
-//#include "usart.h"
+#include "config.h"
 #include "rtc.h"
 
 volatile bool rtcInt = false;

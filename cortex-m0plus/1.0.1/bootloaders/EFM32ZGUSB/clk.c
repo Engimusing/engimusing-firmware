@@ -31,10 +31,8 @@
  *
  ******************************************************************************/
 
-#include <stdbool.h>
-#include "em_device.h"
+#include "config.h"
 #include "clk.h"
-#include "em_cmu.h"
 #include "flash.h"
 
 
@@ -52,14 +50,8 @@ void initClocks(void)
   
   FLASH_CalcPageSize();  // Figure out correct flash page size
 
-#if defined(_EFM32_ZERO_FAMILY)
   // Change to 21MHz internal osciallator to increase speed of bootloader
-  tuning = ((DEVINFO->HFRCOCAL1 & _DEVINFO_HFRCOCAL1_BAND21_MASK) >> _DEVINFO_HFRCOCAL1_BAND21_SHIFT);
+  tuning = ((DEVINFO->HFRCOCAL1 & DEVINFO_HFRCOCAL1_BAND21_MASK) >> DEVINFO_HFRCOCAL1_BAND21_SHIFT);
   CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_21MHZ | tuning;
-#else
-  // Change to 28MHz internal osciallator to increase speed of bootloader
-  tuning = (DEVINFO->HFRCOCAL1 & _DEVINFO_HFRCOCAL1_BAND28_MASK) >> _DEVINFO_HFRCOCAL1_BAND28_SHIFT;
-  CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_28MHZ | tuning;
-#endif
 }
 

@@ -5,7 +5,7 @@ static volatile int timer_int = 0;
 
 void init_timer(void)
 {
-  CMU_ClockEnable(cmuClock_TIMER0, true);
+  CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_TIMER0;
 
   TIMER0->CTRL = TIMER_CTRL_MODE_UP | TIMER_CTRL_OSMEN | TIMER_CTRL_DEBUGRUN;
   NVIC_EnableIRQ(TIMER0_IRQn);  // Enable TIMER0 interrupt vector in NVIC
