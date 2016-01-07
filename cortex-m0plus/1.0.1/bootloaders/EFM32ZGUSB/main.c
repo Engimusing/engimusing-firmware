@@ -99,7 +99,6 @@ int main(void)
   FLASH_init();  // Initialize flash for writing
   printEntryMessages();
   initRTC();
-  init_timer();
 
   // Wait to allow operator to type a <SPACE> to enter the bootloader
   // If timeout boot the application

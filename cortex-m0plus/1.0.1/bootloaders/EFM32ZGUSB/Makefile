@@ -97,7 +97,6 @@ led.c \
 printf.c \
 rtc.c \
 serial.c \
-timer.c \
 xmodem.c \
 main.c
 

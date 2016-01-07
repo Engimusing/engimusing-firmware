@@ -54,7 +54,6 @@
 #include "rtc.h"
 #include "serial.h"
 #include "xmodem.h"
-#include "timer.h"
 #include "efm_gpio.h"
 #include "efm_leuart.h"
 
