@@ -3,6 +3,8 @@
 #include "io_types.h"
 #include <stdint.h>
 
+#define CMU_UNLOCK_CODE                         0x580E        // CMU unlock code
+
 #define CMU_HFPERCLKDIV_HFPERCLKEN        (0x1UL << 8)        // HFPERCLK Enable
 #define CMU_HFPERCLKEN0_GPIO              (0x1UL << 7)        // General purpose Input/Output Clock Enable
 #define CMU_HFCORECLKEN0_LE               (0x1UL << 2)        // Low Energy Peripheral Interface Clock Enable
@@ -20,6 +22,14 @@
 #define CMU_DIV_REG_POS            4
 #define CMU_HFCORE_CLK_BRANCH      2
 #define CMU_CLK_BRANCH_POS         17
+
+#define CMU_LFACLKEN0_RESETVALUE           0x00000000UL      // Default value for CMU_LFA
+#define CMU_LFCLKSEL_RESETVALUE            0x00000005UL      // Default value for CMU_LFCLKSEL
+
+#define CMU_OSCENCMD_LFRCODIS              (0x1UL << 7)      // LFRCO Disable
+#define CMU_HFCORECLKEN0_RESETVALUE        0x00000000UL      // Default value for CMU_HFCORECLKEN0
+#define CMU_HFPERCLKDIV_RESETVALUE         0x00000100UL      // Default value for CMU_HFPERCLKDIV
+#define CMU_HFPERCLKEN0_RESETVALUE         0x00000000UL      // Default value for CMU_HFPERCLKEN0
 
 //#define cmuClock_CORE  ((CMU_HFCORECLKDIV_REG << CMU_DIV_REG_POS) | (CMU_HFCORE_CLK_BRANCH << CMU_CLK_BRANCH_POS))
 

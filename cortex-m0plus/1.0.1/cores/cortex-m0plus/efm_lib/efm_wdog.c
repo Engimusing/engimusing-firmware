@@ -16,23 +16,19 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "efm_wdog.h"
 
-#ifndef __EFM_PIN_CONFIG_H
-#define __EFM_PIN_CONFIG_H
-
-#include <stdint.h>
-#include "wiring_constants.h"
-#include "efm_gpio.h"
-
-#ifdef __cplusplus
-extern "C"{
-#endif // __cplusplus
-
-  void GPIO_config(uint32_t port, uint32_t pin, uint32_t ulMode);
-
-#ifdef __cplusplus
+void initWdog(void)
+{
+  WDOG->CTRL = WDOG_CTRL_CLKSEL_LFRCO | wdogPeriod_64k << 8;
 }
-#endif // __cplusplus
 
-#endif  // __EFM_PIN_CONFIG_H
+void WDOG_Feed(void)
+{
+  if(!(WDOG->CTRL & WDOG_CTRL_EN) || (WDOG->SYNCBUSY & WDOG_SYNCBUSY_CMD)) { // do not feed if disabled
+    return;
+  }
+  while(WDOG->SYNCBUSY & WDOG_SYNCBUSY_CTRL); // wait for other writes to complete
+  WDOG->CMD = WDOG_CMD_CLEAR;
+}
 
