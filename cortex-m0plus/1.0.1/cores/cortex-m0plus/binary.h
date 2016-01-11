@@ -17,8 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef Binary_h
-#define Binary_h
+#pragma once
 
 #define B0 0
 #define B00 0
@@ -531,4 +530,3 @@
 #define B11111110 254
 #define B11111111 255
 
-#endif

@@ -32,8 +32,7 @@
  *
  ******************************************************************************/
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -250,7 +249,4 @@ void led4_off(void);
 void led5_off(void);
 void led6_off(void);
 void led7_off(void);
-
-
-#endif
 

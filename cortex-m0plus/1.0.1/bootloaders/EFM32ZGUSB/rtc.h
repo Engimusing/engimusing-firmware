@@ -31,9 +31,7 @@
  *
  ******************************************************************************/
 
-
-#ifndef _RTC_H
-#define _RTC_H
+#pragma once
 
 #include "efm_rtc.h"
 
@@ -42,4 +40,3 @@ void RTC_IRQHandler(void);
 bool getRTCint(void);
 void clearRTCint(void);
 
-#endif

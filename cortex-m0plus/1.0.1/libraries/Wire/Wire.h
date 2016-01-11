@@ -17,8 +17,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef TwoWire_h
-#define TwoWire_h
+#pragma once
 
 #include "Stream.h"
 #include "variant.h"
@@ -101,4 +100,3 @@ class TwoWire : public Stream
 
 extern TwoWire Wire;
 
-#endif

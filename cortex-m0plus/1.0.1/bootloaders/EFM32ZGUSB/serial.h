@@ -31,8 +31,7 @@
  *
  ******************************************************************************/
 
-#ifndef _SERIAL_H
-#define _SERIAL_H
+#pragma once
 
 void    SERIAL_txByte(uint8_t data);
 uint8_t SERIAL_rxByte(void);
@@ -56,4 +55,3 @@ void tty1_disable_tx_ints(void);
 // Declare a circular buffer structure to use for Rx and Tx queues
 #define BUFFERSIZE          256
 
-#endif

@@ -17,8 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _VARIANT_EFM32ZGUSB_
-#define _VARIANT_EFM32ZGUSB_
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -48,6 +47,4 @@ extern TimersLP Timers;
 
   void init_efm32zg(void);
 
-
-#endif // _VARIANT_EFM32ZGUSB_
 

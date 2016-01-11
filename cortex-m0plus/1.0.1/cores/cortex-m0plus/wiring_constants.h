@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _WIRING_CONSTANTS_
-#define _WIRING_CONSTANTS_
+#pragma once
 
 #ifdef __cplusplus
 extern "C"{
@@ -207,5 +206,3 @@ enum BitOrder {
 #ifdef __cplusplus
 } // extern "C"
 #endif // __cplusplus
-
-#endif /* _WIRING_CONSTANTS_ */

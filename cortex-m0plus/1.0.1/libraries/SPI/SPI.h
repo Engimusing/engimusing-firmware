@@ -17,8 +17,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef _SPI_H_INCLUDED
-#define _SPI_H_INCLUDED
+#pragma once
 
 #include <Arduino.h>
 
@@ -150,4 +149,3 @@ void SPIClass::transfer(void *buf, size_t count)
   #define SPI_CLOCK_DIV128 255
 #endif
 
-#endif

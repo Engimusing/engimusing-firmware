@@ -31,8 +31,7 @@
  *
  ******************************************************************************/
 
-#ifndef _BOOT_H
-#define _BOOT_H
+#pragma once
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -41,4 +40,3 @@ void BOOT_boot(void);
 bool BOOT_checkFirmwareIsValid(void);
 void checkForValidApp(uint32_t);
 
-#endif

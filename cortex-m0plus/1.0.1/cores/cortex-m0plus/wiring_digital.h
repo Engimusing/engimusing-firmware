@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _WIRING_DIGITAL_
-#define _WIRING_DIGITAL_
+#pragma once
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,4 +65,3 @@ extern "C" {
 }
 #endif
 
-#endif /* _WIRING_DIGITAL_ */

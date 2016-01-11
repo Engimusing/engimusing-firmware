@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _WIRING_MATH_
-#define _WIRING_MATH_
+#pragma once
 
 extern long random( long ) ;
 extern long random( long, long ) ;
@@ -29,5 +28,3 @@ extern uint16_t makeWord( uint8_t h, uint8_t l ) ;
 
 #define word(...) makeWord(__VA_ARGS__)
 
-
-#endif /* _WIRING_MATH_ */

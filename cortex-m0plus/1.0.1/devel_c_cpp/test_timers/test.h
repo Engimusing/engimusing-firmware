@@ -1,5 +1,4 @@
-#ifndef _EFMUSB_TESTH_
-#define _EFMUSB_TESTH_
+#pragma once
 
 #include "Arduino.h"
 
@@ -58,7 +57,4 @@ void test49(uint8_t);
 #define TESTHELP    (0x00)
 #define DESCRIPTION (0x01)
 #define RUNTEST     (0x02)
-
-#endif
-
 

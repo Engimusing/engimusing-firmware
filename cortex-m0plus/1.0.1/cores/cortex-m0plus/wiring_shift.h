@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _WIRING_SHIFT_
-#define _WIRING_SHIFT_
+#pragma once
 
 #ifdef __cplusplus
  extern "C" {
@@ -40,4 +39,3 @@ extern void shiftOut( uint32_t ulDataPin, uint32_t ulClockPin, uint32_t ulBitOrd
 }
 #endif
 
-#endif /* _WIRING_SHIFT_ */

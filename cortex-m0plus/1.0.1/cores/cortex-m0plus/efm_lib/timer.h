@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _TIMERLP_
-#define _TIMERLP_
+#pragma once
 
 #include "efm_cmu_config.h"
 #include "efm_pin_config.h"
@@ -102,4 +101,3 @@ extern "C"{
 
 #endif
 
-#endif /* _TIMERLP_ */

@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef Character_h
-#define Character_h
+#pragma once
 
 #include <ctype.h>
 
@@ -176,4 +175,3 @@ inline int toUpperCase(int c)
 }
 #endif
 
-#endif

@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _ANALOGLP_
-#define _ANALOGLP_
+#pragma once
 
 #include "Arduino.h"
 #include "io_types.h"
@@ -301,4 +300,3 @@ typedef struct
 #define _ADC_BIASPROG_COMPBIAS_SHIFT                      8           // Shift value for ADC_COMPBIAS
 #define _ADC_BIASPROG_COMPBIAS_MASK                   0xF00           // Bit mask for ADC_COMPBIAS
 
-#endif /* _ANALOGLP_ */

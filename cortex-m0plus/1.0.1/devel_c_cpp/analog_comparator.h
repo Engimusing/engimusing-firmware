@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _VARIANT_ACMP_
-#define _VARIANT_ACMP_
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -56,5 +55,3 @@ extern "C" {
 #define ACMP_CTRL_HALFBIAS_ON         (ACMP_CTRL_HALFBIAS)
 #define ACMP_CTRL_HALFBIAS_OFF        (0x00)
 
-
-#endif

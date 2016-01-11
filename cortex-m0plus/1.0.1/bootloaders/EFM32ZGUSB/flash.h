@@ -31,8 +31,7 @@
  *
  ******************************************************************************/
 
-#ifndef FLASH_H
-#define FLASH_H
+#pragma once
 
 #include "efm_dma.h"
 #include "efm_msc.h"
@@ -51,4 +50,3 @@ void FLASH_init(void);
 void FLASH_CalcPageSize(void);
 
 extern volatile uint32_t flashPageSize;
-#endif

@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef Print_h
-#define Print_h
+#pragma once
 
 #include <inttypes.h>
 #include <stdio.h> // for size_t
@@ -99,5 +98,3 @@ class Print
 
 };
 
-
-#endif

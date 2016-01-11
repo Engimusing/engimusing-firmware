@@ -17,8 +17,7 @@
 */
 
 
-#ifndef __EFM_PIN_CONFIG_H
-#define __EFM_PIN_CONFIG_H
+#pragma once
 
 #include <stdint.h>
 #include "wiring_constants.h"
@@ -33,6 +32,4 @@ extern "C"{
 #ifdef __cplusplus
 }
 #endif // __cplusplus
-
-#endif  // __EFM_PIN_CONFIG_H
 

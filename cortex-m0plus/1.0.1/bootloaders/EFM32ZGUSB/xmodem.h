@@ -31,8 +31,7 @@
  *
  ******************************************************************************/
 
-#ifndef _XMODEM_H
-#define _XMODEM_H
+#pragma once
 
 #include <stdint.h>
 
@@ -66,4 +65,3 @@ typedef struct
 int XMODEM_download(uint32_t baseAddress, uint32_t endAddress);
 int XMODEM_downloadAndReset(uint32_t baseAddress, uint32_t endAddress);
 
-#endif

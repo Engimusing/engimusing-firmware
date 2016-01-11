@@ -16,8 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _DELAY_
-#define _DELAY_
+#pragma once
 
 #include <stdint.h>
 
@@ -50,4 +49,3 @@ extern void delay( uint32_t dwMs ) ;
 }
 #endif
 
-#endif /* _DELAY_ */

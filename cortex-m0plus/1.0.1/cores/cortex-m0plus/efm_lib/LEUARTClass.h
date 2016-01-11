@@ -17,8 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef _LEUART_CLASS_
-#define _LEUART_CLASS_
+#pragma once
 
 #include "RingBuffer.h"
 #include "HardwareSerial.h"
@@ -68,4 +67,3 @@ class LEUARTClass : public HardwareSerial
 
 };
 
-#endif // _LEUART_CLASS_
