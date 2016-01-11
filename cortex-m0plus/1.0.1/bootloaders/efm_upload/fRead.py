@@ -18,6 +18,11 @@ from tty import checkAck
 packet_size   = 128
 debug = 0
 
+def debugPrint(s):
+    if s.inWaiting() > 0:
+        print s.read()
+    return
+
 def sendPackets(s, filename):
 
     stream = file(filename, 'rb')
@@ -43,8 +48,11 @@ def sendPackets(s, filename):
             print
             print
 
+        if debug: debugPrint(s)
+
         if checkAck(s) == True:
             if debug:
+                print "checkAck -> True"
                 print " %r" % sequence
             else:
                 sys.stdout.write('>')
@@ -58,9 +66,10 @@ def sendPackets(s, filename):
                 return True
         else:
             print
+            print "checkAck -> False"
             print "Packet %r Failed" % sequence
             errcnt += 1
-            if errcnt > 15:
+            if errcnt > 0:
                 print "Transfer Errors"
                 return False
 

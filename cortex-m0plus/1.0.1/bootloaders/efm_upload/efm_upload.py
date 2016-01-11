@@ -65,18 +65,19 @@ s.write('r')
 print "Send Spaces - wait for ?"
 
 ch = 0
-mustend = time.time() + 35
-while ((ch != '?') and (time.time() < mustend)):
+cnt = 10
+while True:
     s.write(' ')
-    ch = s.read()
-    if (ch != 0) and (ch != '?'):
-        sys.stdout.write(ch)
+    if(wait_until(s, '?', 1) == True):
+        break;
+    else:
+        cnt = cnt -1
+        if cnt == 0:
+            print "timed out waiting for ? after sending space"
+            s.close()
+            sys.exit(0)
 
-if(ch == '?'):
-    print "? received"
-else:
-    print "Timed out waiting for ?"
-    sys.exit(0)
+print "? received"
 
 print "Send u and wait for flash erase"
 
