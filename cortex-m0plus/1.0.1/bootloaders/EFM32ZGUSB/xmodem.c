@@ -36,7 +36,7 @@
 #include "serial.h"
 #include "flash.h"
 #include "crc.h"
-
+ 
 const uint8_t dot[]    = ".";
 
 
@@ -54,13 +54,15 @@ __INLINE int XMODEM_verifyPacketChecksum(XMODEM_packet *pkt, int sequenceNumber)
   uint16_t packetCRC;
   uint16_t calculatedCRC;
 
-  printf1("#\r\n");
+  printf1('#');
   if (pkt->packetNumber + pkt->packetNumberC != 255) { // Check the packet number integrity
-    printf1("packet number error 1\r\n");
+    SERIAL_txByte(XMODEM_NAK);
+    printf1("!");
     return -1;
   }
   if (pkt->packetNumber != (sequenceNumber % 256)) { // Check that the packet number matches the excpected number
-    printf1("packet number error 2\r\n");
+    SERIAL_txByte(XMODEM_NAK);
+    printf1("@");
     return -1;
   }
 
@@ -68,7 +70,8 @@ __INLINE int XMODEM_verifyPacketChecksum(XMODEM_packet *pkt, int sequenceNumber)
   packetCRC     = pkt->crcHigh << 8 | pkt->crcLow;
 
   if (calculatedCRC != packetCRC) { // Check the CRC value
-    printf1("crc error\r\n");
+    SERIAL_txByte(XMODEM_NAK);
+    printf1("~");
     return -1;
   }
   return 0;
@@ -91,12 +94,11 @@ int XMODEM_download(uint32_t baseAddress, uint32_t endAddress)
     FLASH_eraseOneBlock(addr);
     printf1(".");
   }
-  printf1("#\r\n");
+  printf1("#");
 
   // Send one start transmission packet. Wait for a response. If there is no
   // response, we resend the start transmission packet.
   // Note: This is a fairly long delay between retransmissions(~6 s).
-
   while(1) {
     SERIAL_txByte(XMODEM_NCG);
     for (i = 0; i < 100000; i++) {
@@ -115,21 +117,26 @@ int XMODEM_download(uint32_t baseAddress, uint32_t endAddress)
     pkt->header = SERIAL_rxByte();
 
     if (pkt->header == XMODEM_EOT)  {     // Check for end of transfer
-      SERIAL_txByte(XMODEM_ACK);  // Acknowledget End of transfer
+      printf1(XMODEM_ACK);  // Acknowledget End of transfer
       break;
     }
-    printf1("%");
-
     // If the header is not a start of header (SOH), then cancel the transfer.
     if (pkt->header != XMODEM_SOH)	{
+      SERIAL_txByte(XMODEM_NAK);
+      printf1('^');
       return -1;
     }
     // Fill the remaining bytes packet
     // Byte 0 is padding, byte 1 is header
+    uint32_t t = millis();
     for (byte = 2; byte < sizeof(XMODEM_packet); byte++) {
       *(((uint8_t *) pkt) + byte) = SERIAL_rxByte();
+      if(t > millis() + 12) {
+	printf1('`');
+	SERIAL_txByte(XMODEM_NAK);
+	break;
+      }
     }
-
     if (XMODEM_verifyPacketChecksum(pkt, sequenceNumber) != 0) {
       // On a malformed packet, we send a NAK, and start over
       //SERIAL_printString(1, s12);
@@ -147,7 +154,7 @@ int XMODEM_download(uint32_t baseAddress, uint32_t endAddress)
   }
   WDOG_Feed();
   while (DMA->CHENS & DMA_CHENS_CH0ENS) ;  // Wait for the last DMA transfer to finish.
-  printf1("---END\n\r");
+  printf1("$");
 
   uint32_t endp =  bootloader_size + (XMODEM_DATA_SIZE * (sequenceNumber -1));
   uint16_t crc = CRC_calc((uint8_t *)bootloader_size, (uint8_t *)endp);

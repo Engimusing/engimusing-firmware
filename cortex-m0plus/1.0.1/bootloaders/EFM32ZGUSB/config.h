@@ -233,5 +233,24 @@ void print_txparams(void);
 void delayt(uint32_t val);
 void GPIO_pinMode(GPIO_Port_TypeDef port, unsigned int pin, GPIO_Mode_TypeDef mode);
 
+void led0_on(void);
+void led1_on(void);
+void led2_on(void);
+void led3_on(void);
+void led4_on(void);
+void led5_on(void);
+void led6_on(void);
+void led7_on(void);
+
+void led0_off(void);
+void led1_off(void);
+void led2_off(void);
+void led3_off(void);
+void led4_off(void);
+void led5_off(void);
+void led6_off(void);
+void led7_off(void);
+
+
 #endif
 

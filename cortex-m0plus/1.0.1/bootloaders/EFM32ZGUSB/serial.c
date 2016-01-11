@@ -90,7 +90,6 @@ uint8_t SERIAL_rxByte(void)
   // Check if there is a byte that is ready to be fetched. If no byte is ready, wait for incoming data
   if (rxBuf1.pendingBytes < 1) {
     while (rxBuf1.pendingBytes < 1) ;
-    EMU_EnterEM1();
   }
   ch = rxBuf1.data[rxBuf1.rdI];    // Copy data from buffer
   rxBuf1.rdI = (rxBuf1.rdI + 1) % BUFFERSIZE;

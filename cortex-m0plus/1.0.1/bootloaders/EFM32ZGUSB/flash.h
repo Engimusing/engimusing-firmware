@@ -34,8 +34,9 @@
 #ifndef FLASH_H
 #define FLASH_H
 
-#include "efm_msc.h"
 #include "efm_dma.h"
+#include "efm_msc.h"
+
 
 // Flash programming hardware interface
 

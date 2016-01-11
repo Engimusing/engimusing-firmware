@@ -9,6 +9,14 @@ typedef struct
 
 typedef struct
 {
+  __IO void * __IO SRCEND;     // DMA source address end
+  __IO void * __IO DSTEND;     // DMA destination address end
+  __IO uint32_t    CTRL;       // DMA control register
+  __IO uint32_t    USER;       // DMA padding register, available for user
+} DMA_DESCRIPTOR_TypeDef;
+
+typedef struct
+{
    __I uint32_t STATUS;         // DMA Status Registers
    __O uint32_t CONFIG;         // DMA Configuration Register
   __IO uint32_t CTRLBASE;       // Channel Control Data Base Pointer Register
@@ -40,79 +48,69 @@ typedef struct
        DMA_CH_TypeDef CH[4];    // Channel registers
 } DMA_TypeDef;
 
-typedef struct
-{
-  __IO void * __IO SRCEND;     // DMA source address end
-  __IO void * __IO DSTEND;     // DMA destination address end
-  __IO uint32_t    CTRL;       // DMA control register
-  __IO uint32_t    USER;       // DMA padding register, available for user
-} DMA_DESCRIPTOR_TypeDef;
-
 #define DMA                          ((DMA_TypeDef *) 0x400C2000UL)   // DMA base pointer
 
 // Bit fields for DMA STATUS
-#define DMA_STATUS_RESETVALUE                           0x10030000UL  // Default value for DMA_STATUS
-#define DMA_STATUS_MASK                                 0x001F00F1UL  // Mask for DMA_STATUS
-#define DMA_STATUS_EN                                   (0x1UL << 0)  // DMA Enable Status
-#define DMA_STATUS_EN_MASK                                     0x1UL  // Bit mask for DMA_EN
-#define DMA_STATUS_EN_DEFAULT                           0x00000000UL  // Mode DEFAULT for DMA_STATUS
-#define DMA_STATUS_STATE_SHIFT                                     4  // Shift value for DMA_STATE
-#define DMA_STATUS_STATE_MASK                                 0xF0UL  // Bit mask for DMA_STATE
-
-#define DMA_STATUS_STATE_DEFAULT                 (0x00000000UL << 4)  // Shifted mode DEFAULT for DMA_STATUS
-#define DMA_STATUS_STATE_IDLE                    (0x00000000UL << 4)  // Shifted mode IDLE for DMA_STATUS
-#define DMA_STATUS_STATE_RDCHCTRLDATA            (0x00000001UL << 4)  // Shifted mode RDCHCTRLDATA for DMA_STATUS
-#define DMA_STATUS_STATE_RDSRCENDPTR             (0x00000002UL << 4)  // Shifted mode RDSRCENDPTR for DMA_STATUS
-#define DMA_STATUS_STATE_RDDSTENDPTR             (0x00000003UL << 4)  // Shifted mode RDDSTENDPTR for DMA_STATUS
-#define DMA_STATUS_STATE_RDSRCDATA               (0x00000004UL << 4)  // Shifted mode RDSRCDATA for DMA_STATUS
-#define DMA_STATUS_STATE_WRDSTDATA               (0x00000005UL << 4)  // Shifted mode WRDSTDATA for DMA_STATUS
-#define DMA_STATUS_STATE_WAITREQCLR              (0x00000006UL << 4)  // Shifted mode WAITREQCLR for DMA_STATUS
-#define DMA_STATUS_STATE_WRCHCTRLDATA            (0x00000007UL << 4)  // Shifted mode WRCHCTRLDATA for DMA_STATUS
-#define DMA_STATUS_STATE_STALLED                 (0x00000008UL << 4)  // Shifted mode STALLED for DMA_STATUS
-#define DMA_STATUS_STATE_DONE                    (0x00000009UL << 4)  // Shifted mode DONE for DMA_STATUS
-#define DMA_STATUS_STATE_PERSCATTRANS            (0x0000000AUL << 4)  // Shifted mode PERSCATTRANS for DMA_STATUS
-#define DMA_STATUS_CHNUM_MASK                             0x1F0000UL  // Bit mask for DMA_CHNUM
-#define DMA_STATUS_CHNUM_DEFAULT                (0x00000003UL << 16)  // Shifted mode DEFAULT for DMA_STATUS
+#define DMA_STATUS_RESETVALUE                          0x10030000UL  // Default value for DMA_STATUS
+#define DMA_STATUS_EN                                  (0x1UL << 0)  // DMA Enable Status
+#define DMA_STATUS_STATE_MASK                                0xF0UL  // Bit mask for DMA_STATE
+#define DMA_STATUS_STATE_DEFAULT                (0x00000000UL << 4)  // Mode DEFAULT for DMA_STATUS
+#define DMA_STATUS_STATE_IDLE                   (0x00000000UL << 4)  // Mode IDLE for DMA_STATUS
+#define DMA_STATUS_STATE_RDCHCTRLDATA           (0x00000001UL << 4)  // Mode RDCHCTRLDATA for DMA_STATUS
+#define DMA_STATUS_STATE_RDSRCENDPTR            (0x00000002UL << 4)  // Mode RDSRCENDPTR for DMA_STATUS
+#define DMA_STATUS_STATE_RDDSTENDPTR            (0x00000003UL << 4)  // Mode RDDSTENDPTR for DMA_STATUS
+#define DMA_STATUS_STATE_RDSRCDATA              (0x00000004UL << 4)  // Mode RDSRCDATA for DMA_STATUS
+#define DMA_STATUS_STATE_WRDSTDATA              (0x00000005UL << 4)  // Mode WRDSTDATA for DMA_STATUS
+#define DMA_STATUS_STATE_WAITREQCLR             (0x00000006UL << 4)  // Mode WAITREQCLR for DMA_STATUS
+#define DMA_STATUS_STATE_WRCHCTRLDATA           (0x00000007UL << 4)  // Mode WRCHCTRLDATA for DMA_STATUS
+#define DMA_STATUS_STATE_STALLED                (0x00000008UL << 4)  // Mode STALLED for DMA_STATUS
+#define DMA_STATUS_STATE_DONE                   (0x00000009UL << 4)  // Mode DONE for DMA_STATUS
+#define DMA_STATUS_STATE_PERSCATTRANS           (0x0000000AUL << 4)  // Mode PERSCATTRANS for DMA_STATUS
+#define DMA_STATUS_CHNUM_MASK                            0x1F0000UL  // Bit mask for DMA_CHNUM
+#define DMA_STATUS_CHNUM_DEFAULT               (0x00000003UL << 16)  // Mode DEFAULT for DMA_STATUS
 
 // Bit fields for DMA CONFIG
-#define DMA_CONFIG_RESETVALUE                           0x00000000UL  // Default value for DMA_CONFIG
-#define DMA_CONFIG_MASK                                 0x00000021UL  // Mask for DMA_CONFIG
-#define DMA_CONFIG_EN                                   (0x1UL << 0)  // Enable DMA
-#define DMA_CONFIG_CHPROT                               (0x1UL << 5)  // Channel Protection Control
+#define DMA_CONFIG_RESETVALUE                          0x00000000UL  // Default value for DMA_CONFIG
+#define DMA_CONFIG_MASK                                0x00000021UL  // Mask for DMA_CONFIG
+#define DMA_CONFIG_EN                                  (0x1UL << 0)  // Enable DMA
+#define DMA_CONFIG_CHPROT                              (0x1UL << 5)  // Channel Protection Control
 
 // Bit fields for DMA CTRLBASE
-#define DMA_CTRLBASE_RESETVALUE                         0x00000000UL  // Default value for DMA_CTRLBASE
-#define DMA_CTRLBASE_MASK                               0xFFFFFFFFUL  // Mask for DMA_CTRLBASE
-#define DMA_CTRLBASE_CTRLBASE_DEFAULT            (0x00000000UL << 0)  // Shifted mode DEFAULT for DMA_CTRLBASE
+#define DMA_CTRLBASE_RESETVALUE                        0x00000000UL  // Default value for DMA_CTRLBASE
+#define DMA_CTRLBASE_MASK                              0xFFFFFFFFUL  // Mask for DMA_CTRLBASE
 
 // Bit fields for DMA ALTCTRLBASE
-#define DMA_ALTCTRLBASE_RESETVALUE                      0x00000040UL  // Default value for DMA_ALTCTRLBASE
-#define DMA_ALTCTRLBASE_MASK                            0xFFFFFFFFUL  // Mask for DMA_ALTCTRLBASE
-#define DMA_ALTCTRLBASE_ALTCTRLBASE_DEFAULT      (0x00000040UL << 0)  // Shifted mode DEFAULT for DMA_ALTCTRLBASE
+#define DMA_ALTCTRLBASE_RESETVALUE                     0x00000040UL  // Default value for DMA_ALTCTRLBASE
+#define DMA_ALTCTRLBASE_MASK                           0xFFFFFFFFUL  // Mask for DMA_ALTCTRLBASE
+#define DMA_ALTCTRLBASE_ALTCTRLBASE_DEFAULT            0x00000040UL  // Mode DEFAULT for DMA_ALTCTRLBASE
 
 // Bit fields for DMA CHWAITSTATUS
-#define DMA_CHWAITSTATUS_RESETVALUE                     0x0000000FUL  // Default value for DMA_CHWAITSTATUS
-#define DMA_CHWAITSTATUS_MASK                           0x0000000FUL  // Mask for DMA_CHWAITSTATUS
-#define DMA_CHWAITSTATUS_CH0WAITSTATUS                  (0x1UL << 0)  // Channel 0 Wait on Request Status
-#define DMA_CHWAITSTATUS_CH1WAITSTATUS                  (0x1UL << 1)  // Channel 1 Wait on Request Status
-#define DMA_CHWAITSTATUS_CH2WAITSTATUS                  (0x1UL << 2)  // Channel 2 Wait on Request Status
-#define DMA_CHWAITSTATUS_CH3WAITSTATUS                  (0x1UL << 3)  // Channel 3 Wait on Request Status
+#define DMA_CHWAITSTATUS_RESETVALUE                    0x0000000FUL  // Default value for DMA_CHWAITSTATUS
+#define DMA_CHWAITSTATUS_MASK                          0x0000000FUL  // Mask for DMA_CHWAITSTATUS
+#define DMA_CHWAITSTATUS_CH0WAITSTATUS                 (0x1UL << 0)  // Channel 0 Wait on Request Status
+#define DMA_CHWAITSTATUS_CH1WAITSTATUS                 (0x1UL << 1)  // Channel 1 Wait on Request Status
+#define DMA_CHWAITSTATUS_CH2WAITSTATUS                 (0x1UL << 2)  // Channel 2 Wait on Request Status
+#define DMA_CHWAITSTATUS_CH3WAITSTATUS                 (0x1UL << 3)  // Channel 3 Wait on Request Status
 
 // Bit fields for DMA CHSWREQ
-#define _DMA_CHSWREQ_RESETVALUE                         0x00000000UL  // Default value for DMA_CHSWREQ
-#define _DMA_CHSWREQ_MASK                               0x0000000FUL  // Mask for DMA_CHSWREQ
-#define DMA_CHSWREQ_CH0SWREQ                            (0x1UL << 0)  // Channel 0 Software Request
-#define DMA_CHSWREQ_CH1SWREQ                            (0x1UL << 1)  // Channel 1 Software Request
-#define DMA_CHSWREQ_CH2SWREQ                            (0x1UL << 2)  // Channel 2 Software Request
-#define DMA_CHSWREQ_CH3SWREQ                            (0x1UL << 3)  // Channel 3 Software Request
+#define DMA_CHSWREQ_RESETVALUE                         0x00000000UL  // Default value for DMA_CHSWREQ
+#define DMA_CHSWREQ_MASK                               0x0000000FUL  // Mask for DMA_CHSWREQ
+#define DMA_CHSWREQ_CH0SWREQ                           (0x1UL << 0)  // Channel 0 Software Request
+#define DMA_CHSWREQ_CH1SWREQ                           (0x1UL << 1)  // Channel 1 Software Request
+#define DMA_CHSWREQ_CH2SWREQ                           (0x1UL << 2)  // Channel 2 Software Request
+#define DMA_CHSWREQ_CH3SWREQ                           (0x1UL << 3)  // Channel 3 Software Request
 
 // Bit fields for DMA CHUSEBURSTS
-#define _DMA_CHUSEBURSTS_RESETVALUE                     0x00000000UL  // Default value for DMA_CHUSEBURSTS
-#define _DMA_CHUSEBURSTS_MASK                           0x0000000FUL  // Mask for DMA_CHUSEBURSTS
-#define DMA_CHUSEBURSTS_CH0USEBURSTS                    (0x1UL << 0)  // Channel 0 Useburst Set
-#define DMA_CHUSEBURSTS_CH1USEBURSTS                    (0x1UL << 1)  // Channel 1 Useburst Set
-#define DMA_CHUSEBURSTS_CH2USEBURSTS                    (0x1UL << 2)  // Channel 2 Useburst Set
-#define DMA_CHUSEBURSTS_CH3USEBURSTS                    (0x1UL << 3)  // Channel 3 Useburst Set
+#define DMA_CHUSEBURSTS_RESETVALUE                     0x00000000UL  // Default value for DMA_CHUSEBURSTS
+#define DMA_CHUSEBURSTS_MASK                           0x0000000FUL  // Mask for DMA_CHUSEBURSTS
+#define DMA_CHUSEBURSTS_CH0USEBURSTS                   (0x1UL << 0)  // Channel 0 Useburst Set
+
+#define DMA_CHUSEBURSTS_CH0USEBURSTS_DEFAULT           0x00000000UL  // Mode DEFAULT for DMA_CHUSEBURSTS
+#define DMA_CHUSEBURSTS_CH0USEBURSTS_SINGLEANDBURST    0x00000000UL  // Mode SINGLEANDBURST for DMA_CHUSEBURSTS
+#define DMA_CHUSEBURSTS_CH0USEBURSTS_BURSTONLY         0x00000001UL  // Mode BURSTONLY for DMA_CHUSEBURSTS
+#define DMA_CHUSEBURSTS_CH1USEBURSTS                   (0x1UL << 1)  // Channel 1 Useburst Set
+#define DMA_CHUSEBURSTS_CH2USEBURSTS                   (0x1UL << 2)  // Channel 2 Useburst Set
+#define DMA_CHUSEBURSTS_CH3USEBURSTS                   (0x1UL << 3)  // Channel 3 Useburst Set
 
 // Bit fields for DMA CHUSEBURSTC
 #define _DMA_CHUSEBURSTC_RESETVALUE                     0x00000000UL  // Default value for DMA_CHUSEBURSTC
@@ -274,17 +272,19 @@ typedef struct
 #define DMA_CH_CTRL_SIGSEL_USART1TXBLRIGHT              0x00000004UL  // Mode USART1TXBLRIGHT for DMA_CH_CTRL
 
 
-#define DMA_CH_CTRL_SOURCESEL_SHIFT                               16  // Shift value for DMA_SOURCESEL
 #define DMA_CH_CTRL_SOURCESEL_MASK                        0x3F0000UL  // Bit mask for DMA_SOURCESEL
-#define DMA_CH_CTRL_SOURCESEL_NONE                      0x00000000UL  // Mode NONE for DMA_CH_CTRL
-#define DMA_CH_CTRL_SOURCESEL_ADC0                      0x00000008UL  // Mode ADC0 for DMA_CH_CTRL
-#define DMA_CH_CTRL_SOURCESEL_USART1                    0x0000000DUL  // Mode USART1 for DMA_CH_CTRL
-#define DMA_CH_CTRL_SOURCESEL_LEUART0                   0x00000010UL  // Mode LEUART0 for DMA_CH_CTRL
-#define DMA_CH_CTRL_SOURCESEL_I2C0                      0x00000014UL  // Mode I2C0 for DMA_CH_CTRL
-#define DMA_CH_CTRL_SOURCESEL_TIMER0                    0x00000018UL  // Mode TIMER0 for DMA_CH_CTRL
-#define DMA_CH_CTRL_SOURCESEL_TIMER1                    0x00000019UL  // Mode TIMER1 for DMA_CH_CTRL
-#define DMA_CH_CTRL_SOURCESEL_MSC                       0x00000030UL  // Mode MSC for DMA_CH_CTRL
-#define DMA_CH_CTRL_SOURCESEL_AES                       0x00000031UL  // Mode AES for DMA_CH_CTRL
+#define DMA_CH_CTRL_SOURCESEL_NONE              (0x00000000UL << 16)  // Mode NONE for DMA_CH_CTRL
+#define DMA_CH_CTRL_SOURCESEL_ADC0              (0x00000008UL << 16)  // Mode ADC0 for DMA_CH_CTRL
+#define DMA_CH_CTRL_SOURCESEL_USART1            (0x0000000DUL << 16)  // Mode USART1 for DMA_CH_CTRL
+#define DMA_CH_CTRL_SOURCESEL_LEUART0           (0x00000010UL << 16)  // Mode LEUART0 for DMA_CH_CTRL
+#define DMA_CH_CTRL_SOURCESEL_I2C0              (0x00000014UL << 16)  // Mode I2C0 for DMA_CH_CTRL
+#define DMA_CH_CTRL_SOURCESEL_TIMER0            (0x00000018UL << 16)  // Mode TIMER0 for DMA_CH_CTRL
+#define DMA_CH_CTRL_SOURCESEL_TIMER1            (0x00000019UL << 16)  // Mode TIMER1 for DMA_CH_CTRL
+#define DMA_CH_CTRL_SOURCESEL_MSC               (0x00000030UL << 16)  // Mode MSC for DMA_CH_CTRL
+#define DMA_CH_CTRL_SOURCESEL_AES               (0x00000031UL << 16)  // Mode AES for DMA_CH_CTRL
+
+
+
 
 #define _DMA_CTRL_DST_INC_MASK                          0xC0000000UL  // Data increment for destination, bit mask
 #define _DMA_CTRL_DST_INC_SHIFT                                   30  // Data increment for destination, shift value
@@ -382,33 +382,3 @@ typedef struct
 #define DMA_CTRL_CYCLE_CTRL_MEM_SCATTER_GATHER_ALT     0x000000005UL  // Memory scatter gather using alternate structure
 #define DMA_CTRL_CYCLE_CTRL_PER_SCATTER_GATHER         0x000000006UL  // Peripheral scatter gather cycle type
 #define DMA_CTRL_CYCLE_CTRL_PER_SCATTER_GATHER_ALT     0x000000007UL  // Peripheral scatter gather cycle type using alternate structure
-
-
-#define DMAREQ_ADC0_SINGLE                           ((8 << 16) + 0)  // DMA channel select for ADC0_SINGLE
-#define DMAREQ_ADC0_SCAN                             ((8 << 16) + 1)  // DMA channel select for ADC0_SCAN
-#define DMAREQ_USART1_RXDATAV                        ((13 << 16) + 0) // DMA channel select for USART1_RXDATAV
-#define DMAREQ_USART1_TXBL                           ((13 << 16) + 1) // DMA channel select for USART1_TXBL
-#define DMAREQ_USART1_TXEMPTY                        ((13 << 16) + 2) // DMA channel select for USART1_TXEMPTY
-#define DMAREQ_USART1_RXDATAVRIGHT                   ((13 << 16) + 3) // DMA channel select for USART1_RXDATAVRIGHT
-#define DMAREQ_USART1_TXBLRIGHT                      ((13 << 16) + 4) // DMA channel select for USART1_TXBLRIGHT
-#define DMAREQ_LEUART0_RXDATAV                       ((16 << 16) + 0) // DMA channel select for LEUART0_RXDATAV
-#define DMAREQ_LEUART0_TXBL                          ((16 << 16) + 1) // DMA channel select for LEUART0_TXBL
-#define DMAREQ_LEUART0_TXEMPTY                       ((16 << 16) + 2) // DMA channel select for LEUART0_TXEMPTY
-#define DMAREQ_I2C0_RXDATAV                          ((20 << 16) + 0) // DMA channel select for I2C0_RXDATAV
-#define DMAREQ_I2C0_TXBL                             ((20 << 16) + 1) // DMA channel select for I2C0_TXBL
-#define DMAREQ_TIMER0_UFOF                           ((24 << 16) + 0) // DMA channel select for TIMER0_UFOF
-#define DMAREQ_TIMER0_CC0                            ((24 << 16) + 1) // DMA channel select for TIMER0_CC0
-#define DMAREQ_TIMER0_CC1                            ((24 << 16) + 2) // DMA channel select for TIMER0_CC1
-#define DMAREQ_TIMER0_CC2                            ((24 << 16) + 3) // DMA channel select for TIMER0_CC2
-#define DMAREQ_TIMER1_UFOF                           ((25 << 16) + 0) // DMA channel select for TIMER1_UFOF
-#define DMAREQ_TIMER1_CC0                            ((25 << 16) + 1) // DMA channel select for TIMER1_CC0
-#define DMAREQ_TIMER1_CC1                            ((25 << 16) + 2) // DMA channel select for TIMER1_CC1
-#define DMAREQ_TIMER1_CC2                            ((25 << 16) + 3) // DMA channel select for TIMER1_CC2
-#define DMAREQ_MSC_WDATA                             ((48 << 16) + 0) // DMA channel select for MSC_WDATA
-#define DMAREQ_AES_DATAWR                            ((49 << 16) + 0) // DMA channel select for AES_DATAWR
-#define DMAREQ_AES_XORDATAWR                         ((49 << 16) + 1) // DMA channel select for AES_XORDATAWR
-#define DMAREQ_AES_DATARD                            ((49 << 16) + 2) // DMA channel select for AES_DATARD
-#define DMAREQ_AES_KEYWR                             ((49 << 16) + 3) // DMA channel select for AES_KEYWR
-
-
-

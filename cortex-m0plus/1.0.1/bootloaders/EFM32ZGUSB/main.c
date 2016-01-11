@@ -16,7 +16,6 @@ void printEntryMessages(void)
   uint32_t partnum =  pnum[0] & DEVINFO_PART_DEVICE_NUMBER_MASK;
 
   printf1("\r\nEFM32ZGUSB V0.0.3\r\n");
-
   printf1("ChipID: %x%x\r\n",DEVINFO->UNIQUEH,DEVINFO->UNIQUEL);
 
   if ((family == DEVINFO_PART_DEVICE_FAMILY_ZG) && (partnum == 222) && (flashSize == 32768)) {
@@ -64,23 +63,6 @@ uint8_t led_cycle(void)
   return boot_cntr++;
 }
 
-void delay(int dtime)
-{
-  int cnt;
-
-  cnt = 0;
-  for(;;) {
-    WDOG_Feed();
-    EMU_EnterEM1();
-    if(getRTCint()) {
-      cnt++;
-      clearRTCint();
-    }
-    if(cnt > dtime) break;
-  }
-}
-
-
 void SystemInit(void)
 {
 }
@@ -89,6 +71,7 @@ void SystemInit(void)
 int main(void)
 {
   uint8_t  c = 0;
+  int rv = 0;
 
   // Find the size of the flash. DEVINFO->MSIZE is the size in KB so left shift by 10.
   flashSize = ((DEVINFO->MSIZE & DEVINFO_MSIZE_FLASH_MASK) >> DEVINFO_MSIZE_FLASH_SHIFT) << 10;
@@ -116,7 +99,6 @@ int main(void)
     //receive any characters on the UART's  
     //check to see which port received the ' '
     if(SERIAL_check_rxByte() == ' ') {
-      printf1("%");
       break;
     }
   }
@@ -132,10 +114,16 @@ int main(void)
     if(c != 0) {
       switch (c) {
       case 'u':    // Upload command
-	XMODEM_download(bootloader_size, flashSize);
+	rv = XMODEM_download(bootloader_size, flashSize);
+	if(rv < 0) {
+	  printf1("SOH not received at start of frame");
+	}
 	break;
       case 't':    // Write to user page
-	XMODEM_download(XMODEM_USER_PAGE_START, XMODEM_USER_PAGE_END);
+	rv = XMODEM_download(XMODEM_USER_PAGE_START, XMODEM_USER_PAGE_END);
+	if(rv < 0) {
+	  printf1("SOH not received at start of frame");
+	}
 	break;
       case 'b':    // Boot into new program
 	BOOT_boot();
@@ -163,6 +151,33 @@ int main(void)
 	break;
       case 'l':
 	led_cycle();
+	break;
+      case 'o':
+	leds_off();
+	break;
+      case '0':
+	led0_on();
+	break;
+      case '1':
+	led1_on();
+	break;
+      case '2':
+	led2_on();
+	break;
+      case '3':
+	led3_on();
+	break;
+      case '4':
+	led4_on();
+	break;
+      case '5':
+	led5_on();
+	break;
+      case '6':
+	led6_on();
+	break;
+      case '7':
+	led7_on();
 	break;
       default:
 	printf1("\r\n?\r\n");

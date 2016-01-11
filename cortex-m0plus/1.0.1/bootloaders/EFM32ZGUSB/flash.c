@@ -44,19 +44,7 @@ volatile uint32_t flashPageSize;
 // Calculate flash page size
 void FLASH_CalcPageSize(void)
 {
-#if defined(_EFM32_ZERO_FAMILY)
   flashPageSize = 1024;
-#else
-  uint8_t family = *(uint8_t*)0x0FE081FE;
-
-  if ( ( family == 71 ) || ( family == 73 ) ) {
-    flashPageSize = 512;                // Gecko and Tiny, 'G' or 'I'
-  } else if ( family == 72 ) {
-    flashPageSize = 4096;               // Giant, 'H'
-  } else { // if ( family == 74 )
-    flashPageSize = 2048;               // Leopard, 'J'
-  }
-#endif
 }
 
 // Initializes the Flash programmer
