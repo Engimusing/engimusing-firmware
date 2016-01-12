@@ -174,7 +174,7 @@ void tfp_printf1(char *fmt, ...);
 #define LFRCO_FREQ           (32768)
 
 /** The size of the bootloader flash image */
-#define BOOTLOADER_SIZE      0x2000
+#define BOOTLOADER_SIZE      0x1400
 
 #define PORTA    0
 #define PORTB    1

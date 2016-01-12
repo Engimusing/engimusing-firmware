@@ -32,7 +32,7 @@ void printEntryMessages(void)
   uint32_t family  = (DEVINFO->PART & DEVINFO_PART_DEVICE_FAMILY_MASK) >> DEVINFO_PART_DEVICE_FAMILY_SHIFT;
   uint32_t partnum =  pnum[0] & DEVINFO_PART_DEVICE_NUMBER_MASK;
 
-  printf1("\r\nEFM32ZGUSB V0.0.3\r\n");
+  printf1("\r\nEFM32ZGUSB V0.0.4\r\n");
   printf1("ChipID: %x%x\r\n",DEVINFO->UNIQUEH,DEVINFO->UNIQUEL);
 
   if ((family == DEVINFO_PART_DEVICE_FAMILY_ZG) && (partnum == 222) && (flashSize == 32768)) {
@@ -94,7 +94,7 @@ int main(void)
   flashSize = ((DEVINFO->MSIZE & DEVINFO_MSIZE_FLASH_MASK) >> DEVINFO_MSIZE_FLASH_SHIFT) << 10;
 
   io_init();
-  //  initWdog();
+  initWdog();
 
   FLASH_init();  // Initialize flash for writing
   printEntryMessages();
@@ -168,33 +168,6 @@ int main(void)
 	break;
       case 'l':
 	led_cycle();
-	break;
-      case 'o':
-	leds_off();
-	break;
-      case '0':
-	led0_on();
-	break;
-      case '1':
-	led1_on();
-	break;
-      case '2':
-	led2_on();
-	break;
-      case '3':
-	led3_on();
-	break;
-      case '4':
-	led4_on();
-	break;
-      case '5':
-	led5_on();
-	break;
-      case '6':
-	led6_on();
-	break;
-      case '7':
-	led7_on();
 	break;
       default:
 	printf1("\r\n?\r\n");

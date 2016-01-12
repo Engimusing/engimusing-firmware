@@ -69,10 +69,9 @@ void tty1_rx_data(uint8_t rxData)
   rxBuf1.data[rxBuf1.wrI] = rxData;
   rxBuf1.wrI = (rxBuf1.wrI + 1) % BUFFERSIZE;
   rxBuf1.pendingBytes++;
-  if (rxBuf1.pendingBytes > BUFFERSIZE)    // Flag Rx overflow
-    {
-      rxBuf1.overflow = true;
-    }
+  if (rxBuf1.pendingBytes > BUFFERSIZE) {   // Flag Rx overflow
+    rxBuf1.overflow = true;
+  }
 }
 
 uint8_t tty1_get_pending_byte(void)
@@ -92,16 +91,15 @@ uint32_t tty1_get_number_pendingBytes(void)
 // Transmit single byte
 void SERIAL_txByte(uint8_t data)
 {
-    if ((txBuf1.pendingBytes + 1) > BUFFERSIZE)  // Check if Tx queue has room for new data
-      {
-	while ((txBuf1.pendingBytes + 1) > BUFFERSIZE) ;    // Wait until there is room in queue
-      }
-    txBuf1.data[txBuf1.wrI] = data;  // Copy ch into txBuffer
-    txBuf1.wrI             = (txBuf1.wrI + 1) % BUFFERSIZE;
-    tty1_disable_tx_ints();
-    txBuf1.pendingBytes++;  // Increment pending byte counter
-    tty1_enable_tx_ints();
-    tty1_enable_tx_int();
+  if ((txBuf1.pendingBytes + 1) > BUFFERSIZE) { // Check if Tx queue has room for new data
+    while ((txBuf1.pendingBytes + 1) > BUFFERSIZE) ;    // Wait until there is room in queue
+  }
+  txBuf1.data[txBuf1.wrI] = data;  // Copy ch into txBuffer
+  txBuf1.wrI = (txBuf1.wrI + 1) % BUFFERSIZE;
+  tty1_disable_tx_ints();
+  txBuf1.pendingBytes++;  // Increment pending byte counter
+  tty1_enable_tx_ints();
+  tty1_enable_tx_int();
 }
 
 uint8_t SERIAL_rxByte(void)

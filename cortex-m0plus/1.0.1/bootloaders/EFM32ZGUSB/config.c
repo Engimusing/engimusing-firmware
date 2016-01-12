@@ -91,24 +91,6 @@ void io_init()
   GPIO_pinMode(PORTA,  9, OUTPUT);
   GPIO_pinMode(PORTA, 10, OUTPUT);
 
-  GPIO_pinMode(PORTD, 4, OUTPUT);
-  GPIO_pinMode(PORTB, 8, OUTPUT);
-  GPIO_pinMode(PORTC, 4, OUTPUT);
-  GPIO_pinMode(PORTD, 6, OUTPUT);
-  GPIO_pinMode(PORTB, 7, OUTPUT);
-  GPIO_pinMode(PORTC, 1, OUTPUT);
-  GPIO_pinMode(PORTC, 0, OUTPUT);
-  GPIO_pinMode(PORTD, 7, OUTPUT);
-
-  led0_off();
-  led1_off();
-  led2_off();
-  led3_off();
-  led4_off();
-  led5_off();
-  led6_off();
-  led7_off();
-
   // TTY1 - LEUART0
   GPIO->P[1].DOUT  = (1 << 13);  // To avoid false start, configure output LEU0_TX as high on PB13
   GPIO->P[1].MODEH = GPIO_P_MODEH_MODE13_WIREDANDPULLUP | GPIO_P_MODEH_MODE14_WIREDANDPULLUP;
@@ -126,36 +108,6 @@ void io_init()
 
   init_printf1(NULL,putc1);
 
-}
-
-void led0_on(void)  {GPIO_PinOutClear(PORTD,4);}
-void led1_on(void)  {GPIO_PinOutClear(PORTB,8);}
-void led2_on(void)  {GPIO_PinOutClear(PORTC,4);}
-void led3_on(void)  {GPIO_PinOutClear(PORTD,6);}
-void led4_on(void)  {GPIO_PinOutClear(PORTB,7);}
-void led5_on(void)  {GPIO_PinOutClear(PORTC,1);}
-void led6_on(void)  {GPIO_PinOutClear(PORTC,0);}
-void led7_on(void)  {GPIO_PinOutClear(PORTD,7);}
-
-void led0_off(void) {GPIO_PinOutSet(PORTD,4);}
-void led1_off(void) {GPIO_PinOutSet(PORTB,8);}
-void led2_off(void) {GPIO_PinOutSet(PORTC,4);}
-void led3_off(void) {GPIO_PinOutSet(PORTD,6);}
-void led4_off(void) {GPIO_PinOutSet(PORTB,7);}
-void led5_off(void) {GPIO_PinOutSet(PORTC,1);}
-void led6_off(void) {GPIO_PinOutSet(PORTC,0);}
-void led7_off(void) {GPIO_PinOutSet(PORTD,7);}
-
-void leds_off(void)
-{
-  led0_off();
-  led1_off();
-  led2_off();
-  led3_off();
-  led4_off();
-  led5_off();
-  led6_off();
-  led7_off();
 }
 
 const uint8_t patterns[16] = {0x01,0x02,0x04,0x08, 0x10,0x20,0x40,0x80,  0xAA,0x55,0x33,0xCC,0xF0,0x0F,0xFF,0x00};
@@ -243,13 +195,9 @@ void tty1_enable_tx_int(void)
 }
 
 
-void tty0_enable_rx_ints(void)  {NVIC_EnableIRQ(USART1_RX_IRQn);}
-void tty0_disable_rx_ints(void) {NVIC_DisableIRQ(USART1_RX_IRQn);}
 void tty1_enable_rx_ints(void)  {NVIC_EnableIRQ(LEUART0_IRQn);}
 void tty1_disable_rx_ints(void) {NVIC_DisableIRQ(LEUART0_IRQn);}
 
-void tty0_enable_tx_ints(void)  {NVIC_EnableIRQ(USART1_TX_IRQn);}
-void tty0_disable_tx_ints(void) {NVIC_DisableIRQ(USART1_TX_IRQn);}
 void tty1_enable_tx_ints(void)  {NVIC_EnableIRQ(LEUART0_IRQn);}
 void tty1_disable_tx_ints(void) {NVIC_DisableIRQ(LEUART0_IRQn);}
 
