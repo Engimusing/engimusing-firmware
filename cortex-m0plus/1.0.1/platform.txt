@@ -92,10 +92,13 @@ recipe.size.regex=\.text\s+([0-9]+).*
 # Uploader tools
 # --------------
 
-tools.ft_prog.cmd=efm_upload.py
-tools.ft_prog.cmd.windows=efm_upload.py
-tools.ft_prog.path={runtime.ide.path}/hardware/tools/efm_upload/
-tools.ft_prog.path.windows={runtime.ide.path}/hardware/tools/efm_upload/
+tools.efm_upload.upload.params.verbose=
 
-tools.ft_prog.upload.pattern="{path}/{cmd}" "{build.path}/{build.project_name}.bin" {serial.port.file}
-tools.ft_prog.upload.pattern.windows="{path}/{cmd}" {upload.verbose} P "{build.path}/{build.project_name}.bin"  {serial.port.file}
+tools.efm_upload.cmd=efm_upload.py
+tools.efm_upload.cmd.windows=efm_upload.py
+tools.efm_upload.path={runtime.hardware.path}/1.0.1/efm_upload
+tools.efm_upload.path.windows={runtime.ide.path}/hardware/tools/efm_upload/
+
+tools.efm_upload.upload.pattern="{path}/{cmd}" "{build.path}/{build.project_name}.bin" {serial.port.file}
+tools.efm_upload.upload.pattern.windows="{path}/{cmd}" {upload.verbose} P "{build.path}/{build.project_name}.bin"  {serial.port.file}
+
