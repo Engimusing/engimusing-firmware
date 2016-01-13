@@ -19,7 +19,7 @@ void setup() {
 
   Serial.begin(115200);
 
-  Serial.println("\n\r\n\rAnalog - Unit Test Framework 0.1" );
+  Serial.println("\n\r\n\rAnalog - Unit Test Framework 0.2" );
 }
 
 void printHelp(void)

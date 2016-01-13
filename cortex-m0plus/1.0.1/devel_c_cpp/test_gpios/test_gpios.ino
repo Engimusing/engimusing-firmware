@@ -14,7 +14,7 @@ void setup() {
   pinMode(14, OUTPUT);
   pinMode(15, OUTPUT);
 
-  // reserve 200 bytes for the inputString:
+  // reserve 16 bytes for the inputString:
   inputString.reserve(16);
   inputString = "";
 
