@@ -1,5 +1,15 @@
 #!/usr/bin/python
 
+"""
+Original Code:
+  Summary: XMODEM protocol implementation.
+  Home-page: https://github.com/tehmaze/xmodem
+  Author: Wijnand Modderman, Jeff Quast
+  License: MIT
+
+Stripped down and modified for this bootloader by Joe George 2015-2016
+"""
+
 import sys
 import serial
 import time
@@ -110,6 +120,7 @@ while ((ch != 'C') and (time.time() < mustend)):
 if(ch == 'C'):
     print "Start transfer"
 else:
+    print "C not received to start transfer"
     s.close()
     sys.exit(0)
 

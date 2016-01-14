@@ -1,5 +1,15 @@
 #!/usr/bin/python
 
+"""
+Original Code:
+  Summary: XMODEM protocol implementation.
+  Home-page: https://github.com/tehmaze/xmodem
+  Author: Wijnand Modderman, Jeff Quast
+  License: MIT
+
+Stripped down and modified for this bootloader by Joe George 2015-2016
+"""
+
 i = (0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 
 def checkAck(sequence):

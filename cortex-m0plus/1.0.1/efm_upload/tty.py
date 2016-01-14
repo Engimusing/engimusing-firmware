@@ -1,5 +1,15 @@
 #!/usr/bin/python
 
+"""
+Original Code:
+  Summary: XMODEM protocol implementation.
+  Home-page: https://github.com/tehmaze/xmodem
+  Author: Wijnand Modderman, Jeff Quast
+  License: MIT
+
+Stripped down and modified for this bootloader by Joe George 2015-2016
+"""
+
 import time
 import sys
 
@@ -32,6 +42,14 @@ def checkAck(s):
                 return False
             if (ch == '@'):
                 print "CRC Error received"
+                sys.stdout.write(ch)
+                return False
+            if (ch == '^'):
+                print "First character is not Start of Header"
+                sys.stdout.write(ch)
+                return False
+            if (ch == '!'):
+                print "Wrong number of bytes in packet"
                 sys.stdout.write(ch)
                 return False
             else:
