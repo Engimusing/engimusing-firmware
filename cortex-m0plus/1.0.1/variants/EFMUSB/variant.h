@@ -39,12 +39,13 @@ extern LEUARTClass Serial;
 extern TimersLP Timers;
 
 
-  void print_gpio_regs(void);
+void print_gpio_regs(void);
 
-  void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
-  void detachInterrupt(uint8_t pin);
-  uint32_t cmu_hfper_freq_get(void);
+void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
+void detachInterrupt(uint8_t pin);
+uint32_t cmu_hfper_freq_get(void);
 
-  void init_efm32zg(void);
+void init_efm32zg(void);
+void check_for_reset(void);
 
 

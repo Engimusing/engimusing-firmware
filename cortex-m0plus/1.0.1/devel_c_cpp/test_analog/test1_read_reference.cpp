@@ -19,7 +19,6 @@
 #include "Arduino.h"
 #include "test.h"
 
-extern LEUARTClass Serial;
 static String test_help = "test01 - ADC Test varying references";
 extern AnalogLP Analog;
 

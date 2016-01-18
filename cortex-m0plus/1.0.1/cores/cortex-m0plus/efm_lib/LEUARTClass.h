@@ -47,6 +47,8 @@ class LEUARTClass : public HardwareSerial
 
   void IrqHandler(void);
 
+  void chk_reset(void);
+
   operator bool() { return true; }; // LEUART0 always active
 
  protected:
