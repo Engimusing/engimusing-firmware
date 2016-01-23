@@ -20,7 +20,8 @@
 
 #include "io_types.h"
 #include <stdint.h>
-
+#include "efm_msc.h"
+#include "efm_emu.h"
 
 typedef struct
 {
@@ -42,19 +43,19 @@ typedef struct
   __IO uint32_t IEN;          // Interrupt Enable Register 
   __IO uint32_t HFCORECLKEN0; // High Frequency Core Clock Enable Register 0 
   __IO uint32_t HFPERCLKEN0;  // High Frequency Peripheral Clock Enable Register 0 
-       uint32_t RESERVED0[2]; // Reserved for future use **/
+  uint32_t RESERVED0[2]; // Reserved for future use **/
   __I  uint32_t SYNCBUSY;     // Synchronization Busy Register 
   __IO uint32_t FREEZE;       // Freeze Register 
   __IO uint32_t LFACLKEN0;    // Low Frequency A Clock Enable Register 0  (Async Reg) 
-       uint32_t RESERVED1[1]; // Reserved for future use **/
+  uint32_t RESERVED1[1]; // Reserved for future use **/
   __IO uint32_t LFBCLKEN0;    // Low Frequency B Clock Enable Register 0 (Async Reg) 
-       uint32_t RESERVED2[1]; // Reserved for future use **/
+  uint32_t RESERVED2[1]; // Reserved for future use **/
   __IO uint32_t LFAPRESC0;    // Low Frequency A Prescaler Register 0 (Async Reg) 
-       uint32_t RESERVED3[1]; // Reserved for future use **/
+  uint32_t RESERVED3[1]; // Reserved for future use **/
   __IO uint32_t LFBPRESC0;    // Low Frequency B Prescaler Register 0  (Async Reg) 
-       uint32_t RESERVED4[1]; // Reserved for future use **/
+  uint32_t RESERVED4[1]; // Reserved for future use **/
   __IO uint32_t PCNTCTRL;     // PCNT Control Register 
-       uint32_t RESERVED5[1]; // Reserved for future use
+  uint32_t RESERVED5[1]; // Reserved for future use
   __IO uint32_t ROUTE;        // I/O Routing Register 
   __IO uint32_t LOCK;         // Configuration Lock Register 
 } CMU_TypeDef;
@@ -475,7 +476,202 @@ typedef struct
 extern "C" {
 #endif
 
-uint32_t cmu_hfper_freq_get(void);
+  uint32_t cmu_hfper_freq_get(void);
+
+  // CMU_HFPERCLKEN0 enable and disable functions
+  __STATIC_INLINE void clk_enable_TIMER0(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_TIMER0;}
+  __STATIC_INLINE void clk_disable_TIMER0(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_TIMER0;}
+
+  __STATIC_INLINE void clk_enable_TIMER1(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_TIMER1;}
+  __STATIC_INLINE void clk_disable_TIMER1(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_TIMER1;}
+
+  __STATIC_INLINE void clk_enable_ACMP0(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_ACMP0;}
+  __STATIC_INLINE void clk_disable_ACMP0(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_ACMP0;}
+
+  __STATIC_INLINE void clk_enable_USART1(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_USART1;}
+  __STATIC_INLINE void clk_disable_USART1(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_USART1;}
+
+  __STATIC_INLINE void clk_enable_PRS(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_PRS;}
+  __STATIC_INLINE void clk_disable_PRS(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_PRS;}
+
+  __STATIC_INLINE void clk_enable_IDAC0(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_IDAC0;}
+  __STATIC_INLINE void clk_disable_IDAC0(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_IDAC0;}
+
+  __STATIC_INLINE void clk_enable_GPIO(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_GPIO;}
+  __STATIC_INLINE void clk_disable_GPIO(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_GPIO;}
+
+  __STATIC_INLINE void clk_enable_VCMP(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_VCMP;}
+  __STATIC_INLINE void clk_disable_VCMP(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_VCMP;}
+
+  __STATIC_INLINE void clk_enable_ADC0(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_ADC0;}
+  __STATIC_INLINE void clk_disable_ADC0(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_ADC0;}
+
+  __STATIC_INLINE void clk_enable_I2C0(void)  {CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_I2C0;}
+  __STATIC_INLINE void clk_disable_I2C0(void) {CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_I2C0;}
+
+  // CMU_HFCORECLKEN0 enable and disable functions
+  __STATIC_INLINE void clk_enable_AES(void)  {CMU->HFCORECLKEN0 |= CMU_HFCORECLKEN0_AES;}
+  __STATIC_INLINE void clk_disable_AES(void) {CMU->HFCORECLKEN0 &= ~CMU_HFCORECLKEN0_AES;}
+
+  __STATIC_INLINE void clk_enable_DMA(void)  {CMU->HFCORECLKEN0 |= CMU_HFCORECLKEN0_DMA;}
+  __STATIC_INLINE void clk_disable_DMA(void) {CMU->HFCORECLKEN0 &= ~CMU_HFCORECLKEN0_DMA;}
+
+  __STATIC_INLINE void clk_enable_LE(void)  {CMU->HFCORECLKEN0 |= CMU_HFCORECLKEN0_LE;}
+  __STATIC_INLINE void clk_disable_LE(void) {CMU->HFCORECLKEN0 &= ~CMU_HFCORECLKEN0_LE;}
+
+
+  // CMU_HFPERCLKDIV enable and disable functions
+  __STATIC_INLINE void clk_enable_HFPER(void)  {CMU->HFPERCLKDIV |= CMU_HFPERCLKDIV_HFPERCLKEN;}
+  __STATIC_INLINE void clk_disable_HFPER(void) {CMU->HFPERCLKDIV &= ~CMU_HFPERCLKDIV_HFPERCLKEN;}
+
+  // CMU_LFACLKEN0 enable and disable functions
+  __STATIC_INLINE void clk_enable_RTC(void)
+  {
+    CMU->LFACLKEN0 |= CMU_LFACLKEN0_RTC;
+    while(CMU->SYNCBUSY & CMU_SYNCBUSY_LFACLKEN0);
+  }
+
+  __STATIC_INLINE void clk_disable_RTC(void)
+  {
+    CMU->LFACLKEN0 &= ~CMU_LFACLKEN0_RTC;
+    while(CMU->SYNCBUSY & CMU_SYNCBUSY_LFACLKEN0);
+  }
+
+  // CMU_LFBCLKEN0 enable and disable functions
+  __STATIC_INLINE void clk_enable_LEUART0(void)
+  {
+    CMU->LFBCLKEN0 |= CMU_LFBCLKEN0_LEUART0;
+    while(CMU->SYNCBUSY & CMU_SYNCBUSY_LFBCLKEN0);
+  }
+
+  __STATIC_INLINE void clk_disable_LEUART0(void)
+  {
+    CMU->LFBCLKEN0 &= CMU_LFBCLKEN0_LEUART0;
+    while(CMU->SYNCBUSY & ~CMU_SYNCBUSY_LFBCLKEN0);
+  }
+
+  // CMU_PCNTCTRL enable and disable functions
+  __STATIC_INLINE void clk_enable_PCNT0(void)  {CMU->PCNTCTRL |= CMU_PCNTCTRL_PCNT0CLKEN;}
+  __STATIC_INLINE void clk_disable_PCNT0(void) {CMU->PCNTCTRL &= ~CMU_PCNTCTRL_PCNT0CLKEN;}
+
+  __STATIC_INLINE void clk_enable_PCNT0_LFACLK(void)  {CMU->PCNTCTRL |= CMU_PCNTCTRL_PCNT0CLKSEL;}
+  __STATIC_INLINE void clk_disable_PCNT0_EXTPIN(void) {CMU->PCNTCTRL &= ~CMU_PCNTCTRL_PCNT0CLKSEL;}
+
+  // CMU_LFCLKSEL LFA Select
+  __STATIC_INLINE void clk_lfa_select_DISABLED(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFA_MASK | CMU_LFCLKSEL_LFAE);
+  }
+
+  __STATIC_INLINE void clk_lfa_select_LFRCO(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFA_MASK | CMU_LFCLKSEL_LFAE);
+    CMU->LFCLKSEL |= CMU_LFCLKSEL_LFA_LFRCO;
+  }
+
+  __STATIC_INLINE void clk_lfa_select_LFXO(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFA_MASK | CMU_LFCLKSEL_LFAE);
+    CMU->LFCLKSEL |= CMU_LFCLKSEL_LFA_LFXO;
+  }
+
+  __STATIC_INLINE void clk_lfa_select_HFCORECLKLEDIV2(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFA_MASK | CMU_LFCLKSEL_LFAE);
+    CMU->LFCLKSEL |= CMU_LFCLKSEL_LFA_HFCORECLKLEDIV2;
+  }
+
+  __STATIC_INLINE void clk_lfa_select_ULFRCO(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFA_MASK | CMU_LFCLKSEL_LFAE);
+    CMU->LFCLKSEL |= CMU_LFCLKSEL_LFAE;
+  }
+
+  // CMU_LFCLKSEL LFB Select
+  __STATIC_INLINE void clk_lfb_select_DISABLED(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFB_MASK | CMU_LFCLKSEL_LFBE);
+  }
+
+  __STATIC_INLINE void clk_lfb_select_LFRCO(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFB_MASK | CMU_LFCLKSEL_LFBE);
+    CMU->LFCLKSEL |= CMU_LFCLKSEL_LFB_LFRCO;
+  }
+
+  __STATIC_INLINE void clk_lfb_select_LFXO(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFB_MASK | CMU_LFCLKSEL_LFBE);
+    CMU->LFCLKSEL |= CMU_LFCLKSEL_LFB_LFXO;
+  }
+
+  __STATIC_INLINE void clk_lfb_select_HFCORECLKLEDIV2(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFB_MASK | CMU_LFCLKSEL_LFBE);
+    CMU->LFCLKSEL |= CMU_LFCLKSEL_LFB_HFCORECLKLEDIV2;
+  }
+
+  __STATIC_INLINE void clk_lfb_select_ULFRCO(void)
+  {
+    CMU->LFCLKSEL &= ~(CMU_LFCLKSEL_LFB_MASK | CMU_LFCLKSEL_LFBE);
+    CMU->LFCLKSEL |= CMU_LFCLKSEL_LFBE;
+  }
+
+  __STATIC_INLINE void wait_state_select(void)
+  {
+    if(CMU->STATUS & CMU_STATUS_HFXOSEL) {
+      if((CMU->HFRCOCTRL & CMU_HFRCOCTRL_BAND_MASK) <= CMU_HFRCOCTRL_BAND_14MHZ) {
+	MSC->READCTRL &= ~MSC_READCTRL_MODE_WS1;
+      }
+    }
+  }
+
+  __STATIC_INLINE void clk_osc_select_LFXO(void)
+  {
+    CMU->OSCENCMD = CMU_OSCENCMD_LFXOEN;
+    while (!(CMU->STATUS & CMU_STATUS_LFXORDY));
+    MSC->READCTRL = MSC_READCTRL_MODE_WS1;
+    CMU->CMD = CMU_CMD_HFCLKSEL_LFXO;
+    //EMU_UpdateOscConfig();
+    wait_state_select();
+  }
+
+  __STATIC_INLINE void clk_osc_select_LFRCO(void)
+  {
+    CMU->OSCENCMD = CMU_OSCENCMD_LFRCOEN;
+    while (!(CMU->STATUS & CMU_STATUS_LFRCORDY));
+    MSC->READCTRL = MSC_READCTRL_MODE_WS1;
+    CMU->CMD = CMU_CMD_HFCLKSEL_LFRCO;
+    //EMU_UpdateOscConfig();
+    wait_state_select();
+  }
+
+  __STATIC_INLINE void clk_osc_select_HFXO(void)
+  {
+    CMU->OSCENCMD = CMU_OSCENCMD_HFXOEN;
+    while (!(CMU->STATUS & CMU_STATUS_HFXORDY));
+    MSC->READCTRL = MSC_READCTRL_MODE_WS1;
+    CMU->CMD = CMU_CMD_HFCLKSEL_HFXO;
+    //EMU_UpdateOscConfig();
+    wait_state_select();
+  }
+
+  __STATIC_INLINE void clk_osc_select_HFRCO(void)
+  {
+    CMU->OSCENCMD = CMU_OSCENCMD_HFRCOEN;
+    while (!(CMU->STATUS & CMU_STATUS_HFRCORDY));
+    MSC->READCTRL = MSC_READCTRL_MODE_WS1;
+    CMU->CMD = CMU_CMD_HFCLKSEL_HFRCO;
+    //EMU_UpdateOscConfig();
+    wait_state_select();
+  }
+
+  __STATIC_INLINE void clk_osc_enable_LFRCO(void)
+  {
+    CMU->OSCENCMD = CMU_OSCENCMD_LFRCOEN;
+    while (!(CMU->STATUS & CMU_STATUS_LFRCORDY));
+  }
+
 
 #ifdef __cplusplus
 }

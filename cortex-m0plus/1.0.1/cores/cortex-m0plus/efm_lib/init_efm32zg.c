@@ -26,15 +26,18 @@
 void init_efm32zg(void)
 {
   // Enable clocks for peripherals.
-  CMU->HFPERCLKDIV = CMU_HFPERCLKDIV_HFPERCLKEN;
-  CMU->HFPERCLKEN0 = CMU_HFPERCLKEN0_GPIO;
+  clk_enable_HFPER();
+  clk_enable_GPIO();
+  clk_enable_LE();
+  clk_enable_DMA();
 
-  CMU->HFCORECLKEN0 = CMU_HFCORECLKEN0_LE | CMU_HFCORECLKEN0_DMA;  // Enable LE and DMA interface
-  CMU->OSCENCMD = CMU_OSCENCMD_LFRCOEN;  // Enable LFRCO for RTC
-  CMU->LFCLKSEL = CMU_LFCLKSEL_LFA_LFRCO | CMU_LFCLKSEL_LFB_HFCORECLKLEDIV2;  // Setup LFA to use LFRCRO
-  CMU->LFACLKEN0 = CMU_LFACLKEN0_RTC;  // Enable RTC
+  //  CMU->OSCENCMD = CMU_OSCENCMD_LFRCOEN;  // Enable LFRCO for RTC
+  clk_osc_enable_LFRCO();
+  clk_lfa_select_LFRCO();
+  clk_lfb_select_HFCORECLKLEDIV2();
+  clk_enable_RTC();
 
-  // Change to 21MHz internal oscillator to increase speed of bootloader
+  // Change to 21MHz internal oscillator band
   CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_21MHZ | (DEVINFO->HFRCOCAL1 & 0xFF);
 
   SysTick_Config(cmu_hfper_freq_get() / 1000);
