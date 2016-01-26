@@ -22,15 +22,23 @@
 #define BLUE_LED      1
 #define GREEN_LED     2
 
-void ledRedOff(void);
-void ledRedOn(void);
 
-void ledGreenOff(void);
-void ledGreenOn(void);
+class boardIO
+{
+ public:
+  boardIO();
+  void ledRedOff(void);
+  void ledRedOn(void);
+  void ledGreenOff(void);
+  void ledGreenOn(void);
+  void ledBlueOff(void);
+  void ledBlueOn(void);
+  void ledAllOff(void);
+  void ledAllOn(void);
+  void printBoardParameters(void);
 
-void ledBlueOff(void);
-void ledBlueOn(void);
+ private:
 
-void ledAllOff(void);
-void ledAllOn(void);
+};
+
 

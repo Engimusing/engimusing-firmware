@@ -17,6 +17,8 @@
 */
 
 #include "analog.h"
+#include "efm_devinfo.h"
+
 extern "C" {
 #include "pins_arduino.h"
 }
@@ -30,13 +32,16 @@ AnalogLP::AnalogLP()
   adc_reference = DEFAULT;
   adc_resolution = ADC_SINGLECTRL_RES_12BIT;
   adc_oversampling = ADC_CTRL_OVSRSEL_X2;
+  tempval = {0,0,0,0};
 }
 
-uint32_t AnalogLP::analogRead(uint8_t pin)
+
+uint32_t AnalogLP::analogRead(uint32_t sel)
 {
-  if(valid_pin(pin)) {
     // Enable clock for ADC0
-    CMU->HFPERCLKEN0 |= CMU_HFPERCLKEN0_ADC0;      // Enable clock for ADC0
+  clk_enable_HFPER();
+  clk_enable_ADC0();
+
 
     uint32_t hfperFreq = cmu_hfper_freq_get();
     hfperFreq += 999999;
@@ -50,7 +55,7 @@ uint32_t AnalogLP::analogRead(uint8_t pin)
       | adc_oversampling; // oversampling rate if enabled
 
     ADC0->SINGLECTRL = adc_resolution
-      | (adcPins[pin] << _ADC_SINGLECTRL_INPUTSEL_SHIFT)
+      | (sel << _ADC_SINGLECTRL_INPUTSEL_SHIFT)
       | adc_reference
       | ADC_SINGLECTRL_AT_32CYCLES;
 
@@ -58,11 +63,88 @@ uint32_t AnalogLP::analogRead(uint8_t pin)
     while (ADC0->STATUS & ADC_STATUS_SINGLEACT) ;  // Wait while conversion is active
 
     uint32_t data = ADC0->SINGLEDATA;
-    CMU->HFPERCLKEN0 &= ~CMU_HFPERCLKEN0_ADC0;
+
+    clk_disable_ADC0();
     return data;
+}
+
+uint32_t AnalogLP::analogReadPin(uint8_t pin)
+{
+  if(valid_pin(pin)) {
+    return analogRead(adcPins[pin]);
   } else {
     return 0;
   }
+}
+
+uPvdd AnalogLP::analogReadVDD(void)
+{
+  adc_reference = INTERNAL1V25; // set up reference
+  adc_resolution = ADC_SINGLECTRL_RES_12BIT;
+
+  uint32_t sample = analogRead(ADC_SINGLECTRL_INPUTSEL_VDD_DIV3);
+
+  vddval.mVolts =  ((sample * 1250 * 3)/4096);
+  vddval.wholeVDD = vddval.mVolts / 1000;
+vddval.fracVDD =  vddval.mVolts % 1000;
+
+ return vddval;
+}
+
+void AnalogLP::xmlVDD(void)
+{
+  Serial.printf("<upVDD>%d.%dV</upVDD>\r\n",vddval.wholeVDD,vddval.fracVDD);
+}
+
+temperature AnalogLP::analogReadTemp(void)
+{
+  float temp;
+  
+  adc_reference = INTERNAL1V25; // set up reference
+  adc_resolution = ADC_SINGLECTRL_RES_12BIT;
+
+  // Factory calibration temperature from device information page
+  float cal_temp_0 = (float)((DEVINFO->CAL & DEVINFO_CAL_TEMP_MASK)
+                             >> DEVINFO_CAL_TEMP_SHIFT);
+
+  float cal_value_0 = (float)((DEVINFO->ADC0CAL2
+                               & DEVINFO_ADC0CAL2_TEMP1V25_MASK)
+                              >> DEVINFO_ADC0CAL2_TEMP1V25_SHIFT);
+
+  uint32_t sample = analogRead(ADC_SINGLECTRL_INPUTSEL_TEMPSENS);
+
+  // Temperature gradient from datasheet
+  float t_grad = -6.27;
+
+  // Calculate temperature in Celcius
+  tempval.tenthsC = (cal_temp_0 - ((cal_value_0 - sample)  / t_grad)) * 10;
+
+  tempval.wholeC  =  tempval.tenthsC / 10;
+  if(tempval.tenthsC < 0) { 
+    tempval.fracC = ((uint16_t) -tempval.tenthsC) % 10;
+  } else {
+    tempval.fracC = (uint16_t) tempval.tenthsC % 10;
+  }
+
+  // Calculate temperature in Farenheit
+  float tempF = ((tempval.tenthsC * 9) / 5) + 320;
+  tempval.tenthsF = (int16_t) tempF;
+
+  tempval.wholeF = tempval.tenthsF / 10;
+
+  if(tempval.tenthsF < 0) {
+    tempval.fracF = ((uint16_t) -tempval.tenthsF) % 10;
+  } else {
+    tempval.fracF = (uint16_t) tempval.tenthsF % 10;
+  }
+
+  return tempval;
+}
+
+void AnalogLP::xmlTemperature(void)
+{
+  Serial.printf("<CPUTEMP><DEGC>%d.%dC</DEGC><DEGF>%d.%dF</DEGF></CPUTEMP>\r\n",
+		tempval.wholeC,tempval.fracC,tempval.wholeF,tempval.fracF);
 }
 
 

@@ -21,28 +21,45 @@
 #include "Arduino.h"
 #include "io_types.h"
 
-#define INTERNAL1V25 ADC_SINGLECTRL_REF_1V25
-#define INTERNAL2V5  ADC_SINGLECTRL_REF_2V5
-#define DEFAULT      ADC_SINGLECTRL_REF_VDD
-#define EXTERNAL     ADC_SINGLECTRL_REF_EXTSINGLE
+struct temperature {
+  int16_t tenthsC ;
+  int16_t tenthsF ;
+  int8_t  wholeC;
+  uint8_t fracC;
+  int8_t  wholeF;
+  uint8_t fracF;
+};
 
-class AnalogLP
-{
-public:
-AnalogLP();
-uint32_t analogRead(uint8_t pin);
-uint32_t analogReference(uint32_t ref);
-void analogReadResolution(uint8_t bits);
-private:
-uint32_t adc_reference;
-uint32_t adc_resolution;
-uint32_t adc_oversampling;
+struct uPvdd {
+  uint16_t mVolts;
+  uint8_t wholeVDD;
+  uint8_t fracVDD;
 };
 
 
+class AnalogLP
+{
+ public:
+  AnalogLP();
+  uint32_t analogRead(uint32_t sel);
+  uint32_t analogReadPin(uint8_t pin);
+  uPvdd    analogReadVDD(void);
+  temperature analogReadTemp(void);
+  uint32_t analogReference(uint32_t ref);
+  void analogReadResolution(uint8_t bits);
+  void xmlVDD(void);
+  void xmlTemperature(void);
+ private:
+  uint32_t adc_reference;
+  uint32_t adc_resolution;
+  uint32_t adc_oversampling;
+  temperature tempval;
+  uPvdd vddval;
+};
+
 #ifdef __cplusplus
 extern "C"{
-void print_adc_regs(void);
+  void print_adc_regs(void);
 
 } // extern "C"
 
@@ -152,7 +169,9 @@ typedef struct
 #define ADC_SINGLECTRL_INPUTSEL_CH6             (0x6 << 8)            // Shifted mode CH6 for ADC_SINGLECTRL
 #define ADC_SINGLECTRL_INPUTSEL_CH7             (0x7 << 8)            // Shifted mode CH7 for ADC_SINGLECTRL
 #define ADC_SINGLECTRL_INPUTSEL_TEMP            (0x8 << 8)            // Shifted mode TEMP for ADC_SINGLECTRL
+#define ADC_SINGLECTRL_INPUTSEL_TEMPSENS             (0x8)            // Shifted mode TEMP for ADC_SINGLECTRL
 #define ADC_SINGLECTRL_INPUTSEL_VDDDIV3         (0x9 << 8)            // Shifted mode VDDDIV3 for ADC_SINGLECTRL
+#define ADC_SINGLECTRL_INPUTSEL_VDD_DIV3             (0x9)            // Shifted mode VDDDIV3 for ADC_SINGLECTRL
 #define ADC_SINGLECTRL_INPUTSEL_VDD             (0xA << 8)            // Shifted mode VDD for ADC_SINGLECTRL
 #define ADC_SINGLECTRL_INPUTSEL_VSS             (0xB << 8)            // Shifted mode VSS for ADC_SINGLECTRL
 #define ADC_SINGLECTRL_INPUTSEL_VREFDIV2        (0xC << 8)            // Shifted mode VREFDIV2 for ADC_SINGLECTRL
@@ -299,4 +318,9 @@ typedef struct
 #define _ADC_BIASPROG_HALFBIAS_MASK                    0x40           // Bit mask for ADC_HALFBIAS
 #define _ADC_BIASPROG_COMPBIAS_SHIFT                      8           // Shift value for ADC_COMPBIAS
 #define _ADC_BIASPROG_COMPBIAS_MASK                   0xF00           // Bit mask for ADC_COMPBIAS
+
+#define INTERNAL1V25 ADC_SINGLECTRL_REF_1V25
+#define INTERNAL2V5  ADC_SINGLECTRL_REF_2V5
+#define DEFAULT      ADC_SINGLECTRL_REF_VDD
+#define EXTERNAL     ADC_SINGLECTRL_REF_EXTSINGLE
 

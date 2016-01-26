@@ -673,6 +673,14 @@ extern "C" {
   }
 
 
+  __STATIC_INLINE uint32_t get_hfrco_freq(void)
+  {
+    const uint32_t hf_bands[5] = {1,7,11,14,21};
+
+    return (hf_bands[(CMU->HFRCOCTRL & CMU_HFRCOCTRL_BAND_MASK) >> CMU_HFRCOCTRL_BAND_SHIFT] * 1000000);
+  }
+
+
 #ifdef __cplusplus
 }
 #endif

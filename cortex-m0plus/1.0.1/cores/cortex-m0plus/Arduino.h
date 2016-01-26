@@ -74,6 +74,7 @@ extern "C"{
 #include "efm_lib/LEUARTClass.h"
 #include "efm_lib/timer.h"
 #include "efm_lib/analog.h"
+#include "efm_lib/boardIO.h"
 #endif
 
 #include "variant.h"

@@ -21,9 +21,23 @@
 
 extern LEUARTClass Serial;
 static String test_help = "test03 - help entry";
+extern AnalogLP Analog;
 
 void test03_test(void)
 {
+  int8_t vddh = 0;
+
+  delay(1000);
+
+  uPvdd vdd = Analog.analogReadVDD();
+
+  Serial.printf("VDD = %d.%dV\r\n", vdd.wholeVDD, vdd.fracVDD);
+  Analog.xmlVDD();
+
+  temperature temp = Analog.analogReadTemp();
+
+  Serial.printf("Temp = %d.%dC (%d.%dF)\r\n", temp.wholeC, temp.fracC, temp.wholeF, temp.fracF);
+  Analog.xmlTemperature();
 }
 
 void test03_desc(void)
@@ -33,20 +47,20 @@ void test03_desc(void)
 
 void test03(uint8_t function)
 {
-  switch(function) {
-  case TESTHELP:
-    Serial.print(test_help);
-    break;
-  case DESCRIPTION:
-    test03_desc();
-    break;
-  case RUNTEST:
-    Serial.println("\n\rRun test03");
-    test03_test();
-    break;
-  default:
-    Serial.println("\n\rBad Test Function");
-    break;
+  switch (function) {
+    case TESTHELP:
+      Serial.print(test_help);
+      break;
+    case DESCRIPTION:
+      test03_desc();
+      break;
+    case RUNTEST:
+      Serial.println("\n\rRun test03");
+      test03_test();
+      break;
+    default:
+      Serial.println("\n\rBad Test Function");
+      break;
   }
 }
 
