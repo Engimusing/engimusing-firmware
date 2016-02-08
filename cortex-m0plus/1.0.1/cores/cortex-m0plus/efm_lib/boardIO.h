@@ -36,6 +36,7 @@ class boardIO
   void ledAllOff(void);
   void ledAllOn(void);
   void printBoardParameters(void);
+  char* getChipID(void);
 
  private:
 

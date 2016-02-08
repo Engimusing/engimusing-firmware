@@ -81,3 +81,11 @@ void boardIO::printBoardParameters(void)
   Serial.printf("</BRDINFO>\r\n");
 }
 
+char* boardIO::getChipID(void)
+{
+  static char id[] = "0000000000000000";
+  sprintf(id, "%x%x",DEVINFO->UNIQUEH,DEVINFO->UNIQUEL);
+  return id;
+}
+
+
