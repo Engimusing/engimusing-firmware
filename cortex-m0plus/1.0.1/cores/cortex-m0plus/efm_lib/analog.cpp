@@ -77,22 +77,28 @@ uint32_t AnalogLP::analogReadPin(uint8_t pin)
   }
 }
 
-uPvdd AnalogLP::analogReadVDD(void)
+uint32_t AnalogLP::analogReadVDDsample(void)
 {
   adc_reference = INTERNAL1V25; // set up reference
   adc_resolution = ADC_SINGLECTRL_RES_12BIT;
 
-  uint32_t sample = analogRead(ADC_SINGLECTRL_INPUTSEL_VDD_DIV3);
+  return analogRead(ADC_SINGLECTRL_INPUTSEL_VDD_DIV3);
+}
+
+uPvdd AnalogLP::analogReadVDD(void)
+{
+  uint32_t sample = analogReadVDDsample();
 
   vddval.mVolts =  ((sample * 1250 * 3)/4096);
   vddval.wholeVDD = vddval.mVolts / 1000;
-vddval.fracVDD =  vddval.mVolts % 1000;
+  vddval.fracVDD =  vddval.mVolts % 1000;
 
- return vddval;
+  return vddval;
 }
 
 void AnalogLP::xmlVDD(void)
 {
+  uPvdd vddval = analogReadVDD();
   Serial.printf("<upVDD>%d.%dV</upVDD>\r\n",vddval.wholeVDD,vddval.fracVDD);
 }
 
@@ -143,6 +149,7 @@ temperature AnalogLP::analogReadTemp(void)
 
 void AnalogLP::xmlTemperature(void)
 {
+  analogReadTemp();
   Serial.printf("<CPUTEMP><DEGC>%d.%dC</DEGC><DEGF>%d.%dF</DEGF></CPUTEMP>\r\n",
 		tempval.wholeC,tempval.fracC,tempval.wholeF,tempval.fracF);
 }

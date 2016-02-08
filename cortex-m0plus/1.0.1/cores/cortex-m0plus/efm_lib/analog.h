@@ -43,6 +43,7 @@ class AnalogLP
   AnalogLP();
   uint32_t analogRead(uint32_t sel);
   uint32_t analogReadPin(uint8_t pin);
+  uint32_t analogReadVDDsample(void);
   uPvdd    analogReadVDD(void);
   temperature analogReadTemp(void);
   uint32_t analogReference(uint32_t ref);
@@ -321,6 +322,11 @@ typedef struct
 
 #define INTERNAL1V25 ADC_SINGLECTRL_REF_1V25
 #define INTERNAL2V5  ADC_SINGLECTRL_REF_2V5
+#define INTERNALVDD  ADC_SINGLECTRL_REF_VDD
 #define DEFAULT      ADC_SINGLECTRL_REF_VDD
 #define EXTERNAL     ADC_SINGLECTRL_REF_EXTSINGLE
+
+#define RES_6BITS    ADC_SINGLECTRL_RES_6BIT
+#define RES_8BITS    ADC_SINGLECTRL_RES_8BIT
+#define RES_12BITS   ADC_SINGLECTRL_RES_12BIT
 
