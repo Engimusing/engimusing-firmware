@@ -35,6 +35,12 @@ class boardIO
   void ledBlueOn(void);
   void ledAllOff(void);
   void ledAllOn(void);
+  void commBoardName(void);
+  void commBootloaderVersion(void);
+  void commChipID(void);
+  void commCPUtype(void);
+  void commFlashSize(void);
+  void commSRAMsize(void);
   void printBoardParameters(void);
   char* getChipID(void);
 

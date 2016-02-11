@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "EFM32XML.h"
+#include "EFM32COMM.h"
 #include "HABTUTOR.h"
 #include <Arduino.h>
 
@@ -39,7 +39,8 @@ void HABTUTORClass::begin(void)
 {
   uint8_t s1[] = "HABTUTOR";
 
-  XML.add_module(s1, decode_cmd);
+  Serial.printf("{\"MODULE\":\"HABTUTOR\"}\r\n");
+  COMM.add_module(s1, decode_cmd);
   Serial.printf("HAB Tutorial  setup\r\n");
   pinMode( 7, OUTPUT);     // Switch pull up
   digitalWrite( 7, HIGH);
@@ -82,11 +83,12 @@ void HABTUTORClass::decode_cmd(uint8_t* item_type,
 
   if(strcmp((char*)item_type, led) == 0) {
     if(strcmp((char*)item_action, on) == 0) {
+      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"LED\":\"ON\"}\r\n");
       digitalWrite(5, HIGH);
       return;
     }
     if(strcmp((char*)item_action, off) == 0) {
-      Serial.printf("LED OFF\r\n");
+      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"LED\":\"OFF\"}\r\n");
       digitalWrite(5, LOW);
       return;
     }
@@ -95,18 +97,18 @@ void HABTUTORClass::decode_cmd(uint8_t* item_type,
     if(strcmp((char*)item_id, red) == 0) {
       sw = digitalRead(10);
       if(sw) {
-	Serial.printf("<HABTUTOR><REDSW>HIGH</REDSW></HABTUTOR>\r\n");
+	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REDSW\":\"HIGH\"}\r\n");
       } else {
-	Serial.printf("<HABTUTOR><REDSW>LOW</REDSW></HABTUTOR>\r\n");
+	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REDSW\":\"LOW\"}\r\n");
       }
       return;
     }
     if(strcmp((char*)item_id, black) == 0) {
       sw = digitalRead(2);
       if(sw) {
-	Serial.printf("<HABTUTOR><BLKSW>HIGH</BLKSW></HABTUTOR>\r\n");
+	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"BLKSW\":\"HIGH\"}\r\n");
       } else {
-	Serial.printf("<HABTUTOR><BLKSW>LOW</BLKSW></HABTUTOR>\r\n");
+	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"BLKSW\":\"LOW\"}\r\n");
       }
       return;
     }
@@ -114,18 +116,18 @@ void HABTUTORClass::decode_cmd(uint8_t* item_type,
   if(strcmp((char*)item_type, reed) == 0) {
     sw = digitalRead(4);
     if(sw) {
-      Serial.printf("<HABTUTOR><REEDSW>HIGH</REEDSW></HABTUTOR>\r\n");
+      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REEDSW\":\"HIGH\"}\r\n");
     } else {
-      Serial.printf("<HABTUTOR><REEDSW>LOW</REEDSW></HABTUTOR>\r\n");
+      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REEDSW\":\"LOW\"}\r\n");
     }
     return;
   }
   if(strcmp((char*)item_type, sensor) == 0) {
     sw = digitalRead(8);
     if(sw) {
-      Serial.printf("<HABTUTOR><SENSOR>HIGH</SENSOR></HABTUTOR>\r\n");
+      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"SENSOR\":\"HIGH\"}\r\n");
     } else {
-      Serial.printf("<HABTUTOR><SENSOR>LOW</SENSOR></HABTUTOR>\r\n");
+      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"SENSOR\":\"LOW\"}\r\n");
     }
     return;
   }
@@ -135,7 +137,7 @@ void HABTUTORClass::decode_cmd(uint8_t* item_type,
     Analog.analogReadResolution(RES_12BITS);
     uint32_t v = Analog.analogReadPin(3);
     uint32_t mV = ((v * r)/4096);
-    Serial.printf("HABTUTOR><POT>%d.%dV</POT></HABTUTOR>\r\n",mV/1000,mV%1000);
+    Serial.printf("{\"MODULE\":\"HABTUTOR\",\"POT\":\"%d.%dV\"}\r\n",mV/1000,mV%1000);
   }
   if(strcmp((char*)item_type, buzzer) == 0) {
     uint32_t freq = 1000;

@@ -20,7 +20,7 @@
 
 #include "Arduino.h"
 
-#define XMLSTRING_LENGTH 253
+#define COMM_STRING_LENGTH 253
 #define ITEM_TOKEN_LENGTH 16
 #define NUMBER_ELEMENTS    3
 #define ITEM_TYPE          0
@@ -28,10 +28,10 @@
 #define ITEM_ACTION        2
 
 
-class EFM32XMLClass
+class EFM32COMMClass
 {
  public:
-  EFM32XMLClass();
+  EFM32COMMClass();
   void begin(void);
   void decode(void);
   int8_t add_module(uint8_t*, void (*cmd)(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*));
@@ -39,14 +39,13 @@ class EFM32XMLClass
   void getInputString(char);
   int8_t parse(uint8_t* s, uint8_t cnt, char c);
   int8_t substrcmp(uint8_t* str, uint8_t* sub, uint8_t start);
-  void decodeAddress(void);
   void parseLine(void);
   void transferLine(void);
-  uint8_t inputString[XMLSTRING_LENGTH+3];
+  uint8_t inputString[COMM_STRING_LENGTH+3];
   void addCharToInputString(char c);
   void invalidCPUid(void);
   void invalidAddr(void);
-  int8_t getToken(uint8_t* tokS, uint8_t* tokE, uint8_t* item);
+  int8_t getToken(uint8_t* str, uint8_t* item);
   void execute_cmd(uint8_t* item_module, 
 		   uint8_t* item_type, 
 		   uint8_t* item_id, 
@@ -56,5 +55,5 @@ class EFM32XMLClass
 };
 
 
-extern EFM32XMLClass XML;
+extern EFM32COMMClass COMM;
 

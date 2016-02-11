@@ -65,20 +65,57 @@ void boardIO::printBoardParameters(void)
   uint32_t sramSize = ((DEVINFO->MSIZE & DEVINFO_MSIZE_SRAM_MASK) >> DEVINFO_MSIZE_SRAM_SHIFT) << 10;
   uint32_t freq = get_hfrco_freq();
 
-  Serial.printf("\r\n\r\n<BRDINFO>\r\n  <BRD>EFM32ZGUSB</BRD>\r\n  <BLVER>1.0</BLVER>\r\n");
-  Serial.printf("  <CHIPID>%x%x</CHIPID>\r\n",DEVINFO->UNIQUEH,DEVINFO->UNIQUEL);
+  // need to generalize these to work for any board - store actual board somewhere
+
+  Serial.printf("{\"BRDNAME\":\"EFM32ZGUSB\",");
+  Serial.printf("\"CHIPID\":\"%x%x\",",DEVINFO->UNIQUEH,DEVINFO->UNIQUEL);
+  if ((family == DEVINFO_PART_DEVICE_FAMILY_ZG) && (partnum == 222) && (flashSize == 32768)) {
+    Serial.printf("\"CPU\":\"EFM32ZG222F32\",");
+  }
+  Serial.printf("\"FLASHSIZE\":\"%d\",",flashSize);
+  Serial.printf("\"SRAMSIZE\":\"%d\",",sramSize);
+  Serial.printf("\"CLKFREQ\":\"%d\",",freq);
+  Serial.printf("\"BLVER\":\"1.0\"}\r\n");
+}
+
+void boardIO::commBoardName(void)
+{
+  Serial.printf("{\"BRDNAME\":\"EFM32ZGUSB\"}\r\n");
+}
+
+void boardIO::commBootloaderVersion(void)
+{
+  // need to fix this to get the data from the actual bootloader
+  Serial.printf("{\"BLVER\":\"1.0\"}\r\n");
+}
+
+void boardIO::commChipID(void)
+{
+  Serial.printf("{\"CHIPID\":\"%x%x\"}\r\n",DEVINFO->UNIQUEH,DEVINFO->UNIQUEL);
+}
+
+void boardIO::commCPUtype(void)
+{
+  uint32_t *pnum = ((uint32_t *) 0x00FE081FCUL);
+  uint32_t family  = (DEVINFO->PART & DEVINFO_PART_DEVICE_FAMILY_MASK) >> DEVINFO_PART_DEVICE_FAMILY_SHIFT;
+  uint32_t partnum =  pnum[0] & DEVINFO_PART_DEVICE_NUMBER_MASK;
+  uint32_t flashSize = ((DEVINFO->MSIZE & DEVINFO_MSIZE_FLASH_MASK) >> DEVINFO_MSIZE_FLASH_SHIFT) << 10;
 
   if ((family == DEVINFO_PART_DEVICE_FAMILY_ZG) && (partnum == 222) && (flashSize == 32768)) {
-    Serial.printf("  <CPU>EFM32ZG222F32</CPU>\r\n");
-  } else {
-    Serial.printf("<CPU>Wrong Gecko</CPU>\r\n");
+    Serial.printf("{\"CPU\":\"EFM32ZG222F32\"}");
   }
+}
 
-  Serial.printf("  <FLASHSIZE>%d</FLASHSIZE>\r\n",flashSize);
-  Serial.printf("  <SRAMSIZE>%d</SRAMSIZE>\r\n",sramSize);
-  Serial.printf("  <CLKFREQ>%d</CLKFREQ>\r\n",freq);
+void boardIO::commFlashSize(void)
+{
+  uint32_t flashSize = ((DEVINFO->MSIZE & DEVINFO_MSIZE_FLASH_MASK) >> DEVINFO_MSIZE_FLASH_SHIFT) << 10;
+  Serial.printf("{\"FLASHSIZE\":\"%d\"}\r\n",flashSize);
+}
 
-  Serial.printf("</BRDINFO>\r\n");
+void boardIO::commSRAMsize(void)
+{
+  uint32_t sramSize = ((DEVINFO->MSIZE & DEVINFO_MSIZE_SRAM_MASK) >> DEVINFO_MSIZE_SRAM_SHIFT) << 10;
+  Serial.printf("{\"SRAMSIZE\":\"%d\"}\r\n",sramSize);
 }
 
 char* boardIO::getChipID(void)

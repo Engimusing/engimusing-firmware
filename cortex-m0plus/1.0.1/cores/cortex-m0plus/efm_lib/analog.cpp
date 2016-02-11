@@ -96,10 +96,10 @@ uPvdd AnalogLP::analogReadVDD(void)
   return vddval;
 }
 
-void AnalogLP::xmlVDD(void)
+void AnalogLP::commVDD(void)
 {
   uPvdd vddval = analogReadVDD();
-  Serial.printf("<upVDD>%d.%dV</upVDD>\r\n",vddval.wholeVDD,vddval.fracVDD);
+  Serial.printf("{\"upVDD\":\"%d.%dV\"}\r\n",vddval.wholeVDD,vddval.fracVDD);
 }
 
 temperature AnalogLP::analogReadTemp(void)
@@ -147,10 +147,10 @@ temperature AnalogLP::analogReadTemp(void)
   return tempval;
 }
 
-void AnalogLP::xmlTemperature(void)
+void AnalogLP::commTemperature(void)
 {
   analogReadTemp();
-  Serial.printf("<CPUTEMP><DEGC>%d.%dC</DEGC><DEGF>%d.%dF</DEGF></CPUTEMP>\r\n",
+  Serial.printf("{\"CPUTEMPC\":\"%d.%dC\",\"CPUTEMPF\":\"%d.%dF\"}\r\n",
 		tempval.wholeC,tempval.fracC,tempval.wholeF,tempval.fracF);
 }
 

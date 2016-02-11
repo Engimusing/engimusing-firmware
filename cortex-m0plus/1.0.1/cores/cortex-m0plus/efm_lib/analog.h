@@ -48,8 +48,8 @@ class AnalogLP
   temperature analogReadTemp(void);
   uint32_t analogReference(uint32_t ref);
   void analogReadResolution(uint8_t bits);
-  void xmlVDD(void);
-  void xmlTemperature(void);
+  void commVDD(void);
+  void commTemperature(void);
  private:
   uint32_t adc_reference;
   uint32_t adc_resolution;

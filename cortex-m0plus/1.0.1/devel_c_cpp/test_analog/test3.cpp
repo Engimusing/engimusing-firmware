@@ -32,12 +32,12 @@ void test03_test(void)
   uPvdd vdd = Analog.analogReadVDD();
 
   Serial.printf("VDD = %d.%dV\r\n", vdd.wholeVDD, vdd.fracVDD);
-  Analog.xmlVDD();
+  Analog.commVDD();
 
   temperature temp = Analog.analogReadTemp();
 
   Serial.printf("Temp = %d.%dC (%d.%dF)\r\n", temp.wholeC, temp.fracC, temp.wholeF, temp.fracF);
-  Analog.xmlTemperature();
+  Analog.commTemperature();
 }
 
 void test03_desc(void)

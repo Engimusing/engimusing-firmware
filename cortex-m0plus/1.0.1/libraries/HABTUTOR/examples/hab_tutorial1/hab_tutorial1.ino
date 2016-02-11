@@ -1,6 +1,6 @@
 #include "Arduino.h"
 
-#include <EFM32XML.h>
+#include <EFM32COMM.h>
 #include <EFM32ZGUSB.h>
 #include <HABTUTOR.h>
 
@@ -21,13 +21,12 @@ Commands:
 
 void setup() {
   Serial.begin(115200);
-  Serial.printf("\r\n\r\nStart\r\n");
-  XML.begin();
+  COMM.begin();
   ZGUSB.begin();
   HABT.begin();
 }
 
 void loop() {
-  XML.decode();
+  COMM.decode();
 }
 
