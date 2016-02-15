@@ -154,6 +154,14 @@ void AnalogLP::commTemperature(void)
 		tempval.wholeC,tempval.fracC,tempval.wholeF,tempval.fracF);
 }
 
+void AnalogLP::commTempVDD(void)
+{
+  uPvdd vddval = analogReadVDD();
+  analogReadTemp();
+  Serial.printf("{\"upVDD\":\"%d.%dV\",\"CPUTEMPC\":\"%d.%dC\",\"CPUTEMPF\":\"%d.%dF\"}\r\n"
+		,vddval.wholeVDD,vddval.fracVDD,tempval.wholeC,tempval.fracC,tempval.wholeF,tempval.fracF);
+}
+
 
 uint32_t AnalogLP::analogReference(uint32_t ref)
 {

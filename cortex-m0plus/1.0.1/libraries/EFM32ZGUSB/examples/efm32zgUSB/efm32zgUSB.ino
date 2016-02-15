@@ -15,6 +15,14 @@
 {"MOD":"EFMUSB", "TYP":"LED", "IID":"GREEN", "ACT":"OFF"}
 {"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"ON"}
 {"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"OFF"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"ON"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"OFF"}
+
+{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"RED"}
+{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"GREEN"}
+{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"BLUE"}
+{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"ALL"}
+
 {"MOD":"EFMUSB", "TYP":"CPUTEMP"}
 {"MOD":"EFMUSB", "TYP":"CPUVDD"}
 {"MOD":"EFMUSB", "TYP":"BRDINFO"}

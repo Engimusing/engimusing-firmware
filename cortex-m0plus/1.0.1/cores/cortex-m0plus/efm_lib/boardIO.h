@@ -18,15 +18,19 @@
 
 #pragma once
 
-#define RED_LED       0
+#define RED_LED       2
 #define BLUE_LED      1
-#define GREEN_LED     2
+#define GREEN_LED     0
 
 
 class boardIO
 {
  public:
   boardIO();
+  void ledReadRed(void);
+  void ledReadBlue(void);
+  void ledReadGreen(void);
+  void ledReadAll(void);
   void ledRedOff(void);
   void ledRedOn(void);
   void ledGreenOff(void);

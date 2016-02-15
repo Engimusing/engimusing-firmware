@@ -38,10 +38,9 @@ TimersLP Timer;
 void HABTUTORClass::begin(void)
 {
   uint8_t s1[] = "HABTUTOR";
-
-  Serial.printf("{\"MODULE\":\"HABTUTOR\"}\r\n");
   COMM.add_module(s1, decode_cmd);
-  Serial.printf("HAB Tutorial  setup\r\n");
+  Serial.printf("{\"MODULE\":\"HABTUTOR\"}\r\n");
+
   pinMode( 7, OUTPUT);     // Switch pull up
   digitalWrite( 7, HIGH);
   pinMode(10, INPUT);      // Red Switch

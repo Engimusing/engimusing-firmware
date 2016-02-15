@@ -40,27 +40,34 @@ EFM32ZGUSBClass::EFM32ZGUSBClass()
 
 /*
 
-{"CPUID":"24353a02522fa331", "ADDR":"01"}   // set address to 01 for cpuid
-{"CPUID":"24353a02522fa331", "MOD":"EFMUSB", "TYPE":"LED", "ID":"RED",   "ON"} // CPUID is target
-{"ADDR":"01", "MOD":"EFMUSB", "TYPE":"LED", "ID":"RED",   "ON"} // address 01 is target
+{"CID":"24353a02522fa331", "ADR":"01"}   // set address to 01 for cpuid
+{"CID":"24353a02522fa331", "MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ON"} // CPUID is target
+{"ADR":"01", "MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ON"} // address 01 is target
 
 // following are targeted to the first (or only) device in a chain
-{"MOD":"EFMUSB", "TYPE":"LED", "ID":"RED",   "ON"}
-{"MOD":"EFMUSB", "TYPE":"LED", "ID":"RED",   "OFF"}
-{"MOD":"EFMUSB", "TYPE":"LED", "ID":"GREEN", "ON"}
-{"MOD":"EFMUSB", "TYPE":"LED", "ID":"GREEN", "OFF"}
-{"MOD":"EFMUSB", "TYPE":"LED", "ID":"BLUE",  "ON"}
-{"MOD":"EFMUSB", "TYPE":"LED", "ID":"BLUE",  "OFF"}
-{"MOD":"EFMUSB", "TYPE":"CPUTEMP"}
-{"MOD":"EFMUSB", "TYPE":"CPUVDD"}
-{"MOD":"EFMUSB", "TYPE":"BRDINFO"}
-{"MOD":"EFMUSB", "TYPE":"BRDNAME"}
-{"MOD":"EFMUSB", "TYPE":"BLVER"}
-{"MOD":"EFMUSB", "TYPE":"CHIPID"}
-{"MOD":"EFMUSB", "TYPE":"CPUTYPE"}
-{"MOD":"EFMUSB", "TYPE":"FLASHSIZE"}
-{"MOD":"EFMUSB", "TYPE":"SRAMSIZE"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"RED","ACT":"ON"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ACT":"OFF"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"GREEN", "ACT":"ON"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"GREEN", "ACT":"OFF"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"ON"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"OFF"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"ON"}
+{"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"OFF"}
 
+{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"RED"}
+{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"GREEN"}
+{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"BLUE"}
+{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"ALL"}
+
+{"MOD":"EFMUSB", "TYP":"CPUTEMP"}
+{"MOD":"EFMUSB", "TYP":"CPUVDD"}
+{"MOD":"EFMUSB", "TYP":"BRDINFO"}
+{"MOD":"EFMUSB", "TYP":"BRDNAME"}
+{"MOD":"EFMUSB", "TYP":"BLVER"}
+{"MOD":"EFMUSB", "TYP":"CHIPID"}
+{"MOD":"EFMUSB", "TYP":"CPUTYPE"}
+{"MOD":"EFMUSB", "TYP":"FLASHSIZE"}
+{"MOD":"EFMUSB", "TYP":"SRAMSIZE"}
 */
 
 void EFM32ZGUSBClass::decode_cmd(uint8_t* item_type, 
@@ -71,6 +78,7 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_type,
 {
   // Types:
   const char led[]       = "LED";
+  const char ledr[]      = "LEDR";
   const char cputemp[]   = "CPUTEMP";
   const char cpuvdd[]    = "CPUVDD";
   const char brdinfo[]   = "BRDINFO";
@@ -80,10 +88,12 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_type,
   const char cputype[]   = "CPUTYPE";
   const char flashsize[] = "FLASHSIZE";
   const char sramsize[]  = "SRAMSIZE";
+  const char tempVDD[]   = "TEMPVDD";
   // IDs:
   const char red[]       = "RED";
   const char blue[]      = "BLUE";
   const char green[]     = "GREEN";
+  const char all[]       = "ALL";
   // ACTIONs:
   const char on[]        = "ON";
   const char off[]       = "OFF";
@@ -117,6 +127,16 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_type,
       }
       if(strcmp((char*)item_action, off) == 0) {
 	IO.ledGreenOff();
+	return;
+      }
+    }
+    if(strcmp((char*)item_id, all) == 0) {
+      if(strcmp((char*)item_action, on) == 0) {
+	IO.ledAllOn();
+	return;
+      }
+      if(strcmp((char*)item_action, off) == 0) {
+	IO.ledAllOff();
 	return;
       }
     }
@@ -157,9 +177,30 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_type,
     IO.commSRAMsize();
     return;
   }
+  if(strcmp((char*)item_type, tempVDD) == 0) {
+    Analog.commTempVDD();
+    return;
+  }
+  if(strcmp((char*)item_type, ledr) == 0) {
+    if(strcmp((char*)item_id, red) == 0) {
+      IO.ledReadRed();
+      return;
+    }
+    if(strcmp((char*)item_id, blue) == 0) {
+      IO.ledReadBlue();
+      return;
+    }
+    if(strcmp((char*)item_id, green) == 0) {
+      IO.ledReadGreen();
+      return;
+    }
+    if(strcmp((char*)item_id, all) == 0) {
+      IO.ledReadAll();
+      return;
+    }
+  }
 }
 
 
 EFM32ZGUSBClass ZGUSB;
-
 

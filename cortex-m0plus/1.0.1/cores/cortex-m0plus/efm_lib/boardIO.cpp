@@ -56,6 +56,49 @@ void boardIO::ledAllOn(void)
   GPIO->P[ledPorts[BLUE_LED]].DOUTCLR  = (1 << ledPins[BLUE_LED]);
 }
 
+void boardIO::ledReadRed(void)   {
+  if((GPIO->P[dPorts[ledPorts[RED_LED]]].DIN >> ledPins[RED_LED]) & 0x1) {
+    Serial.printf("{\"REDLED\":\"ISOFF\"}\r\n");
+  } else {
+    Serial.printf("{\"REDLED\":\"ISON\"}\r\n");
+  }
+}
+
+void boardIO::ledReadBlue(void)  {
+  if((GPIO->P[dPorts[ledPorts[BLUE_LED]]].DIN >> ledPins[BLUE_LED]) & 0x1) {
+    Serial.printf("{\"BLUELED\":\"ISOFF\"}\r\n");
+  } else {
+    Serial.printf("{\"BLUELED\":\"ISON\"}\r\n");
+  }
+}
+
+void boardIO::ledReadGreen(void) {
+  if((GPIO->P[dPorts[ledPorts[GREEN_LED]]].DIN >> ledPins[GREEN_LED]) & 0x1) {
+    Serial.printf("{\"GREENLED\":\"ISOFF\"}\r\n");
+  } else {
+    Serial.printf("{\"GREENLED\":\"ISON\"}\r\n");
+  }
+}
+
+void boardIO::ledReadAll(void)
+{
+  if((GPIO->P[dPorts[ledPorts[RED_LED]]].DIN >> ledPins[RED_LED]) & 0x1) {
+    Serial.printf("{\"REDLED\":\"ISOFF\",");
+  } else {
+    Serial.printf("{\"REDLED\":\"ISON\",");
+  }
+  if((GPIO->P[dPorts[ledPorts[BLUE_LED]]].DIN >> ledPins[BLUE_LED]) & 0x1) {
+    Serial.printf("\"BLUELED\":\"ISOFF\",");
+  } else {
+    Serial.printf("\"BLUELED\":\"ISON\",");
+  }
+  if((GPIO->P[dPorts[ledPorts[GREEN_LED]]].DIN >> ledPins[GREEN_LED]) & 0x1) {
+    Serial.printf("\"GREENLED\":\"ISOFF\"}\r\n");
+  } else {
+    Serial.printf("\"GREENLED\":\"ISON\"}\r\n");
+  }
+}
+
 void boardIO::printBoardParameters(void)
 {
   uint32_t *pnum = ((uint32_t *) 0x00FE081FCUL);

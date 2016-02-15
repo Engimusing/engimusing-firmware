@@ -50,6 +50,7 @@ class AnalogLP
   void analogReadResolution(uint8_t bits);
   void commVDD(void);
   void commTemperature(void);
+  void commTempVDD(void);
  private:
   uint32_t adc_reference;
   uint32_t adc_resolution;
