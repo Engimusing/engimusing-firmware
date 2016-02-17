@@ -20,12 +20,16 @@
 
 #include "Arduino.h"
 
-#define COMM_STRING_LENGTH 253
-#define ITEM_TOKEN_LENGTH 16
-#define NUMBER_ELEMENTS    3
-#define ITEM_TYPE          0
-#define ITEM_ID            1
-#define ITEM_ACTION        2
+#define MODULE_TABLE_ENTRIES    8
+#define MODULE_STRING_LENGTH   48
+#define COMM_STRING_LENGTH    253
+#define ITEM_TOKEN_LENGTH      16
+#define ITEM_TOPIC_LENGTH     128
+#define ITEM_PAYLOAD_LENGTH    32
+#define NUMBER_ELEMENTS         3
+#define ITEM_TYPE               0
+#define ITEM_ID                 1
+#define ITEM_ACTION             2
 
 
 class EFM32COMMClass
@@ -34,7 +38,7 @@ class EFM32COMMClass
   EFM32COMMClass();
   void begin(void);
   void decode(void);
-  int8_t add_module(uint8_t*, void (*cmd)(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*));
+  int8_t add_module(uint8_t*, void (*cmd)(uint8_t*, uint8_t*, uint8_t*, uint8_t*));
  private:
   void getInputString(char);
   int8_t parse(uint8_t* s, uint8_t cnt, char c);
@@ -45,15 +49,13 @@ class EFM32COMMClass
   void addCharToInputString(char c);
   void invalidCPUid(void);
   void invalidAddr(void);
-  int8_t getToken(uint8_t* str, uint8_t* item);
+  int8_t getToken(uint8_t* str, uint8_t* item, uint8_t tok_length);
   void execute_cmd(uint8_t* item_module, 
 		   uint8_t* item_type, 
 		   uint8_t* item_id, 
 		   uint8_t* item_action,
-		   uint8_t* item_p1,
-		   uint8_t* item_p2);
+		   uint8_t* item_payload);
 };
-
 
 extern EFM32COMMClass COMM;
 

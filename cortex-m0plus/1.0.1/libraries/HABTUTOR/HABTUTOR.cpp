@@ -60,8 +60,7 @@ HABTUTORClass::HABTUTORClass()
 void HABTUTORClass::decode_cmd(uint8_t* item_type,
 			       uint8_t* item_id,
 			       uint8_t* item_action,
-			       uint8_t* item_p1,
-			       uint8_t* item_p2)
+			       uint8_t* item_payload)
 {
   // Types:
   const char switches[] = "SWITCH";
@@ -140,12 +139,12 @@ void HABTUTORClass::decode_cmd(uint8_t* item_type,
   }
   if(strcmp((char*)item_type, buzzer) == 0) {
     uint32_t freq = 1000;
-    uint32_t f = atoi((char*)item_p1);
+    uint32_t f = atoi((char*)item_payload);
     if((f > 0) && (f < 20000)) {
       freq = f;
     }
     uint32_t duration = 0;
-    uint32_t d = atoi((char*)item_p2);
+    uint32_t d = atoi((char*)item_payload);
     if(d > 0) {
       duration = d;
     }

@@ -28,8 +28,10 @@ extern AnalogLP Analog;
 void EFM32ZGUSBClass::begin(void)
 {
   uint8_t s1[] = "EFMUSB";
+  uint8_t s2[] = "home/efmusb";
 
   COMM.add_module(s1, decode_cmd);
+  COMM.add_module(s2, decode_cmd);
   IO.commChipID();
   Serial.printf("{\"MODULE\":\"EFMUSB\"}\r\n");
 }
@@ -40,41 +42,40 @@ EFM32ZGUSBClass::EFM32ZGUSBClass()
 
 /*
 
-{"CID":"24353a02522fa331", "ADR":"01"}   // set address to 01 for cpuid
-{"CID":"24353a02522fa331", "MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ON"} // CPUID is target
-{"ADR":"01", "MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ON"} // address 01 is target
+  {"CID":"24353a02522fa331", "ADR":"01"}   // set address to 01 for cpuid
+  {"CID":"24353a02522fa331", "MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ON"} // CPUID is target
+  {"ADR":"01", "MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ON"} // address 01 is target
 
-// following are targeted to the first (or only) device in a chain
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"RED","ACT":"ON"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ACT":"OFF"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"GREEN", "ACT":"ON"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"GREEN", "ACT":"OFF"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"ON"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"OFF"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"ON"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"OFF"}
+  // following are targeted to the first (or only) device in a chain
+  {"MOD":"EFMUSB", "TYP":"LED", "IID":"RED","ACT":"ON"}
+  {"MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ACT":"OFF"}
+  {"MOD":"EFMUSB", "TYP":"LED", "IID":"GREEN", "ACT":"ON"}
+  {"MOD":"EFMUSB", "TYP":"LED", "IID":"GREEN", "ACT":"OFF"}
+  {"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"ON"}
+  {"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"OFF"}
+  {"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"ON"}
+  {"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"OFF"}
 
-{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"RED"}
-{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"GREEN"}
-{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"BLUE"}
-{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"ALL"}
+  {"MOD":"EFMUSB", "TYP":"LEDR", "IID":"RED"}
+  {"MOD":"EFMUSB", "TYP":"LEDR", "IID":"GREEN"}
+  {"MOD":"EFMUSB", "TYP":"LEDR", "IID":"BLUE"}
+  {"MOD":"EFMUSB", "TYP":"LEDR", "IID":"ALL"}
 
-{"MOD":"EFMUSB", "TYP":"CPUTEMP"}
-{"MOD":"EFMUSB", "TYP":"CPUVDD"}
-{"MOD":"EFMUSB", "TYP":"BRDINFO"}
-{"MOD":"EFMUSB", "TYP":"BRDNAME"}
-{"MOD":"EFMUSB", "TYP":"BLVER"}
-{"MOD":"EFMUSB", "TYP":"CHIPID"}
-{"MOD":"EFMUSB", "TYP":"CPUTYPE"}
-{"MOD":"EFMUSB", "TYP":"FLASHSIZE"}
-{"MOD":"EFMUSB", "TYP":"SRAMSIZE"}
+  {"MOD":"EFMUSB", "TYP":"CPUTEMP"}
+  {"MOD":"EFMUSB", "TYP":"CPUVDD"}
+  {"MOD":"EFMUSB", "TYP":"BRDINFO"}
+  {"MOD":"EFMUSB", "TYP":"BRDNAME"}
+  {"MOD":"EFMUSB", "TYP":"BLVER"}
+  {"MOD":"EFMUSB", "TYP":"CHIPID"}
+  {"MOD":"EFMUSB", "TYP":"CPUTYPE"}
+  {"MOD":"EFMUSB", "TYP":"FLASHSIZE"}
+  {"MOD":"EFMUSB", "TYP":"SRAMSIZE"}
 */
 
 void EFM32ZGUSBClass::decode_cmd(uint8_t* item_type, 
 				 uint8_t* item_id, 
 				 uint8_t* item_action, 
-				 uint8_t* item_p1,
-				 uint8_t* item_p2)
+				 uint8_t* item_payload)
 {
   // Types:
   const char led[]       = "LED";

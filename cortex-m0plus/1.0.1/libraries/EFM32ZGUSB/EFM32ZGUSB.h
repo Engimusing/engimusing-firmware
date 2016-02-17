@@ -27,7 +27,7 @@ class EFM32ZGUSBClass
   EFM32ZGUSBClass();
   void begin(void);
  private:
-  static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*);
+  static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*);
 };
 
 
