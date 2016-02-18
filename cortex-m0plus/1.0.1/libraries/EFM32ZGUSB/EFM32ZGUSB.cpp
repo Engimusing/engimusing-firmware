@@ -98,105 +98,148 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_type,
   // ACTIONs:
   const char on[]        = "ON";
   const char off[]       = "OFF";
+  const char stat[]      = "STAT";
+  const char cel[]       = "CEL";
+  const char far[]       = "FAR";
 
+  const char *onoff[]   = {"ISON","ISOFF"};
+  const char modu[]     = "{\"MODULE\":\"EFMUSB\",\"";
+  const char mid[]      = "\":\"";
+  const char com[]      = "\",\"";
+  const char tail[]     = "\"}\r\n";
 
   if(strcmp((char*)item_type, led) == 0) {
     if(strcmp((char*)item_id, red) == 0) {
       if(strcmp((char*)item_action, on) == 0) {
-	IO.ledRedOn();
+	digitalWrite(RED_LED, LOW);
 	return;
       }
       if(strcmp((char*)item_action, off) == 0) {
+	digitalWrite(RED_LED, HIGH);
 	IO.ledRedOff();
+	return;
+      }
+      if(strcmp((char*)item_action, stat) == 0) {
+	Serial.printf("%sREDLED%s%s%s",modu,mid,onoff[digitalRead(RED_LED)],tail);
 	return;
       }
     }
     if(strcmp((char*)item_id, blue) == 0) {
       if(strcmp((char*)item_action, on) == 0) {
-	IO.ledBlueOn();
+	digitalWrite(BLUE_LED, LOW);
 	return;
       }
       if(strcmp((char*)item_action, off) == 0) {
-	IO.ledBlueOff();
+	digitalWrite(BLUE_LED, HIGH);
+	return;
+      }
+      if(strcmp((char*)item_action, stat) == 0) {
+	Serial.printf("%sBLUELED%s%s%s",modu,mid,onoff[digitalRead(BLUE_LED)],tail);
 	return;
       }
     }
     if(strcmp((char*)item_id, green) == 0) {
       if(strcmp((char*)item_action, on) == 0) {
-	IO.ledGreenOn();
+	digitalWrite(GREEN_LED, LOW);
 	return;
       }
       if(strcmp((char*)item_action, off) == 0) {
-	IO.ledGreenOff();
+	digitalWrite(GREEN_LED, HIGH);
+	return;
+      }
+      if(strcmp((char*)item_action, stat) == 0) {
+	Serial.printf("%sGREENLED%s%s%s",modu,mid,onoff[digitalRead(GREEN_LED)],tail);
 	return;
       }
     }
     if(strcmp((char*)item_id, all) == 0) {
       if(strcmp((char*)item_action, on) == 0) {
-	IO.ledAllOn();
+	digitalWrite(RED_LED, LOW);
+	digitalWrite(BLUE_LED, LOW);
+	digitalWrite(GREEN_LED, LOW);
 	return;
       }
       if(strcmp((char*)item_action, off) == 0) {
-	IO.ledAllOff();
+	digitalWrite(RED_LED, HIGH);
+	digitalWrite(BLUE_LED, HIGH);
+	digitalWrite(GREEN_LED, HIGH);
+	return;
+      }
+      if(strcmp((char*)item_action, stat) == 0) {
+	Serial.printf("%sREDLED%s%s%sBLUELED%s%s%sGREENLED%s%s%s",
+		      modu,mid,onoff[digitalRead(RED_LED)],com,
+		      mid,onoff[digitalRead(BLUE_LED)],com,
+		      mid,onoff[digitalRead(GREEN_LED)],tail);
 	return;
       }
     }
   }
   if(strcmp((char*)item_type, cputemp) == 0) {
-    Analog.commTemperature();
-    return;
+    if(strcmp((char*)item_id, cel) == 0) {
+      if(strcmp((char*)item_action, stat) == 0) {
+	temperature tempval = Analog.analogReadTemp();
+	Serial.printf("%sCPUTEMPC%s%d.%dC%s", modu, mid, tempval.wholeC, tempval.fracC, tail);
+	return;
+      }
+    }
+    if(strcmp((char*)item_id, far) == 0) {
+      if(strcmp((char*)item_action, stat) == 0) {
+	temperature tempval = Analog.analogReadTemp();
+	Serial.printf("%sCPUTEMPF%s%d.%dF%s", modu, mid, tempval.wholeF, tempval.fracF, tail);
+	return;
+      }
+    }
   }
   if(strcmp((char*)item_type, cpuvdd) == 0) {
-    Analog.commVDD();
-    return;
+    if(strcmp((char*)item_action, stat) == 0) {
+      uPvdd vddval = Analog.analogReadVDD();
+      Serial.printf("%supVDD%s%d.%dV%s",modu, mid, vddval.wholeVDD,vddval.fracVDD, tail);
+      return;
+    }
   }
   if(strcmp((char*)item_type, brdinfo) == 0) {
-    IO.printBoardParameters();
-    return;
+    if(strcmp((char*)item_action, stat) == 0) {
+      IO.printBoardParameters();
+      return;
+    }
   }
   if(strcmp((char*)item_type, brdname) == 0) {
-    IO.commBoardName();
-    return;
+    if(strcmp((char*)item_action, stat) == 0) {
+      Serial.printf("%sBRDNAME%sEFMZGUSB%s",modu, mid, tail);
+      return;
+    }
   }
   if(strcmp((char*)item_type, blver) == 0) {
-    IO.commBootloaderVersion();
-    return;
+    if(strcmp((char*)item_action, stat) == 0) {
+      Serial.printf("%s",modu);
+      IO.commBootloaderVersion();
+      return;
+    }
   }
   if(strcmp((char*)item_type, chipid) == 0) {
-    IO.commChipID();
-    return;
+    if(strcmp((char*)item_action, stat) == 0) {
+      Serial.printf("%sCHIPID%s%s%s",modu, mid, IO.getChipID(), tail);
+      return;
+    }
   }
   if(strcmp((char*)item_type, cputype) == 0) {
-    IO.commCPUtype();
-    return;
+    if(strcmp((char*)item_action, stat) == 0) {
+      Serial.printf("%s",modu);
+      IO.commCPUtype();
+      return;
+    }
   }
   if(strcmp((char*)item_type, flashsize) == 0) {
-    IO.commFlashSize();
-    return;
+    if(strcmp((char*)item_action, stat) == 0) {
+      Serial.printf("%s",modu);
+      IO.commFlashSize();
+      return;
+    }
   }
   if(strcmp((char*)item_type, sramsize) == 0) {
-    IO.commSRAMsize();
-    return;
-  }
-  if(strcmp((char*)item_type, tempVDD) == 0) {
-    Analog.commTempVDD();
-    return;
-  }
-  if(strcmp((char*)item_type, ledr) == 0) {
-    if(strcmp((char*)item_id, red) == 0) {
-      IO.ledReadRed();
-      return;
-    }
-    if(strcmp((char*)item_id, blue) == 0) {
-      IO.ledReadBlue();
-      return;
-    }
-    if(strcmp((char*)item_id, green) == 0) {
-      IO.ledReadGreen();
-      return;
-    }
-    if(strcmp((char*)item_id, all) == 0) {
-      IO.ledReadAll();
+    if(strcmp((char*)item_action, stat) == 0) {
+      Serial.printf("%s",modu);
+      IO.commSRAMsize();
       return;
     }
   }

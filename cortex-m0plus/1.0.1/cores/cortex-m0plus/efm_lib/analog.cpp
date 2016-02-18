@@ -147,11 +147,16 @@ temperature AnalogLP::analogReadTemp(void)
   return tempval;
 }
 
-void AnalogLP::commTemperature(void)
+void AnalogLP::commTemperatureCelcius(void)
 {
   analogReadTemp();
-  Serial.printf("{\"CPUTEMPC\":\"%d.%dC\",\"CPUTEMPF\":\"%d.%dF\"}\r\n",
-		tempval.wholeC,tempval.fracC,tempval.wholeF,tempval.fracF);
+  Serial.printf("{\"CPUTEMPC\":\"%d.%dC\"}\r\n", tempval.wholeC, tempval.fracC);
+}
+
+void AnalogLP::commTemperatureFarenheit(void)
+{
+  analogReadTemp();
+  Serial.printf("{\"CPUTEMPF\":\"%d.%dF\"}\r\n", tempval.wholeF, tempval.fracF);
 }
 
 void AnalogLP::commTempVDD(void)

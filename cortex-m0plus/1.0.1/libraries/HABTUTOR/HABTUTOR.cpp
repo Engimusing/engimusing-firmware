@@ -41,15 +41,15 @@ void HABTUTORClass::begin(void)
   COMM.add_module(s1, decode_cmd);
   Serial.printf("{\"MODULE\":\"HABTUTOR\"}\r\n");
 
-  pinMode( 7, OUTPUT);     // Switch pull up
+  pinMode( 7, OUTPUT);       // Switch pull up
   digitalWrite( 7, HIGH);
-  pinMode(10, INPUT);      // Red Switch
-  pinMode( 2, INPUT);      // Black Switch
-  pinMode( 4, INPUT);      // Reed Switch
-  pinMode( 5, OUTPUT);     // LED
+  pinMode(10, INPUT);        // Red Switch
+  pinMode( 2, INPUT);        // Black Switch
+  pinMode( 4, INPUT);        // Reed Switch
+  pinMode( 5, OUTPUT);       // LED
   digitalWrite( 5, HIGH);
-  pinMode( 8, INPUT_PULLUP);      // Reflective Object Sensor
-  pinMode( 6, OUTPUT);     // Buzzer
+  pinMode( 8, INPUT_PULLUP); // Reflective Object Sensor
+  pinMode( 6, OUTPUT);       // Buzzer
 }
 
 HABTUTORClass::HABTUTORClass()
@@ -76,77 +76,97 @@ void HABTUTORClass::decode_cmd(uint8_t* item_type,
   // ACTIONs:
   const char on[]       = "ON";
   const char off[]      = "OFF";
-
-  uint32_t sw = 0;
+  const char stat[]     = "STAT";
+  const char freqy[]    = "FREQ";
+  const char dur[]      = "DURATION";
 
   if(strcmp((char*)item_type, led) == 0) {
     if(strcmp((char*)item_action, on) == 0) {
-      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"LED\":\"ON\"}\r\n");
       digitalWrite(5, HIGH);
       return;
     }
     if(strcmp((char*)item_action, off) == 0) {
-      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"LED\":\"OFF\"}\r\n");
       digitalWrite(5, LOW);
+      return;
+    }
+    if(strcmp((char*)item_action, stat) == 0) {
+      if(digitalRead(5)) {
+	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"LED\":\"ISOFF\"}\r\n");
+      } else {
+	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"LED\":\"ISON\"}\r\n");
+      }
       return;
     }
   }
   if(strcmp((char*)item_type, switches) == 0) {
-    if(strcmp((char*)item_id, red) == 0) {
-      sw = digitalRead(10);
-      if(sw) {
-	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REDSW\":\"HIGH\"}\r\n");
-      } else {
-	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REDSW\":\"LOW\"}\r\n");
+    if(strcmp((char*)item_action, stat) == 0) {
+      if(strcmp((char*)item_id, red) == 0) {
+	if(digitalRead(10)) {
+	  Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REDSW\":\"HIGH\"}\r\n");
+	} else {
+	  Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REDSW\":\"LOW\"}\r\n");
+	}
+	return;
       }
-      return;
-    }
-    if(strcmp((char*)item_id, black) == 0) {
-      sw = digitalRead(2);
-      if(sw) {
-	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"BLKSW\":\"HIGH\"}\r\n");
-      } else {
-	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"BLKSW\":\"LOW\"}\r\n");
+      if(strcmp((char*)item_id, black) == 0) {
+	if(digitalRead(2)) {
+	  Serial.printf("{\"MODULE\":\"HABTUTOR\",\"BLKSW\":\"HIGH\"}\r\n");
+	} else {
+	  Serial.printf("{\"MODULE\":\"HABTUTOR\",\"BLKSW\":\"LOW\"}\r\n");
+	}
+	return;
       }
-      return;
     }
   }
-  if(strcmp((char*)item_type, reed) == 0) {
-    sw = digitalRead(4);
-    if(sw) {
-      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REEDSW\":\"HIGH\"}\r\n");
-    } else {
-      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REEDSW\":\"LOW\"}\r\n");
+  if(strcmp((char*)item_type, switches) == 0) {
+    if(strcmp((char*)item_id, reed) == 0) {
+      if(strcmp((char*)item_action, stat) == 0) {
+	if(digitalRead(4)) {
+	  Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REEDSW\":\"HIGH\"}\r\n");
+	} else {
+	  Serial.printf("{\"MODULE\":\"HABTUTOR\",\"REEDSW\":\"LOW\"}\r\n");
+	}
+	return;
+      }
     }
-    return;
   }
   if(strcmp((char*)item_type, sensor) == 0) {
-    sw = digitalRead(8);
-    if(sw) {
-      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"SENSOR\":\"HIGH\"}\r\n");
-    } else {
-      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"SENSOR\":\"LOW\"}\r\n");
+    if(strcmp((char*)item_action, stat) == 0) {
+      if(digitalRead(8)) {
+	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"SENSOR\":\"HIGH\"}\r\n");
+      } else {
+	Serial.printf("{\"MODULE\":\"HABTUTOR\",\"SENSOR\":\"LOW\"}\r\n");
+      }
+      return;
     }
-    return;
   }
   if(strcmp((char*)item_type, pot) == 0) {
-    uint32_t r = Analog.analogReadVDDsample();
-    Analog.analogReference(INTERNALVDD);
-    Analog.analogReadResolution(RES_12BITS);
-    uint32_t v = Analog.analogReadPin(3);
-    uint32_t mV = ((v * r)/4096);
-    Serial.printf("{\"MODULE\":\"HABTUTOR\",\"POT\":\"%d.%dV\"}\r\n",mV/1000,mV%1000);
+    if(strcmp((char*)item_action, stat) == 0) {
+      uint32_t r = Analog.analogReadVDDsample();
+      Analog.analogReference(INTERNALVDD);
+      Analog.analogReadResolution(RES_12BITS);
+      uint32_t v = Analog.analogReadPin(3);
+      uint32_t mV = ((v * r)/4096);
+      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"POT\":\"%d.%dV\"}\r\n",mV/1000,mV%1000);
+    }
   }
   if(strcmp((char*)item_type, buzzer) == 0) {
-    uint32_t freq = 1000;
-    uint32_t f = atoi((char*)item_payload);
-    if((f > 0) && (f < 20000)) {
-      freq = f;
+    static uint32_t freq = 1000;
+    static uint32_t duration = 0;
+
+    if(strcmp((char*)item_action, freqy) == 0) {
+      uint32_t f = atoi((char*)item_payload);
+      if((f >= 0) && (f < 20000)) {
+	freq = f;
+	Serial.printf("freq = %d\r\n",freq);
+      }
     }
-    uint32_t duration = 0;
-    uint32_t d = atoi((char*)item_payload);
-    if(d > 0) {
-      duration = d;
+    if(strcmp((char*)item_action, dur) == 0) {
+      uint32_t d = atoi((char*)item_payload);
+      if(d >= 0) {
+	duration = d;
+	Serial.printf("duration = %d\r\n",duration);
+      }
     }
     if(strcmp((char*)item_action, on) == 0) {
       Timer.noTone(6);

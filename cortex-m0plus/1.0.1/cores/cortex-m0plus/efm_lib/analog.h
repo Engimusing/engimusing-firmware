@@ -51,6 +51,8 @@ class AnalogLP
   void commVDD(void);
   void commTemperature(void);
   void commTempVDD(void);
+  void commTemperatureCelcius(void);
+  void commTemperatureFarenheit(void);
  private:
   uint32_t adc_reference;
   uint32_t adc_resolution;

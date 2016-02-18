@@ -50,11 +50,6 @@ class EFM32COMMClass
   void invalidCPUid(void);
   void invalidAddr(void);
   int8_t getToken(uint8_t* str, uint8_t* item, uint8_t tok_length);
-  void execute_cmd(uint8_t* item_module, 
-		   uint8_t* item_type, 
-		   uint8_t* item_id, 
-		   uint8_t* item_action,
-		   uint8_t* item_payload);
 };
 
 extern EFM32COMMClass COMM;

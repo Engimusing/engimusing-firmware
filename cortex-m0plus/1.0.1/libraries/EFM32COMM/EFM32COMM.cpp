@@ -53,7 +53,7 @@ void EFM32COMMClass::decode(void)
   if (Serial.available()) {
     char c = (char)Serial.read(); // get the new byte:
     if(isgraph(c)) {
-      Serial.print(c);
+      //Serial.print(c);
       getInputString(c);
     } else {
       return;
@@ -137,7 +137,7 @@ void EFM32COMMClass::parseLine(void)
   uint8_t *myid;
   static uint8_t myAddr[] = "00";
 
-  static uint8_t debug = 1;
+  static uint8_t debug = 0;
 
   myid = (uint8_t*)IO.getChipID();
   //if(debug) {Serial.printf("myid = %s\r\n",myid);}
@@ -187,8 +187,8 @@ void EFM32COMMClass::parseLine(void)
   int addr_length = strlen((char*)item_addr);
   int topic_length = strlen((char*)item_topic);
 
-  if(debug) {Serial.printf("cpuid_equal = %d addr_equal = %d cpuid_length = %d addr_length = %d\r\n",
-			   cpuid_equal, addr_equal, cpuid_length, addr_length);}
+  if(debug) {Serial.printf("cpuid_equal = %d addr_equal = %d cpuid_length = %d addr_length = %d topic_length = %d\r\n",
+			   cpuid_equal, addr_equal, cpuid_length, addr_length, topic_length);}
 
   if((cpuid_length == 16) && cpuid_equal && (addr_length == 2)) {
     myAddr[0] = item_addr[0];
@@ -200,9 +200,18 @@ void EFM32COMMClass::parseLine(void)
   uint8_t done = false;
   uint8_t equal = false;
 
-  if(cpuid_equal || addr_equal) {
-    execute_cmd(item_module, item_type, item_id, item_action, item_payload);
-    done = true;
+  if((topic_length == 0) || cpuid_equal || addr_equal) {
+
+    for(int i = 0; (i < MODULE_TABLE_ENTRIES) && module_table[i][0]; i++) {
+      if(strcmp((char*)item_module, (char*)module_table[i]) == 0) {
+	moduleCmd[i](item_type, item_id, item_action, item_payload);
+	done = true;
+	break;
+      }
+    }
+    if(done == false) {
+      Serial.printf("{\"ERROR\":\"INVALID_MODULE_%s\"}\r\n",item_module);
+    }
   }
   if(topic_length) {
     for(m = 0; (m < MODULE_TABLE_ENTRIES) && module_table[m][0]; m++) {
@@ -268,27 +277,6 @@ int8_t EFM32COMMClass::getToken(uint8_t* str, uint8_t* item, uint8_t tok_length)
     }    
   }
   item[i-3] = '\0';
-}
-
-void EFM32COMMClass::execute_cmd(uint8_t* item_module, 
-				 uint8_t* item_type, 
-				 uint8_t* item_id, 
-				 uint8_t* item_action,
-				 uint8_t* item_payload
-				 )
-{
-  uint8_t debug = 1;
-
-  if(debug) {Serial.printf("execute_cmd - item_module = %s\r\n",item_module);}
-  for(int i = 0; (i < MODULE_TABLE_ENTRIES) && module_table[i][0]; i++) {
-    if(debug) {Serial.printf("m[%d] = %s\r\n",i,module_table[i]);}
-    if(strcmp((char*)item_module, (char*)module_table[i]) == 0) {
-      if(debug) {Serial.printf("equal\r\n");}
-      moduleCmd[i](item_type, item_id, item_action, item_payload);
-      return;
-    }
-  }
-  Serial.printf("{\"ERROR\":\"INVALID_MODULE_%s\"}\r\n",item_module);
 }
 
 int8_t EFM32COMMClass::add_module(uint8_t* str,

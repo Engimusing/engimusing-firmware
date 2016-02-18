@@ -20,6 +20,10 @@
 
 #include "Arduino.h"
 
+#define RED_LED       15
+#define BLUE_LED      14
+#define GREEN_LED     13
+
 
 class EFM32ZGUSBClass
 {

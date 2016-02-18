@@ -4,34 +4,42 @@
 #include <EFM32ZGUSB.h>
 
 /*
-{"CPUID":"24353a02522fa331", "ADDR":"01"}   // set address to 01 for cpuid
-{"CPUID":"24353a02522fa331", "MOD":"EFMUSB", "TYPE":"LED", "ID":"RED",   "ON"} // CPUID is target
-{"ADDR":"01", "MOD":"EFMUSB", "TYPE":"LED", "ID":"RED",   "ON"} // address 01 is target
+{"TOP":"24353a02522fa331/MOD/ID/SET","PLD":"module topic string"}
 
-// following are targeted to the first (or only) device in a chain
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"RED","ACT":"ON"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"RED", "ACT":"OFF"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"GREEN", "ACT":"ON"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"GREEN", "ACT":"OFF"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"ON"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"BLUE", "ACT":"OFF"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"ON"}
-{"MOD":"EFMUSB", "TYP":"LED", "IID":"ALL", "ACT":"OFF"}
+{"TOP":"module/LED/RED/ON"}
+{"TOP":"module/LED/RED/OFF"}
+{"TOP":"module/LED/RED/STAT"}
+{"TOP":"module/LED/RED/PFRQ","PLD":"time in seconds, zero means once"}
 
-{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"RED"}
-{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"GREEN"}
-{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"BLUE"}
-{"MOD":"EFMUSB", "TYP":"LEDR", "IID":"ALL"}
+{"TOP":"module/LED/GREEN/ON"}
+{"TOP":"module/LED/GREEN/OFF"}
+{"TOP":"module/LED/GREEN/STAT"}
+{"TOP":"module/LED/GREEN/PFRQ","PLD":"time in seconds, zero means once"}
 
-{"MOD":"EFMUSB", "TYP":"CPUTEMP"}
-{"MOD":"EFMUSB", "TYP":"CPUVDD"}
-{"MOD":"EFMUSB", "TYP":"BRDINFO"}
-{"MOD":"EFMUSB", "TYP":"BRDNAME"}
-{"MOD":"EFMUSB", "TYP":"BLVER"}
-{"MOD":"EFMUSB", "TYP":"CHIPID"}
-{"MOD":"EFMUSB", "TYP":"CPUTYPE"}
-{"MOD":"EFMUSB", "TYP":"FLASHSIZE"}
-{"MOD":"EFMUSB", "TYP":"SRAMSIZE"} */
+{"TOP":"module/LED/BLUE/ON"}
+{"TOP":"module/LED/BLUE/OFF"}
+{"TOP":"module/LED/BLUE/STAT"}
+{"TOP":"module/LED/BLUE/PFRQ","PLD":"time in seconds, zero means once"}
+
+{"TOP":"module/CPUTEMP/CEL/STAT"}
+{"TOP":"module/CPUTEMP/CEL/PFRQ","PLD":"time in seconds, zero means once"}
+{"TOP":"module/CPUTEMP/FAR/STAT"}
+{"TOP":"module/CPUTEMP/FAR/PFRQ","PLD":"time in seconds, zero means once"}
+
+{"TOP":"module/CPUVDD/1/STAT"}
+{"TOP":"module/CPUVDD/1/PFRQ","PLD":"time in seconds, zero means once"}
+
+{"TOP":"module/BRDNAME/1/STAT"}
+{"TOP":"module/BRDNAME/1/PFRQ","PLD":"time in seconds, zero means once"}
+{"TOP":"module/BLVER/1/STAT"}
+{"TOP":"module/BLVER/1/PFRQ","PLD":"time in seconds, zero means once"}
+{"TOP":"module/CHIPID/1/STAT"}
+{"TOP":"module/CHIPID/1/PFRQ","PLD":"time in seconds, zero means once"}
+{"TOP":"module/FLASHSIZE/1/STAT"}
+{"TOP":"module/FLASHSIZE/1/PFRQ","PLD":"time in seconds, zero means once"}
+{"TOP":"module/SRAMSIZE/1/STAT"}
+{"TOP":"module/SRAMSIZE/1/PFRQ","PLD":"time in seconds, zero means once"}
+*/
 
 void setup() {
   Serial.begin(115200);
