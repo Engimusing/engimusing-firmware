@@ -26,38 +26,38 @@ extern boardIO IO;
 extern AnalogLP Analog;
 
 // Types:
-const char led[]       = "LED";
-const char ledr[]      = "LEDR";
-const char cputemp[]   = "CPUTEMP";
-const char cpuvdd[]    = "CPUVDD";
-const char brdinfo[]   = "BRDINFO";
-const char brdname[]   = "BRDNAME";
-const char blver[]     = "BLVER";
-const char chipid[]    = "CHIPID";
-const char cputype[]   = "CPUTYPE";
-const char flashsize[] = "FLASHSIZE";
-const char sramsize[]  = "SRAMSIZE";
-const char tempVDD[]   = "TEMPVDD";
+static const char led[]       = "LED";
+static const char ledr[]      = "LEDR";
+static const char cputemp[]   = "CPUTEMP";
+static const char cpuvdd[]    = "CPUVDD";
+static const char brdinfo[]   = "BRDINFO";
+static const char brdname[]   = "BRDNAME";
+static const char blver[]     = "BLVER";
+static const char chipid[]    = "CHIPID";
+static const char cputype[]   = "CPUTYPE";
+static const char flashsize[] = "FLASHSIZE";
+static const char sramsize[]  = "SRAMSIZE";
+static const char tempVDD[]   = "TEMPVDD";
 // IDs:
-const char red[]       = "RED";
-const char blue[]      = "BLUE";
-const char green[]     = "GREEN";
-const char all[]       = "ALL";
+static const char red[]       = "RED";
+static const char blue[]      = "BLUE";
+static const char green[]     = "GREEN";
+static const char all[]       = "ALL";
 // ACTIONs:
-const char on[]        = "ON";
-const char off[]       = "OFF";
-const char stat[]      = "STAT";
-const char pub[]       = "PUB";
-const char cel[]       = "CEL";
-const char far[]       = "FAR";
+static const char on[]        = "ON";
+static const char off[]       = "OFF";
+static const char stat[]      = "STAT";
+static const char pub[]       = "PUB";
+static const char cel[]       = "CEL";
+static const char far[]       = "FAR";
 
-const char *onoff[]   = {"ISON","ISOFF"};
-const char modu[]     = "{\"MODULE\":\"EFMUSB\",\"";
-const char mid[]      = "\":\"";
-const char com[]      = "\",\"";
-const char tail[]     = "\"}\r\n";
-const char topu[]     = "{\"TOP\":\"";
-const char midu[]     = "\",\"PLD\":\"";
+static const char *onoff[]   = {"ISON","ISOFF"};
+static const char modu[]     = "{\"MODULE\":\"EFMUSB\",\"";
+static const char mid[]      = "\":\"";
+static const char com[]      = "\",\"";
+static const char tail[]     = "\"}\r\n";
+static const char topu[]     = "{\"TOP\":\"";
+static const char midu[]     = "\",\"PLD\":\"";
 
 void EFM32ZGUSBClass::begin(void)
 {

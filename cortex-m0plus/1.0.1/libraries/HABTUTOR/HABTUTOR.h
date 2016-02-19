@@ -29,6 +29,13 @@ class HABTUTORClass
  private:
   static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*);
   static void handle_tick(void);
+  static void pub_led(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_red_switch(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_black_switch(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_reed_switch(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_light_sensor(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_pot_voltage(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static uint32_t read_pot(void);
 };
 
 
