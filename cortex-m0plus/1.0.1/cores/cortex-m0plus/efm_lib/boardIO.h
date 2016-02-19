@@ -47,6 +47,10 @@ class boardIO
   void commSRAMsize(void);
   void printBoardParameters(void);
   char* getChipID(void);
+  char* getBootloaderVersion(void);
+  char* getFlashSize(void);
+  char* getSRAMsize(void);
+  char* getCPUtype(void);
 
  private:
 

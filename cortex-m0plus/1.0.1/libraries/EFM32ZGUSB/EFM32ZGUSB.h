@@ -31,7 +31,20 @@ class EFM32ZGUSBClass
   EFM32ZGUSBClass();
   void begin(void);
  private:
-  static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*);
+  static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*);
+  static void handle_tick(void);
+  static void pub_red_led(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_green_led(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_blue_led(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_temp_cel(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_temp_far(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_cpu_vdd(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_board_name(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_bootloader_version(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_chip_id(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_cpu_type(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_flash_size(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
+  static void pub_sram_size(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id);
 };
 
 

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2015 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -34,10 +34,16 @@ static giState state = Idle;
 
 static uint8_t module_table[MODULE_TABLE_ENTRIES][MODULE_STRING_LENGTH] = {'\0'};
 
-static void (*moduleCmd[MODULE_TABLE_ENTRIES])(uint8_t* item_type, 
+static void (*moduleCmd[MODULE_TABLE_ENTRIES])(uint8_t* item_module,
+					       uint8_t* item_type, 
 					       uint8_t* item_id, 
 					       uint8_t* item_action,
 					       uint8_t* item_payload);
+
+static uint8_t number_tickers = 0;
+static void (*moduleTick[MODULE_TABLE_ENTRIES])(void);
+
+
 
 EFM32COMMClass::EFM32COMMClass()
 {
@@ -47,9 +53,17 @@ void EFM32COMMClass::begin(void)
 {
 }
 
+void EFM32COMMClass::tick_handler(void)
+{
+  for(int t = 0; t < number_tickers; t++) {
+    moduleTick[t]();
+  }
+}
 
 void EFM32COMMClass::decode(void)
 {
+  static uint32_t tick = millis();
+
   if (Serial.available()) {
     char c = (char)Serial.read(); // get the new byte:
     if(isgraph(c)) {
@@ -58,6 +72,10 @@ void EFM32COMMClass::decode(void)
     } else {
       return;
     }
+  }
+  if(millis() > tick + 100) {
+    tick = millis();
+    tick_handler();
   }
 }
 
@@ -202,9 +220,9 @@ void EFM32COMMClass::parseLine(void)
 
   if((topic_length == 0) || cpuid_equal || addr_equal) {
 
-    for(int i = 0; (i < MODULE_TABLE_ENTRIES) && module_table[i][0]; i++) {
+    for(i = 0; (i < MODULE_TABLE_ENTRIES) && module_table[i][0]; i++) {
       if(strcmp((char*)item_module, (char*)module_table[i]) == 0) {
-	moduleCmd[i](item_type, item_id, item_action, item_payload);
+	moduleCmd[i](item_module, item_type, item_id, item_action, item_payload);
 	done = true;
 	break;
       }
@@ -217,6 +235,7 @@ void EFM32COMMClass::parseLine(void)
     for(m = 0; (m < MODULE_TABLE_ENTRIES) && module_table[m][0]; m++) {
       if(debug) Serial.printf("module_table[%d] = %s\r\n",m,module_table[m]);
       for(s = 0; s < MODULE_STRING_LENGTH; s++) {
+	item_module[s] = module_table[m][s];
 	if(item_topic[s] != module_table[m][s]) {
 	  if(debug) Serial.printf("topic not equal %d\r\n",m);
 	  break;
@@ -250,7 +269,7 @@ void EFM32COMMClass::parseLine(void)
       Serial.printf("\r\nmoduleCmd[%d] - item_type = %s, item_id = %s, item_action = %s, item_payload = %s\r\n",
 		    m, item_type, item_id, item_action, item_payload);
     }
-    moduleCmd[m](item_type, item_id, item_action, item_payload);
+    moduleCmd[m](item_module, item_type, item_id, item_action, item_payload);
     done = true;
   }
   if(done == false) {
@@ -280,7 +299,8 @@ int8_t EFM32COMMClass::getToken(uint8_t* str, uint8_t* item, uint8_t tok_length)
 }
 
 int8_t EFM32COMMClass::add_module(uint8_t* str,
-				  void (*cmd)(uint8_t* item_type, 
+				  void (*cmd)(uint8_t* item_module,
+					      uint8_t* item_type, 
 					      uint8_t* item_id, 
 					      uint8_t* item_action,
 					      uint8_t* item_payload))
@@ -289,6 +309,18 @@ int8_t EFM32COMMClass::add_module(uint8_t* str,
   if(index < 8) {
     strcpy((char*)module_table[index],(char*)str);
     moduleCmd[index++] = cmd;
+    return index;
+  } else {
+    return -1;
+  }
+}
+
+int8_t EFM32COMMClass::add_tick_handler(void (*tick)(void))
+{
+  static uint8_t index = 0;
+  if(index < 8) {
+    moduleTick[index++] = tick;
+    number_tickers++;
     return 1;
   } else {
     return -1;

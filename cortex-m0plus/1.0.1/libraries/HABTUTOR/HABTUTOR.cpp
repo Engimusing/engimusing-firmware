@@ -41,6 +41,8 @@ void HABTUTORClass::begin(void)
   COMM.add_module(s1, decode_cmd);
   Serial.printf("{\"MODULE\":\"HABTUTOR\"}\r\n");
 
+  COMM.add_tick_handler(handle_tick);
+
   pinMode( 7, OUTPUT);       // Switch pull up
   digitalWrite( 7, HIGH);
   pinMode(10, INPUT);        // Red Switch
@@ -56,8 +58,20 @@ HABTUTORClass::HABTUTORClass()
 {
 }
 
+void HABTUTORClass::handle_tick(void)
+{
+  static uint32_t clk = 0;
 
-void HABTUTORClass::decode_cmd(uint8_t* item_type,
+  clk++;
+
+
+  //  if((clk % 10) == 0)  Serial.printf("!\n\r");
+}
+
+
+
+void HABTUTORClass::decode_cmd(uint8_t* item_module,
+			       uint8_t* item_type,
 			       uint8_t* item_id,
 			       uint8_t* item_action,
 			       uint8_t* item_payload)

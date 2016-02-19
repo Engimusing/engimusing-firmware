@@ -168,4 +168,42 @@ char* boardIO::getChipID(void)
   return id;
 }
 
+char* boardIO::getBootloaderVersion(void)
+{
+  // need to fix this to get the data from the actual bootloader
+
+  static char ver[] = "0.0";
+  sprintf(ver, "%s", "1.0");
+  return ver;
+}
+
+char* boardIO::getFlashSize(void)
+{
+  static char fs[] = "000000";
+  uint32_t flashSize = ((DEVINFO->MSIZE & DEVINFO_MSIZE_FLASH_MASK) >> DEVINFO_MSIZE_FLASH_SHIFT) << 10;
+  sprintf(fs, "%d", flashSize);
+  return fs;
+}
+
+char* boardIO::getSRAMsize(void)
+{
+  static char ss[] = "000000";
+  uint32_t sramSize = ((DEVINFO->MSIZE & DEVINFO_MSIZE_SRAM_MASK) >> DEVINFO_MSIZE_SRAM_SHIFT) << 10;
+  sprintf(ss, "%d", sramSize);
+  return ss;
+}
+
+char* boardIO::getCPUtype(void)
+{
+  uint32_t *pnum = ((uint32_t *) 0x00FE081FCUL);
+  uint32_t family  = (DEVINFO->PART & DEVINFO_PART_DEVICE_FAMILY_MASK) >> DEVINFO_PART_DEVICE_FAMILY_SHIFT;
+  uint32_t partnum =  pnum[0] & DEVINFO_PART_DEVICE_NUMBER_MASK;
+  uint32_t flashSize = ((DEVINFO->MSIZE & DEVINFO_MSIZE_FLASH_MASK) >> DEVINFO_MSIZE_FLASH_SHIFT) << 10;
+  static char ct[] = "00000000000000";
+
+  if ((family == DEVINFO_PART_DEVICE_FAMILY_ZG) && (partnum == 222) && (flashSize == 32768)) {
+    sprintf(ct, "%s", "EFM32ZG222F32");
+  }
+  return ct;
+}
 

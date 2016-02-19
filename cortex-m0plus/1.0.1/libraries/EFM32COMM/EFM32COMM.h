@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2015 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,9 @@ class EFM32COMMClass
   EFM32COMMClass();
   void begin(void);
   void decode(void);
-  int8_t add_module(uint8_t*, void (*cmd)(uint8_t*, uint8_t*, uint8_t*, uint8_t*));
+  int8_t add_module(uint8_t*, void (*cmd)(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*));
+  int8_t add_tick_handler(void (*tick)(void));
+  void tick_handler(void);
  private:
   void getInputString(char);
   int8_t parse(uint8_t* s, uint8_t cnt, char c);
