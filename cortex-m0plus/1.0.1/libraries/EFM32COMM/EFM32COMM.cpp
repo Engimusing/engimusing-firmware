@@ -86,19 +86,21 @@ void EFM32COMMClass::getInputString(char c)
 
   int8_t r = 0;
 
-  if(state == Idle) {
-    if(c == '{') {
-      state = gettingLine;
-    }
+  if(c == '{') {
+    state = gettingLine;
+    isCnt = 0;
     addCharToInputString(c);
-  } else {
+  } else if(state != Idle) {
     if(c == '}') {
       state = Idle;
       addCharToInputString(c);
       addCharToInputString('\r');
       addCharToInputString('\n');
       addCharToInputString('\0');
+      //Serial.printf("%s\r\n",inputString);
       parseLine();
+      inputString[0]  = '\0';
+      isCnt = 0;
     } else {
       addCharToInputString(c);
     }
@@ -107,6 +109,7 @@ void EFM32COMMClass::getInputString(char c)
 
 void EFM32COMMClass::addCharToInputString(char c)
 {
+  //  Serial.printf("isCnt = %d c = %c\r\n",isCnt,c);
   inputString[isCnt++] = c;
   if(isCnt >= COMM_STRING_LENGTH) {
     isCnt = 0;
@@ -156,6 +159,13 @@ void EFM32COMMClass::parseLine(void)
   static uint8_t myAddr[] = "00";
 
   static uint8_t debug = 0;
+
+  item_topic[0]   = '\0';
+  item_module[0]  = '\0';
+  item_type[0]    = '\0';
+  item_id[0]      = '\0';
+  item_action[0]  = '\0';
+  item_payload[0] = '\0';
 
   myid = (uint8_t*)IO.getChipID();
   //if(debug) {Serial.printf("myid = %s\r\n",myid);}
@@ -266,8 +276,8 @@ void EFM32COMMClass::parseLine(void)
     item_action[i] = '\0';
 
     if(debug) {
-      Serial.printf("\r\nmoduleCmd[%d] - item_type = %s, item_id = %s, item_action = %s, item_payload = %s\r\n",
-		    m, item_type, item_id, item_action, item_payload);
+      Serial.printf("\r\nmoduleCmd[%d] - item_module = %s, item_type = %s, item_id = %s, item_action = %s, item_payload = %s\r\n",
+		    m, item_module, item_type, item_id, item_action, item_payload);
     }
     moduleCmd[m](item_module, item_type, item_id, item_action, item_payload);
     done = true;
@@ -275,14 +285,6 @@ void EFM32COMMClass::parseLine(void)
   if(done == false) {
     transferLine();
   }
-  inputString[0]  = '\0';
-  item_topic[0]   = '\0';
-  item_payload[0] = '\0';
-  item_module[0]  = '\0';
-  item_type[0]    = '\0';
-  item_id[0]      = '\0';
-  item_action[0]  = '\0';
-  isCnt = 0;
   if(debug) {Serial.printf("\r\n\r\n");}
 }
 

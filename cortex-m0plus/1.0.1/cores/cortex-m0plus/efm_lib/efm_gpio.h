@@ -730,4 +730,3 @@ typedef enum
 
 __STATIC_INLINE void GPIO_PinOutSet(GPIO_Port_TypeDef port, unsigned int pin)   {GPIO->P[port].DOUTSET = 1 << pin;}
 __STATIC_INLINE void GPIO_PinOutClear(GPIO_Port_TypeDef port, unsigned int pin) {GPIO->P[port].DOUTCLR = 1 << pin;}
-

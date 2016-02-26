@@ -75,6 +75,7 @@ extern "C"{
 #include "efm_lib/timer.h"
 #include "efm_lib/analog.h"
 #include "efm_lib/boardIO.h"
+#include "efm_lib/efm_gpio.h"
 #endif
 
 #include "variant.h"

@@ -18,30 +18,17 @@
 
 #pragma once
 
-#include "Arduino.h"
+#include <EFM32COMM.h>
 
-#define RED_LED       15
-#define BLUE_LED      14
-#define GREEN_LED     13
-
-
-class EFM32ZGUSBClass
+class tickHandler
 {
  public:
-  EFM32ZGUSBClass();
-  void begin(void);
-  void addModule(const char*);
-  void sch_temp_cel(uint32_t interval, const char* item_module);
-  void sch_temp_far(uint32_t interval, const char* item_module);
-  void sch_cpu_vdd(uint32_t interval, const char* item_module);
+  tickHandler();
+  void setInterval(uint32_t interval);
+  bool serviceTick(void);
  private:
-  static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*);
-  static void handle_tick(void);
-  static void pub_temp_cel(uint8_t* item_module);
-  static void pub_temp_far(uint8_t* item_module);
-  static void pub_cpu_vdd(uint8_t* item_module);
+  uint32_t interval;
+  uint32_t current;
 };
 
-
-extern EFM32ZGUSBClass ZGUSB;
 

@@ -166,6 +166,22 @@ __STATIC_INLINE uint32_t NVIC_GetPriority(IRQn_Type IRQn)
     return((uint32_t)(((NVIC->IP[ _IP_IDX(IRQn)] >> _BIT_SHIFT(IRQn) ) & 0xFF) >> (8 - __NVIC_PRIO_BITS)));  }
 }
 
+// This function disables IRQ interrupts by setting the I-bit in the CPSR.
+// Can only be executed in Privileged modes.
+__attribute__( ( always_inline ) ) __STATIC_INLINE void __disable_irq(void)
+{
+  __ASM volatile ("cpsid i" : : : "memory");
+}
+
+// This function enables IRQ interrupts by clearing the I-bit in the CPSR.
+// Can only be executed in Privileged modes.
+__attribute__( ( always_inline ) ) __STATIC_INLINE void __enable_irq(void)
+{
+  __ASM volatile ("cpsie i" : : : "memory");
+}
+
+
+
 // SCB CPUID Register Definitions
 #define SCB_CPUID_IMPLEMENTER_Msk       (0xFFUL << 24)      // SCB CPUID: IMPLEMENTER Mask
 #define SCB_CPUID_VARIANT_Msk            (0xFUL << 20)      // SCB CPUID: VARIANT Mask

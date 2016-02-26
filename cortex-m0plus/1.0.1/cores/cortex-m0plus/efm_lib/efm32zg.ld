@@ -7,7 +7,7 @@
 /* Silicon Laboratories, Inc. 2014                                  */
 MEMORY
 {
-  FLASH (rx) : ORIGIN = 0x00001400, LENGTH = 24576
+  FLASH (rx) : ORIGIN = 0x00001400, LENGTH = 27648
   RAM (rwx)  : ORIGIN = 0x20000000, LENGTH = 4096
 }
 

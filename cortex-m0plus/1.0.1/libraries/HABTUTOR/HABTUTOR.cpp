@@ -18,6 +18,7 @@
 
 #include "EFM32COMM.h"
 #include "HABTUTOR.h"
+#include "tickHandler.h"
 #include <Arduino.h>
 
 
@@ -40,18 +41,45 @@ static const char green[]    = "QRE";
 // ACTIONs:
 static const char on[]       = "ON";
 static const char off[]      = "OFF";
-static const char stat[]     = "STAT";
+static const char stat[]     = "STATUS";
 static const char pub[]      = "PUB";
+static const char intv[]     = "INTERVAL";
 static const char freqy[]    = "FREQ";
 static const char dur[]      = "DURATION";
 
 static const char *onoff[]   = {"ISON","ISOFF"};
-static const char modu[]     = "{\"MODULE\":\"EFMUSB\",\"";
+static const char modu[]     = "{\"MODULE\":\"";
 static const char mid[]      = "\":\"";
 static const char com[]      = "\",\"";
 static const char tail[]     = "\"}\r\n";
 static const char topu[]     = "{\"TOP\":\"";
 static const char midu[]     = "\",\"PLD\":\"";
+
+static uint8_t red_sw_int   = 0;
+static uint8_t black_sw_int = 0;
+static uint8_t reed_sw_int  = 0;
+static uint8_t light_sw_int = 0;
+
+void RedSwitchISR(void)
+{
+  red_sw_int = 1;
+}
+
+void BlackSwitchISR(void)
+{
+  black_sw_int = 1;
+}
+
+void LightSensorISR(void)
+{
+  light_sw_int = 1;
+}
+
+void ReedSwitchISR(void)
+{
+  reed_sw_int++;
+}
+
 
 // PD7 - Red Switch
 // PC0 - QRE Sensor Out
@@ -69,60 +97,180 @@ void HABTUTORClass::begin(void)
 
   COMM.add_tick_handler(handle_tick);
 
-  pinMode( 7, OUTPUT);       // Switch pull up
-  digitalWrite( 7, HIGH);
-  pinMode(10, INPUT);        // Red Switch
-  pinMode( 2, INPUT);        // Black Switch
-  pinMode( 4, INPUT);        // Reed Switch
-  pinMode( 5, OUTPUT);       // LED
-  digitalWrite( 5, HIGH);
-  pinMode( 8, INPUT_PULLUP); // Reflective Object Sensor
-  pinMode( 6, OUTPUT);       // Buzzer
+  pinMode( SWPULL_PIN, OUTPUT);       // Switch pull up
+  digitalWrite(SWPULL_PIN, HIGH);
+
+  pinMode(REDSW_PIN, GPIO_MODE_INPUTPULLFILTER);        // Red Switch
+  attachInterrupt(REDSW_PIN, RedSwitchISR, FALLING);
+
+  pinMode(BLKSW_PIN, GPIO_MODE_INPUTPULLFILTER);        // Black Switch
+  attachInterrupt(BLKSW_PIN, BlackSwitchISR, FALLING);
+
+  pinMode(REEDSW_PIN, GPIO_MODE_INPUTPULLFILTER);        // Reed Switch
+  attachInterrupt(REEDSW_PIN, ReedSwitchISR, CHANGE);
+
+  pinMode(HABLED_PIN, OUTPUT);       // LED
+
+  pinMode(LTSENS_PIN, GPIO_MODE_INPUTPULLFILTER); // Reflective Object Sensor
+  digitalWrite(LTSENS_PIN, HIGH);
+  attachInterrupt(LTSENS_PIN, LightSensorISR, FALLING);
+
+  pinMode(BUZZER_PIN, OUTPUT);       // Buzzer
 }
+
+
+void HABTUTORClass::addModule(const char* s)
+{
+  COMM.add_module((uint8_t*)s, decode_cmd);
+}
+
 
 HABTUTORClass::HABTUTORClass()
 {
 }
 
+tickHandler redsw;
+tickHandler blacksw;
+tickHandler reedsw;
+tickHandler lightsens;
+tickHandler potpub;
+
+static uint8_t redsw_module[ITEM_TOKEN_LENGTH];
+static uint8_t blacksw_module[ITEM_TOKEN_LENGTH];
+static uint8_t reedsw_module[ITEM_TOKEN_LENGTH];
+static uint8_t lightsens_module[ITEM_TOKEN_LENGTH];
+static uint8_t pot_module[ITEM_TOKEN_LENGTH];
+
 void HABTUTORClass::handle_tick(void)
 {
-  static uint32_t clk = 0;
-
-  clk++;
-
-
-  //  if((clk % 10) == 0)  Serial.printf("!\n\r");
+  pub_red_switch(redsw_module);
+  pub_black_switch(blacksw_module);
+  pub_reed_switch(reedsw_module);
+  pub_light_sensor(lightsens_module);
+  if(potpub.serviceTick())    {pub_pot_voltage(pot_module);}
 }
 
-void HABTUTORClass::pub_led(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id)
+void HABTUTORClass::sch_pot_voltage(uint32_t interval, const char* item_module)
 {
-  Serial.printf("%s%s/%s/%s/STATE%s%s%s",topu, item_module, item_type, item_id,  midu, onoff[digitalRead(5)], tail);
+  strcpy((char*)pot_module, (char*)item_module);
+  potpub.setInterval(interval);
 }
 
-void HABTUTORClass::pub_red_switch(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id)
+
+void HABTUTORClass::pub_red_switch(uint8_t* item_module)
 {
-  Serial.printf("%s%s/%s/%s/STATE%s%s%s",topu, item_module, item_type, item_id,  midu, onoff[digitalRead(10)], tail);
+  static uint8_t sw_state = 0;
+  uint8_t sw = (digitalRead(REDSW_PIN) & 0x01); // mask needed???
+
+  if((sw_state == 0) && red_sw_int) {
+    sw_state = 1;
+    red_sw_int = 0;
+    Serial.printf("%s%s/SWITCH/RED/STATE%sISON%s",topu, item_module, midu, tail);
+  } else if((sw_state == 1) & sw) {
+    sw_state = 0;
+  } 
 }
 
-void HABTUTORClass::pub_black_switch(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id)
+void HABTUTORClass::pub_black_switch(uint8_t* item_module)
 {
-  Serial.printf("%s%s/%s/%s/STATE%s%s%s",topu, item_module, item_type, item_id,  midu, onoff[digitalRead(2)], tail);
+  static uint8_t sw_state = 0;
+  uint8_t sw = (digitalRead(BLKSW_PIN) & 0x01);
+
+  if((sw_state == 0) && black_sw_int) {
+    sw_state = 1;
+    black_sw_int = 0;
+    Serial.printf("%s%s/SWITCH/BLACK/STATE%sISON%s",topu, item_module, midu, tail);
+  } else if((sw_state == 1) & sw) {
+    sw_state = 0;
+  } 
 }
 
-void HABTUTORClass::pub_reed_switch(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id)
+static uint8_t reed_switch_state = 0;
+
+
+void HABTUTORClass::reed_switch_msg(uint8_t* item_module)
 {
-  Serial.printf("%s%s/%s/%s/STATE%s%s%s",topu, item_module, item_type, item_id,  midu, onoff[digitalRead(4)], tail);
+  char rs2on[] = "ISON";
+  char rs2off[] = "ISOFF";
+  char rs1[MODULE_STRING_LENGTH+15];
+
+  if(reed_switch_state == 0) {
+    reed_switch_state = 1;
+
+    sprintf(rs1, "%s%s/SWITCH/REED/STATE%s", topu, item_module,midu);
+    Serial.printf("%s%s%s",rs1,rs2on,tail);
+
+  } else if(reed_switch_state == 1) {
+    reed_switch_state = 0;
+    Serial.printf("%s%s/SWITCH/REED/STATE%sISOFF%s",topu, item_module, midu, tail);
+  }
 }
 
-void HABTUTORClass::pub_light_sensor(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id)
+void HABTUTORClass::decrement_reed_sw_int(void)
 {
-  Serial.printf("%s%s/%s/%s/STATE%s%s%s",topu, item_module, item_type, item_id,  midu, onoff[digitalRead(8)], tail);
+  noInterrupts();
+  reed_sw_int--;
+  interrupts();
 }
 
-void HABTUTORClass::pub_pot_voltage(uint8_t* item_module, uint8_t* item_type, uint8_t* item_id)
+void HABTUTORClass::clear_reed_sw_int(void)
+{
+  noInterrupts();
+  reed_sw_int = 0;
+  interrupts();
+}
+
+void HABTUTORClass::pub_reed_switch(uint8_t* item_module)
+{
+  static uint8_t event_in_progress = 0;
+
+  uint8_t sw = (~digitalRead(REEDSW_PIN) & 0x01);
+
+  if((event_in_progress == 0) && reed_sw_int) {
+    reed_switch_msg(item_module);
+    event_in_progress = 1;
+    decrement_reed_sw_int();
+  } else if(event_in_progress == 1) {
+    event_in_progress = 2;
+  } else if(event_in_progress == 2) {
+    event_in_progress = 0;
+    clear_reed_sw_int();
+    if(sw != reed_switch_state) {
+      reed_switch_msg(item_module);
+    }
+  } else if((event_in_progress == 0) && (sw != reed_switch_state)) {
+    reed_switch_msg(item_module);
+  }
+}
+
+/*
+event start
+send 1st message
+wait 2 cycles
+send 2nd message if state has changed
+clear reed_sw_int if it hasn't changed
+
+if nothing is going on check state to be sure it matches
+*/
+
+void HABTUTORClass::pub_light_sensor(uint8_t* item_module)
+{
+  static uint8_t sw_state = 0;
+  uint8_t sw = (digitalRead(REEDSW_PIN) & 0x01);
+
+  if((sw_state == 0) && light_sw_int) {
+    sw_state = 1;
+    light_sw_int = 0;
+    Serial.printf("%s%s/SWITCH/SENSOR/STATE%sISON%s",topu, item_module, midu, tail);
+  } else if((sw_state == 1) & sw) {
+    sw_state = 0;
+  } 
+}
+
+void HABTUTORClass::pub_pot_voltage(uint8_t* item_module)
 {
   uint32_t mV = read_pot();
-  Serial.printf("%s%s/%s/%s/STATE%s%d.%dV%s",topu, item_module, item_type, item_id,  midu, mV/1000, mV%1000, tail);
+  Serial.printf("%s%s/POT/1/STATE%s%d.%dV%s",topu, item_module, midu, mV/1000, mV%1000, tail);
 }
 
 void HABTUTORClass::decode_cmd(uint8_t* item_module,
@@ -131,98 +279,91 @@ void HABTUTORClass::decode_cmd(uint8_t* item_module,
 			       uint8_t* item_action,
 			       uint8_t* item_payload)
 {
+  uint8_t debug = 0;
+  if(debug) {Serial.printf("item_module = %s, item_type = %s, item_id = %s, item_action = %s, item_payload = %s\r\n",
+			   item_module,item_type,item_id,item_action,item_payload);}
+
   if(strcmp((char*)item_type, led) == 0) {
     if(strcmp((char*)item_action, on) == 0) {
-      digitalWrite(5, HIGH);
+      digitalWrite(HABLED_PIN, HIGH);
       return;
     }
     if(strcmp((char*)item_action, off) == 0) {
-      digitalWrite(5, LOW);
+      digitalWrite(HABLED_PIN, LOW);
       return;
     }
     if(strcmp((char*)item_action, stat) == 0) {
-      Serial.printf("%sLED%s%s%s",modu,mid,onoff[digitalRead(5)],tail);
-      return;
-    }
-    if(strcmp((char*)item_action, pub) == 0) {
-      pub_led(item_module, item_type, item_id);
+      uint8_t l = (~digitalRead(HABLED_PIN) & 0x01);
+      Serial.printf("%s%s%sLED%s%s%s",modu,item_module,com,mid,onoff[l],tail);
       return;
     }
   }
   if(strcmp((char*)item_type, switches) == 0) {
     if(strcmp((char*)item_action, stat) == 0) {
       if(strcmp((char*)item_id, red) == 0) {
-	Serial.printf("%sREDSW%s%s%s",modu,mid,onoff[digitalRead(10)],tail);
+	Serial.printf("%s%s%sREDSW%s%s%s",modu,item_module,com,mid,onoff[digitalRead(REDSW_PIN)],tail);
 	return;
       }
       if(strcmp((char*)item_id, black) == 0) {
-	Serial.printf("%sBLKSW%s%s%s",modu,mid,onoff[digitalRead(2)],tail);
+	Serial.printf("%s%s%sBLKSW%s%s%s",modu,item_module,com,mid,onoff[digitalRead(BLKSW_PIN)],tail);
 	return;
       }
       if(strcmp((char*)item_id, reed) == 0) {
-	Serial.printf("%sREEDSW%s%s%s",modu,mid,onoff[digitalRead(4)],tail);
-	return;
-      }
-    }
-    if(strcmp((char*)item_action, pub) == 0) {
-      if(strcmp((char*)item_id, red) == 0) {
-	pub_red_switch(item_module, item_type, item_id);
-	return;
-      }
-      if(strcmp((char*)item_id, black) == 0) {
-	pub_black_switch(item_module, item_type, item_id);
-	return;
-      }
-      if(strcmp((char*)item_id, reed) == 0) {
-	pub_reed_switch(item_module, item_type, item_id);
+	Serial.printf("%s%s%sREEDSW%s%s%s",modu,item_module,com,mid,onoff[digitalRead(REEDSW_PIN)],tail);
 	return;
       }
     }
   }
   if(strcmp((char*)item_type, sensor) == 0) {
     if(strcmp((char*)item_action, stat) == 0) {
-      Serial.printf("%sSENSOR%s%s%s",modu,mid,onoff[digitalRead(8)],tail);
-      return;
-    }
-    if(strcmp((char*)item_action, pub) == 0) {
-      pub_light_sensor(item_module, item_type, item_id);
+      Serial.printf("%s%s%sSENSOR%s%s%s",modu,item_module,com,mid,onoff[digitalRead(LTSENS_PIN)],tail);
       return;
     }
   }
   if(strcmp((char*)item_type, pot) == 0) {
     if(strcmp((char*)item_action, stat) == 0) {
       uint32_t mV = read_pot();
-      Serial.printf("{\"MODULE\":\"HABTUTOR\",\"POT\":\"%d.%dV\"}\r\n",mV/1000,mV%1000);
+      Serial.printf("%s%s%sPOT%s%d.%dV%s",modu,item_module,com,mid,mV/1000,mV%1000,tail);
     }
-    if(strcmp((char*)item_action, pub) == 0) {
-      pub_pot_voltage(item_module, item_type, item_id);
+    if(strcmp((char*)item_action, intv) == 0) {
+      strcpy((char*)pot_module, (char*)item_module);
+      potpub.setInterval(atoi((char*)item_payload));
+      return;
     }
   }
   if(strcmp((char*)item_type, buzzer) == 0) {
     static uint32_t freq = 1000;
     static uint32_t duration = 0;
+    static uint32_t bzstate = 0;
 
+    if(strcmp((char*)item_action, on) == 0) {
+      Timer.noTone(6);
+      Timer.tone(6, freq, duration);
+      bzstate = 1;
+      return;
+    }
+    if(strcmp((char*)item_action, off) == 0) {
+      Timer.noTone(6);
+      bzstate = 0;
+      return;
+    }
+    if(strcmp((char*)item_action, stat) == 0) {
+      Serial.printf("%s%s%sBUZZER%s%s\",\"FREQ\":\"%d\",\"DURATION\":\"%d%s",
+		    modu,item_module,com,mid,onoff[bzstate],freq,duration,tail);
+      return;
+    }
     if(strcmp((char*)item_action, freqy) == 0) {
       uint32_t f = atoi((char*)item_payload);
       if((f >= 0) && (f < 20000)) {
 	freq = f;
-	Serial.printf("freq = %d\r\n",freq);
       }
+      return;
     }
     if(strcmp((char*)item_action, dur) == 0) {
       uint32_t d = atoi((char*)item_payload);
       if(d >= 0) {
 	duration = d;
-	Serial.printf("duration = %d\r\n",duration);
       }
-    }
-    if(strcmp((char*)item_action, on) == 0) {
-      Timer.noTone(6);
-      Timer.tone(6, freq, duration);
-      return;
-    }
-    if(strcmp((char*)item_action, off) == 0) {
-      Timer.noTone(6);
       return;
     }
   }
@@ -233,7 +374,7 @@ uint32_t HABTUTORClass::read_pot(void)
     uint32_t r = Analog.analogReadVDDsample();
     Analog.analogReference(INTERNALVDD);
     Analog.analogReadResolution(RES_12BITS);
-    uint32_t v = Analog.analogReadPin(3);
+    uint32_t v = Analog.analogReadPin(POT_PIN);
     return ((v * r)/4096);
 }
 
