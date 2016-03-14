@@ -4,41 +4,32 @@
 #include <EFM32ZGUSB.h>
 
 /*
-{"TOP":"24353a02522fa331/MOD/ID/SET","PLD":"module topic string"}
+ {"TOP":"EFMUSB/LED/RED/ON"}
+ {"TOP":"EFMUSB/LED/RED/OFF"}
+ {"TOP":"EFMUSB/LED/RED/STATUS"}
 
-{"TOP":"module/LED/RED/ON"}
-{"TOP":"module/LED/RED/OFF"}
-{"TOP":"module/LED/RED/STAT"}
-{"TOP":"module/LED/RED/PFRQ","PLD":"time in seconds, zero means once"}
+ {"TOP":"EFMUSB/LED/GREEN/ON"}
+ {"TOP":"EFMUSB/LED/GREEN/OFF"}
+ {"TOP":"EFMUSB/LED/GREEN/STATUS"}
 
-{"TOP":"module/LED/GREEN/ON"}
-{"TOP":"module/LED/GREEN/OFF"}
-{"TOP":"module/LED/GREEN/STAT"}
-{"TOP":"module/LED/GREEN/PFRQ","PLD":"time in seconds, zero means once"}
+ {"TOP":"EFMUSB/LED/BLUE/ON"}
+ {"TOP":"EFMUSB/LED/BLUE/OFF"}
+ {"TOP":"EFMUSB/LED/BLUE/STATUS"}
 
-{"TOP":"module/LED/BLUE/ON"}
-{"TOP":"module/LED/BLUE/OFF"}
-{"TOP":"module/LED/BLUE/STAT"}
-{"TOP":"module/LED/BLUE/PFRQ","PLD":"time in seconds, zero means once"}
+ {"TOP":"EFMUSB/LED/ALL/ON"}
+ {"TOP":"EFMUSB/LED/ALL/OFF"}
+ {"TOP":"EFMUSB/LED/ALL/STATUS"}
 
-{"TOP":"module/CPUTEMP/CEL/STAT"}
-{"TOP":"module/CPUTEMP/CEL/PFRQ","PLD":"time in seconds, zero means once"}
-{"TOP":"module/CPUTEMP/FAR/STAT"}
-{"TOP":"module/CPUTEMP/FAR/PFRQ","PLD":"time in seconds, zero means once"}
+ {"TOP":"EFMUSB/CPUTEMP/CEL/STATUS"}
+ {"TOP":"EFMUSB/CPUTEMP/CEL/INTERVAL","PLD":"time"} // seconds, zero means off
 
-{"TOP":"module/CPUVDD/1/STAT"}
-{"TOP":"module/CPUVDD/1/PFRQ","PLD":"time in seconds, zero means once"}
+ {"TOP":"EFMUSB/CPUTEMP/FAR/STATUS"}
+ {"TOP":"EFMUSB/CPUTEMP/FAR/INTERVAL","PLD":"time"} // seconds, zero means off
+ 
+ {"TOP":"EFMUSB/CPUVDD/1/STATUS"}
+ {"TOP":"EFMUSB/CPUVDD/1/INTERVAL","PLD":"time"} // seconds, zero means off
 
-{"TOP":"module/BRDNAME/1/STAT"}
-{"TOP":"module/BRDNAME/1/PFRQ","PLD":"time in seconds, zero means once"}
-{"TOP":"module/BLVER/1/STAT"}
-{"TOP":"module/BLVER/1/PFRQ","PLD":"time in seconds, zero means once"}
-{"TOP":"module/CHIPID/1/STAT"}
-{"TOP":"module/CHIPID/1/PFRQ","PLD":"time in seconds, zero means once"}
-{"TOP":"module/FLASHSIZE/1/STAT"}
-{"TOP":"module/FLASHSIZE/1/PFRQ","PLD":"time in seconds, zero means once"}
-{"TOP":"module/SRAMSIZE/1/STAT"}
-{"TOP":"module/SRAMSIZE/1/PFRQ","PLD":"time in seconds, zero means once"}
+ {"TOP":"EFMUSB/BRDINFO"}
 */
 
 void setup() {

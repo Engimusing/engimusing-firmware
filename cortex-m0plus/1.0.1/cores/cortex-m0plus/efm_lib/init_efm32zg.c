@@ -40,6 +40,6 @@ void init_efm32zg(void)
   // Change to 21MHz internal oscillator band
   CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_21MHZ | (DEVINFO->HFRCOCAL1 & 0xFF);
 
-  SysTick_Config(cmu_hfper_freq_get() / 1000);
+  SysTick_Config(21000000 / 1000);
 }
 

@@ -30,6 +30,8 @@ enum giState {
   gettingLine,
 };
 
+static uint8_t item_module[MODULE_STRING_LENGTH];
+
 static giState state = Idle;
 
 static uint8_t module_table[MODULE_TABLE_ENTRIES][MODULE_STRING_LENGTH] = {'\0'};
@@ -146,14 +148,13 @@ int8_t EFM32COMMClass::parse(uint8_t* s, uint8_t cnt, char c)
 void EFM32COMMClass::parseLine(void)
 {
   // MQTT items
-  static uint8_t item_topic[ITEM_TOPIC_LENGTH];
+  static uint8_t item_topic[MODULE_STRING_LENGTH];
   static uint8_t item_payload[ITEM_PAYLOAD_LENGTH];
   // JSON items
   static uint8_t item_action[ITEM_TOKEN_LENGTH];
   static uint8_t item_addr[ITEM_TOKEN_LENGTH];
   static uint8_t item_cpuid[ITEM_TOKEN_LENGTH];
   static uint8_t item_id[ITEM_TOKEN_LENGTH];
-  static uint8_t item_module[ITEM_TOKEN_LENGTH];
   static uint8_t item_type[ITEM_TOKEN_LENGTH];
   uint8_t *myid;
   static uint8_t myAddr[] = "00";
@@ -200,7 +201,7 @@ void EFM32COMMClass::parseLine(void)
 	if(debug) {Serial.printf("TYP = %s\r\n", item_type);}
       }
       if((c[2] == 'T') && (c[3] == 'O') && (c[4] == 'P')) {
-	getToken(&c[5], item_topic, ITEM_TOPIC_LENGTH);
+	getToken(&c[5], item_topic, MODULE_STRING_LENGTH);
 	if(debug) {Serial.printf("TOP = %s\r\n", item_topic);}
       }
       if((c[2] == 'P') && (c[3] == 'L') && (c[4] == 'D')) {

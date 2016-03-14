@@ -21,10 +21,9 @@
 #include "Arduino.h"
 
 #define MODULE_TABLE_ENTRIES    8
-#define MODULE_STRING_LENGTH   48
+#define MODULE_STRING_LENGTH   32
 #define COMM_STRING_LENGTH    253
 #define ITEM_TOKEN_LENGTH      16
-#define ITEM_TOPIC_LENGTH     128
 #define ITEM_PAYLOAD_LENGTH    32
 #define NUMBER_ELEMENTS         3
 #define ITEM_TYPE               0

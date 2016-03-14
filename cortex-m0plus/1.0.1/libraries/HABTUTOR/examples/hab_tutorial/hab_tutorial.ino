@@ -6,31 +6,36 @@
 
 /*
   Commands:
-  {"TOP":"module/LED/1/ON"}
-  {"TOP":"module/LED/1/OFF"}
-  {"TOP":"module/LED/1/STATE"}
-  {"TOP":"module/LED/1/PFRQ","PLD":"time in seconds, zero means once"}
+ {"TOP":"HABTUTOR/LED/1/ON"}
+ {"TOP":"HABTUTOR/LED/1/OFF"}
+ {"TOP":"HABTUTOR/LED/1/STATUS"}
 
-  {"TOP":"module/SWITCH/RED/STATE"}
-  {"TOP":"module/SWITCH/RED/PFRQ","PLD":"time in seconds, zero means once"}
-  {"TOP":"module/SWITCH/BLACK/STATE"}
-  {"TOP":"module/SWITCH/BLACK/PFRQ","PLD":"time in seconds, zero means once"}
-  {"TOP":"module/SENSOR/QRE/STATE"}
-  {"TOP":"module/SENSOR/QRE/PFRQ","PLD":"time in seconds, zero means once"}
-  {"TOP":"module/SWITCH/REED/STATE"}
-  {"TOP":"module/SWITCH/REED/PFRQ","PLD":"time in seconds, zero means once"}
-  {"TOP":"module/POT/1/STATE"}
-  {"TOP":"module/POT/1/PFRQ","PLD":"time in seconds, zero means once"}
+ {"TOP":"HABTUTOR/SWITCH/RED/STATUS"}
 
-  {"TOP":"module/BUZZER/1/ON"}
-  {"TOP":"module/BUZZER/1/OFF"}
-  {"TOP":"module/BUZZER/1/STATE"}
-  {"TOP":"module/BUZZER/1/FREQ","PLD":"frequency in HZ"}
-  {"TOP":"module/BUZZER/1/DURATION","PLD":"time in seconds"}
+ {"TOP":"HABTUTOR/SWITCH/BLACK/STATUS"}
+
+ {"TOP":"HABTUTOR/SENSOR/QRE/STATUS"}
+
+ {"TOP":"HABTUTOR/SWITCH/REED/STATUS"}
+
+ {"TOP":"HABTUTOR/POT/1/STATUS"}
+ {"TOP":"HABTUTOR/POT/1/INTERVAL"}
+
+ {"TOP":"HABTUTOR/BUZZER/1/ON"}
+ {"TOP":"HABTUTOR/BUZZER/1/OFF"}
+ {"TOP":"HABTUTOR/BUZZER/1/STATUS"}
+ {"TOP":"HABTUTOR/BUZZER/1/FREQ","PLD":"500"} // freq in Hz
+ {"TOP":"HABTUTOR/BUZZER/1/DURATION","PLD":"200"} // duration in seconds
+
 */
 
 const char efmusbModule[] = "home/efmusb";
 const char habModule[] = "home/habtutor";
+
+
+uint8_t item_module[] = "testModule";
+static uint8_t itemModule[] = "home/habtutor";
+
 
 void setup() {
   Serial.begin(115200);
@@ -39,8 +44,10 @@ void setup() {
   ZGUSB.addModule(efmusbModule);
   HABT.begin();
   HABT.addModule(habModule);
-  HABT.sch_pot_voltage(50, habModule);
-  ZGUSB.sch_temp_cel(50, efmusbModule);
+  //HABT.sch_pot_voltage(50, habModule);
+  //ZGUSB.sch_temp_cel(50, efmusbModule);
+  Serial.printf("Start Test:\r\n\r\n");
+
 }
 
 void loop() {

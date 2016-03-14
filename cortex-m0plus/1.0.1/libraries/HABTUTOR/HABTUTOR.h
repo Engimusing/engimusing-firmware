@@ -29,6 +29,13 @@
 #define LTSENS_PIN    8
 #define REDSW_PIN    10
 
+
+void ReedSwitchISR(void);
+void RedSwitchISR(void);
+void BlackSwitchISR(void);
+void LightSensorISR(void);
+
+
 class HABTUTORClass
 {
  public:
@@ -45,9 +52,15 @@ class HABTUTORClass
   static void pub_light_sensor(uint8_t* item_module);
   static void pub_pot_voltage(uint8_t* item_module);
   static uint32_t read_pot(void);
+
   static void reed_switch_msg(uint8_t* item_module);
   static void decrement_reed_sw_int(void);
   static void clear_reed_sw_int(void);
+
+  static void light_switch_msg(uint8_t* item_module);
+  static void decrement_light_sw_int(void);
+  static void clear_light_sw_int(void);
+
 };
 
 
