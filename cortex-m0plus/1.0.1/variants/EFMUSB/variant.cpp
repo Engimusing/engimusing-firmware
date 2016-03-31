@@ -83,4 +83,25 @@ LEUARTClass Serial(LEUART0, LEUART0_IRQn, 0, &rx_buffer0, &tx_buffer0, PORTB, 13
 
 // -------------------------------------------------------------------------------------------------------------
 
-
+void print_gpio_regs(void)
+{
+  char port[6] = {'A','B','C','D','E','F'};
+  Serial.printf("\r\n");
+  for(int i = 0; i < 6; i++) {
+    Serial.printf("PORT %c:\r\n",port[i]);
+    Serial.printf(" CTRL    = %x\r\n",GPIO->P[i].CTRL);
+    Serial.printf(" MODEL   = %x\r\n",GPIO->P[i].MODEL);
+    Serial.printf(" MODEH   = %x\r\n",GPIO->P[i].MODEH);
+    Serial.printf(" DOUT    = %x\r\n",GPIO->P[i].DOUT);
+    Serial.printf(" DOUTSET = %x\r\n",GPIO->P[i].DOUTSET);
+    Serial.printf(" DOUTCLR = %x\r\n",GPIO->P[i].DOUTCLR);
+    Serial.printf(" DOUTTGL = %x\r\n",GPIO->P[i].DOUTTGL);
+    Serial.printf(" DIN     = %x\r\n",GPIO->P[i].DIN);
+  }
+  Serial.printf(" GPIO->EXTIPSELL = %x\r\n",GPIO->EXTIPSELL);
+  Serial.printf(" GPIO->EXTIPSELH = %x\r\n",GPIO->EXTIPSELH);
+  Serial.printf(" GPIO->EXTIRISE  = %x\r\n",GPIO->EXTIRISE);
+  Serial.printf(" GPIO->EXTIFALL  = %x\r\n",GPIO->EXTIFALL);
+  Serial.printf(" IEN             = %x\r\n",GPIO->IEN);
+  Serial.printf(" IF              = %x\r\n",GPIO->IF);
+}
