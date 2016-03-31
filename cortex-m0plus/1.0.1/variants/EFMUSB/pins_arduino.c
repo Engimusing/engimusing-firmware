@@ -75,9 +75,8 @@ volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 
 
 // This function verifies the pin is valid for this variant
-int valid_pin(uint8_t pin) {
+uint8_t valid_pin(uint8_t pin) {
   if((pin < 2) || (pin == 11) || (pin == 12) || (pin > 15)) {
-    //FIXME    Serial.println("pinMode - pin not support for this board"); // Error
     return 0;
   } else {
     return 1;
@@ -106,3 +105,4 @@ void init( void )
   GPIO->P[PORTA].DOUTSET = (1 << 9);   // Blue LED off
   GPIO->P[PORTA].DOUTSET = (1 << 10);  // Red LED off
 }
+

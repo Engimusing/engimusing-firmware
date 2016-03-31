@@ -59,7 +59,7 @@ extern const uint32_t timerRoutes[];
 extern const uint8_t ledPorts[];
 extern const uint8_t ledPins[];
 
-int valid_pin(uint8_t pin);
+uint8_t valid_pin(uint8_t pin);
 
 extern volatile voidFuncPtr intFunc[];
 
