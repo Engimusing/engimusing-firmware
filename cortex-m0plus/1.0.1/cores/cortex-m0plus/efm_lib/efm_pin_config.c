@@ -16,69 +16,33 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-// P5-2:
-// PD4  - ADC4
-// PC15 - GPIO
-
-// P5-3:
-// PD6  - ADC6
-// PC14 - GPIO
-// PE12 - PE12
-
-// P5-4:
-// PB8  - US1_CS
-// PC3  - GPIO
-
-// P5-5:
-// PB7  - US1_CLK
-// PC2  - GPIO
-
-// P5-6:
-// PB11 - IDAC OUT
-// PC4  - ACMP4
-
-// P5-7:
-// PA1  - I2C0_SCL
-// PC1  - US1_RX
-
-// P5-8:
-// PA0  - I2C0_SDA
-// PC0  - US1_TX
-
-// P5-10:
-// PD7  - ADC7
-// PC13 - 
-// PE13 - 
-
-// PA8  - LED_GREEN
-// PA9  - LED_BLUE
-// PA10 - LED_RED
-
-// 0..13  - Digital pins
-// 0/1    - SERCOM/UART (Serial1)
-// 2..12
-// 13 (LED)
-// 14..19 - Analog pins
-// 20..21 I2C pins (SDA/SCL and also EDBG:SDA/SCL)
-// 22..24 - SPI pins (ICSP:MISO,SCK,MOSI)
-// 25..26 - RX/TX LEDS (PB03/PA27)
-// 27..29 - USB
-// 30..41 - EDBG
-// 30/31  - EDBG/UART
-// 32/33 I2C (SDA/SCL and also EDBG:SDA/SCL)
-// 34..37 - EDBG/SPI
-// 38..41 - EDBG/Digital
-// 42 (AREF)
-// 43     - Alternate use of A0 (DAC output)
 
 #include "efm_pin_config.h"
 #include "pins_arduino.h"
 #include "cmsis.h"
 
-void pinMode(uint32_t pin, uint32_t mode)
+uint8_t pinMode(uint32_t pin, uint32_t mode)
 {
   if(valid_pin(pin)) {
     GPIO_config(dPorts[pin], dPins[pin], mode);
+    return 1;
+  }
+  return 0;
+}
+
+uint8_t intrPinMode(uint32_t pin, uint32_t mode)
+{
+  if(valid_pin(pin)) {
+    GPIO_config(iPorts[pin], iPins[pin], mode);
+    return 1;
+  }
+  return 0;
+}
+
+int intrDigitalRead(uint32_t pin)
+{
+  if(valid_pin(pin)) {
+    return (GPIO->P[iPorts[pin]].DIN >> iPins[pin]) & 0x1;
   }
 }
 
@@ -99,10 +63,6 @@ int digitalRead(uint32_t pin)
     return (GPIO->P[dPorts[pin]].DIN >> dPins[pin]) & 0x1;
   }
 }
-
-
-
-
 
 void GPIO_pinMode(GPIO_Port_TypeDef port, uint32_t pin, GPIO_Mode_TypeDef mode)
 {
@@ -248,11 +208,9 @@ void pinDrive(GPIO_Port_TypeDef port, GPIO_DriveMode_TypeDef ulDrive)
 
 
 // GPIO Interrupts
-
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
 {
   if(valid_pin(pin)) {
-    GPIO_config(iPorts[pin], iPins[pin], INPUT_FILTER);
 
     intFunc[iPins[pin]] = gpioIntFunc;
     int shift = ((iPins[pin] & 0x7) * 4);
@@ -271,19 +229,7 @@ void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
     }
     GPIO->IFC = 0x1 << iPins[pin];
     GPIO->IEN |= 0x1 << iPins[pin];
-    /*  
-	Serial.print(" port            = "); Serial.println(iPorts[pin],HEX);
-	Serial.print(" pin             = "); Serial.println(iPins[pin],HEX);
-	Serial.print(" mask            = "); Serial.println(mask,HEX);
-	Serial.print(" value           = "); Serial.println(iPorts[pin] << iPins[pin],HEX);
-	Serial.print(" GPIO->EXTIPSELL = "); Serial.println(GPIO->EXTIPSELL,HEX);
-	Serial.print(" GPIO->EXTIPSELH = "); Serial.println(GPIO->EXTIPSELH,HEX);
-	Serial.print(" GPIO->EXTIRISE  = "); Serial.println(GPIO->EXTIRISE,HEX);
-	Serial.print(" GPIO->EXTIFALL  = "); Serial.println(GPIO->EXTIFALL,HEX);
-	Serial.print(" IEN             = "); Serial.println(GPIO->IEN,HEX);
-	Serial.print(" IF              = "); Serial.println(GPIO->IF,HEX);
-	Serial.println();
-    */
+
     NVIC_EnableIRQ(GPIO_EVEN_IRQn);
     NVIC_EnableIRQ(GPIO_ODD_IRQn);
   }
@@ -334,23 +280,3 @@ void GPIO_EVEN_IRQHandler(void)
   }  
 }
 
-
-/*
-void print_gpio_regs(void)
-{
-  char port[6] = {'A','B','C','D','E','F'};
-  Serial.println("");
-  for(int i = 0; i < 6; i++) {
-    Serial.print("PORT"); Serial.print(port[i]); Serial.println(":");
-    Serial.print(" CTRL = "); Serial.print(GPIO->P[i].CTRL,HEX);
-    Serial.print(" MODEL = "); Serial.print(GPIO->P[i].MODEL,HEX);
-    Serial.print(" MODEH = "); Serial.print(GPIO->P[i].MODEH,HEX);
-    Serial.print(" DOUT = "); Serial.println(GPIO->P[i].DOUT,HEX);
-    Serial.print(" DOUTSET = "); Serial.print(GPIO->P[i].DOUTSET,HEX);
-    Serial.print(" DOUTCLR = "); Serial.print(GPIO->P[i].DOUTCLR,HEX);
-    Serial.print(" DOUTTGL = "); Serial.print(GPIO->P[i].DOUTTGL,HEX);
-    Serial.print(" DIN = "); Serial.print(GPIO->P[i].DIN,HEX);
-    Serial.print(" PINLOCKN = "); Serial.println(GPIO->P[i].PINLOCKN,HEX);
-  }
-}
-*/

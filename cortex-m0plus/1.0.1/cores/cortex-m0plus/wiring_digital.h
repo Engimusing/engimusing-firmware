@@ -30,7 +30,8 @@ extern "C" {
    * \param ulPin The number of the pin whose mode you wish to set
    * \param ulMode Can be INPUT, OUTPUT, INPUT_PULLUP or INPUT_PULLDOWN
    */
-  extern void pinMode( uint32_t dwPin, uint32_t dwMode ) ;
+  extern uint8_t pinMode( uint32_t dwPin, uint32_t dwMode ) ;
+  extern uint8_t intrPinMode(uint32_t pin, uint32_t mode);
 
   /**
    * \brief Write a HIGH or a LOW value to a digital pin.
@@ -56,6 +57,7 @@ extern "C" {
    * \return HIGH or LOW
    */
   extern int digitalRead( uint32_t ulPin ) ;
+  extern int intrDigitalRead(uint32_t pin);
 
   void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
 
