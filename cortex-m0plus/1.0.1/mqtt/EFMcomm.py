@@ -38,6 +38,7 @@ class toSerialThread(threading.Thread):
             try:
                 # write command string to serial port
                 toSerialPortString = self.toSerialPort_q.get(True, 0.05)
+                print toSerialPortString
                 self.serialPort.write(toSerialPortString)
             except Queue.Empty:
                 continue
@@ -134,15 +135,13 @@ def on_connectc(mqttc, userdata, rc):
     # reconnect then subscriptions will be renewed.
     mqttc.subscribe("home/habtutor/+/+/STATUS")
     mqttc.subscribe("home/habtutor/+/+/INTERVAL")
-    mqttc.subscribe("home/habtutor/+/+/ON")
-    mqttc.subscribe("home/habtutor/+/+/OFF")
+    mqttc.subscribe("home/habtutor/+/+/CHG")
     mqttc.subscribe("home/habtutor/+/+/FREQ")
     mqttc.subscribe("home/habtutor/+/+/DURATION")
 
     mqttc.subscribe("home/efmusb/+/+/STATUS")
     mqttc.subscribe("home/efmusb/+/+/INTERVAL")
-    mqttc.subscribe("home/efmusb/+/+/ON")
-    mqttc.subscribe("home/efmusb/+/+/OFF")
+    mqttc.subscribe("home/efmusb/+/+/CHG")
     mqttc.subscribe("home/efmusb/+/+/FREQ")
     mqttc.subscribe("home/efmusb/+/+/DURATION")
 
@@ -154,6 +153,7 @@ def on_message(mqttc, userdata, msg):
     toStr = "{\"TOP\":\"" + msg.topic + "\""
     if len(str(msg.payload)) > 0:
         toStr += ",\"PLD\":\"" + str(msg.payload) + "\"}"
+        print(toStr)
     else:
         toStr += "}"
     try:
