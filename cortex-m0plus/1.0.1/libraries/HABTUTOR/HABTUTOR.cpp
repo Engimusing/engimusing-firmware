@@ -69,29 +69,28 @@ static uint8_t reedsw_module[ITEM_TOKEN_LENGTH];
 static uint8_t lightsens_module[ITEM_TOKEN_LENGTH];
 static uint8_t pot_module[ITEM_TOKEN_LENGTH];
 
-switchesClass sw_reed(REEDSW_PIN,"REED", ReedSwitchISR);
-switchesClass sw_red(REDSW_PIN, "RED", RedSwitchISR);
-switchesClass sw_blk(BLKSW_PIN, "BLACK", BlackSwitchISR);
-switchesClass sw_sen(LTSENS_PIN, "SENSOR", LightSensorISR);
+switchesClass sw_reed("REED",  ReedSwitchISR,  3, SW_DETECTOR);
+switchesClass sw_red("RED",    RedSwitchISR,   2, SW_MOMENTARY);
+switchesClass sw_blk("BLACK",  BlackSwitchISR, 2, SW_MOMENTARY);
+switchesClass sw_sen("SENSOR", LightSensorISR, 2, SW_MOMENTARY);
 
 void ReedSwitchISR(void)
 {
-  sw_reed.sw_int++;
 }
 
 void RedSwitchISR(void)
 {
-  sw_red.sw_int = 1;
+  sw_red.sw_int++;
 }
 
 void BlackSwitchISR(void)
 {
-  sw_blk.sw_int = 1;
+  sw_blk.sw_int++;
 }
 
 void LightSensorISR(void)
 {
-  sw_sen.sw_int = 1;
+  sw_sen.sw_int++;
 }
 
 
@@ -103,21 +102,23 @@ void LightSensorISR(void)
 // PB8 - Reed Switch
 // PD6 - ADC Voltage
 // PD4 - Black Switch
-void HABTUTORClass::begin(void)
+void HABTUTORClass::begin(const char* s)
 {
   uint8_t s1[] = "HABTUTOR";
   COMM.add_module(s1, decode_cmd);
   Serial.printf("{\"MODULE\":\"HABTUTOR\"}\r\n");
+  addModule(s);
 
   COMM.add_tick_handler(handle_tick);
 
   pinMode( SWPULL_PIN, OUTPUT);       // Switch pull up
   digitalWrite(SWPULL_PIN, HIGH);
 
-  sw_red.begin();
-  sw_blk.begin();
-  sw_reed.begin();
-  sw_sen.begin();
+  sw_red.begin(REDSW_PIN, redsw_module);
+  sw_blk.begin(BLKSW_PIN, blacksw_module);
+  sw_reed.begin(REEDSW_PIN, reedsw_module);
+  sw_sen.begin(LTSENS_PIN, lightsens_module);
+
   pinMode(HABLED_PIN, OUTPUT);       // LED
   pinMode(BUZZER_PIN, OUTPUT);       // Buzzer
 }
@@ -148,7 +149,7 @@ void HABTUTORClass::handle_tick(void)
 
 void HABTUTORClass::sch_pot_voltage(uint32_t interval, const char* item_module)
 {
-  Serial.printf("item_module = %s\r\n",item_module);
+  //  Serial.printf("item_module = %s\r\n",item_module);
   strcpy((char*)pot_module, (char*)item_module);
   potpub.setInterval(interval);
 }
@@ -171,17 +172,17 @@ void HABTUTORClass::decode_cmd(uint8_t* item_module,
 			   item_module,item_type,item_id,item_action,item_payload);}
 
   if(strcmp((char*)item_type, led) == 0) {
-    if(strcmp((char*)item_action, on) == 0) {
+    if(strcmp((char*)item_payload, on) == 0) {
       digitalWrite(HABLED_PIN, HIGH);
       return;
     }
-    if(strcmp((char*)item_action, off) == 0) {
+    if(strcmp((char*)item_payload, off) == 0) {
       digitalWrite(HABLED_PIN, LOW);
       return;
     }
     if(strcmp((char*)item_action, stat) == 0) {
       uint8_t l = (~digitalRead(HABLED_PIN) & 0x01);
-      Serial.printf("%s%s%sLED%s%s%s",modu,item_module,com,mid,onoff[l],tail);
+      Serial.printf("%s%s/LED/1/STATE%s%s%s",topu, item_module, midu, onoff[l], tail);
       return;
     }
   }
@@ -223,13 +224,13 @@ void HABTUTORClass::decode_cmd(uint8_t* item_module,
     static uint32_t duration = 0;
     static uint32_t bzstate = 0;
 
-    if(strcmp((char*)item_action, on) == 0) {
+    if(strcmp((char*)item_payload, on) == 0) {
       Timer.noTone(6);
       Timer.tone(6, freq, duration);
       bzstate = 1;
       return;
     }
-    if(strcmp((char*)item_action, off) == 0) {
+    if(strcmp((char*)item_payload, off) == 0) {
       Timer.noTone(6);
       bzstate = 0;
       return;
