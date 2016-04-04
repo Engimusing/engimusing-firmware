@@ -25,10 +25,11 @@ class tickHandler
  public:
   tickHandler();
   void setInterval(uint32_t interval);
-  bool serviceTick(void);
+  volatile bool serviceTick(void);
+  void print(void);
  private:
   uint32_t interval;
-  uint32_t current;
+  volatile uint32_t current;
 };
 
 

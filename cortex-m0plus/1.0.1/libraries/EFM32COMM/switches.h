@@ -23,23 +23,30 @@
 #define SWITCH_NAME_LENGTH 12
 #define ON_MESSAGE  1
 #define OFF_MESSAGE 0
-
+#define SW_MOMENTARY  0xFF
+#define SW_DETECTOR   0
 
 class switchesClass
 {
  public:
-  uint8_t sw_int;
-  switchesClass(uint32_t _pin, String name, void (*_switchISR)(void));
-  void begin(void);
+  volatile uint8_t sw_int;
+  volatile uint32_t sw_int_cnt;
+  switchesClass(String name, void (*_switchISR)(void), uint8_t cnt, uint8_t type);
+  void begin(uint32_t pin, uint8_t* s);
   void pub_switch(uint8_t* item_module); // publish changes in switch state
 
  private:
   uint32_t pin;  // connector pin connected to switch
-  uint8_t switch_state; // current state of the switch
+  uint8_t event_in_progress; // switch event in progress
+  uint8_t init;
+  uint8_t switch_type;
+  uint32_t switch_state;
+  uint8_t sw_previous_state;
   uint8_t switch_name[SWITCH_NAME_LENGTH]; // name of the switch for publish message
-
-  void switch_msg(uint8_t* item_module); // publish switch state to MQTT
+  uint8_t bounce_cnt; // bounce filter value, 0 = no filter, 0xff = momentary
+  void switch_msg(uint8_t* item_module, uint8_t current_switch); // publish switch state to MQTT
   void (*switchISR)(void); // class function executed when switch ISR occurs
   void decrement_sw_int(void); // decrement int count
+  void clear_sw_int(void); // clear int count
 };
 

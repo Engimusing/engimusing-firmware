@@ -27,57 +27,71 @@ static const char rs2on[]    = "CLOSED";
 static const char rs2off[]   = "OPEN";
 
 
-switchesClass::switchesClass(uint32_t _pin, String name, void (*_switchISR)(void))
+switchesClass::switchesClass(String name, void (*_switchISR)(void), uint8_t bounce_count, uint8_t switch_typ)
 {
-  pin = _pin;
-  sw_int = 1;
-  switch_state = 1;
   strcpy((char*)switch_name, name.c_str());
   switchISR = _switchISR;
+  bounce_cnt = bounce_count;
+  switch_type = switch_typ;
+  event_in_progress = 0;
+  sw_previous_state = 0;
 }
 
-void switchesClass::begin(void)
+
+void switchesClass::begin(uint32_t _pin, uint8_t* item_module)
 {
-  pinMode(pin, GPIO_MODE_INPUTPULLFILTER);
-  digitalWrite(pin, HIGH);
-  attachInterrupt(pin, switchISR, CHANGE);
+  pin = _pin;
+  intrPinMode(pin, INPUT_PU_FILTER);
+  init = 0;
+  sw_int = 0;
+  if(switch_type == SW_MOMENTARY) {
+    attachInterrupt(pin, switchISR, RISING);
+  }
 }
-
 
 void switchesClass::pub_switch(uint8_t* item_module)
 {
-  static uint8_t event_in_progress = 0;
-  uint8_t current_switch = (~digitalRead(pin) & 0x01);
+  uint8_t current_switch = (intrDigitalRead(pin) & 0x01);
 
   if(sw_int < 0) {sw_int = 0;}
 
-  if((event_in_progress == 0) && (sw_int == 0) && (current_switch != switch_state)) {
-    switch_msg(item_module);
+  if(init == 0) {
+    init = 1;
+    switch_state = (intrDigitalRead(pin) & 0x01);
+    switch_msg(item_module, switch_state);
+    sw_int = 0;
+    return;
   }
-  if(event_in_progress || sw_int) {
-    if(event_in_progress == 0) {
-      decrement_sw_int();
-      switch_msg(item_module);
-      event_in_progress = 1;
-    } else if(event_in_progress == 1) {
-      if(sw_int) {
-	decrement_sw_int();
-	switch_msg(item_module);
-      } else {
-	event_in_progress = 0;
+  if((event_in_progress == 0) && ( (switch_type == SW_DETECTOR) && (switch_state != current_switch)
+				   || (switch_type == SW_MOMENTARY) && (sw_int > 0)) ) { // switch event happened
+    event_in_progress = 1;
+  } else if((event_in_progress > 0) && (event_in_progress < bounce_cnt)) { // wait until bounce count
+    event_in_progress++;
+  } else if(event_in_progress >= bounce_cnt) { // report event
+    if(switch_type == SW_MOMENTARY) {
+      //Serial.printf("%d ",sw_int);
+      switch_msg(item_module, 1);
+      clear_sw_int();
+    } else {
+      if(switch_state != current_switch) {
+	switch_state = current_switch;
+	switch_msg(item_module, current_switch);
       }
     }
+    event_in_progress = 0;
+    return;
   }
 }
 
-void switchesClass::switch_msg(uint8_t* item_module)
+
+static char rs1[MODULE_STRING_LENGTH+15];
+
+void switchesClass::switch_msg(uint8_t* item_module, uint8_t current_switch)
 {
-  char rs1[MODULE_STRING_LENGTH+15];
 
   sprintf(rs1, "%s%s/SWITCH/%s/STATE%s", topu, item_module, switch_name, midu);
 
-  uint8_t onoff = (switch_state) ? OFF_MESSAGE : ON_MESSAGE;
-  switch_state = (switch_state) ? 0 : 1;
+  uint8_t onoff = (current_switch) ? OFF_MESSAGE : ON_MESSAGE;
   if(onoff == ON_MESSAGE) {
     Serial.printf("%s%s%s",rs1,rs2on,tail);
   } else if(onoff == OFF_MESSAGE) {
@@ -89,5 +103,12 @@ void switchesClass::decrement_sw_int(void)
 {
   noInterrupts();
   sw_int--;
+  interrupts();
+}
+
+void switchesClass::clear_sw_int(void)
+{
+  noInterrupts();
+  sw_int = 0;
   interrupts();
 }

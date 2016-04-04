@@ -42,17 +42,21 @@ static void (*moduleCmd[MODULE_TABLE_ENTRIES])(uint8_t* item_module,
 					       uint8_t* item_action,
 					       uint8_t* item_payload);
 
+// ----------------------------------------------------------------------
 static uint8_t number_tickers = 0;
 static void (*moduleTick[MODULE_TABLE_ENTRIES])(void);
 
 
-
-EFM32COMMClass::EFM32COMMClass()
+int8_t EFM32COMMClass::add_tick_handler(void (*tick)(void))
 {
-}
-
-void EFM32COMMClass::begin(void)
-{
+  static uint8_t index = 0;
+  if(index < 8) {
+    moduleTick[index++] = tick;
+    number_tickers++;
+    return 1;
+  } else {
+    return -1;
+  }
 }
 
 void EFM32COMMClass::tick_handler(void)
@@ -60,6 +64,15 @@ void EFM32COMMClass::tick_handler(void)
   for(int t = 0; t < number_tickers; t++) {
     moduleTick[t]();
   }
+}
+// ----------------------------------------------------------------------
+
+EFM32COMMClass::EFM32COMMClass()
+{
+}
+
+void EFM32COMMClass::begin(void)
+{
 }
 
 void EFM32COMMClass::decode(void)
@@ -313,18 +326,6 @@ int8_t EFM32COMMClass::add_module(uint8_t* str,
     strcpy((char*)module_table[index],(char*)str);
     moduleCmd[index++] = cmd;
     return index;
-  } else {
-    return -1;
-  }
-}
-
-int8_t EFM32COMMClass::add_tick_handler(void (*tick)(void))
-{
-  static uint8_t index = 0;
-  if(index < 8) {
-    moduleTick[index++] = tick;
-    number_tickers++;
-    return 1;
   } else {
     return -1;
   }

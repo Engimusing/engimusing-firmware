@@ -31,9 +31,12 @@ void tickHandler::setInterval(uint32_t intval)
   current = 0;
 }
 
-bool tickHandler::serviceTick(void)
+volatile bool tickHandler::serviceTick(void)
 {
-  if(interval && (current == 0)) {
+  if(interval == 0) {
+    return false;
+  }
+  if(current <= 0) {
     current = interval;
     return true;
   } else {
@@ -42,3 +45,9 @@ bool tickHandler::serviceTick(void)
   }
 }
 
+void tickHandler::print(void)
+{
+  Serial.printf("\r\n");
+  Serial.printf("interval = %d current = %d\r\n",interval,current);
+  Serial.printf("\r\n");
+}
