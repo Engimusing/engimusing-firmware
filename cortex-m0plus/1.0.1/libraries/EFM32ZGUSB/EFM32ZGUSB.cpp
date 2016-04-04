@@ -20,6 +20,7 @@
 #include "EFM32ZGUSB.h"
 #include "tickHandler.h"
 #include <Arduino.h>
+#include <functional>
 
 
 extern LEUARTClass Serial;
@@ -51,30 +52,16 @@ static const char *onoff[]   = {"ISON","ISOFF"};
 static const char modu[]     = "{\"MODULE\":\"EFMUSB\",\"";
 static const char mid[]      = "\":\"";
 static const char com[]      = "\",\"";
-static const char tail[]     = "\"}\r\n";
-static const char topu[]     = "{\"TOP\":\"";
-static const char midu[]     = "\",\"PLD\":\"";
 
-void EFM32ZGUSBClass::begin(void)
+
+void EFM32ZGUSBClass::begin(uint8_t* s)
 {
-  uint8_t s1[] = "EFMUSB";
-
-  COMM.add_module(s1, decode_cmd);
+  this->module = s;
   COMM.add_tick_handler(handle_tick);
   IO.commChipID();
-  Serial.printf("{\"MODULE\":\"EFMUSB\"}\r\n");
+  COMM.add_module((uint8_t*)this->module, this->decode_cmd);
+  Serial.printf("module = %s\r\n",this->module);
 }
-
-void EFM32ZGUSBClass::addModule(const char* s)
-{
-  COMM.add_module((uint8_t*)s, decode_cmd);
-}
-
-
-EFM32ZGUSBClass::EFM32ZGUSBClass()
-{
-}
-
 
 tickHandler tempcpub;
 tickHandler tempfpub;
@@ -91,19 +78,19 @@ void EFM32ZGUSBClass::handle_tick(void)
   if(vddpub.serviceTick())   {pub_cpu_vdd(vdd_module);}
 }
 
-void EFM32ZGUSBClass::sch_temp_cel(uint32_t interval, const char* item_module)
+void EFM32ZGUSBClass::sch_temp_cel(uint32_t interval, uint8_t* item_module)
 {
   strcpy((char*)tempc_module, (char*)item_module);
   tempcpub.setInterval(interval);
 }
 
-void EFM32ZGUSBClass::sch_temp_far(uint32_t interval, const char* item_module)
+void EFM32ZGUSBClass::sch_temp_far(uint32_t interval, uint8_t* item_module)
 {
   strcpy((char*)tempf_module, (char*)item_module);
   tempfpub.setInterval(interval);
 }
 
-void EFM32ZGUSBClass::sch_cpu_vdd(uint32_t interval, const char* item_module)
+void EFM32ZGUSBClass::sch_cpu_vdd(uint32_t interval, uint8_t* item_module)
 {
   strcpy((char*)vdd_module, (char*)item_module);
   vddpub.setInterval(interval);
@@ -112,19 +99,19 @@ void EFM32ZGUSBClass::sch_cpu_vdd(uint32_t interval, const char* item_module)
 void EFM32ZGUSBClass::pub_temp_cel(uint8_t* item_module)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("%s%s/CPUTEMP/CEL/STATE%s%d.%dC%s",topu, item_module, midu, tempval.wholeC, tempval.fracC, tail);
+  Serial.printf("{\"TOP\":\"%s/CPUTEMP/CEL/STATE\",\"PLD\":\"%d.%d\"}\r\n",item_module, tempval.wholeC, tempval.fracC);
 }
 
 void EFM32ZGUSBClass::pub_temp_far(uint8_t* item_module)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("%s%s/CPUTEMP/FAR/STATE%s%d.%dF%s",topu, item_module, midu, tempval.wholeF, tempval.fracF, tail);
+  Serial.printf("{\"TOP\":\"%s/CPUTEMP/FAR/STATE\",\"PLD\":\"%d.%d\"}\r\n",item_module, tempval.wholeF, tempval.fracF);
 }
 
 void EFM32ZGUSBClass::pub_cpu_vdd(uint8_t* item_module)
 {
   uPvdd vddval = Analog.analogReadVDD();
-  Serial.printf("%s%s/CPUVDD/1/STATE%s%d.%dV%s",topu, item_module, midu, vddval.wholeVDD, vddval.fracVDD, tail);
+  Serial.printf("{\"TOP\":\"%s/CPUVDD/1/STATE\",\"PLD\":\"%d.%d\"}\r\n",item_module, vddval.wholeVDD, vddval.fracVDD);
 }
 
 
@@ -136,44 +123,44 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
 {
   if(strcmp((char*)item_type, led) == 0) {
     if(strcmp((char*)item_id, red) == 0) {
-      if(strcmp((char*)item_action, on) == 0) {
+      if(strcmp((char*)item_payload, on) == 0) {
 	digitalWrite(RED_LED, LOW);
 	return;
       }
-      if(strcmp((char*)item_action, off) == 0) {
+      if(strcmp((char*)item_payload, off) == 0) {
 	digitalWrite(RED_LED, HIGH);
 	return;
       }
       if(strcmp((char*)item_action, stat) == 0) {
-	Serial.printf("%sREDLED%s%s%s",modu,mid,onoff[digitalRead(RED_LED)],tail);
+	Serial.printf("%sREDLED%s%s\"}\r\n",modu,mid,onoff[digitalRead(RED_LED)]);
 	return;
       }
     }
     if(strcmp((char*)item_id, blue) == 0) {
-      if(strcmp((char*)item_action, on) == 0) {
+      if(strcmp((char*)item_payload, on) == 0) {
 	digitalWrite(BLUE_LED, LOW);
 	return;
       }
-      if(strcmp((char*)item_action, off) == 0) {
+      if(strcmp((char*)item_payload, off) == 0) {
 	digitalWrite(BLUE_LED, HIGH);
 	return;
       }
       if(strcmp((char*)item_action, stat) == 0) {
-	Serial.printf("%sBLUELED%s%s%s",modu,mid,onoff[digitalRead(BLUE_LED)],tail);
+	Serial.printf("%sBLUELED%s%s\"}\r\n",modu,mid,onoff[digitalRead(BLUE_LED)]);
 	return;
       }
     }
     if(strcmp((char*)item_id, green) == 0) {
-      if(strcmp((char*)item_action, on) == 0) {
+      if(strcmp((char*)item_payload, on) == 0) {
 	digitalWrite(GREEN_LED, LOW);
 	return;
       }
-      if(strcmp((char*)item_action, off) == 0) {
+      if(strcmp((char*)item_payload, off) == 0) {
 	digitalWrite(GREEN_LED, HIGH);
 	return;
       }
       if(strcmp((char*)item_action, stat) == 0) {
-	Serial.printf("%sGREENLED%s%s%s",modu,mid,onoff[digitalRead(GREEN_LED)],tail);
+	Serial.printf("%sGREENLED%s%s\"}\r\n",modu,mid,onoff[digitalRead(GREEN_LED)]);
 	return;
       }
     }
@@ -191,10 +178,10 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
 	return;
       }
       if(strcmp((char*)item_action, stat) == 0) {
-	Serial.printf("%sREDLED%s%s%sBLUELED%s%s%sGREENLED%s%s%s",
+	Serial.printf("%sREDLED%s%s%sBLUELED%s%s%sGREENLED%s%s\"}\r\n",
 		      modu,mid,onoff[digitalRead(RED_LED)],com,
 		      mid,onoff[digitalRead(BLUE_LED)],com,
-		      mid,onoff[digitalRead(GREEN_LED)],tail);
+		      mid,onoff[digitalRead(GREEN_LED)]);
 	return;
       }
     }
@@ -203,7 +190,7 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
     if(strcmp((char*)item_id, cel) == 0) {
       if(strcmp((char*)item_action, stat) == 0) {
 	temperature tempval = Analog.analogReadTemp();
-	Serial.printf("%sCPUTEMPC%s%d.%dC%s", modu, mid, tempval.wholeC, tempval.fracC, tail);
+	Serial.printf("%sCPUTEMPC%s%d.%dC\"}\r\n", modu, mid, tempval.wholeC, tempval.fracC);
 	return;
       }
       if(strcmp((char*)item_action, pfrq) == 0) {
@@ -215,7 +202,7 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
     if(strcmp((char*)item_id, far) == 0) {
       if(strcmp((char*)item_action, stat) == 0) {
 	temperature tempval = Analog.analogReadTemp();
-	Serial.printf("%sCPUTEMPF%s%d.%dF%s", modu, mid, tempval.wholeF, tempval.fracF, tail);
+	Serial.printf("%sCPUTEMPF%s%d.%dF\"}\r\n", modu, mid, tempval.wholeF, tempval.fracF);
 	return;
       }
       if(strcmp((char*)item_action, pfrq) == 0) {
@@ -228,7 +215,7 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
   if(strcmp((char*)item_type, cpuvdd) == 0) {
     if(strcmp((char*)item_action, stat) == 0) {
       uPvdd vddval = Analog.analogReadVDD();
-      Serial.printf("%supVDD%s%d.%dV%s",modu, mid, vddval.wholeVDD,vddval.fracVDD, tail);
+      Serial.printf("%supVDD%s%d.%dV\"}\r\n",modu, mid, vddval.wholeVDD,vddval.fracVDD);
       return;
     }
     if(strcmp((char*)item_action, pfrq) == 0) {
