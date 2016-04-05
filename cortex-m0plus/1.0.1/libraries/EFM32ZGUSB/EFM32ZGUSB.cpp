@@ -20,7 +20,6 @@
 #include "EFM32ZGUSB.h"
 #include "tickHandler.h"
 #include <Arduino.h>
-#include <functional>
 
 
 extern LEUARTClass Serial;
@@ -56,12 +55,23 @@ static const char com[]      = "\",\"";
 
 void EFM32ZGUSBClass::begin(uint8_t* s)
 {
-  this->module = s;
-  COMM.add_tick_handler(handle_tick);
+  module = s;
   IO.commChipID();
-  COMM.add_module((uint8_t*)this->module, this->decode_cmd);
-  Serial.printf("module = %s\r\n",this->module);
+  COMM.add_module((uint8_t*)module, decode_cmd);
+  Serial.printf("module = %s\r\n",module);
+  tick = 0;
 }
+
+
+void EFM32ZGUSBClass::update(void)
+{
+  if(millis() > tick + 100) {
+    tick = millis();
+
+    handle_tick();
+  }
+}
+
 
 tickHandler tempcpub;
 tickHandler tempfpub;
@@ -164,29 +174,9 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
 	return;
       }
     }
-    if(strcmp((char*)item_id, all) == 0) {
-      if(strcmp((char*)item_action, on) == 0) {
-	digitalWrite(RED_LED, LOW);
-	digitalWrite(BLUE_LED, LOW);
-	digitalWrite(GREEN_LED, LOW);
-	return;
-      }
-      if(strcmp((char*)item_action, off) == 0) {
-	digitalWrite(RED_LED, HIGH);
-	digitalWrite(BLUE_LED, HIGH);
-	digitalWrite(GREEN_LED, HIGH);
-	return;
-      }
-      if(strcmp((char*)item_action, stat) == 0) {
-	Serial.printf("%sREDLED%s%s%sBLUELED%s%s%sGREENLED%s%s\"}\r\n",
-		      modu,mid,onoff[digitalRead(RED_LED)],com,
-		      mid,onoff[digitalRead(BLUE_LED)],com,
-		      mid,onoff[digitalRead(GREEN_LED)]);
-	return;
-      }
-    }
   }
   if(strcmp((char*)item_type, cputemp) == 0) {
+  Serial.printf("decode_cmd\r\n");
     if(strcmp((char*)item_id, cel) == 0) {
       if(strcmp((char*)item_action, stat) == 0) {
 	temperature tempval = Analog.analogReadTemp();

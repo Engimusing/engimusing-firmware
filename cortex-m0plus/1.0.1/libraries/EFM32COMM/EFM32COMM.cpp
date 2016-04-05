@@ -42,38 +42,6 @@ static void (*moduleCmd[MODULE_TABLE_ENTRIES])(uint8_t* item_module,
 					       uint8_t* item_action,
 					       uint8_t* item_payload);
 
-// ----------------------------------------------------------------------
-static uint8_t number_tickers = 0;
-static void (*moduleTick[MODULE_TABLE_ENTRIES])(void);
-
-
-int8_t EFM32COMMClass::add_tick_handler(void (*tick)(void))
-{
-  static uint8_t index = 0;
-  if(index < 8) {
-    moduleTick[index++] = tick;
-    number_tickers++;
-    return 1;
-  } else {
-    return -1;
-  }
-}
-
-void EFM32COMMClass::tick_handler(void)
-{
-  for(int t = 0; t < number_tickers; t++) {
-    moduleTick[t]();
-  }
-}
-// ----------------------------------------------------------------------
-
-EFM32COMMClass::EFM32COMMClass()
-{
-}
-
-void EFM32COMMClass::begin(void)
-{
-}
 
 void EFM32COMMClass::decode(void)
 {
@@ -87,10 +55,6 @@ void EFM32COMMClass::decode(void)
     } else {
       return;
     }
-  }
-  if(millis() > tick + 100) {
-    tick = millis();
-    tick_handler();
   }
 }
 
@@ -133,31 +97,6 @@ void EFM32COMMClass::addCharToInputString(char c)
 }
 
 
-int8_t EFM32COMMClass::parse(uint8_t* s, uint8_t cnt, char c)
-{
-  if((c == s[cnt]) && (s[cnt+1] == 0)) {
-    charCnt = 0;
-    return 1;   // parse equal to string
-  } else if((c != s[cnt]) || (s[cnt] == 0)) {
-    charCnt = 0;
-    return -1;  // parse failed
-  } else {
-    return 0;   // parse incomplete
-  }
-}
-
-
-
-// Test Strings:
-// must change cpuid to match actual CPU you are using for test
-
-// 01234567890123456789012345678901234567890123
-// {"TYPE":"val","ACT":"val"}                debug #1
-// {"CPUID":"24353a02522fa331"}              debug #2
-// {"CPUID":"24353a02522fa331","ADDR":"01"}  debug #3
-// {"ADDR":"01","TYPE":"val"}                debug #4
-
-// {"ACT":"Action","ADR":"Address","CID":"CPU ID","IID":"Item ID","MOD":"Module","PM1":"Param1","PM2":"Param2","TYP":"Type"}
 void EFM32COMMClass::parseLine(void)
 {
   // MQTT items
@@ -165,14 +104,10 @@ void EFM32COMMClass::parseLine(void)
   static uint8_t item_payload[ITEM_PAYLOAD_LENGTH];
   // JSON items
   static uint8_t item_action[ITEM_TOKEN_LENGTH];
-  static uint8_t item_addr[ITEM_TOKEN_LENGTH];
-  static uint8_t item_cpuid[ITEM_TOKEN_LENGTH];
   static uint8_t item_id[ITEM_TOKEN_LENGTH];
   static uint8_t item_type[ITEM_TOKEN_LENGTH];
-  uint8_t *myid;
-  static uint8_t myAddr[] = "00";
 
-  static uint8_t debug = 0;
+  static uint8_t debug = 1;
 
   item_topic[0]   = '\0';
   item_module[0]  = '\0';
@@ -181,38 +116,9 @@ void EFM32COMMClass::parseLine(void)
   item_action[0]  = '\0';
   item_payload[0] = '\0';
 
-  myid = (uint8_t*)IO.getChipID();
-  //if(debug) {Serial.printf("myid = %s\r\n",myid);}
-  if(debug) {Serial.printf("\r\n\r\n",myid);}
-
   for(isCnt = 0; inputString[isCnt] != '\0'; isCnt++) {
     uint8_t* c = &inputString[isCnt];
-
     if( (c[0] == '{') || (c[0] == ',') && (c[1] == '\"')) {
-      if((c[2] == 'A') && (c[3] == 'C') && (c[4] == 'T')) {
-	getToken(&c[5], item_action, ITEM_TOKEN_LENGTH);
-	if(debug) {Serial.printf("ACT = %s\r\n", item_action);}
-      }
-      if((c[2] == 'A') && (c[3] == 'D') && (c[4] == 'R')) {
-	getToken(&c[5], item_addr, ITEM_TOKEN_LENGTH);
-	if(debug) {Serial.printf("ADR = %s\r\n", item_addr);}
-      }
-      if((c[2] == 'C') && (c[3] == 'I') && (c[4] == 'D')) {
-	getToken(&c[5], item_cpuid, ITEM_TOKEN_LENGTH);
-	if(debug) {Serial.printf("CID = %s\r\n", item_cpuid);}
-      }
-      if((c[2] == 'I') && (c[3] == 'I') && (c[4] == 'D')) {
-	getToken(&c[5], item_id, ITEM_TOKEN_LENGTH);
-	if(debug) {Serial.printf("IID = %s\r\n", item_id);}
-      }
-      if((c[2] == 'M') && (c[3] == 'O') && (c[4] == 'D')) {
-	getToken(&c[5], item_module, ITEM_TOKEN_LENGTH);
-	if(debug) {Serial.printf("MOD = %s\r\n", item_module);}
-      }
-      if((c[2] == 'T') && (c[3] == 'Y') && (c[4] == 'P')) {
-	getToken(&c[5], item_type, ITEM_TOKEN_LENGTH);
-	if(debug) {Serial.printf("TYP = %s\r\n", item_type);}
-      }
       if((c[2] == 'T') && (c[3] == 'O') && (c[4] == 'P')) {
 	getToken(&c[5], item_topic, MODULE_STRING_LENGTH);
 	if(debug) {Serial.printf("TOP = %s\r\n", item_topic);}
@@ -223,27 +129,15 @@ void EFM32COMMClass::parseLine(void)
       }
     }
   }
-  int cpuid_equal = (strcmp((char*)myid, (char*)item_cpuid) == 0) ? 1 : 0;
-  int addr_equal = (strcmp((char*)myAddr, (char*)item_addr) == 0) ? 1 : 0;
-  int cpuid_length = strlen((char*)item_cpuid);
-  int addr_length = strlen((char*)item_addr);
   int topic_length = strlen((char*)item_topic);
 
-  if(debug) {Serial.printf("cpuid_equal = %d addr_equal = %d cpuid_length = %d addr_length = %d topic_length = %d\r\n",
-			   cpuid_equal, addr_equal, cpuid_length, addr_length, topic_length);}
-
-  if((cpuid_length == 16) && cpuid_equal && (addr_length == 2)) {
-    myAddr[0] = item_addr[0];
-    myAddr[1] = item_addr[1];
-    addr_equal = 1;
-  }
+  if(debug) {Serial.printf("topic_length = %d\r\n", topic_length);}
 
   uint8_t i, m, s;
   uint8_t done = false;
   uint8_t equal = false;
 
-  if((topic_length == 0) || cpuid_equal || addr_equal) {
-
+  if(topic_length == 0) {
     for(i = 0; (i < MODULE_TABLE_ENTRIES) && module_table[i][0]; i++) {
       if(strcmp((char*)item_module, (char*)module_table[i]) == 0) {
 	moduleCmd[i](item_module, item_type, item_id, item_action, item_payload);
@@ -336,20 +230,6 @@ void EFM32COMMClass::transferLine(void)
 {
   // transfer to other serial port if this isnt end of line
   Serial.printf("{\"ERROR\":\"NO_TRANSFER_VALID\"}\r\n");
-  inputString[0] = '\0';
-  isCnt = 0;
-}
-
-void EFM32COMMClass::invalidCPUid(void)
-{
-  Serial.printf("{\"ERROR\":\"INVALID_CPUID\"}\r\n");
-  inputString[0] = '\0';
-  isCnt = 0;
-}
-
-void EFM32COMMClass::invalidAddr(void)
-{
-  Serial.printf("{\"ERROR\":\"INVALID_ADDRESS\"}\r\n");
   inputString[0] = '\0';
   isCnt = 0;
 }

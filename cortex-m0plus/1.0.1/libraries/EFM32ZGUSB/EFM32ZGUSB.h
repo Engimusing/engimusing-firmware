@@ -29,17 +29,19 @@ class EFM32ZGUSBClass
 {
  public:
   void begin(uint8_t*);
-  //  void addModule(uint8_t*);
+  void update(void);
   void sch_temp_cel(uint32_t interval, uint8_t* item_module);
   void sch_temp_far(uint32_t interval, uint8_t* item_module);
   void sch_cpu_vdd(uint32_t interval, uint8_t* item_module);
  private:
   uint8_t* module;
-  static void handle_tick(void);
   static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*);
-  static void pub_temp_cel(uint8_t* item_module);
-  static void pub_temp_far(uint8_t* item_module);
-  static void pub_cpu_vdd(uint8_t* item_module);
+  void handle_tick(void);
+  void pub_temp_cel(uint8_t* item_module);
+  void pub_temp_far(uint8_t* item_module);
+  void pub_cpu_vdd(uint8_t* item_module);
+
+  uint32_t tick;
 };
 
 

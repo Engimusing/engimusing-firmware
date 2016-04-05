@@ -21,7 +21,7 @@
 #include "Arduino.h"
 
 #define MODULE_TABLE_ENTRIES    8
-#define MODULE_STRING_LENGTH   32
+#define MODULE_STRING_LENGTH   40
 #define COMM_STRING_LENGTH    253
 #define ITEM_TOKEN_LENGTH      24
 #define ITEM_PAYLOAD_LENGTH    32
@@ -34,22 +34,15 @@
 class EFM32COMMClass
 {
  public:
-  EFM32COMMClass();
-  void begin(void);
   void decode(void);
   int8_t add_module(uint8_t*, void (*cmd)(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*));
-  int8_t add_tick_handler(void (*tick)(void));
-  void tick_handler(void);
  private:
   void getInputString(char);
-  int8_t parse(uint8_t* s, uint8_t cnt, char c);
   int8_t substrcmp(uint8_t* str, uint8_t* sub, uint8_t start);
   void parseLine(void);
   void transferLine(void);
   uint8_t inputString[COMM_STRING_LENGTH+3];
   void addCharToInputString(char c);
-  void invalidCPUid(void);
-  void invalidAddr(void);
   int8_t getToken(uint8_t* str, uint8_t* item, uint8_t tok_length);
 };
 
