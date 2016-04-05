@@ -27,9 +27,9 @@ uint8_t* module = efmusbModule;
 void setup() {
   Serial.begin(115200);
   ZGUSB.begin(module);
-  ZGUSB.sch_temp_cel(50, module);
-  ZGUSB.sch_temp_far(50, module);
-  ZGUSB.sch_cpu_vdd(50, module);
+  ZGUSB.sch_temp_cel(50);
+  ZGUSB.sch_temp_far(50);
+  ZGUSB.sch_cpu_vdd(50);
 }
 
 void loop() {

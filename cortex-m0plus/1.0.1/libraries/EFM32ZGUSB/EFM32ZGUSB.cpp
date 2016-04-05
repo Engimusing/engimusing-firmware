@@ -77,51 +77,44 @@ tickHandler tempcpub;
 tickHandler tempfpub;
 tickHandler vddpub;
 
-static uint8_t tempc_module[ITEM_TOKEN_LENGTH];
-static uint8_t tempf_module[ITEM_TOKEN_LENGTH];
-static uint8_t vdd_module[ITEM_TOKEN_LENGTH];
-
 void EFM32ZGUSBClass::handle_tick(void)
 {
-  if(tempcpub.serviceTick()) {pub_temp_cel(tempc_module);}
-  if(tempfpub.serviceTick()) {pub_temp_far(tempf_module);}
-  if(vddpub.serviceTick())   {pub_cpu_vdd(vdd_module);}
+  if(tempcpub.serviceTick()) {pub_temp_cel();}
+  if(tempfpub.serviceTick()) {pub_temp_far();}
+  if(vddpub.serviceTick())   {pub_cpu_vdd();}
 }
 
-void EFM32ZGUSBClass::sch_temp_cel(uint32_t interval, uint8_t* item_module)
+void EFM32ZGUSBClass::sch_temp_cel(uint32_t interval)
 {
-  strcpy((char*)tempc_module, (char*)item_module);
   tempcpub.setInterval(interval);
 }
 
-void EFM32ZGUSBClass::sch_temp_far(uint32_t interval, uint8_t* item_module)
+void EFM32ZGUSBClass::sch_temp_far(uint32_t interval)
 {
-  strcpy((char*)tempf_module, (char*)item_module);
   tempfpub.setInterval(interval);
 }
 
-void EFM32ZGUSBClass::sch_cpu_vdd(uint32_t interval, uint8_t* item_module)
+void EFM32ZGUSBClass::sch_cpu_vdd(uint32_t interval)
 {
-  strcpy((char*)vdd_module, (char*)item_module);
   vddpub.setInterval(interval);
 }
 
-void EFM32ZGUSBClass::pub_temp_cel(uint8_t* item_module)
+void EFM32ZGUSBClass::pub_temp_cel(void)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s/CPUTEMP/CEL/STATE\",\"PLD\":\"%d.%d\"}\r\n",item_module, tempval.wholeC, tempval.fracC);
+  Serial.printf("{\"TOP\":\"%s/CPUTEMP/CEL/STATE\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeC, tempval.fracC);
 }
 
-void EFM32ZGUSBClass::pub_temp_far(uint8_t* item_module)
+void EFM32ZGUSBClass::pub_temp_far(void)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s/CPUTEMP/FAR/STATE\",\"PLD\":\"%d.%d\"}\r\n",item_module, tempval.wholeF, tempval.fracF);
+  Serial.printf("{\"TOP\":\"%s/CPUTEMP/FAR/STATE\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeF, tempval.fracF);
 }
 
-void EFM32ZGUSBClass::pub_cpu_vdd(uint8_t* item_module)
+void EFM32ZGUSBClass::pub_cpu_vdd(void)
 {
   uPvdd vddval = Analog.analogReadVDD();
-  Serial.printf("{\"TOP\":\"%s/CPUVDD/1/STATE\",\"PLD\":\"%d.%d\"}\r\n",item_module, vddval.wholeVDD, vddval.fracVDD);
+  Serial.printf("{\"TOP\":\"%s/CPUVDD/1/STATE\",\"PLD\":\"%d.%d\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
 }
 
 
@@ -184,7 +177,6 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
 	return;
       }
       if(strcmp((char*)item_action, pfrq) == 0) {
-	strcpy((char*)tempc_module, (char*)item_module);
 	tempcpub.setInterval(atoi((char*)item_payload));
 	return;
       }
@@ -196,7 +188,6 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
 	return;
       }
       if(strcmp((char*)item_action, pfrq) == 0) {
-	strcpy((char*)tempf_module, (char*)item_module);
 	tempfpub.setInterval(atoi((char*)item_payload));
 	return;
       }
@@ -209,7 +200,6 @@ void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
       return;
     }
     if(strcmp((char*)item_action, pfrq) == 0) {
-      strcpy((char*)vdd_module, (char*)item_module);
       vddpub.setInterval(atoi((char*)item_payload));
       return;
     }
