@@ -172,19 +172,19 @@ int8_t HABTUTORClass::decode_cmd(void)
     return 1;
   }
   if(compare_token(&COMM.topic[j],"SWITCH/RED")) {
-    Serial.printf("{\"TOP\":\"%s?/SWITCH/RED\",\"PLD\":\"%s\"}\r\n",module,onoff[digitalRead(REDSW_PIN)]);
+    Serial.printf("{\"TOP\":\"%s?/SWITCH/RED\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(REDSW_PIN) & 0x1]);
     return 1;
   }
   if(compare_token(&COMM.topic[j],"SWITCH/BLACK")) {
-    Serial.printf("{\"TOP\":\"%s?/SWITCH/BLACK\",\"PLD\":\"%s\"}\r\n",module,onoff[digitalRead(BLKSW_PIN)]);
+    Serial.printf("{\"TOP\":\"%s?/SWITCH/BLACK\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(BLKSW_PIN) & 0x1]);
     return 1;
   }
   if(compare_token(&COMM.topic[j],"SWITCH/REED")) {
-    Serial.printf("{\"TOP\":\"%s?/SWITCH/REED\",\"PLD\":\"%s\"}\r\n",module,onoff[digitalRead(REEDSW_PIN)]);
+    Serial.printf("{\"TOP\":\"%s?/SWITCH/REED\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(REEDSW_PIN) & 0x1]);
     return 1;
   }
   if(compare_token(&COMM.topic[j],"SENSOR/QRE")) {
-    Serial.printf("{\"TOP\":\"%s?/SENSOR/QRE\",\"PLD\":\"%s\"}\r\n",module,onoff[digitalRead(LTSENS_PIN)]);
+    Serial.printf("{\"TOP\":\"%s?/SENSOR/QRE\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(LTSENS_PIN) & 0x1]);
     return 1;
   }
   if(compare_token(&COMM.topic[j],"BUZZER")) {

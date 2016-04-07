@@ -97,7 +97,7 @@ int8_t QRE1113Class::decode_cmd(void)
   }
   j++;
   if(compare_token(&COMM.topic[j],"SENSOR/QRE")) {
-    Serial.printf("{\"TOP\":\"%s?/SENSOR/QRE\",\"PLD\":\"%s\"}\r\n",module, onoff[~digitalRead(qre_pin) & 0x1]);
+    Serial.printf("{\"TOP\":\"%s?/SENSOR/QRE\",\"PLD\":\"%s\"}\r\n",module, onoff[intrDigitalRead(qre_pin) & 0x1]);
     return 1;
   }
 }
