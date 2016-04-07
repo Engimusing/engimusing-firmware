@@ -39,12 +39,21 @@ void LightSensorISR(void);
 class HABTUTORClass
 {
  public:
-  void begin(const char*);
+  void begin(uint32_t pin, const char*);
   void update(void);
   void sch_pot_voltage(uint32_t interval);
   int8_t decode_cmd(void);
  private:
   uint8_t* module;
+  uint32_t blksw_pin;
+  uint32_t pot_pin;
+  uint32_t reedsw_pin;
+  uint32_t habled_pin;
+  uint32_t buzzer_pin;
+  uint32_t swpull_pin;
+  uint32_t ltsens_pin;
+  uint32_t redsw_pin;
+
   uint32_t tick;
   uint32_t tick_5s;
   uint32_t buzzer_freq;

@@ -67,18 +67,27 @@ void LightSensorISR(void)
 // PB8 - Reed Switch
 // PD6 - ADC Voltage
 // PD4 - Black Switch
-void HABTUTORClass::begin(const char* mod)
+void HABTUTORClass::begin(uint32_t pin, const char* mod)
 {
-  pinMode( SWPULL_PIN, OUTPUT);       // Switch pull up
-  digitalWrite(SWPULL_PIN, HIGH);
+  blksw_pin  = pin;
+  pot_pin    = pin + 1;
+  reedsw_pin = pin + 2;
+  habled_pin = pin + 3;
+  buzzer_pin = pin + 4;
+  swpull_pin = pin + 5;
+  ltsens_pin = pin + 6;
+  redsw_pin  = pin + 8;
 
-  sw_red.begin(REDSW_PIN, module);
-  sw_blk.begin(BLKSW_PIN, module);
-  sw_reed.begin(REEDSW_PIN, module);
-  sw_sen.begin(LTSENS_PIN, module);
+  pinMode(swpull_pin, OUTPUT);       // Switch pull up
+  digitalWrite(swpull_pin, HIGH);
 
-  pinMode(HABLED_PIN, OUTPUT);       // LED
-  pinMode(BUZZER_PIN, OUTPUT);       // Buzzer
+  sw_red.begin(redsw_pin, module);
+  sw_blk.begin(blksw_pin, module);
+  sw_reed.begin(reedsw_pin, module);
+  sw_sen.begin(ltsens_pin, module);
+
+  pinMode(habled_pin, OUTPUT);       // LED
+  pinMode(buzzer_pin, OUTPUT);       // Buzzer
 
   buzzer_freq     = 1000;
   buzzer_duration = 0;
@@ -122,7 +131,7 @@ void HABTUTORClass::pub_pot_voltage(void)
   uint32_t r = Analog.analogReadVDDsample();
   Analog.analogReference(INTERNALVDD);
   Analog.analogReadResolution(RES_12BITS);
-  uint32_t v = Analog.analogReadPin(POT_PIN);
+  uint32_t v = Analog.analogReadPin(pot_pin);
   uint32_t mV =  ((v * r)/4096);
   Serial.printf("{\"TOP\":\"%s?/POT\",\"PLD\":\"%d.%dV\"}\n\r",module, mV/1000, mV%1000);
 }
@@ -159,11 +168,11 @@ int8_t HABTUTORClass::decode_cmd(void)
   j++;
   if(compare_token(&COMM.topic[j],"LED")) {
     if(compare_token(COMM.payload,"ON")) {
-      digitalWrite(HABLED_PIN, HIGH);
+      digitalWrite(habled_pin, HIGH);
     } else if(compare_token(COMM.payload,"OFF")) {
-      digitalWrite(HABLED_PIN, LOW);
+      digitalWrite(habled_pin, LOW);
     } else if(compare_token(COMM.payload,"STATUS")) {
-      Serial.printf("{\"TOP\":\"%s?/LED\",\"PLD\":\"%s\"}\r\n",module, onoff[digitalRead(HABLED_PIN)]);
+      Serial.printf("{\"TOP\":\"%s?/LED\",\"PLD\":\"%s\"}\r\n",module, onoff[digitalRead(habled_pin)]);
     } else {return 0;}
     return 1;
   }
@@ -172,28 +181,28 @@ int8_t HABTUTORClass::decode_cmd(void)
     return 1;
   }
   if(compare_token(&COMM.topic[j],"SWITCH/RED")) {
-    Serial.printf("{\"TOP\":\"%s?/SWITCH/RED\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(REDSW_PIN) & 0x1]);
+    Serial.printf("{\"TOP\":\"%s?/SWITCH/RED\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(redsw_pin) & 0x1]);
     return 1;
   }
   if(compare_token(&COMM.topic[j],"SWITCH/BLACK")) {
-    Serial.printf("{\"TOP\":\"%s?/SWITCH/BLACK\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(BLKSW_PIN) & 0x1]);
+    Serial.printf("{\"TOP\":\"%s?/SWITCH/BLACK\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(blksw_pin) & 0x1]);
     return 1;
   }
   if(compare_token(&COMM.topic[j],"SWITCH/REED")) {
-    Serial.printf("{\"TOP\":\"%s?/SWITCH/REED\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(REEDSW_PIN) & 0x1]);
+    Serial.printf("{\"TOP\":\"%s?/SWITCH/REED\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(reedsw_pin) & 0x1]);
     return 1;
   }
   if(compare_token(&COMM.topic[j],"SENSOR/QRE")) {
-    Serial.printf("{\"TOP\":\"%s?/SENSOR/QRE\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(LTSENS_PIN) & 0x1]);
+    Serial.printf("{\"TOP\":\"%s?/SENSOR/QRE\",\"PLD\":\"%s\"}\r\n",module,onoff[intrDigitalRead(ltsens_pin) & 0x1]);
     return 1;
   }
   if(compare_token(&COMM.topic[j],"BUZZER")) {
     if(compare_token(COMM.payload,"ON")) {
-      Timer.noTone(BUZZER_PIN);
-      Timer.tone(BUZZER_PIN, buzzer_freq, buzzer_duration);
+      Timer.noTone(buzzer_pin);
+      Timer.tone(buzzer_pin, buzzer_freq, buzzer_duration);
       buzzer_state = 1;
     } else if(compare_token(COMM.payload,"OFF")) {
-      Timer.noTone(BUZZER_PIN);
+      Timer.noTone(buzzer_pin);
       buzzer_state = 0;
     } else if(compare_token(COMM.payload,"F")) {
       uint32_t f = atoi((char*)&COMM.payload[1]);

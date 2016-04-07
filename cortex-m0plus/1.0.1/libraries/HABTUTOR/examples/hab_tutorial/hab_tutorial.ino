@@ -53,7 +53,7 @@ void setup()
   ZGUSB.sch_temp_cel(50);
   ZGUSB.sch_temp_far(50);
   ZGUSB.sch_cpu_vdd(50);
-  HABT.begin("HABTUTOR");
+  HABT.begin(BLKSW_PIN,"HABTUTOR");
   HABT.sch_pot_voltage(50);
 }
 
