@@ -31,6 +31,7 @@ class QRE1113Class
  private:
   uint8_t* module;
   uint32_t tick;
+  uint32_t tick_5s;
   uint32_t qre_pin;
   void handle_tick(void);
   void pub_light_sensor(void);

@@ -41,9 +41,11 @@ void QRE1113Class::begin(uint8_t pin, const char* mod)
   module = (uint8_t*)mod;
   Serial.printf("module = %s\r\n",module);
   tick = 0;
+  tick_5s = 0;
 
   qre_pin = pin;
   sw_sen.begin(pin, module);
+  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
 }
 
 void QRE1113Class::update(void)
@@ -51,6 +53,11 @@ void QRE1113Class::update(void)
   if(millis() > tick + 100) {
     tick = millis();
     handle_tick();
+    tick_5s++;
+  }
+  if(tick_5s >= 50) { // subscribe every 5s for a heartbeat
+    tick_5s = 0;
+    Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
   }
 }
 

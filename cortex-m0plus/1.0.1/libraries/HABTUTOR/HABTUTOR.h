@@ -46,6 +46,7 @@ class HABTUTORClass
  private:
   uint8_t* module;
   uint32_t tick;
+  uint32_t tick_5s;
   uint32_t buzzer_freq;
   uint32_t buzzer_duration;
   uint32_t buzzer_state;

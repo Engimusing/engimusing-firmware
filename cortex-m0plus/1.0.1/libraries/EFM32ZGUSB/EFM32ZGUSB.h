@@ -37,6 +37,7 @@ class EFM32ZGUSBClass
  private:
   uint8_t* module;
   uint32_t tick;
+  uint32_t tick_5s;
   void handle_tick(void);
   void pub_temp_cel(void);
   void pub_temp_far(void);

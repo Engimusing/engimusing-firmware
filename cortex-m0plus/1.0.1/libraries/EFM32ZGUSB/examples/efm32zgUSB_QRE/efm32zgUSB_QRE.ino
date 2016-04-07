@@ -6,7 +6,7 @@
 
 /*
   EFMZGUSB Commands:
-  {"TOP":"EFMUSB/LED/RED","PLD":"ON"}
+  {"TOP":"EFMUSB_CMD/LED/RED","PLD":"ON"}
   {"TOP":"EFMUSB/LED/RED","PLD":"OFF"}
   {"TOP":"EFMUSB/LED/RED","PLD":"STATUS"}
 

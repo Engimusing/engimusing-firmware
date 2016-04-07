@@ -85,6 +85,7 @@ class fromSerialThread(threading.Thread):
 
 
 mqttp = mqtt.Client(client_id="publisher")
+mqttc = mqtt.Client(client_id="subscriber")
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connectp(mqttp, userdata, rc):
@@ -117,9 +118,12 @@ class toMQTT(threading.Thread):
                         pPayload = None
                     else:
                         pPayload = dict['PLD']
+                    if pPayload != "SUB":
                         pQos = 0;
                         pRetain = False
                         mqttp.publish(pTopic, payload=pPayload, qos=pQos, retain=pRetain)
+                    else:
+                        mqttc.subscribe(str(pTopic))
             except Queue.Empty:
                 continue
                 mqttp.loop_stop()
@@ -133,23 +137,16 @@ def on_connectc(mqttc, userdata, rc):
     print("mqttc connected with result code "+str(rc))
     #Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    mqttc.subscribe("home/habtutor/+/+/STATUS")
-    mqttc.subscribe("home/habtutor/+/+/INTERVAL")
-    mqttc.subscribe("home/habtutor/+/+/CHG")
-    mqttc.subscribe("home/habtutor/+/+/FREQ")
-    mqttc.subscribe("home/habtutor/+/+/DURATION")
-
-    mqttc.subscribe("home/efmusb/+/+/STATUS")
-    mqttc.subscribe("home/efmusb/+/+/INTERVAL")
-    mqttc.subscribe("home/efmusb/+/+/CHG")
-    mqttc.subscribe("home/efmusb/+/+/FREQ")
-    mqttc.subscribe("home/efmusb/+/+/DURATION")
+    """
+    mqttc.subscribe("some/topic")
+    for s in subscriptions:
+        print "Subscribed to: " + subscriptions
+        mqttc.subscribe(s)
+    """
 
 toSerialPort_q = Queue.Queue()
 
 def on_message(mqttc, userdata, msg):
-    print("message received:" + msg.topic + " - " + str(msg.payload))
-
     toStr = "{\"TOP\":\"" + msg.topic + "\""
     if len(str(msg.payload)) > 0:
         toStr += ",\"PLD\":\"" + str(msg.payload) + "\"}"
@@ -166,7 +163,6 @@ def main(args):
     fromSerialPort_q = Queue.Queue()
     serialPort = getSerialPort()
 
-    mqttc = mqtt.Client(client_id="subscriber")
     mqttc.on_connect = on_connectc
     mqttc.on_message = on_message
     mqttc.connect("localhost",1883,60)

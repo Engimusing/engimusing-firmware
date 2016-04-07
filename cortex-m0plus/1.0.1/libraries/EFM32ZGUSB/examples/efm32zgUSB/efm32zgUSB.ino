@@ -4,6 +4,7 @@
 #include <EFM32ZGUSB.h>
 
 /*
+  EFMUSB Commands:
   {"TOP":"EFMUSB/LED/RED","PLD":"ON"}
   {"TOP":"EFMUSB/LED/RED","PLD":"OFF"}
   {"TOP":"EFMUSB/LED/RED","PLD":"STATUS"}
@@ -19,6 +20,8 @@
   {"TOP":"EFMUSB/CPU/TMPC"}
   {"TOP":"EFMUSB/CPU/TMPF"}
   {"TOP":"EFMUSB/CPU/VDD"}
+
+  QRE Commands:
 */
 
 void setup()

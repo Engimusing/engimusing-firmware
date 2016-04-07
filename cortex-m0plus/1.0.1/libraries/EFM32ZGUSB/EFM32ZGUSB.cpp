@@ -36,6 +36,8 @@ void EFM32ZGUSBClass::begin(const char* mod)
   module = (uint8_t*)mod;
   Serial.printf("module = %s\r\n",module);
   tick = 0;
+  tick_5s = 0;
+  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
 }
 
 void EFM32ZGUSBClass::update(void)
@@ -43,6 +45,11 @@ void EFM32ZGUSBClass::update(void)
   if(millis() > tick + 100) {
     tick = millis();
     handle_tick();
+    tick_5s++;
+  }
+  if(tick_5s >= 50) { // subscribe every 5s for a heartbeat
+    tick_5s = 0;
+    Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
   }
 }
 
