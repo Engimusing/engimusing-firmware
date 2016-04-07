@@ -45,6 +45,7 @@
 */
 
 // need HABT instantiation and pin selection
+HABTUTORClass HABT;
 
 void setup()
 {

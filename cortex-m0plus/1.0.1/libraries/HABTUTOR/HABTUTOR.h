@@ -69,5 +69,3 @@ class HABTUTORClass
 };
 
 
-extern HABTUTORClass HABT;
-

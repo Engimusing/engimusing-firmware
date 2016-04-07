@@ -221,6 +221,5 @@ int8_t HABTUTORClass::decode_cmd(void)
   }
 }
 
-HABTUTORClass HABT;
 
 
