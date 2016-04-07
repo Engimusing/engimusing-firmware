@@ -39,19 +39,23 @@ void LightSensorISR(void);
 class HABTUTORClass
 {
  public:
-  HABTUTORClass();
-  void begin(const char* s);
-  void addModule(const char*);
-  void sch_pot_voltage(uint32_t interval, const char* item_module);
+  void begin(const char*);
+  void update(void);
+  void sch_pot_voltage(uint32_t interval);
+  int8_t decode_cmd(void);
  private:
-  static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*);
-  static void handle_tick(void);
-  static void pub_red_switch(uint8_t* item_module);
-  static void pub_black_switch(uint8_t* item_module);
-  static void pub_reed_switch(uint8_t* item_module);
-  static void pub_light_sensor(uint8_t* item_module);
-  static void pub_pot_voltage(uint8_t* item_module);
-  static uint32_t read_pot(void);
+  uint8_t* module;
+  uint32_t tick;
+  uint32_t buzzer_freq;
+  uint32_t buzzer_duration;
+  uint32_t buzzer_state;
+  void handle_tick(void);
+  void pub_red_switch(void);
+  void pub_black_switch(void);
+  void pub_reed_switch(void);
+  void pub_light_sensor(void);
+  void pub_pot_voltage(void);
+  int8_t compare_token(uint8_t* inTok, const char* cmpTok);
 };
 
 

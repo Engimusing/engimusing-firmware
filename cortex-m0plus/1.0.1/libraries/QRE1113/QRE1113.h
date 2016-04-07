@@ -26,9 +26,14 @@ class QRE1113Class
 {
  public:
   void begin(uint8_t pin, const char*);
-  void addModule(const char*);
+  void update(void);
+  int8_t decode_cmd(void);
  private:
-  static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*);
-  static void handle_tick(void);
+  uint8_t* module;
+  uint32_t tick;
+  uint32_t qre_pin;
+  void handle_tick(void);
+  void pub_light_sensor(void);
+  int8_t compare_token(uint8_t* inTok, const char* cmpTok);
 };
 

@@ -5,52 +5,66 @@
 #include <HABTUTOR.h>
 
 /*
-  Commands:
-  {"TOP":"HABTUTOR/LED/1/ON"}
-  {"TOP":"HABTUTOR/LED/1/OFF"}
-  {"TOP":"HABTUTOR/LED/1/STATUS"}
+  EFMUSB Commands:
+  {"TOP":"EFMUSB/LED/RED","PLD":"ON"}
+  {"TOP":"EFMUSB/LED/RED","PLD":"OFF"}
+  {"TOP":"EFMUSB/LED/RED","PLD":"STATUS"}
 
-  {"TOP":"HABTUTOR/SWITCH/RED/STATUS"}
+  {"TOP":"EFMUSB/LED/GREEN","PLD":"ON"}
+  {"TOP":"EFMUSB/LED/GREEN","PLD":"OFF"}
+  {"TOP":"EFMUSB/LED/GREEN","PLD":"STATUS"}
 
-  {"TOP":"HABTUTOR/SWITCH/BLACK/STATUS"}
+  {"TOP":"EFMUSB/LED/BLUE","PLD":"ON"}
+  {"TOP":"EFMUSB/LED/BLUE","PLD":"OFF"}
+  {"TOP":"EFMUSB/LED/BLUE","PLD":"STATUS"}
 
-  {"TOP":"HABTUTOR/SENSOR/QRE/STATUS"}
+  {"TOP":"EFMUSB/CPU/TMPC"}
+  {"TOP":"EFMUSB/CPU/TMPF"}
+  {"TOP":"EFMUSB/CPU/VDD"}
 
-  {"TOP":"HABTUTOR/SWITCH/REED/STATUS"}
+  HAB Commands:
+  {"TOP":"HABTUTOR/LED","PLD":"ON"}
+  {"TOP":"HABTUTOR/LED","PLD":"OFF"}
+  {"TOP":"HABTUTOR/LED","PLD":"STATUS"}
 
-  {"TOP":"HABTUTOR/POT/1/STATUS"}
-  {"TOP":"HABTUTOR/POT/1/INTERVAL"}
+  {"TOP":"HABTUTOR/SWITCH/RED"}
 
-  {"TOP":"HABTUTOR/BUZZER/1/ON"}
-  {"TOP":"HABTUTOR/BUZZER/1/OFF"}
-  {"TOP":"HABTUTOR/BUZZER/1/STATUS"}
-  {"TOP":"HABTUTOR/BUZZER/1/FREQ","PLD":"500"} // freq in Hz
-  {"TOP":"HABTUTOR/BUZZER/1/DURATION","PLD":"200"} // duration in seconds
+  {"TOP":"HABTUTOR/SWITCH/BLACK"}
 
+  {"TOP":"HABTUTOR/SENSOR/QRE"}
+
+  {"TOP":"HABTUTOR/SWITCH/REED"}
+
+  {"TOP":"HABTUTOR/POT"}
+
+  {"TOP":"HABTUTOR/BUZZER","PLD":"ON"}
+  {"TOP":"HABTUTOR/BUZZER","PLD":"OFF"}
+  {"TOP":"HABTUTOR/BUZZER","PLD":"STATUS"}
+  {"TOP":"HABTUTOR/BUZZER","PLD":"F500"} // freq in Hz
+  {"TOP":"HABTUTOR/BUZZER","PLD":"D200"} // duration in seconds
 */
 
-const char efmusbModule[] = "home/efmusb";
-const char habModule[] = "home/habtutor";
+// need HABT instantiation and pin selection
 
-uint8_t item_module[] = "testModule";
-static uint8_t itemModule[] = "home/habtutor";
-
-uint8_t *ptr_module = item_module;
-
-void setup() {
+void setup()
+{
   Serial.begin(115200);
-  COMM.begin();
-  ZGUSB.begin(ptr_module);
-  HABT.begin(habModule);
-  HABT.sch_pot_voltage(50, habModule);
+  ZGUSB.begin("EFMUSB");
   ZGUSB.sch_temp_cel(50);
   ZGUSB.sch_temp_far(50);
   ZGUSB.sch_cpu_vdd(50);
-
-  Serial.printf("Start Test: \r\n\r\n");
+  HABT.begin("HABTUTOR");
+  HABT.sch_pot_voltage(50);
 }
 
-void loop() {
-  COMM.decode();
+void loop()
+{
+  if (COMM.decode()) {
+    if(ZGUSB.decode_cmd() == 0) {
+      HABT.decode_cmd();
+    }
+  }
+  ZGUSB.update();
+  HABT.update();
 }
 

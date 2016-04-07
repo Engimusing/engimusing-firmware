@@ -23,26 +23,11 @@
 #include <Arduino.h>
 
 extern LEUARTClass Serial;
-extern boardIO IO;
 TimersLP Timer;
 
-// Types:
-static const char sensor[]   = "SENSOR";
-// IDs:
-static const char green[]    = "QRE";
-// ACTIONs:
-static const char stat[]     = "STATUS";
-
-static const char *onoff[]   = {"ISON","ISOFF"};
-static const char modu[]     = "{\"MODULE\":\"";
-static const char mid[]      = "\":\"";
-static const char com[]      = "\",\"";
-static const char tail[]     = "\"}\r\n";
+static const char *onoff[]   = {"ON","OFF"};
 
 tickHandler lightsens;
-
-static uint8_t lightsens_module[ITEM_TOKEN_LENGTH];
-static uint32_t qpin = 0;
 
 switchesClass sw_sen("SENSOR", LightSensorISR, 2, SW_MOMENTARY);
 
@@ -51,45 +36,63 @@ void LightSensorISR(void)
   sw_sen.sw_int++;
 }
 
-void QRE1113Class::begin(uint8_t pin, const char* s)
+void QRE1113Class::begin(uint8_t pin, const char* mod)
 {
-  uint8_t s1[] = "QRE1113";
-  COMM.add_module(s1, decode_cmd);
-  Serial.printf("{\"MODULE\":\"QRE1113\"}\r\n");
-  addModule(s);
+  module = (uint8_t*)mod;
+  Serial.printf("module = %s\r\n",module);
+  tick = 0;
 
-  COMM.add_tick_handler(handle_tick);
-
-  qpin = pin;
-  sw_sen.begin(pin, lightsens_module);
+  qre_pin = pin;
+  sw_sen.begin(pin, module);
 }
 
-void QRE1113Class::addModule(const char* s)
+void QRE1113Class::update(void)
 {
-  COMM.add_module((uint8_t*)s, decode_cmd);
-  strcpy((char*)lightsens_module, (char*)s);
+  if(millis() > tick + 100) {
+    tick = millis();
+    handle_tick();
+  }
 }
 
 void QRE1113Class::handle_tick(void)
 {
-  sw_sen.pub_switch(lightsens_module);
+  sw_sen.pub_switch(module);
 }
 
-void QRE1113Class::decode_cmd(uint8_t* item_module,
-			      uint8_t* item_type,
-			      uint8_t* item_id,
-			      uint8_t* item_action,
-			      uint8_t* item_payload)
+int8_t QRE1113Class::compare_token(uint8_t* inTok, const char* cmpTok)
 {
-  uint8_t debug = 0;
-  if(debug) {Serial.printf("item_module = %s, item_type = %s, item_id = %s, item_action = %s, item_payload = %s\r\n",
-			   item_module,item_type,item_id,item_action,item_payload);}
-
-  if(strcmp((char*)item_type, sensor) == 0) {
-    if(strcmp((char*)item_action, stat) == 0) {
-      Serial.printf("%s%s%sSENSOR%s%s%s",modu,item_module,com,mid,onoff[digitalRead(qpin)],tail);
-      return;
+  int8_t iLen = strlen((char*) inTok);
+  int8_t cLen = strlen((char*) cmpTok);
+  if(iLen < cLen) {
+    return 0;
+  }
+  for(int i = 0; i < cLen; i++) {
+    if(inTok[i] != cmpTok[i]) {
+      return 0;
     }
   }
+  return 1;
 }
+
+int8_t QRE1113Class::decode_cmd(void)
+{
+  int8_t j = 0;
+  int8_t mlen = strlen((char*)module);
+  int8_t tlen = strlen((char*)COMM.topic);
+  if((tlen < mlen) || (COMM.topic[mlen] != '/')) {
+    return 0;
+  }
+  // compare module
+  for(int i = 0; i < mlen; i++, j++) {
+    if(COMM.topic[j] != module[i]) {
+      return 0;
+    }
+  }
+  j++;
+  if(compare_token(&COMM.topic[j],"SENSOR/QRE")) {
+    Serial.printf("{\"TOP\":\"%s?/SENSOR/QRE\",\"PLD\":\"%s\"}\r\n",module, onoff[~digitalRead(qre_pin) & 0x1]);
+    return 1;
+  }
+}
+
 

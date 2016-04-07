@@ -28,20 +28,20 @@
 class EFM32ZGUSBClass
 {
  public:
-  void begin(uint8_t*);
+  void begin(const char*);
   void update(void);
   void sch_temp_cel(uint32_t interval);
   void sch_temp_far(uint32_t interval);
   void sch_cpu_vdd(uint32_t interval);
+  int8_t decode_cmd(void);
  private:
   uint8_t* module;
-  static void decode_cmd(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*);
+  uint32_t tick;
   void handle_tick(void);
   void pub_temp_cel(void);
   void pub_temp_far(void);
   void pub_cpu_vdd(void);
-
-  uint32_t tick;
+  int8_t compare_token(uint8_t* inTok, const char* cmpTok);
 };
 
 

@@ -20,12 +20,6 @@
 #include "switches.h"
 #include "EFM32COMM.h"
 
-static const char tail[]     = "\"}\r\n";
-static const char topu[]     = "{\"TOP\":\"";
-static const char midu[]     = "\",\"PLD\":\"";
-static const char rs2on[]    = "CLOSED";
-static const char rs2off[]   = "OPEN";
-
 
 switchesClass::switchesClass(String name, void (*_switchISR)(void), uint8_t bounce_count, uint8_t switch_typ)
 {
@@ -38,7 +32,7 @@ switchesClass::switchesClass(String name, void (*_switchISR)(void), uint8_t boun
 }
 
 
-void switchesClass::begin(uint32_t _pin, uint8_t* item_module)
+void switchesClass::begin(uint32_t _pin, uint8_t* module)
 {
   pin = _pin;
   intrPinMode(pin, INPUT_PU_FILTER);
@@ -49,7 +43,7 @@ void switchesClass::begin(uint32_t _pin, uint8_t* item_module)
   }
 }
 
-void switchesClass::pub_switch(uint8_t* item_module)
+void switchesClass::pub_switch(uint8_t* module)
 {
   uint8_t current_switch = (intrDigitalRead(pin) & 0x01);
 
@@ -58,7 +52,7 @@ void switchesClass::pub_switch(uint8_t* item_module)
   if(init == 0) {
     init = 1;
     switch_state = (intrDigitalRead(pin) & 0x01);
-    switch_msg(item_module, switch_state);
+    switch_msg(module, switch_state);
     sw_int = 0;
     return;
   }
@@ -70,12 +64,12 @@ void switchesClass::pub_switch(uint8_t* item_module)
   } else if(event_in_progress >= bounce_cnt) { // report event
     if(switch_type == SW_MOMENTARY) {
       //Serial.printf("%d ",sw_int);
-      switch_msg(item_module, 1);
+      switch_msg(module, 1);
       clear_sw_int();
     } else {
       if(switch_state != current_switch) {
 	switch_state = current_switch;
-	switch_msg(item_module, current_switch);
+	switch_msg(module, current_switch);
       }
     }
     event_in_progress = 0;
@@ -83,19 +77,15 @@ void switchesClass::pub_switch(uint8_t* item_module)
   }
 }
 
-
-static char rs1[MODULE_STRING_LENGTH+15];
-
-void switchesClass::switch_msg(uint8_t* item_module, uint8_t current_switch)
+void switchesClass::switch_msg(uint8_t* module, uint8_t current_switch)
 {
 
-  sprintf(rs1, "%s%s/SWITCH/%s/STATE%s", topu, item_module, switch_name, midu);
+  Serial.printf("{\"TOP\":\"%s?/SWITCH/%s\",\"PLD\":\"", module, switch_name);
 
-  uint8_t onoff = (current_switch) ? OFF_MESSAGE : ON_MESSAGE;
-  if(onoff == ON_MESSAGE) {
-    Serial.printf("%s%s%s",rs1,rs2on,tail);
-  } else if(onoff == OFF_MESSAGE) {
-    Serial.printf("%s%s%s",rs1,rs2off,tail);
+  if(current_switch) {
+    Serial.printf("CLOSED\"}\r\n");
+  } else {
+    Serial.printf("OPEN\"}\r\n");
   }
 }
 

@@ -33,7 +33,7 @@ class switchesClass
   volatile uint32_t sw_int_cnt;
   switchesClass(String name, void (*_switchISR)(void), uint8_t cnt, uint8_t type);
   void begin(uint32_t pin, uint8_t* s);
-  void pub_switch(uint8_t* item_module); // publish changes in switch state
+  void pub_switch(uint8_t*); // publish changes in switch state
 
  private:
   uint32_t pin;  // connector pin connected to switch
@@ -44,7 +44,7 @@ class switchesClass
   uint8_t sw_previous_state;
   uint8_t switch_name[SWITCH_NAME_LENGTH]; // name of the switch for publish message
   uint8_t bounce_cnt; // bounce filter value, 0 = no filter, 0xff = momentary
-  void switch_msg(uint8_t* item_module, uint8_t current_switch); // publish switch state to MQTT
+  void switch_msg(uint8_t* module, uint8_t current_switch); // publish switch state to MQTT
   void (*switchISR)(void); // class function executed when switch ISR occurs
   void decrement_sw_int(void); // decrement int count
   void clear_sw_int(void); // clear int count

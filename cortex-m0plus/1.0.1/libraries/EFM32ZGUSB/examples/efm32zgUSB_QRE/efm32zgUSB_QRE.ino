@@ -5,54 +5,49 @@
 #include <QRE1113.h>
 
 /*
- {"TOP":"EFMUSB/LED/RED/ON"}
- {"TOP":"EFMUSB/LED/RED/OFF"}
- {"TOP":"EFMUSB/LED/RED/STATUS"}
+  EFMZGUSB Commands:
+  {"TOP":"EFMUSB/LED/RED","PLD":"ON"}
+  {"TOP":"EFMUSB/LED/RED","PLD":"OFF"}
+  {"TOP":"EFMUSB/LED/RED","PLD":"STATUS"}
 
- {"TOP":"EFMUSB/LED/GREEN/ON"}
- {"TOP":"EFMUSB/LED/GREEN/OFF"}
- {"TOP":"EFMUSB/LED/GREEN/STATUS"}
+  {"TOP":"EFMUSB/LED/GREEN","PLD":"ON"}
+  {"TOP":"EFMUSB/LED/GREEN","PLD":"OFF"}
+  {"TOP":"EFMUSB/LED/GREEN","PLD":"STATUS"}
 
- {"TOP":"EFMUSB/LED/BLUE/ON"}
- {"TOP":"EFMUSB/LED/BLUE/OFF"}
- {"TOP":"EFMUSB/LED/BLUE/STATUS"}
+  {"TOP":"EFMUSB/LED/BLUE","PLD":"ON"}
+  {"TOP":"EFMUSB/LED/BLUE","PLD":"OFF"}
+  {"TOP":"EFMUSB/LED/BLUE","PLD":"STATUS"}
 
- {"TOP":"EFMUSB/LED/ALL/ON"}
- {"TOP":"EFMUSB/LED/ALL/OFF"}
- {"TOP":"EFMUSB/LED/ALL/STATUS"}
+  {"TOP":"EFMUSB/CPU/TMPC"}
+  {"TOP":"EFMUSB/CPU/TMPF"}
+  {"TOP":"EFMUSB/CPU/VDD"}
 
- {"TOP":"EFMUSB/CPUTEMP/CEL/STATUS"}
- {"TOP":"EFMUSB/CPUTEMP/CEL/INTERVAL","PLD":"time"} // seconds, zero means off
-
- {"TOP":"EFMUSB/CPUTEMP/FAR/STATUS"}
- {"TOP":"EFMUSB/CPUTEMP/FAR/INTERVAL","PLD":"time"} // seconds, zero means off
- 
- {"TOP":"EFMUSB/CPUVDD/1/STATUS"}
- {"TOP":"EFMUSB/CPUVDD/1/INTERVAL","PLD":"time"} // seconds, zero means off
-
- {"TOP":"EFMUSB/BRDINFO"}
-
- {"TOP":"home/qre1113/SENSOR/1/STATUS"}
+  QRE Commands:
+  {"TOP":"QRE1/SENSOR/QRE"}
 */
 
-const char efmusbModule[] = "home/efmusb";
-const char qreModule[] = "home/qre1113";
+QRE1113Class QRE1;
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
-  COMM.begin();
-  ZGUSB.begin();
-  ZGUSB.addModule(efmusbModule);
-  ZGUSB.sch_temp_cel(50, efmusbModule);
-  ZGUSB.sch_temp_far(50, efmusbModule);
-  ZGUSB.sch_cpu_vdd(50, efmusbModule);
-
-  QRE1113Class QRE;
-  QRE.addModule(qreModule);
-  QRE.begin(2, qreModule);
+  ZGUSB.begin("EFMUSB");
+  ZGUSB.sch_temp_cel(50);
+  ZGUSB.sch_temp_far(50);
+  ZGUSB.sch_cpu_vdd(50);
+  QRE1.begin(2, "QRE1");
 }
 
-void loop() {
-  COMM.decode();
+void loop()
+{
+  if (COMM.decode()) {
+    if(ZGUSB.decode_cmd() == 0) {
+      QRE1.decode_cmd();
+    }
+  }
+  ZGUSB.update();
+  QRE1.update();
 }
+
+
 

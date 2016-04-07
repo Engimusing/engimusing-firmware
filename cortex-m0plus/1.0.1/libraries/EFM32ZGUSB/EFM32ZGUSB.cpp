@@ -23,59 +23,28 @@
 
 
 extern LEUARTClass Serial;
-extern boardIO IO;
 extern AnalogLP Analog;
 
-// Types:
-static const char led[]       = "LED";
-static const char ledr[]      = "LEDR";
-static const char cputemp[]   = "CPUTEMP";
-static const char cpuvdd[]    = "CPUVDD";
-static const char brdinfo[]   = "BRDINFO";
-static const char tempVDD[]   = "TEMPVDD";
-// IDs:
-static const char red[]       = "RED";
-static const char blue[]      = "BLUE";
-static const char green[]     = "GREEN";
-static const char all[]       = "ALL";
-// ACTIONs:
-static const char on[]        = "ON";
-static const char off[]       = "OFF";
-static const char stat[]      = "STATUS";
-static const char pfrq[]      = "INTERVAL";
-static const char pub[]       = "PUB";
-static const char cel[]       = "CEL";
-static const char far[]       = "FAR";
+static const char *onoff[]   = {"ON","OFF"};
 
-static const char *onoff[]   = {"ISON","ISOFF"};
-static const char modu[]     = "{\"MODULE\":\"EFMUSB\",\"";
-static const char mid[]      = "\":\"";
-static const char com[]      = "\",\"";
+tickHandler tempcpub;
+tickHandler tempfpub;
+tickHandler vddpub;
 
-
-void EFM32ZGUSBClass::begin(uint8_t* s)
+void EFM32ZGUSBClass::begin(const char* mod)
 {
-  module = s;
-  IO.commChipID();
-  COMM.add_module((uint8_t*)module, decode_cmd);
+  module = (uint8_t*)mod;
   Serial.printf("module = %s\r\n",module);
   tick = 0;
 }
-
 
 void EFM32ZGUSBClass::update(void)
 {
   if(millis() > tick + 100) {
     tick = millis();
-
     handle_tick();
   }
 }
-
-
-tickHandler tempcpub;
-tickHandler tempfpub;
-tickHandler vddpub;
 
 void EFM32ZGUSBClass::handle_tick(void)
 {
@@ -102,111 +71,92 @@ void EFM32ZGUSBClass::sch_cpu_vdd(uint32_t interval)
 void EFM32ZGUSBClass::pub_temp_cel(void)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s/CPUTEMP/CEL/STATE\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeC, tempval.fracC);
+  Serial.printf("{\"TOP\":\"%s?/CPU/TMPC\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeC, tempval.fracC);
 }
 
 void EFM32ZGUSBClass::pub_temp_far(void)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s/CPUTEMP/FAR/STATE\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeF, tempval.fracF);
+  Serial.printf("{\"TOP\":\"%s?/CPU/TMPF\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeF, tempval.fracF);
 }
 
 void EFM32ZGUSBClass::pub_cpu_vdd(void)
 {
   uPvdd vddval = Analog.analogReadVDD();
-  Serial.printf("{\"TOP\":\"%s/CPUVDD/1/STATE\",\"PLD\":\"%d.%d\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
+  Serial.printf("{\"TOP\":\"%s?/CPU/VDD\",\"PLD\":\"%d.%d\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
 }
 
-
-void EFM32ZGUSBClass::decode_cmd(uint8_t* item_module,
-				 uint8_t* item_type, 
-				 uint8_t* item_id, 
-				 uint8_t* item_action, 
-				 uint8_t* item_payload)
+int8_t EFM32ZGUSBClass::compare_token(uint8_t* inTok, const char* cmpTok)
 {
-  if(strcmp((char*)item_type, led) == 0) {
-    if(strcmp((char*)item_id, red) == 0) {
-      if(strcmp((char*)item_payload, on) == 0) {
-	digitalWrite(RED_LED, LOW);
-	return;
-      }
-      if(strcmp((char*)item_payload, off) == 0) {
-	digitalWrite(RED_LED, HIGH);
-	return;
-      }
-      if(strcmp((char*)item_action, stat) == 0) {
-	Serial.printf("%sREDLED%s%s\"}\r\n",modu,mid,onoff[digitalRead(RED_LED)]);
-	return;
-      }
-    }
-    if(strcmp((char*)item_id, blue) == 0) {
-      if(strcmp((char*)item_payload, on) == 0) {
-	digitalWrite(BLUE_LED, LOW);
-	return;
-      }
-      if(strcmp((char*)item_payload, off) == 0) {
-	digitalWrite(BLUE_LED, HIGH);
-	return;
-      }
-      if(strcmp((char*)item_action, stat) == 0) {
-	Serial.printf("%sBLUELED%s%s\"}\r\n",modu,mid,onoff[digitalRead(BLUE_LED)]);
-	return;
-      }
-    }
-    if(strcmp((char*)item_id, green) == 0) {
-      if(strcmp((char*)item_payload, on) == 0) {
-	digitalWrite(GREEN_LED, LOW);
-	return;
-      }
-      if(strcmp((char*)item_payload, off) == 0) {
-	digitalWrite(GREEN_LED, HIGH);
-	return;
-      }
-      if(strcmp((char*)item_action, stat) == 0) {
-	Serial.printf("%sGREENLED%s%s\"}\r\n",modu,mid,onoff[digitalRead(GREEN_LED)]);
-	return;
-      }
+  int8_t iLen = strlen((char*) inTok);
+  int8_t cLen = strlen((char*) cmpTok);
+  if(iLen < cLen) {
+    return 0;
+  }
+  for(int i = 0; i < cLen; i++) {
+    if(inTok[i] != cmpTok[i]) {
+      return 0;
     }
   }
-  if(strcmp((char*)item_type, cputemp) == 0) {
-  Serial.printf("decode_cmd\r\n");
-    if(strcmp((char*)item_id, cel) == 0) {
-      if(strcmp((char*)item_action, stat) == 0) {
-	temperature tempval = Analog.analogReadTemp();
-	Serial.printf("%sCPUTEMPC%s%d.%dC\"}\r\n", modu, mid, tempval.wholeC, tempval.fracC);
-	return;
-      }
-      if(strcmp((char*)item_action, pfrq) == 0) {
-	tempcpub.setInterval(atoi((char*)item_payload));
-	return;
-      }
-    }
-    if(strcmp((char*)item_id, far) == 0) {
-      if(strcmp((char*)item_action, stat) == 0) {
-	temperature tempval = Analog.analogReadTemp();
-	Serial.printf("%sCPUTEMPF%s%d.%dF\"}\r\n", modu, mid, tempval.wholeF, tempval.fracF);
-	return;
-      }
-      if(strcmp((char*)item_action, pfrq) == 0) {
-	tempfpub.setInterval(atoi((char*)item_payload));
-	return;
-      }
+  return 1;
+}
+
+int8_t EFM32ZGUSBClass::decode_cmd(void)
+{
+  int8_t j = 0;
+  int8_t mlen = strlen((char*)module);
+  int8_t tlen = strlen((char*)COMM.topic);
+  if((tlen < mlen) || (COMM.topic[mlen] != '/')) {
+    return 0;
+  }
+  // compare module
+  for(int i = 0; i < mlen; i++, j++) {
+    if(COMM.topic[j] != module[i]) {
+      return 0;
     }
   }
-  if(strcmp((char*)item_type, cpuvdd) == 0) {
-    if(strcmp((char*)item_action, stat) == 0) {
-      uPvdd vddval = Analog.analogReadVDD();
-      Serial.printf("%supVDD%s%d.%dV\"}\r\n",modu, mid, vddval.wholeVDD,vddval.fracVDD);
-      return;
-    }
-    if(strcmp((char*)item_action, pfrq) == 0) {
-      vddpub.setInterval(atoi((char*)item_payload));
-      return;
-    }
+  j++;
+  if(compare_token(&COMM.topic[j],"LED/RED")) {
+    if(compare_token(COMM.payload,"ON")) {
+      digitalWrite(RED_LED, LOW);
+    } else if(compare_token(COMM.payload,"OFF")) {
+      digitalWrite(RED_LED, HIGH);
+    } else if(compare_token(COMM.payload,"STATUS")) {
+      Serial.printf("{\"TOP\":\"%s?/LED/RED\",\"PLD\":\"%s\"}\r\n",module, onoff[digitalRead(RED_LED)]);
+    } else {return 0;}
+    return 1;
   }
-  if(strcmp((char*)item_type, brdinfo) == 0) {
-    IO.printBoardParameters();
-    return;
+  if(compare_token(&COMM.topic[j],"LED/BLUE")) {
+    if(compare_token(COMM.payload,"ON")) {
+      digitalWrite(BLUE_LED, LOW);
+    } else if(compare_token(COMM.payload,"OFF")) {
+      digitalWrite(BLUE_LED, HIGH);
+    } else if(compare_token(COMM.payload,"STATUS")) {
+      Serial.printf("{\"TOP\":\"%s?/LED/BLUE\",\"PLD\":\"%s\"}\r\n",module, onoff[digitalRead(BLUE_LED)]);
+    } else {return 0;}
+    return 1;
+  }
+  if(compare_token(&COMM.topic[j],"LED/GREEN")) {
+    if(compare_token(COMM.payload,"ON")) {
+      digitalWrite(GREEN_LED, LOW);
+    } else if(compare_token(COMM.payload,"OFF")) {
+      digitalWrite(GREEN_LED, HIGH);
+    } else if(compare_token(COMM.payload,"STATUS")) {
+      Serial.printf("{\"TOP\":\"%s?/LED/GREEN\",\"PLD\":\"%s\"}\r\n",module, onoff[digitalRead(GREEN_LED)]);
+    } else {return 0;}
+    return 1;
+  }
+  if(compare_token(&COMM.topic[j],"CPU/TMPC")) {
+    pub_temp_cel();
+    return 1;
+  }
+  if(compare_token(&COMM.topic[j],"CPU/TMPF")) {
+    pub_temp_far();
+    return 1;
+  }
+  if(compare_token(&COMM.topic[j],"CPU/VDD")) {
+    pub_cpu_vdd();
+    return 1;
   }
 }
 
