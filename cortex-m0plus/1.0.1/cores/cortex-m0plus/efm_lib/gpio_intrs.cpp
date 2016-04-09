@@ -34,8 +34,11 @@ void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
   INTR.attachIntr(pin, gpioIntFunc, mode);
 }
 
-void INTRClass::gpioISR(void)
+INTRClass::INTRClass()
 {
+  for(int i = 0; i < NUMBER_GPIO_INTRS; i++) {
+    nints[i] = 0;
+  }
 }
 
 void INTRClass::attachIntr(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
@@ -99,6 +102,7 @@ void INTRClass::GPIO_ODD_IRQHandler(void)
       if(intFunc[i]) {
 	intFunc[i]();
       }
+      nints[i]++;
     }
   }
 }
@@ -111,10 +115,34 @@ void INTRClass::GPIO_EVEN_IRQHandler(void)
       if(intFunc[i]) {
 	intFunc[i]();
       }
+      nints[i]++;
     }
   }  
 }
 
+uint8_t INTRClass::read_nints(uint8_t pin)
+{
+  return nints[iPins[pin]];
+}
+
+uint8_t INTRClass::read_clr_nints(uint8_t pin)
+{
+  uint8_t n = nints[iPins[pin]];
+  noInterrupts();
+  nints[iPins[pin]] = 0;
+  interrupts();
+  return n;
+}
+uint8_t INTRClass::read_decrement_nints(uint8_t pin)
+{
+  noInterrupts();
+  uint8_t n = nints[pin];
+  if(nints[iPins[pin]] > 0) {
+    nints[iPins[pin]]--;
+  }
+  interrupts();
+  return n;
+}
 
 void GPIO_ODD_IRQHandler(void)
 {
