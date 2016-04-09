@@ -68,12 +68,6 @@ const uint8_t ledPins[3]   = {  8,     9,    10  };
 
 // ------------------------------------------------------------------------------------------------------------
 
-// GPIO Interrupts
-volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
-// storage for 16 interrupt functions
-// corresponding to #bits in IEN
-
-
 // This function verifies the pin is valid for this variant
 uint8_t valid_pin(uint8_t pin) {
   if((pin < 2) || (pin == 11) || (pin == 12) || (pin > 15)) {
@@ -82,7 +76,6 @@ uint8_t valid_pin(uint8_t pin) {
     return 1;
   }
 }
-
 
 uint32_t cmu_hfper_freq_get(void)
 {

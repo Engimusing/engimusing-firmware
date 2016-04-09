@@ -20,6 +20,7 @@
 
 #include "../../cores/cortex-m0plus/efm_lib/efm_pin_config.h"
 
+typedef void (*voidFuncPtr)(void);
 
 
 #define VARIANT_MCK 21000000
@@ -39,8 +40,6 @@
 
 
 
-typedef void (*voidFuncPtr)(void);
-
 extern const uint8_t dPins[];
 extern const uint8_t dPorts[];
 extern const uint8_t iPorts[];
@@ -59,8 +58,16 @@ extern const uint32_t timerRoutes[];
 extern const uint8_t ledPorts[];
 extern const uint8_t ledPins[];
 
-uint8_t valid_pin(uint8_t pin);
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
 
-extern volatile voidFuncPtr intFunc[];
+  uint8_t valid_pin(uint8_t pin);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+
 
 
