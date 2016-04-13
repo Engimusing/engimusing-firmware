@@ -24,15 +24,9 @@ INTRClass INTR;
 
 
 // GPIO Interrupts
-volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
+static volatile voidFuncPtr intFunc[16] = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
 // storage for 16 interrupt functions
 // corresponding to #bits in IEN
-
-// GPIO Interrupts
-void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
-{
-  INTR.attachIntr(pin, gpioIntFunc, mode);
-}
 
 INTRClass::INTRClass()
 {
@@ -41,11 +35,21 @@ INTRClass::INTRClass()
   }
 }
 
-void INTRClass::attachIntr(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
+void INTRClass::attachIntrCounter(uint8_t pin, uint8_t mode)
+{
+  INTR.attachIntr(pin, mode);
+}
+
+// GPIO Interrupts
+void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode)
+{
+  intFunc[iPins[pin]] = gpioIntFunc;
+  INTR.attachIntr(pin, mode);
+}
+
+void INTRClass::attachIntr(uint8_t pin, uint8_t mode)
 {
   if(valid_pin(pin)) {
-
-    intFunc[iPins[pin]] = gpioIntFunc;
 
     int shift = ((iPins[pin] & 0x7) * 4);
     uint32_t mask = 0xF << shift;

@@ -30,14 +30,15 @@ class INTRClass
 {
   public:
     INTRClass();
-    void attachIntr(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
+    void attachIntrCounter(uint8_t pin, uint8_t mode);
+    void attachIntr(uint8_t pin, uint8_t mode);
     void detachIntr(uint8_t pin);
     void GPIO_ODD_IRQHandler(void);
     void GPIO_EVEN_IRQHandler(void);
     uint8_t read_nints(uint8_t);
     uint8_t read_clr_nints(uint8_t);
     uint8_t read_decrement_nints(uint8_t);
-  private:
     uint8_t nints[NUMBER_GPIO_INTRS];
+  private:
 };
 
