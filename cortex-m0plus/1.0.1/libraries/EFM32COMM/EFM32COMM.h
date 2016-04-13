@@ -51,6 +51,7 @@ class EFM32COMMClass
   int8_t decode(void);
   int8_t add_module(uint8_t*, void (*cmd)(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*));
   int8_t compare_token(uint8_t* inTok, const char* cmpTok);
+  uint32_t subscribe_heartbeat;
  private:
   int8_t getInputString(char);
   int8_t substrcmp(uint8_t* str, uint8_t* sub, uint8_t start);
@@ -106,7 +107,7 @@ class momentarySwitchClass
 class onOffCtlClass
 {
  public:
-  void begin(uint8_t _pin, const char* module);
+  void begin(uint8_t _pin, const char* module, uint8_t active);
   void update(void);
   void decode(void);
  private:
@@ -114,6 +115,9 @@ class onOffCtlClass
   uint32_t tick;
   uint32_t tick_5s;
   uint32_t pin;
+  uint8_t active;
+  uint8_t on;
+  uint8_t off;
 };
 
 // ------------------------------- Tone Control Class -------------------------

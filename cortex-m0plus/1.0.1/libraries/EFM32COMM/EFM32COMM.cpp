@@ -32,6 +32,7 @@ EFM32COMMClass::EFM32COMMClass()
   isCnt = 0;
   charCnt = 0;
   state = Idle;
+  subscribe_heartbeat = 300;
 }
 
 int8_t EFM32COMMClass::decode(void)
@@ -161,7 +162,6 @@ void detectorSwitchClass::update(void)
 {
   if(millis() > tick + 100) {
     tick = millis();
-    tick_5s++;
     uint8_t current_switch = (~intrDigitalRead(pin) & 0x01);
 
     if((event_in_progress == 0) && (switch_state != current_switch) ) { // switch event happened
@@ -176,7 +176,7 @@ void detectorSwitchClass::update(void)
       event_in_progress = 0;
       return;
     }
-    if(tick_5s >= 50) { // subscribe every 5s for a heartbeat
+    if(tick_5s++ >= COMM.subscribe_heartbeat) { // subscribe every 5s for a heartbeat
       tick_5s = 0;
       Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
     }
@@ -251,10 +251,18 @@ void momentarySwitchClass::update(void)
 
 // ------------------------------- On/Off Control Class --------------------------
 
-void onOffCtlClass::begin(uint8_t _pin, const char* mod)
+void onOffCtlClass::begin(uint8_t _pin, const char* mod, uint8_t act)
 {
   pin = _pin;
   module = (uint8_t*)mod;
+  active = act;
+  if(active == HIGH) {
+    on = HIGH;
+    off = LOW;
+  } else {
+    on = LOW;
+    off = HIGH;
+  }
 
   pinMode(pin, OUTPUT);       // LED
 
@@ -267,7 +275,7 @@ void onOffCtlClass::update(void)
 {
   if(millis() > tick + 100) {
     tick = millis();
-    if(tick_5s++ >= 50) { // subscribe every 5s for a heartbeat
+    if(tick_5s++ >= COMM.subscribe_heartbeat) { // subscribe every 5s for a heartbeat
       tick_5s = 0;
       Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
     }
@@ -294,11 +302,12 @@ void onOffCtlClass::decode(void)
   j++;
   if(COMM.compare_token(&COMM.topic[j],"CTL")) {
     if(COMM.compare_token(COMM.payload,"ON")) {
-      digitalWrite(pin, LOW);
+      digitalWrite(pin, on);
     } else if(COMM.compare_token(COMM.payload,"OFF")) {
-      digitalWrite(pin, HIGH);
+      digitalWrite(pin, off);
     } else if(COMM.compare_token(COMM.payload,"STATUS")) {
-      Serial.printf("{\"TOP\":\"%s?/LED\",\"PLD\":\"%s\"}\r\n",module, onoff[~digitalRead(pin) & 0x01]);
+      uint8_t val = (active == HIGH) ? digitalRead(pin) : ~digitalRead(pin);
+      Serial.printf("{\"TOP\":\"%s?/LED\",\"PLD\":\"%s\"}\r\n",module, onoff[val & 0x01]);
     } else {return;}
     COMM.decode_done = 1;
     return;
@@ -329,7 +338,7 @@ void toneCtlClass::update(void)
 {
   if(millis() > tick + 100) {
     tick = millis();
-    if(tick_5s++ >= 50) { // subscribe every 5s for a heartbeat
+    if(tick_5s++ >= COMM.subscribe_heartbeat) { // subscribe every 5s for a heartbeat
       tick_5s = 0;
       Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
     }
@@ -414,7 +423,7 @@ void adcCtlClass::publishADCvoltage(void)
   Analog.analogReadResolution(RES_12BITS);
   uint32_t v = Analog.analogReadPin(pin);
   uint32_t mV =  ((v * r)/4096);
-  Serial.printf("{\"TOP\":\"%s/ADC?\",\"PLD\":\"%d.%dV\"}\n\r",module, mV/1000, mV%1000);
+  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%dV\"}\n\r",module, mV/1000, mV%1000);
 }
 
 void adcCtlClass::decode(void)
@@ -471,7 +480,7 @@ void cpuVDDClass::update(void)
 void cpuVDDClass::publishCPUvoltage(void)
 {
   uPvdd vddval = Analog.analogReadVDD();
-  Serial.printf("{\"TOP\":\"%s/ADC?\",\"PLD\":\"%d.%dV\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
+  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%dV\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
 }
 
 void cpuVDDClass::decode(void)
@@ -537,13 +546,13 @@ void cpuTempClass::update(void)
 void cpuTempClass::publishCPUtempC(void)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s/TMPC?\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeC, tempval.fracC);
+  Serial.printf("{\"TOP\":\"%s?/TMPC\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeC, tempval.fracC);
 }
 
 void cpuTempClass::publishCPUtempF(void)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s/TMPF?\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeF, tempval.fracF);
+  Serial.printf("{\"TOP\":\"%s?/TMPF\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeF, tempval.fracF);
 }
 
 void cpuTempClass::decode(void)
