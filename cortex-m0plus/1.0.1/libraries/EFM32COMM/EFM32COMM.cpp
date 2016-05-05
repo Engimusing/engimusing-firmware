@@ -423,7 +423,7 @@ void adcCtlClass::publishADCvoltage(void)
   Analog.analogReadResolution(RES_12BITS);
   uint32_t v = Analog.analogReadPin(pin);
   uint32_t mV =  ((v * r)/4096);
-  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%dV\"}\n\r",module, mV/1000, mV%1000);
+  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%d\"}\n\r",module, mV/1000, mV%1000);
 }
 
 void adcCtlClass::decode(void)
@@ -480,7 +480,7 @@ void cpuVDDClass::update(void)
 void cpuVDDClass::publishCPUvoltage(void)
 {
   uPvdd vddval = Analog.analogReadVDD();
-  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%dV\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
+  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%d\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
 }
 
 void cpuVDDClass::decode(void)

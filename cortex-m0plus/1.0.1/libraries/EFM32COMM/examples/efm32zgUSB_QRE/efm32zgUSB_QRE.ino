@@ -24,7 +24,7 @@
   {"TOP":"QRE1/SENSOR/QRE"}
 */
 
-#define LTSENS_PIN  2
+#define LTSENS_PIN    2
 #define GREEN_LED    13
 #define BLUE_LED     14
 #define RED_LED      15
@@ -45,7 +45,7 @@ void setup()
   EFMGREENLED.begin(GREEN_LED, "EFMUSB/GREEN/LED", LOW);
   EFMCPUVDD.begin("EFMUSB/CPU/VDD", 50);
   EFMCPUTMP.begin("EFMUSB/CPU/TEMP", 50, 50);
-  QRELTS.begin(LTSENS_PIN, "QRELTS/LTSENSOR", 2);
+  QRELTS.begin(LTSENS_PIN, "HAB/LTSENSOR", 2);
 }
 
 void loop()

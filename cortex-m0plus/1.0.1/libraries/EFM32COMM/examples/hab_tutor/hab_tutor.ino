@@ -85,7 +85,7 @@ void setup()
   HABS1.begin(SW1_PIN, "HAB/SW1", 2);
   HABS2.begin(SW2_PIN, "HAB/SW2", 2);
   HABREED.begin(REEDSW_PIN, "HAB/REED", 2);
-  HABLED.begin(HABLED_PIN, "HAB/LED", LOW);
+  HABLED.begin(HABLED_PIN, "HAB/LED", HIGH);
   HABBUZZ.begin(BUZZER_PIN, "HAB/BUZZER");
   HABPOT.begin(POT_PIN, "HAB/POT", 50);
 }
