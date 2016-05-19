@@ -47,6 +47,7 @@ int8_t EFM32COMMClass::decode(void)
     }
   }
   decode_done = 0;
+  return 0;
 }
 
 int8_t EFM32COMMClass::getInputString(char c)
@@ -73,6 +74,7 @@ int8_t EFM32COMMClass::getInputString(char c)
       return 0;
     }
   }
+  return 0;
 }
 
 void EFM32COMMClass::addCharToInputString(char c)
@@ -97,7 +99,7 @@ int8_t EFM32COMMClass::parseLine(void)
 
   for(isCnt = 0; inputString[isCnt] != '\0'; isCnt++) {
     uint8_t* c = &inputString[isCnt];
-    if( (c[0] == '{') || (c[0] == ',') && (c[1] == '\"')) {
+    if( ((c[0] == '{') || (c[0] == ',')) && (c[1] == '\"')) {
       if((c[2] == 'T') && (c[3] == 'O') && (c[4] == 'P')) {
 	r = getToken(&c[5], item_topic, MODULE_STRING_LENGTH);
 	if(debug) {Serial.printf("TOP = %s\r\n", item_topic);}
@@ -373,14 +375,11 @@ void toneCtlClass::decode(void)
       tone_state = 0;
     } else if(COMM.compare_token(COMM.payload,"F")) {
       uint32_t f = atoi((char*)&COMM.payload[1]);
-      if((f >= 0) && (f < 20000)) {
+      if(f < 20000) {
 	tone_freq = f;
       }
     } else if(COMM.compare_token(COMM.payload,"D")) {
-      uint32_t d = atoi((char*)&COMM.payload[1]);
-      if(d >= 0) {
-	tone_duration = d;
-      }
+      tone_duration = atoi((char*)&COMM.payload[1]);
     } else if(COMM.compare_token(COMM.payload,"STATUS")) {
       Serial.printf("{\"TOP\":\"%s?/TONE\",\"PLD\":\"%s\"}\r\n",module, onoff[tone_state]);
     } else {return;}
@@ -429,7 +428,6 @@ void adcCtlClass::publishADCvoltage(void)
 void adcCtlClass::decode(void)
 {
   if(COMM.decode_done) {return;}
-  static const char *onoff[]   = {"OFF","ON"};
 
   int8_t j = 0;
   int8_t mlen = strlen((char*)module);
@@ -486,7 +484,6 @@ void cpuVDDClass::publishCPUvoltage(void)
 void cpuVDDClass::decode(void)
 {
   if(COMM.decode_done) {return;}
-  static const char *onoff[]   = {"OFF","ON"};
 
   int8_t j = 0;
   int8_t mlen = strlen((char*)module);
@@ -558,7 +555,6 @@ void cpuTempClass::publishCPUtempF(void)
 void cpuTempClass::decode(void)
 {
   if(COMM.decode_done) {return;}
-  static const char *onoff[]   = {"OFF","ON"};
 
   int8_t j = 0;
   int8_t mlen = strlen((char*)module);

@@ -74,7 +74,6 @@ extern "C"{
 #include "efm_lib/LEUARTClass.h"
 #include "efm_lib/timer.h"
 #include "efm_lib/analog.h"
-#include "efm_lib/boardIO.h"
 #include "efm_lib/efm_gpio.h"
 #include "efm_lib/gpio_intrs.h"
 #endif

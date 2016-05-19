@@ -48,29 +48,31 @@ void LEUARTClass::begin(const uint32_t dwBaudRate)
   begin(dwBaudRate, SERIAL_8N1);
 }
 
-void LEUARTClass::begin(const uint32_t dwBaudRate, uint8_t config)
+void LEUARTClass::begin(const uint32_t dwBaudRate, uint32_t config)
 {
   init(dwBaudRate, config);
 }
 
-void LEUARTClass::init(const uint32_t dwBaudRate, uint8_t config)
+void LEUARTClass::init(const uint32_t dwBaudRate, uint32_t config)
 {
   // LEUART configure
-  GPIO->P[_port].DOUTSET = (1 << _txpin);  // LEUART_TX high to avoid false start
-  GPIO_config(_port, _txpin, OUTPUT);      // LEUART_TX output
-  GPIO_config(_port, _rxpin, INPUT);       // LEUART_RX input
-  CMU->LFBCLKEN0 |= _cmu_clken;
-  _pUart->IFC = _LEUART_IFC_MASK;  // clear ints
-  _pUart->IEN |= LEUART_IEN_RXDATAV;    // enable ints
-  NVIC_EnableIRQ(_dwIrq);
-  NVIC_ClearPendingIRQ(_dwIrq);
-  _pUart->CLKDIV = _clkdiv;
-  _pUart->ROUTE  = _location | LEUART_ROUTE_RXPEN | LEUART_ROUTE_TXPEN;
-  _pUart->CMD    = LEUART_CMD_RXEN | LEUART_CMD_TXEN;
+  if((dwBaudRate == 115200) && (config == SERIAL_8N1)) {
+    GPIO->P[_port].DOUTSET = (1 << _txpin);  // LEUART_TX high to avoid false start
+    GPIO_config(_port, _txpin, OUTPUT);      // LEUART_TX output
+    GPIO_config(_port, _rxpin, INPUT);       // LEUART_RX input
+    CMU->LFBCLKEN0 |= _cmu_clken;
+    _pUart->IFC = _LEUART_IFC_MASK;  // clear ints
+    _pUart->IEN |= LEUART_IEN_RXDATAV;    // enable ints
+    NVIC_EnableIRQ(_dwIrq);
+    NVIC_ClearPendingIRQ(_dwIrq);
+    _pUart->CLKDIV = _clkdiv;
+    _pUart->ROUTE  = _location | LEUART_ROUTE_RXPEN | LEUART_ROUTE_TXPEN;
+    _pUart->CMD    = LEUART_CMD_RXEN | LEUART_CMD_TXEN;
 
-  // Make sure both ring buffers are initialized back to empty.
-  _rx_buffer->_iHead = _rx_buffer->_iTail = 0;
-  _tx_buffer->_iHead = _tx_buffer->_iTail = 0;
+    // Make sure both ring buffers are initialized back to empty.
+    _rx_buffer->_iHead = _rx_buffer->_iTail = 0;
+    _tx_buffer->_iHead = _tx_buffer->_iTail = 0;
+  }
 }
 
 void LEUARTClass::end( void )

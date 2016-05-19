@@ -32,7 +32,7 @@ AnalogLP::AnalogLP()
   adc_reference = DEFAULT;
   adc_resolution = ADC_SINGLECTRL_RES_12BIT;
   adc_oversampling = ADC_CTRL_OVSRSEL_X2;
-  tempval = {0,0,0,0};
+  tempval = {0,0,0,0,0,0};
 }
 
 
@@ -104,8 +104,6 @@ void AnalogLP::commVDD(void)
 
 temperature AnalogLP::analogReadTemp(void)
 {
-  float temp;
-  
   adc_reference = INTERNAL1V25; // set up reference
   adc_resolution = ADC_SINGLECTRL_RES_12BIT;
 
@@ -168,7 +166,7 @@ void AnalogLP::commTempVDD(void)
 }
 
 
-uint32_t AnalogLP::analogReference(uint32_t ref)
+void AnalogLP::analogReference(uint32_t ref)
 {
   adc_reference = ref;
 }

@@ -22,6 +22,7 @@
 
 typedef void (*voidFuncPtr)(void);
 
+void init_efm32zg(void);
 
 #define VARIANT_MCK 21000000
 

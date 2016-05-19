@@ -106,7 +106,7 @@ void TimersLP::delay_ms(uint32_t dly)
     T.ptr->IEN = TIMER_IEN_OF;
     NVIC_EnableIRQ(T.IRQn);
     T.ptr->CMD = TIMER_CMD_START;
-    for(int i = 0; i < dly;) {
+    for(uint32_t i = 0; i < dly;) {
       EMU_EnterEM1();
       if(*T.wake) {
 	*T.wake = 0;
@@ -169,6 +169,7 @@ void TimersLP::tone(uint32_t pin, uint32_t frequency, uint32_t duration)
   uint32_t prescalerConfigBits;
   uint32_t ccValue;
 
+  TONE.index = -1;
   // validate pin
   if((pin > 10) || (pin < 2) || (pin == 8)) {
     Serial.print("Invalid pin = "); Serial.println(pin);
@@ -300,6 +301,7 @@ uint32_t TimersLP::tone_active(uint8_t pin)
     return *T1.wake;
   } else {
     Serial.print("Invalid pin = "); Serial.println(pin);
+    return -1;
   }
 }
 
@@ -317,7 +319,6 @@ void tone0_isr(void)
 
 void tone1_isr(void)
 {
-  static uint32_t i = 1;
   if(--toggleCount[1] <= 0) {
     T1.ptr->CMD = TIMER_CMD_STOP;  // stop the timer counting
     NVIC_EnableIRQ(TIMER1_IRQn);
@@ -544,11 +545,6 @@ void noTone(uint32_t _pin)
  * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
  * to 3 minutes in length, but must be called at least a few dozen microseconds
  * before the start of the pulse. */
-
-
-static bool timer0_free = true;
-static bool timer1_free = true;
-static uint32_t timer_freq = 0;
 
 
 uint32_t get_counter_value(int timer)

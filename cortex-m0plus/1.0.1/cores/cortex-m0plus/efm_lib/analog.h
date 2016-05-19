@@ -46,7 +46,7 @@ class AnalogLP
   uint32_t analogReadVDDsample(void);
   uPvdd    analogReadVDD(void);
   temperature analogReadTemp(void);
-  uint32_t analogReference(uint32_t ref);
+  void analogReference(uint32_t ref);
   void analogReadResolution(uint8_t bits);
   void commVDD(void);
   void commTemperature(void);
