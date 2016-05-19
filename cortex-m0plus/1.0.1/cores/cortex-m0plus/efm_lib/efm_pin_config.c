@@ -44,6 +44,7 @@ int intrDigitalRead(uint32_t pin)
   if(valid_pin(pin)) {
     return (GPIO->P[iPorts[pin]].DIN >> iPins[pin]) & 0x1;
   }
+  return 0;
 }
 
 void digitalWrite(uint32_t pin, uint32_t val)
@@ -62,6 +63,7 @@ int digitalRead(uint32_t pin)
   if(valid_pin(pin)) {
     return (GPIO->P[dPorts[pin]].DIN >> dPins[pin]) & 0x1;
   }
+  return 0;
 }
 
 void GPIO_pinMode(GPIO_Port_TypeDef port, uint32_t pin, GPIO_Mode_TypeDef mode)
