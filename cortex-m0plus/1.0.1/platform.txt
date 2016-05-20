@@ -97,7 +97,7 @@ tools.efm_upload.upload.params.verbose=
 tools.efm_upload.cmd=efm_upload.py
 tools.efm_upload.cmd.windows=efm_upload.py
 tools.efm_upload.path={runtime.tools.efm_upload.path}
-tools.efm_upload.path.windows={runtime.ide.path}/hardware/tools/efm_upload/
+tools.efm_upload.path.windows={runtime.tools.efm_upload.path}
 tools.efm_upload.upload.params.quiet=
 
 tools.efm_upload.upload.pattern="{path}/{cmd}" "{build.path}/{build.project_name}.bin" {serial.port.file}
