@@ -18,7 +18,7 @@
 
 #include <stdint.h>
 #include "pins_arduino.h"
-#include "../../cores/cortex-m0plus/efm_lib/efm_cmu_config.h"
+#include "../../cores/efm32/efm_lib/efm_cmu_config.h"
 
 // Required CMSIS global variable that must be kept up-to-date.
 uint32_t SystemCoreClock = VARIANT_MCK;

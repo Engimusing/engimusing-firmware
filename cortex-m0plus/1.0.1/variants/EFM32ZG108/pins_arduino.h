@@ -56,8 +56,6 @@ extern const uint8_t timerPins[];
 extern const uint8_t timerPinMap[];
 extern const uint8_t timerCCindex[];
 extern const uint32_t timerRoutes[];
-extern const uint8_t ledPorts[];
-extern const uint8_t ledPins[];
 
 #ifdef __cplusplus
 extern "C" {
