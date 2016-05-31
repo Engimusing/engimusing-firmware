@@ -23,10 +23,24 @@ engimusing_efm32zgusb.bootloader.tool=
 engimusing_efm32zgusb.bootloader.file=
 engimusing_efm32zgusb.build.mcu=cortex-m0plus
 engimusing_efm32zgusb.build.board=EFM32ZGUSB
-engimusing_efm32zgusb.build.core=cortex-m0plus
+engimusing_efm32zgusb.build.core=efm32
 engimusing_efm32zgusb.build.ldscript=
 engimusing_efm32zgusb.build.variant=EFMUSB
 engimusing_efm32zgusb.build.variant_system_lib=
 engimusing_efm32zgusb.compiler.device=-DEFM32ZG222F32
+
+engimusing_efm32zg108.name=Engimusing EFM32ZG108
+engimusing_efm32zg108.upload.tool=efm_upload
+engimusing_efm32zg108.upload.protocol=xmodem
+engimusing_efm32zg108.upload.maximum_size=27648
+engimusing_efm32zg108.bootloader.tool=
+engimusing_efm32zg108.bootloader.file=
+engimusing_efm32zg108.build.mcu=cortex-m0plus
+engimusing_efm32zg108.build.board=EFM32ZG108
+engimusing_efm32zg108.build.core=efm32
+engimusing_efm32zg108.build.ldscript=
+engimusing_efm32zg108.build.variant=EFM32ZG108
+engimusing_efm32zg108.build.variant_system_lib=
+engimusing_efm32zg108.compiler.device=-DEFM32ZG108F32
 
 
