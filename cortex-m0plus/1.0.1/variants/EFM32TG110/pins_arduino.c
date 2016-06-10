@@ -88,7 +88,7 @@ void init( void )
 {
   init_efm32();
 
-  GPIO_config(PORTE,  13, OUTPUT);      // Configure Green LED
-  GPIO->P[PORTE].DOUTSET = (1 << 13);   // Green LED off
+  GPIO_config(PORTB,  11, OUTPUT);      // Configure Green LED
+  GPIO->P[PORTB].DOUTSET = (1 << 11);   // Green LED off
 }
 

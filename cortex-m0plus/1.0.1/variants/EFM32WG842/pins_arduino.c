@@ -258,12 +258,12 @@ void init( void )
 {
   init_efm32();
 
-  GPIO_config(PORTA,  8, OUTPUT);      // Configure Green LED
-  GPIO_config(PORTA,  9, OUTPUT);      // Configure Blue LED
-  GPIO_config(PORTA, 10, OUTPUT);      // Configure Red LED
-  GPIO->P[PORTA].DOUTSET = (1 << 8);   // Green LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 9);   // Blue LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 10);  // Red LED off
+  GPIO_config(PORTA, 12, OUTPUT);      // Configure Green LED
+  GPIO_config(PORTA, 13, OUTPUT);      // Configure Blue LED
+  GPIO_config(PORTA, 14, OUTPUT);      // Configure Red LED
+  GPIO->P[PORTA].DOUTSET = (1 << 12);   // Green LED off
+  GPIO->P[PORTA].DOUTSET = (1 << 13);   // Blue LED off
+  GPIO->P[PORTA].DOUTSET = (1 << 14);  // Red LED off
 }
 
 /*
