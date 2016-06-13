@@ -16,16 +16,26 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include <stdbool.h>
 #include <stdint.h>
 #include "efm_cmu_config.h"
 #include "efm_devinfo.h"
 #include "cmsis.h"
+#include "coreclk.h"
 
-void init_efm32zg(void)
+// Required CMSIS global variable that must be kept up-to-date.
+uint32_t SystemCoreClock = VARIANT_MCK;
+
+uint32_t cmu_hfper_freq_get(void)
+{
+  return VARIANT_MCK >> (CMU->HFPERCLKDIV & 0xF);
+}
+
+
+void init_efm32(void)
 {
   // Enable clocks for peripherals.
+
   clk_enable_HFPER();
   clk_enable_GPIO();
   clk_enable_LE();
@@ -37,9 +47,18 @@ void init_efm32zg(void)
   clk_lfb_select_HFCORECLKLEDIV2();
   clk_enable_RTC();
 
+#ifdef CORTEX_M0PLUS
   // Change to 21MHz internal oscillator band
   CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_21MHZ | (DEVINFO->HFRCOCAL1 & 0xFF);
-
-  SysTick_Config(21000000 / 1000);
+  SysTick_Config(VARIANT_MCK / 1000);
+#elif  CORTEX_M3
+  // Change to 28MHz internal oscillator band
+  CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_28MHZ | (DEVINFO->HFRCOCAL1 & 0xFF);
+  SysTick_Config(VARIANT_MCK / 1000);
+#elif  CORTEX_M4
+  // Change to 28MHz internal oscillator band
+  CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_28MHZ | (DEVINFO->HFRCOCAL1 & 0xFF);
+  SysTick_Config(VARIANT_MCK / 1000);
+#endif
 }
 
