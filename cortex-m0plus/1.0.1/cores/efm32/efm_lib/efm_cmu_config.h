@@ -208,7 +208,6 @@ typedef struct
 #define CMU_HFRCOCTRL_BAND_DEFAULT              (0x00000003UL << 8)  // Mode DEFAULT for CMU_HFRCOCTRL
 #define CMU_HFRCOCTRL_BAND_14MHZ                (0x00000003UL << 8)  // Mode 14MHZ for CMU_HFRCOCTRL
 #define CMU_HFRCOCTRL_BAND_21MHZ                (0x00000004UL << 8)  // Mode 21MHZ for CMU_HFRCOCTRL
-#define CMU_HFRCOCTRL_BAND_28MHZ                (0x00000005UL << 8)  // Mode 28MHZ for CMU_HFRCOCTRL
 
 #define CMU_HFRCOCTRL_SUDELAY_SHIFT                              12  // Shift value for CMU_SUDELAY
 #define CMU_HFRCOCTRL_SUDELAY_MASK                        0x1F000UL  // Bit mask for CMU_SUDELAY

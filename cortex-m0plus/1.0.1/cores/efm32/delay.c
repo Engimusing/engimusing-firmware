@@ -19,7 +19,6 @@
 #include "delay.h"
 #include "efm_lib/cmsis.h"
 #include "pins_arduino.h"
-#include "efm_lib/coreclk.h"
 
 // Tick Counter united by ms
 static volatile uint32_t _ulTickCount = 0;

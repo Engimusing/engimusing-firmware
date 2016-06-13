@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2014-2016 Engimusing LLC.  All right reserved.
+  Copyright (c) 2014-2015 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,13 +16,31 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#pragma once
 
-#ifdef CORTEX_M0PLUS
-  #define VARIANT_MCK 21000000
-#elif  CORTEX_M3
-  #define VARIANT_MCK 28000000
-#elif  CORTEX_M4
-  #define VARIANT_MCK 28000000
-#endif
+#include <stdbool.h>
+#include <stdint.h>
+#include "efm_cmu_config.h"
+#include "efm_devinfo.h"
+#include "cmsis.h"
+
+void init_efm32zg(void)
+{
+  // Enable clocks for peripherals.
+
+  clk_enable_HFPER();
+  clk_enable_GPIO();
+  clk_enable_LE();
+  clk_enable_DMA();
+
+  //  CMU->OSCENCMD = CMU_OSCENCMD_LFRCOEN;  // Enable LFRCO for RTC
+  clk_osc_enable_LFRCO();
+  clk_lfa_select_LFRCO();
+  clk_lfb_select_HFCORECLKLEDIV2();
+  clk_enable_RTC();
+
+  // Change to 21MHz internal oscillator band
+  CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_21MHZ | (DEVINFO->HFRCOCAL1 & 0xFF);
+
+  SysTick_Config(21000000 / 1000);
+}
 
