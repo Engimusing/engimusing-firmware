@@ -182,7 +182,7 @@ const uint8_t timerCCindex[]= {9,   0,    1,    2,    9,    9,    9,    9,    9,
 			       9};
 
 
-const uint32_t timerRoutes[] = {0, // 0
+const uint32_t timerRoutes[11] = {0, // 0
 				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC0PEN,  // 1  PA0 TIM0_CC0 #0/1/4
 				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC1PEN, // 2  PA1 TIM0_CC1 #0/1
 				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC2PEN, // 3  PA2 TIM0_CC2 #0/1

@@ -28,7 +28,6 @@ engimusing_efm32zgusb.build.ldscript=efm32_32K4K.ld
 engimusing_efm32zgusb.build.variant=EFMUSB
 engimusing_efm32zgusb.build.variant_system_lib=
 engimusing_efm32zgusb.compiler.device=-DEFM32ZG222F32
-engimusing_efm32zgusb.compiler.mcu=-DCORTEX_M0PLUS
 
 engimusing_efm32zg108.name=Engimusing EFM32ZG108
 engimusing_efm32zg108.upload.tool=efm_upload
@@ -43,7 +42,6 @@ engimusing_efm32zg108.build.ldscript=efm32_32K4K.ld
 engimusing_efm32zg108.build.variant=EFM32ZG108
 engimusing_efm32zg108.build.variant_system_lib=
 engimusing_efm32zg108.compiler.device=-DEFM32ZG108F32
-engimusing_efm32zg108.compiler.mcu=-DCORTEX_M0PLUS
 
 engimusing_efm32zg222.name=Engimusing EFM32ZG222
 engimusing_efm32zg222.upload.tool=efm_upload
@@ -58,7 +56,6 @@ engimusing_efm32zg222.build.ldscript=efm32_32K4K.ld
 engimusing_efm32zg222.build.variant=EFM32ZG222
 engimusing_efm32zg222.build.variant_system_lib=
 engimusing_efm32zg222.compiler.device=-DEFM32ZG222F32
-engimusing_efm32zg222.compiler.mcu=-DCORTEX_M0PLUS
 
 engimusing_efm32tg110.name=Engimusing EFM32TG110
 engimusing_efm32tg110.upload.tool=efm_upload
@@ -73,7 +70,6 @@ engimusing_efm32tg110.build.ldscript=efm32_32K4K.ld
 engimusing_efm32tg110.build.variant=EFM32TG110
 engimusing_efm32tg110.build.variant_system_lib=
 engimusing_efm32tg110.compiler.device=-DEFM32TG110F32
-engimusing_efm32tg110.compiler.mcu=-DCORTEX_M3
 
 engimusing_efm32g232.name=Engimusing EFM32G232
 engimusing_efm32g232.upload.tool=efm_upload
@@ -84,11 +80,10 @@ engimusing_efm32g232.bootloader.file=
 engimusing_efm32g232.build.mcu=cortex-m3
 engimusing_efm32g232.build.board=EFM32G232
 engimusing_efm32g232.build.core=efm32
-engimusing_efm32g232.build.ldscript=efm32_128K16K.ld
+engimusing_efm32g232.build.ldscript=efm32_32K4K.ld
 engimusing_efm32g232.build.variant=EFM32G232
 engimusing_efm32g232.build.variant_system_lib=
 engimusing_efm32g232.compiler.device=-DEFM32G232F32
-engimusing_efm32g232.compiler.mcu=-DCORTEX_M3
 
 engimusing_efm32wg840.name=Engimusing EFM32WG840
 engimusing_efm32wg840.upload.tool=efm_upload
@@ -96,14 +91,13 @@ engimusing_efm32wg840.upload.protocol=xmodem
 engimusing_efm32wg840.upload.maximum_size=27648
 engimusing_efm32wg840.bootloader.tool=
 engimusing_efm32wg840.bootloader.file=
-engimusing_efm32wg840.build.mcu=cortex-m4
+engimusing_efm32wg840.build.mcu=cortex-m3
 engimusing_efm32wg840.build.board=EFM32WG840
 engimusing_efm32wg840.build.core=efm32
-engimusing_efm32wg840.build.ldscript=efm32_256K32K.ld
+engimusing_efm32wg840.build.ldscript=efm32_32K4K.ld
 engimusing_efm32wg840.build.variant=EFM32WG840
 engimusing_efm32wg840.build.variant_system_lib=
 engimusing_efm32wg840.compiler.device=-DEFM32WG840F32
-engimusing_efm32wg840.compiler.mcu=-DCORTEX_M4
 
 engimusing_efm32wg842.name=Engimusing EFM32WG842
 engimusing_efm32wg842.upload.tool=efm_upload
@@ -111,13 +105,12 @@ engimusing_efm32wg842.upload.protocol=xmodem
 engimusing_efm32wg842.upload.maximum_size=27648
 engimusing_efm32wg842.bootloader.tool=
 engimusing_efm32wg842.bootloader.file=
-engimusing_efm32wg842.build.mcu=cortex-m4
+engimusing_efm32wg842.build.mcu=cortex-m3
 engimusing_efm32wg842.build.board=EFM32WG842
 engimusing_efm32wg842.build.core=efm32
-engimusing_efm32wg842.build.ldscript=efm32_256K32K.ld
+engimusing_efm32wg842.build.ldscript=efm32_32K4K.ld
 engimusing_efm32wg842.build.variant=EFM32WG842
 engimusing_efm32wg842.build.variant_system_lib=
 engimusing_efm32wg842.compiler.device=-DEFM32WG842F32
-engimusing_efm32wg842.compiler.mcu=-DCORTEX_M4
 
 

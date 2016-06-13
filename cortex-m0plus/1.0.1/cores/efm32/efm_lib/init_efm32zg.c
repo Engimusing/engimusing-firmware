@@ -26,7 +26,6 @@
 void init_efm32zg(void)
 {
   // Enable clocks for peripherals.
-
   clk_enable_HFPER();
   clk_enable_GPIO();
   clk_enable_LE();
