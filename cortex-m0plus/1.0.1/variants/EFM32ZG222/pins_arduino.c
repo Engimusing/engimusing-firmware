@@ -18,11 +18,6 @@
 
 #include <stdint.h>
 #include "pins_arduino.h"
-#include "../../cores/efm32/efm_lib/efm_cmu_config.h"
-
-// Required CMSIS global variable that must be kept up-to-date.
-uint32_t SystemCoreClock = VARIANT_MCK;
-
 
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
 // Digital Pins             0  1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
@@ -77,11 +72,6 @@ uint8_t valid_pin(uint8_t pin) {
   }
 }
 
-uint32_t cmu_hfper_freq_get(void)
-{
-  return VARIANT_MCK >> (CMU->HFPERCLKDIV & 0xF);
-}
-
 // System initialize function called in startup_efm32zg.S
 void SystemInit(void)
 {
@@ -89,7 +79,7 @@ void SystemInit(void)
 
 void init( void )
 {
-  init_efm32zg();
+  init_efm32();
 
   GPIO_config(PORTA,  8, OUTPUT);      // Configure Green LED
   GPIO_config(PORTA,  9, OUTPUT);      // Configure Blue LED

@@ -22,9 +22,7 @@
 
 typedef void (*voidFuncPtr)(void);
 
-void init_efm32tg(void);
-
-#define VARIANT_MCK 21000000
+void init_efm32(void);
 
 // timer variant defines
 #define TIMER_ROUTE_CC0PEN                 (0x1UL << 0)          // CC Channel 0 Pin Enable
@@ -37,9 +35,6 @@ void init_efm32tg(void);
 #define TIMER_ROUTE_LOCATION_LOC3           (0x3 << 16)          // Shifted mode LOC3 for TIMER_ROUTE
 #define TIMER_ROUTE_LOCATION_LOC4           (0x4 << 16)          // Shifted mode LOC4 for TIMER_ROUTE
 #define TIMER_ROUTE_LOCATION_LOC5           (0x5 << 16)          // Shifted mode LOC5 for TIMER_ROUTE
-
-
-
 
 extern const uint8_t dPins[];
 extern const uint8_t dPorts[];

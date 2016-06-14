@@ -20,10 +20,6 @@
 
 #include <stdint.h>
 #include "pins_arduino.h"
-#include "../../cores/efm32/efm_lib/efm_cmu_config.h"
-
-// Required CMSIS global variable that must be kept up-to-date.
-uint32_t SystemCoreClock = VARIANT_MCK;
 
 
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
@@ -185,7 +181,7 @@ const uint8_t timerCCindex[]= {9,   0,    1,    2,    9,    9,    9,    9,    9,
 
 
 
-const uint32_t timerRoutes[11] = {0, // 0
+const uint32_t timerRoutes[] = {0, // 0
 				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC0PEN,  // 1  PA0 TIM0_CC0 #0/1/4
 				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC1PEN, // 2  PA1 TIM0_CC1 #0/1
 				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC2PEN, // 3  PA2 TIM0_CC2 #0/1
@@ -253,11 +249,6 @@ uint8_t valid_pin(uint8_t pin) {
   }
 }
 
-uint32_t cmu_hfper_freq_get(void)
-{
-  return VARIANT_MCK >> (CMU->HFPERCLKDIV & 0xF);
-}
-
 // System initialize function called in startup_efm32zg.S
 void SystemInit(void)
 {
@@ -265,14 +256,14 @@ void SystemInit(void)
 
 void init( void )
 {
-  init_efm32zg();
+  init_efm32();
 
-  GPIO_config(PORTA,  8, OUTPUT);      // Configure Green LED
-  GPIO_config(PORTA,  9, OUTPUT);      // Configure Blue LED
-  GPIO_config(PORTA, 10, OUTPUT);      // Configure Red LED
-  GPIO->P[PORTA].DOUTSET = (1 << 8);   // Green LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 9);   // Blue LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 10);  // Red LED off
+  GPIO_config(PORTA, 12, OUTPUT);      // Configure Green LED
+  GPIO_config(PORTA, 13, OUTPUT);      // Configure Blue LED
+  GPIO_config(PORTA, 14, OUTPUT);      // Configure Red LED
+  GPIO->P[PORTA].DOUTSET = (1 << 12);   // Green LED off
+  GPIO->P[PORTA].DOUTSET = (1 << 13);   // Blue LED off
+  GPIO->P[PORTA].DOUTSET = (1 << 14);  // Red LED off
 }
 
 /*
