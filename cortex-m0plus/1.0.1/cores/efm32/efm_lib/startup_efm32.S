@@ -55,7 +55,7 @@ __StackTop:
 #ifdef __HEAP_SIZE
     .equ        Heap_Size, __HEAP_SIZE
 #else
-  #ifdef EFM32ZG
+  #if defined(EFM32ZG) || defined(EFM32TG)
     .equ        Heap_Size, 0x00000000
   #else
     .equ        Heap_Size, 0x00000C00
@@ -257,7 +257,7 @@ Reset_Handler:
 #endif
     def_irq_handler    GPIO_ODD_IRQHandler
     def_irq_handler    TIMER1_IRQHandler
-#if defined(EFM32G) || defined(EFM32WG)
+#ifndef EFM32ZG
     def_irq_handler    TIMER2_IRQHandler
 #endif
 #ifdef EFM32WG
@@ -287,7 +287,6 @@ Reset_Handler:
 #endif
     def_irq_handler    PCNT0_IRQHandler
 #if defined(EFM32G) || defined(EFM32WG)
-    def_irq_handler    PCNT0_IRQHandler
     def_irq_handler    PCNT1_IRQHandler
     def_irq_handler    PCNT2_IRQHandler
 #endif
