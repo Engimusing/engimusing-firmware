@@ -28,8 +28,8 @@ const uint8_t dPorts[]         = {0, 0,PORTB,PORTB,PORTC,PORTC,PORTE,PORTE,PORTA
 const uint8_t dPins[]          = {0, 0,  7,    8,   14,   15,   12,   13,    0,    2,   11,    6,    7,   11  };
 
 // GPIO Interrupt Pins                  X1    X2    X3    X4    X5    X6    X7    SWO   LED   SDA   SCL
-const uint8_t iPorts[]       = {0,0,PORTB,PORTB,PORTC,PORTC,PORTE,PORTE,PORTA,PORTF,PORTE,PORTD,PORTD,0};
-const uint8_t iPins[]        = {0,0,   7,    8,   14,   15,   12,   13,    0,    2,   13,    6,    7 ,0};
+const uint8_t iPorts[]         = {0,0,PORTB,PORTB,PORTC,PORTC,PORTE,PORTE,PORTA,PORTF,PORTE,PORTD,PORTD,0};
+const uint8_t iPins[]          = {0,0,   7,    8,   14,   15,   12,   13,    0,    2,   13,    6,    7 ,0};
 
 // ADC Pins
 const uint8_t adcPorts[14]       = {0};
@@ -45,13 +45,13 @@ const uint8_t dacPins[14]  = {0};
 
 //                                     X1    X2     X3    X4    X5    X6    X7    SWO   LED  SDA  SCL
 //                                      5     6     17    18    23    24     1     21    8    13   14
-const uint8_t timerPorts[14]   = {0,0,PORTB,PORTB,PORTC,PORTC,PORTE,PORTE,PORTA,PORTF,   0,PORTD,PORTD,0};
-const uint8_t timerPins[14]    = {0,0,  7,    8,    14,   15,   12,   13,    0,    2,    0,   6,    7 ,0};
+const uint8_t timerPorts[]   = {0,0,PORTB,PORTB,PORTC,PORTC,PORTE,PORTE,PORTA,PORTF,   0,PORTD,PORTD,0};
+const uint8_t timerPins[]    = {0,0,  7,    8,    14,   15,   12,   13,    0,    2,    0,   6,    7 ,0};
 
-const uint8_t timerPinMap[14]  = {9,9,  1,    1,    1,    1,    1,    9,     0,    0,    9,   1,    1, 0};
-const uint8_t timerCCindex[14] = {9,9,  0,    1,    1,    2,    2,    9,     0,    2,    9,   0,    1, 0};
+const uint8_t timerPinMap[]  = {9,9,  1,    1,    1,    1,    1,    9,     0,    0,    9,   1,    1, 0};
+const uint8_t timerCCindex[] = {9,9,  0,    1,    1,    2,    2,    9,     0,    2,    9,   0,    1, 0};
 
-const uint32_t timerRoutes[14] = {0, // 0
+const uint32_t timerRoutes[] = {0, // 0
 				  0, // 1
 				  TIMER_ROUTE_LOCATION_LOC3 | TIMER_ROUTE_CC0PEN, // 2: PB7  - TIM1_CC0 #3
 				  TIMER_ROUTE_LOCATION_LOC3 | TIMER_ROUTE_CC1PEN, // 3: PB8  - TIM1_CC1 #3

@@ -114,6 +114,9 @@ __isr_vector:
     .long    USART0_RX_IRQHandler    /* 3 - USART0_RX */
     .long    USART0_TX_IRQHandler    /* 4 - USART0_TX */
 #endif
+#ifdef EFM32WG
+    .long    USB_IRQHandler    /* 5 - USB */
+#endif
     .long    ACMP0_IRQHandler    /* 3 - ACMP0 */
     .long    ADC0_IRQHandler    /* 4 - ADC0 */
 #ifndef EFM32ZG
@@ -159,6 +162,9 @@ __isr_vector:
     .long    PCNT2_IRQHandler    /* 29 - PCNT2 */
 #endif
     .long    RTC_IRQHandler    /* 12 - RTC */
+#ifdef EFM32WG
+    .long    BURTC_IRQHandler    /* 31 - BURTC */
+#endif
     .long    CMU_IRQHandler    /* 13 - CMU */
     .long    VCMP_IRQHandler    /* 14 - VCMP */
 #ifndef EFM32ZG
@@ -246,6 +252,9 @@ Reset_Handler:
     def_irq_handler    USART0_RX_IRQHandler
     def_irq_handler    USART0_TX_IRQHandler
 #endif
+#ifdef EFM32WG
+    def_irq_handler    USB_IRQHandler
+#endif
     def_irq_handler    ACMP0_IRQHandler
     def_irq_handler    ADC0_IRQHandler
 #ifndef EFM32ZG
@@ -291,6 +300,9 @@ Reset_Handler:
     def_irq_handler    PCNT2_IRQHandler
 #endif
     def_irq_handler    RTC_IRQHandler
+#ifdef EFM32WG
+    def_irq_handler    BURTC_IRQHandler
+#endif
     def_irq_handler    CMU_IRQHandler
     def_irq_handler    VCMP_IRQHandler
 #ifndef EFM32ZG
