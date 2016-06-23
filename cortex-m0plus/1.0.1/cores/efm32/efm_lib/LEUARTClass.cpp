@@ -89,16 +89,6 @@ void LEUARTClass::end( void )
   CMU->LFBCLKEN0 &= ~_cmu_clken;
 }
 
-void LEUARTClass::setInterruptPriority(uint32_t priority)
-{
-  NVIC_SetPriority(_dwIrq, priority & 0x0F);
-}
-
-uint32_t LEUARTClass::getInterruptPriority()
-{
-  return NVIC_GetPriority(_dwIrq);
-}
-
 int LEUARTClass::available( void )
 {
   return (uint32_t)(SERIAL_BUFFER_SIZE + _rx_buffer->_iHead - _rx_buffer->_iTail) & SERIAL_BUFFER_MASK;
@@ -190,15 +180,9 @@ void LEUARTClass::IrqHandler( void )
 	  _pUart->IEN &= ~LEUART_IEN_TXBL;
 	}
     }
-
   // Acknowledge errors
   if(_pUart->RXDATAXP & LEUART_RXDATAXP_FERRP)
     SCB->AIRCR = 0x05FA0004;  // Write to the Application Interrupt/Reset Command Register to reset
 }
 
-// LEUART0 Interrupt handler
-void LEUART0_IRQHandler(void)
-{
-  Serial.IrqHandler();
-}
 

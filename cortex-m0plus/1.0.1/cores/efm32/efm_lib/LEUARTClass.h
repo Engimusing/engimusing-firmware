@@ -29,7 +29,9 @@ typedef LEUART_TypeDef Leuart;
 class LEUARTClass : public HardwareSerial
 {
  public:
-  LEUARTClass(Leuart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *pRx_buffer, RingBuffer *pTx_buffer, uint8_t port, uint8_t txpin, uint8_t rxpin, uint32_t location, uint32_t cmu_clken, uint32_t leuart_clkdiv);
+  LEUARTClass(Leuart *pUart, IRQn_Type dwIrq, uint32_t dwId, RingBuffer *pRx_buffer, RingBuffer *pTx_buffer,
+	      uint8_t port, uint8_t txpin, uint8_t rxpin, uint32_t location, uint32_t cmu_clken, 
+	      uint32_t leuart_clkdiv);
 
   void   begin(const uint32_t dwBaudRate);
   void   begin(const uint32_t dwBaudRate, uint32_t config);
@@ -41,10 +43,10 @@ class LEUARTClass : public HardwareSerial
   void   flush(void);
   size_t write(const uint8_t c);
   using  Print::write; // pull in write(str) and write(buf, size) from Print
-
-  void     setInterruptPriority(uint32_t priority);
-  uint32_t getInterruptPriority();
-
+  /*
+    void     setInterruptPriority(uint32_t priority);
+    uint32_t getInterruptPriority();
+  */
   void IrqHandler(void);
 
   operator bool() { return true; }; // LEUART0 always active
