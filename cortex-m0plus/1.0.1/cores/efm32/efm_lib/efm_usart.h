@@ -45,7 +45,7 @@ typedef struct
   __IO uint32_t IEN;        // Interrupt Enable Register
   __IO uint32_t IRCTRL;     // IrDA Control Register
   __IO uint32_t ROUTE;      // I/O Routing Register
-  __IO uint32_t INPUT;      // USART Input Register
+  __IO uint32_t INPUTREG;      // USART Input Register
   __IO uint32_t I2SCTRL;    // I2S Control Register
 } USART_TypeDef;
 
@@ -598,7 +598,7 @@ typedef struct
 #define USART_ROUTE_LOCATION_LOC4             (0x00000004UL << 8)                   // Shifted mode LOC4 for USART_ROUTE
 #define USART_ROUTE_LOCATION_LOC5             (0x00000005UL << 8)                   // Shifted mode LOC5 for USART_ROUTE
 
-// Bit fields for USART INPUT
+// Bit fields for USART INPUTREG
 #define USART_INPUT_RXPRSSEL_MASK              0xFUL                                 // Bit mask for USART_RXPRSSEL
 #define USART_INPUT_RXPRSSEL_PRSCH0           (0x00000000UL << 0)                    // Shifted mode PRSCH0 for USART_INPUT
 #define USART_INPUT_RXPRSSEL_PRSCH1           (0x00000001UL << 0)                    // Shifted mode PRSCH1 for USART_INPUT
