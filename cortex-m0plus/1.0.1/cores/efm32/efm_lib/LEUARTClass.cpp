@@ -196,18 +196,6 @@ void LEUARTClass::IrqHandler( void )
     SCB->AIRCR = 0x05FA0004;  // Write to the Application Interrupt/Reset Command Register to reset
 }
 
-void LEUARTClass::chk_reset(void)
-{
-  if(_pUart->RXDATAXP & LEUART_RXDATAXP_FERRP)
-    SCB->AIRCR = 0x05FA0004;  // Write to the Application Interrupt/Reset Command Register to reset
-}
-
-void check_for_reset(void)
-{
-  Serial.chk_reset();
-}
-
-
 // LEUART0 Interrupt handler
 void LEUART0_IRQHandler(void)
 {

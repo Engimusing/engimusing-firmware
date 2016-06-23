@@ -19,6 +19,7 @@
 #include <stdint.h>
 #include "pins_arduino.h"
 
+
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
 
 //                                       2     3     4     5     6     7     8      9    10    11    12    13
@@ -90,4 +91,20 @@ void init( void )
   GPIO_config(PORTB,  11, OUTPUT);      // Configure Green LED
   GPIO->P[PORTB].DOUTSET = (1 << 11);   // Green LED off
 }
+
+#define LEUART0_RXDATAXP ((uint32_t *) (0x40084008UL))
+#define USART1_RXDATAXP  ((uint32_t *) (0x4000C410UL))
+#define SCB_AIRCR        ((uint32_t *) (0xE000ED0CUL))
+#define RXDATAXP_BREAK   ((uint32_t)        (1 << 15))
+
+void check_for_reset(void)
+{
+  if((*LEUART0_RXDATAXP & RXDATAXP_BREAK) || (*USART1_RXDATAXP & RXDATAXP_BREAK)) {
+    for(volatile int i = 0; i < 150000; i++);
+    *SCB_AIRCR = 0x05FA0004;  // Write to the Application Interrupt/Reset Command Register to reset
+  }
+}
+
+
+
 
