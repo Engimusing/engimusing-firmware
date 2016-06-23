@@ -45,6 +45,14 @@ void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
 void detachInterrupt(uint8_t pin);
 uint32_t cmu_hfper_freq_get(void);
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 void check_for_reset(void);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 

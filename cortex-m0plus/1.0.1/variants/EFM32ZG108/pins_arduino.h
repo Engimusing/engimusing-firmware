@@ -56,7 +56,6 @@ extern const uint32_t timerRoutes[];
 extern "C" {
 #endif // __cplusplus
 
-  void check_for_reset(void);
   uint8_t valid_pin(uint8_t pin);
 
 #ifdef __cplusplus
