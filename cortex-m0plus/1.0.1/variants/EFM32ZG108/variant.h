@@ -26,16 +26,19 @@
 
 #include "Arduino.h"
 #include "../../cores/efm32/efm_lib/LEUARTClass.h"
+#include "../../cores/efm32/efm_lib/USARTClass.h"
 #include "../../cores/efm32/efm_lib/timer.h"
 
-#define EFMZG_LEUART_CLKDIV 0x59D0
-#define EFMTG_LEUART_CLKDIV 0x77C0
-#define EFMWG_LEUART_CLKDIV 0x77C0
-#define LEUART_CLKDIV EFMZG_LEUART_CLKDIV
+#define EFMZG_LEUART_CLKDIV	0x59D0
+#define EFMTG_LEUART_CLKDIV	0x77C0
+#define EFMWG_LEUART_CLKDIV	0x77C0
 
+#define LEUART_CLKDIV		EFMZG_LEUART_CLKDIV
+#define EFMZG_USART_CLKDIV  	0x0A65
 
 
 extern LEUARTClass Serial;
+extern USARTClass Serial1;
 extern TimersLP Timers;
 
 
@@ -44,6 +47,8 @@ void print_gpio_regs(void);
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
 void detachInterrupt(uint8_t pin);
 uint32_t cmu_hfper_freq_get(void);
+
+#define CMU_HFPERCLKEN0_USART1	(0x1UL << 3)
 
 #ifdef __cplusplus
 extern "C" {
