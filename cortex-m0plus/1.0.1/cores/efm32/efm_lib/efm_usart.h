@@ -53,6 +53,9 @@ typedef struct
 #define USART1       ((USART_TypeDef *) 0x4000C400UL)        // USART1 base pointer
 #define USART2       ((USART_TypeDef *) 0x4000C800UL)        // USART2 base pointer
 
+#define _USART_IFC_MASK                       0x00001FF9UL
+#define USART_IEN_RXDATAV                     (0x1UL << 2)
+#define USART_IEN_TXBL                        (0x1UL << 1)
 
 // Bit fields for USART CTRL
 #define USART_CTRL_SYNC                       (0x1UL << 0)                       // USART Synchronous Mode

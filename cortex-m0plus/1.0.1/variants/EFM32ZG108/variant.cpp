@@ -77,14 +77,48 @@
 RingBuffer rx_buffer0;
 RingBuffer tx_buffer0;
 
+RingBuffer rx_buffer1;
+RingBuffer tx_buffer1;
+
 LEUARTClass Serial(LEUART0, LEUART0_IRQn, 0, &rx_buffer0, &tx_buffer0, PORTB, 13, 14,
 		   LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0, LEUART_CLKDIV);
 
 // LEUART0 Interrupt handler
 void LEUART0_IRQHandler(void)
 {
+  check_for_reset();
   Serial.IrqHandler();
 }
+
+
+USARTClass Serial1(USART1, USART1_TX_IRQn, USART1_RX_IRQn, 1, &rx_buffer1, &tx_buffer1, PORTC, 0, 1,
+		   USART_ROUTE_LOCATION_LOC0, CMU_HFPERCLKEN0_USART1, EFMZG_USART_CLKDIV);
+
+void USART1_RX_IRQHandler(void)
+{
+  check_for_reset();
+  Serial1.IrqRxHandler();
+}
+
+void USART1_TX_IRQHandler(void)
+{
+  Serial1.IrqTxHandler();
+}
+
+#define LEUART0_RXDATAXP ((uint32_t *) (0x40084018UL))
+#define USART1_RXDATAXP  ((uint32_t *) (0x4000C418UL))
+#define SCB_AIRCR        ((uint32_t *) (0xE000ED0CUL))
+#define RXDATAXP_BREAK   ((uint32_t)        (1 << 15))
+
+void check_for_reset(void)
+{
+  if((*LEUART0_RXDATAXP & RXDATAXP_BREAK) || (*USART1_RXDATAXP & RXDATAXP_BREAK)) {
+    for(volatile int i = 0; i < 150000; i++);
+    *SCB_AIRCR = 0x05FA0004;  // Write to the Application Interrupt/Reset Command Register to reset
+  }
+}
+
+
 
 // -------------------------------------------------------------------------------------------------------------
 
