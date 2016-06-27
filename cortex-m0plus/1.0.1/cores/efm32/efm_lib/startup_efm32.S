@@ -128,7 +128,7 @@ __isr_vector:
 #endif
     .long    GPIO_ODD_IRQHandler    /* 6 - GPIO_ODD */
     .long    TIMER1_IRQHandler    /* 7 - TIMER1 */
-#if defined(EFM32G) || defined(EFM32WG)
+#ifndef EFM32ZG
     .long    TIMER2_IRQHandler    /* 11 - TIMER2 */
 #endif
 #ifdef EFM32WG
@@ -266,7 +266,7 @@ Reset_Handler:
 #endif
     def_irq_handler    GPIO_ODD_IRQHandler
     def_irq_handler    TIMER1_IRQHandler
-#if defined(EFM32G) || defined(EFM32WG)
+#ifndef EFM32ZG
     def_irq_handler    TIMER2_IRQHandler
 #endif
 #ifdef EFM32WG
