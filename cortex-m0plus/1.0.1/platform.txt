@@ -96,6 +96,8 @@ tools.efm_upload.upload.params.verbose=
 
 tools.efm_upload.cmd=efm_upload
 tools.efm_upload.path={runtime.tools.efm_upload.path}
+tools.efm_upload.device=/dev/{serial.port.file}
+tools.efm_upload.device.windows={serial.port.file}
 tools.efm_upload.upload.params.quiet=
 
-tools.efm_upload.upload.pattern="{path}/{runtime.os}/{cmd}" "{build.path}/{build.project_name}.bin" {serial.port.file} {build.project_name}
+tools.efm_upload.upload.pattern="{path}/{runtime.os}/{cmd}" "{build.path}/{build.project_name}.bin" {device} {build.project_name}
