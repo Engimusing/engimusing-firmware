@@ -42,8 +42,6 @@ typedef uint16_t word;
 extern "C"{
 #endif // __cplusplus
 
-#include "wiring_constants.h"
-
   void yield( void ) ;
 
   void init(void);
@@ -109,3 +107,5 @@ extern "C"{
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 
 #define bit(b) (1UL << (b))
+
+#include "wiring_constants.h"

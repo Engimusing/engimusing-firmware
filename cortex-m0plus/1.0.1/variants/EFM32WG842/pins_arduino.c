@@ -222,15 +222,19 @@ uint8_t valid_pin(uint8_t pin) {
 }
 
 // System initialize function called in startup_efm32zg.S
-void SystemInit(void)
+void init( void )
 {
+  init_efm32();
+
+  GPIO_config(PORTA, 12, OUTPUT);      // Configure Green LED
+  GPIO_config(PORTA, 13, OUTPUT);      // Configure Blue LED
+  GPIO_config(PORTA, 14, OUTPUT);      // Configure Red LED
+  GPIO->P[PORTA].DOUTSET = (1 << 12);   // Green LED off
+  GPIO->P[PORTA].DOUTSET = (1 << 13);   // Blue LED off
+  GPIO->P[PORTA].DOUTSET = (1 << 14);  // Red LED off
 }
 
-#include "../../cores/efm32/efm_lib/efm_cmu_config.h"
-#include "../../cores/efm32/efm_lib/efm_devinfo.h"
-#include "../../cores/efm32/efm_lib/cmsis.h"
-#include "../../cores/efm32/efm_lib/coreclk.h"
-
+/*
 void init_efm32a(void)
 {
   // Enable clocks for peripherals.
@@ -257,7 +261,7 @@ void init( void )
   GPIO->P[PORTA].DOUTSET = (1 << 12);   // Green LED off
   GPIO->P[PORTA].DOUTSET = (1 << 13);   // Blue LED off
   GPIO->P[PORTA].DOUTSET = (1 << 14);  // Red LED off
-}
+}*/
 
 /*
 Pin Name Analog		Timers		Communication		Other

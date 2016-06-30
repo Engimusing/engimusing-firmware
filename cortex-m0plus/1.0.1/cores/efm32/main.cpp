@@ -46,7 +46,7 @@ int main( void )
   for (;;)
   {
     loop();
-    check_for_reset();
+    //check_for_reset();
     if (serialEventRun) serialEventRun();
   }
 

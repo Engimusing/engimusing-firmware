@@ -17,7 +17,8 @@
 */
 
 #pragma once
-
+#include "em_device.h"
+#if 0
 #include "io_types.h"
 
 #define IDAC0CAL0 DAC0CAL0
@@ -160,4 +161,4 @@ typedef struct
 
 
 #define DEVINFO      ((DEVINFO_TypeDef *) 0x0FE081B0UL)     // DEVINFO base pointer
-
+#endif

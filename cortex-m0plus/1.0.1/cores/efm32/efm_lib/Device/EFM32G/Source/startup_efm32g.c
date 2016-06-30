@@ -33,6 +33,7 @@
    POSSIBILITY OF SUCH DAMAGE.
    ---------------------------------------------------------------------------*/
 
+ #ifdef EFM32G
 
 #include <stdint.h>
 
@@ -318,3 +319,4 @@ void Default_Handler(void)
   while(1);
 }
 
+#endif

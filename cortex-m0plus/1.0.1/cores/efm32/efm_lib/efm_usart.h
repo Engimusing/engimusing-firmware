@@ -18,6 +18,11 @@
 
 #pragma once
 
+#include "./emlib/inc/em_usart.h"
+
+
+#if 0
+
 #include "io_types.h"
 #include "cmsis.h"
 
@@ -654,3 +659,4 @@ typedef struct
 #define USART_I2SCTRL_FORMAT_W8D8             (_USART_I2SCTRL_FORMAT_W8D8 << 8)      // Shifted mode W8D8 for USART_I2SCTRL
 
 
+#endif

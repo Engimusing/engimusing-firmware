@@ -18,7 +18,9 @@
 
 #include "analog.h"
 #include "efm_devinfo.h"
-
+#include "em_device.h"
+#include "LEUARTClass.h"
+#include "efm_cmu_config.h"
 extern "C" {
 #include "pins_arduino.h"
 }
@@ -29,18 +31,21 @@ AnalogLP Analog;
 
 AnalogLP::AnalogLP()
 {
+#if defined(ADC_COUNT)
   adc_reference = DEFAULT;
   adc_resolution = ADC_SINGLECTRL_RES_12BIT;
   adc_oversampling = ADC_CTRL_OVSRSEL_X2;
   tempval = {0,0,0,0,0,0};
+#endif
 }
 
 
 uint32_t AnalogLP::analogRead(uint32_t sel)
 {
+#if defined(ADC_COUNT)
     // Enable clock for ADC0
-  clk_enable_HFPER();
-  clk_enable_ADC0();
+    CMU_ClockEnable(cmuClock_HFPER, true);
+	CMU_ClockEnable(cmuClock_ADC0, true);
 
 
     uint32_t hfperFreq = cmu_hfper_freq_get();
@@ -64,8 +69,11 @@ uint32_t AnalogLP::analogRead(uint32_t sel)
 
     uint32_t data = ADC0->SINGLEDATA;
 
-    clk_disable_ADC0();
+    CMU_ClockEnable(cmuClock_ADC0, false);
     return data;
+#else
+	return 0;
+#endif
 }
 
 uint32_t AnalogLP::analogReadPin(uint8_t pin)
@@ -79,10 +87,12 @@ uint32_t AnalogLP::analogReadPin(uint8_t pin)
 
 uint32_t AnalogLP::analogReadVDDsample(void)
 {
+#if defined(ADC_COUNT)
   adc_reference = INTERNAL1V25; // set up reference
   adc_resolution = ADC_SINGLECTRL_RES_12BIT;
 
   return analogRead(ADC_SINGLECTRL_INPUTSEL_VDD_DIV3);
+#endif
 }
 
 uPvdd AnalogLP::analogReadVDD(void)
@@ -104,16 +114,17 @@ void AnalogLP::commVDD(void)
 
 temperature AnalogLP::analogReadTemp(void)
 {
+#if defined(ADC_COUNT)
   adc_reference = INTERNAL1V25; // set up reference
   adc_resolution = ADC_SINGLECTRL_RES_12BIT;
 
   // Factory calibration temperature from device information page
-  float cal_temp_0 = (float)((DEVINFO->CAL & DEVINFO_CAL_TEMP_MASK)
-                             >> DEVINFO_CAL_TEMP_SHIFT);
+  float cal_temp_0 = (float)((DEVINFO->CAL & _DEVINFO_CAL_TEMP_MASK)
+                             >> _DEVINFO_CAL_TEMP_SHIFT);
 
   float cal_value_0 = (float)((DEVINFO->ADC0CAL2
-                               & DEVINFO_ADC0CAL2_TEMP1V25_MASK)
-                              >> DEVINFO_ADC0CAL2_TEMP1V25_SHIFT);
+                               & _DEVINFO_ADC0CAL2_TEMP1V25_MASK)
+                              >> _DEVINFO_ADC0CAL2_TEMP1V25_SHIFT);
 
   uint32_t sample = analogRead(ADC_SINGLECTRL_INPUTSEL_TEMPSENS);
 
@@ -141,7 +152,7 @@ temperature AnalogLP::analogReadTemp(void)
   } else {
     tempval.fracF = (uint16_t) tempval.tenthsF % 10;
   }
-
+#endif
   return tempval;
 }
 
@@ -173,6 +184,7 @@ void AnalogLP::analogReference(uint32_t ref)
 
 void AnalogLP::analogReadResolution(uint8_t bits)
 {
+#if defined(ADC_COUNT)
   if(bits == 6) {
     adc_resolution = ADC_SINGLECTRL_RES_6BIT;
   } else if(bits == 8) {
@@ -185,11 +197,13 @@ void AnalogLP::analogReadResolution(uint8_t bits)
   } else {
     adc_resolution = ADC_SINGLECTRL_RES_12BIT;
   }
+#endif
 }
 
 
 void print_adc_regs(void)
 {
+#if defined(ADC_COUNT)
   uint32_t regs[15];
 
   regs[0] = ADC0->CTRL;
@@ -224,4 +238,5 @@ void print_adc_regs(void)
   Serial.print(" CAL         = "); Serial.println(regs[13],HEX);
   Serial.print(" BIASPROG    = "); Serial.println(regs[14],HEX);
   Serial.println("");
+#endif
 }
