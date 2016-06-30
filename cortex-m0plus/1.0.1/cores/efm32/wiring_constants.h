@@ -29,7 +29,7 @@ extern "C"{
 #define PIN_MODE_GPIO0                        (0x0)
 #define GPIO_DISABLED                        (0x00)
 #define DISABLED_PULLUP                      (0x01)
-#define INPUT                                (0x02)
+#define INPUT_                                (0x02)
 #define INPUT_PULLUP                         (0x03)
 #define INPUT_PULLDOWN                       (0x04)
 #define INPUT_FILTER                         (0x05)

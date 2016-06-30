@@ -23,6 +23,7 @@
 #include "HardwareSerial.h"
 #include "efm_leuart.h"
 
+#define INPUT INPUT_
 
 typedef LEUART_TypeDef Leuart;
 

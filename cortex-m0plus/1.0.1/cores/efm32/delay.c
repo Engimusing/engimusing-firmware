@@ -17,7 +17,7 @@
 */
 
 #include "delay.h"
-#include "efm_lib/cmsis.h"
+#include "em_device.h"
 #include "pins_arduino.h"
 #include "efm_lib/coreclk.h"
 

@@ -32,7 +32,7 @@
    ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
    POSSIBILITY OF SUCH DAMAGE.
    ---------------------------------------------------------------------------*/
-
+#ifdef EFM32WG
 
 #include <stdint.h>
 
@@ -289,3 +289,4 @@ void Default_Handler(void)
   while(1);
 }
 
+#endif

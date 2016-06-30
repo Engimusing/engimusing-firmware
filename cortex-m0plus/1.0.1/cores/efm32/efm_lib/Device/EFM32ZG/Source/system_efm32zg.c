@@ -29,7 +29,7 @@
  * any third party, arising from your use of this Software.
  *
  *****************************************************************************/
-
+#ifdef EFM32ZG
 #include <stdint.h>
 #include "em_device.h"
 
@@ -379,3 +379,4 @@ void SystemLFXOClockSet(uint32_t freq)
   (void)freq; /* Unused parameter */
 #endif
 }
+#endif

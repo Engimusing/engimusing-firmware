@@ -18,8 +18,13 @@
 
 #pragma once
 
-#include "Arduino.h"
-#include "io_types.h"
+#include "./emlib/inc/em_adc.h"
+
+#define ADC_SINGLECTRL_INPUTSEL_TEMPSENS             (0x8)            // Shifted mode TEMP for ADC_SINGLECTRL
+#define ADC_SINGLECTRL_INPUTSEL_VDD_DIV3             (0x9)            // Shifted mode VDDDIV3 for ADC_SINGLECTRL
+
+//#include "Arduino.h"
+//#include "io_types.h"
 
 struct temperature {
   int16_t tenthsC ;
@@ -70,7 +75,7 @@ extern "C"{
 #endif
 
 
-typedef struct
+/*typedef struct
 {
   __IO uint32_t CTRL;         // Control Register
   __IO uint32_t CMD;          // Command Register
@@ -322,7 +327,7 @@ typedef struct
 #define _ADC_BIASPROG_HALFBIAS_MASK                    0x40           // Bit mask for ADC_HALFBIAS
 #define _ADC_BIASPROG_COMPBIAS_SHIFT                      8           // Shift value for ADC_COMPBIAS
 #define _ADC_BIASPROG_COMPBIAS_MASK                   0xF00           // Bit mask for ADC_COMPBIAS
-
+*/
 #define INTERNAL1V25 ADC_SINGLECTRL_REF_1V25
 #define INTERNAL2V5  ADC_SINGLECTRL_REF_2V5
 #define INTERNALVDD  ADC_SINGLECTRL_REF_VDD
@@ -333,3 +338,4 @@ typedef struct
 #define RES_8BITS    ADC_SINGLECTRL_RES_8BIT
 #define RES_12BITS   ADC_SINGLECTRL_RES_12BIT
 
+//#endif

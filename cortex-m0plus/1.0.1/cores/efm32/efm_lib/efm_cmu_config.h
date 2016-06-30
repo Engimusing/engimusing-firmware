@@ -18,6 +18,19 @@
 
 #pragma once
 
+#include "./emlib/inc/em_cmu.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+  uint32_t cmu_hfper_freq_get(void);
+  
+  #ifdef __cplusplus
+}
+#endif
+
+#if 0
 #include "io_types.h"
 #include <stdint.h>
 #include "efm_msc.h"
@@ -686,4 +699,5 @@ extern "C" {
 }
 #endif
 
+#endif
 

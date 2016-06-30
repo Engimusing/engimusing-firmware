@@ -20,11 +20,12 @@
 #include <stdint.h>
 #include "efm_cmu_config.h"
 #include "efm_devinfo.h"
-#include "cmsis.h"
+#include "em_chip.h"
+//#include "cmsis.h"
 #include "coreclk.h"
 
 // Required CMSIS global variable that must be kept up-to-date.
-uint32_t SystemCoreClock = VARIANT_MCK;
+//uint32_t SystemCoreClock = VARIANT_MCK;
 
 uint32_t cmu_hfper_freq_get(void)
 {
@@ -34,8 +35,16 @@ uint32_t cmu_hfper_freq_get(void)
 
 void init_efm32(void)
 {
+	
+	CHIP_Init();
+ 
+    if (SysTick_Config(CMU_ClockFreqGet(cmuClock_CORE) / 1000)) while (1) ;
+  
+    CMU_ClockEnable(cmuClock_HFPER, true);
+    CMU_ClockEnable(cmuClock_GPIO, true);
+	
   // Enable clocks for peripherals.
-
+/*
   clk_enable_HFPER();
   clk_enable_GPIO();
   clk_enable_LE();
@@ -59,6 +68,6 @@ void init_efm32(void)
   // Change to 28MHz internal oscillator band
   CMU->HFRCOCTRL = CMU_HFRCOCTRL_BAND_28MHZ | (DEVINFO->HFRCOCAL1 & 0xFF);
   SysTick_Config(VARIANT_MCK / 1000);
-#endif
+#endif*/
 }
 

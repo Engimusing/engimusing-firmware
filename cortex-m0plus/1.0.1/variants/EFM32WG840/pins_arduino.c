@@ -250,10 +250,6 @@ uint8_t valid_pin(uint8_t pin) {
   }
 }
 
-// System initialize function called in startup_efm32zg.S
-void SystemInit(void)
-{
-}
 
 void init( void )
 {
