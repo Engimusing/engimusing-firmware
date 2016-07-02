@@ -19,13 +19,12 @@
 #include "analog.h"
 #include "efm_devinfo.h"
 #include "em_device.h"
-#include "LEUARTClass.h"
+#include "UARTClass.h"
 #include "efm_cmu_config.h"
 extern "C" {
 #include "pins_arduino.h"
 }
 
-extern LEUARTClass Serial;
 AnalogLP Analog;
 
 

@@ -26,6 +26,7 @@
 void initVariant() __attribute__((weak));
 void initVariant() { }
 
+extern void check_for_reset ( void ) __attribute__((weak));
 
 // Declared weak in Arduino.h to allow user redefinitions.
 //int atexit(void (* /*func*/ )()) { return 0; }
@@ -46,8 +47,8 @@ int main( void )
   for (;;)
   {
     loop();
-    //check_for_reset();
     if (serialEventRun) serialEventRun();
+	if(check_for_reset) check_for_reset();
   }
 
   return 0;

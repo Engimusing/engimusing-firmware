@@ -34,5 +34,6 @@ class RingBuffer
   volatile uint16_t _iHead ;
   volatile uint16_t _iTail ;
   RingBuffer( void ) ;
+  void store_char( uint8_t c );
 } ;
 
