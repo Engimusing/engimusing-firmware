@@ -100,6 +100,12 @@ void check_for_reset()
 	}
   }
 
+void initVariant() 
+{ 
+	Serial.begin(115200);
+	Serial1.begin(115200);
+}
+  
 // -------------------------------------------------------------------------------------------------------------
 
 void print_gpio_regs(void)

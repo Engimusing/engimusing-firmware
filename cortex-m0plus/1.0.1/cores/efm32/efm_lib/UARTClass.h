@@ -82,10 +82,10 @@ extern UARTClass Serial1;
 
 extern void serialEventRun(void) __attribute__((weak));
 extern void serialEvent() __attribute__((weak));
-/*void serialEventRun(void)
+void serialEventRun(void)
   {
   if (Serial.available() && serialEvent) serialEvent();
 
   }
-*/
+
 #endif // _UART_CLASS_

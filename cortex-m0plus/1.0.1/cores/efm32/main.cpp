@@ -24,7 +24,7 @@
 // Weak empty variant initialization function.
 // May be redefined by variant files.
 void initVariant() __attribute__((weak));
-void initVariant() { }
+
 
 extern void check_for_reset ( void ) __attribute__((weak));
 
@@ -41,7 +41,7 @@ int main( void )
   initVariant();
 
   delay(1);
-
+    
   setup();
 
   for (;;)

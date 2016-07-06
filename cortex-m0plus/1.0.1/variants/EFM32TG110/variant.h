@@ -45,5 +45,5 @@ void detachInterrupt(uint8_t pin);
 uint32_t cmu_hfper_freq_get(void);
 
 extern void check_for_reset(void);
-
+extern void initVariant(void);
 
