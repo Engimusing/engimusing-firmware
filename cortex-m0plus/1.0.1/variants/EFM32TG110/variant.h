@@ -33,8 +33,6 @@
 #define LEUART_CLKDIV EFMZG_LEUART_CLKDIV
 
 
-
-//extern LEUARTClass Serial;
 extern TimersLP Timers;
 
 

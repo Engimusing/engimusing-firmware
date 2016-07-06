@@ -130,14 +130,14 @@ void UARTClass::begin( const uint32_t dwBaudRate )
 			/* Select LFRCO as clock source for LFBCLK */
 			CMU_ClockSelectSet(cmuClock_LFB, cmuSelect_LFRCO);
 		}
-
+#if defined(EFM32TG)  || defined(EFM32ZG)
 		if(_UartLoc == LEUART_ROUTE_LOCATION_LOC3)
 		{
 			//if it is LOC3 than it is shared with the debug IO pins on the TG222 and ZG222 so disable them after a 3 second delay 
 			delay(3000);
 			GPIO->ROUTE &= ~(GPIO_ROUTE_SWDIOPEN | GPIO_ROUTE_SWCLKPEN);
 		}
-
+#endif
 
 		LEUART_Init_TypeDef leuartInit = LEUART_INIT_DEFAULT;
 		leuartInit.baudrate = dwBaudRate;
