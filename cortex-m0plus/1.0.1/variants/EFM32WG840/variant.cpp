@@ -74,12 +74,38 @@
 
 
 
-RingBuffer rx_buffer0;
-RingBuffer tx_buffer0;
 
-LEUARTClass Serial(LEUART0, LEUART0_IRQn, 0, &rx_buffer0, &tx_buffer0, PORTB, 13, 14,
-		   LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0, LEUART_CLKDIV);
+RingBuffer rx_buffer1;
+RingBuffer rx_buffer2;
 
+UARTClass Serial(USART1, USART1_RX_IRQn, &rx_buffer1, USART_ROUTE_LOCATION_LOC0, cmuClock_USART1);
+UARTClass Serial1(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC1, cmuClock_LEUART0);
+
+// IT handlers
+void USART1_RX_IRQHandler(void)
+{
+  Serial.IrqHandler();
+}
+
+void LEUART0_IRQHandler(void)
+{
+  Serial1.IrqHandler();
+}
+
+void check_for_reset()
+  {
+	if(Serial.isResetReceived() || Serial1.isResetReceived())
+	{
+		SCB->AIRCR = 0x05FA0004;
+		//BOOT_reset();
+	}
+  }
+
+void initVariant() 
+{ 
+	Serial.begin(115200);
+	Serial1.begin(115200);
+}
 
 // -------------------------------------------------------------------------------------------------------------
 

@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include "Arduino.h"
-#include "../../cores/efm32/efm_lib/UARTClass.h"
 #include "../../cores/efm32/efm_lib/timer.h"
 
 #define EFMZG_LEUART_CLKDIV 0x59D0
