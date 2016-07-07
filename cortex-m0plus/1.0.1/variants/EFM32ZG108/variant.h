@@ -25,8 +25,6 @@
 #include <string.h>
 
 #include "Arduino.h"
-#include "../../cores/efm32/efm_lib/LEUARTClass.h"
-#include "../../cores/efm32/efm_lib/USARTClass.h"
 #include "../../cores/efm32/efm_lib/timer.h"
 
 #define EFMZG_LEUART_CLKDIV	0x59D0
@@ -37,8 +35,6 @@
 #define EFMZG_USART_CLKDIV  	0x0A65
 
 
-extern LEUARTClass Serial;
-extern USARTClass Serial1;
 extern TimersLP Timers;
 
 
@@ -50,7 +46,10 @@ uint32_t cmu_hfper_freq_get(void);
 
 #define CMU_HFPERCLKEN0_USART1	(0x1UL << 3)
 
-#ifdef __cplusplus
+extern void check_for_reset(void);
+extern void initVariant(void);
+
+/*#ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
 
@@ -59,5 +58,5 @@ void check_for_reset(void);
 #ifdef __cplusplus
 } // extern "C"
 #endif
-
+*/
 
