@@ -19,10 +19,11 @@
 #include "timer.h"
 #include "Tone.h"
 #include "pins_arduino.h"
-#include "LEUARTClass.h"
+#include "UARTClass.h"
 #include "delay.h"
 
-extern LEUARTClass Serial;
+#define INPUT INPUT_
+
 
 TimersLP Timers;
 

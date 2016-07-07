@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include "Arduino.h"
-#include "../../cores/efm32/efm_lib/LEUARTClass.h"
 #include "../../cores/efm32/efm_lib/timer.h"
 
 #define EFMZG_LEUART_CLKDIV 0x59D0
@@ -34,8 +33,6 @@
 #define LEUART_CLKDIV EFMZG_LEUART_CLKDIV
 
 
-
-extern LEUARTClass Serial;
 extern TimersLP Timers;
 
 
@@ -45,6 +42,6 @@ void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
 void detachInterrupt(uint8_t pin);
 uint32_t cmu_hfper_freq_get(void);
 
-void check_for_reset(void);
-
+extern void check_for_reset(void);
+extern void initVariant(void);
 

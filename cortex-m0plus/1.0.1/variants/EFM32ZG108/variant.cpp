@@ -73,43 +73,44 @@
 */
 
 
-
-RingBuffer rx_buffer0;
-RingBuffer tx_buffer0;
-
 RingBuffer rx_buffer1;
-RingBuffer tx_buffer1;
+RingBuffer rx_buffer2;
 
-LEUARTClass Serial(LEUART0, LEUART0_IRQn, 0, &rx_buffer0, &tx_buffer0, PORTB, 13, 14,
-		   LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0, LEUART_CLKDIV);
+UARTClass Serial(USART1, USART1_RX_IRQn, &rx_buffer1, USART_ROUTE_LOCATION_LOC0, cmuClock_USART1);
+UARTClass Serial1(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC1, cmuClock_LEUART0);
 
-// LEUART0 Interrupt handler
-void LEUART0_IRQHandler(void)
+// IT handlers
+void USART1_RX_IRQHandler(void)
 {
-  check_for_reset();
   Serial.IrqHandler();
 }
 
-
-USARTClass Serial1(USART1, USART1_TX_IRQn, USART1_RX_IRQn, 1, &rx_buffer1, &tx_buffer1, PORTC, 0, 1,
-		   USART_ROUTE_LOCATION_LOC0, CMU_HFPERCLKEN0_USART1, EFMZG_USART_CLKDIV);
-
-void USART1_RX_IRQHandler(void)
+void LEUART0_IRQHandler(void)
 {
-  check_for_reset();
-  Serial1.IrqRxHandler();
+  Serial1.IrqHandler();
 }
 
-void USART1_TX_IRQHandler(void)
-{
-  Serial1.IrqTxHandler();
+void check_for_reset()
+  {
+	if(Serial.isResetReceived() || Serial1.isResetReceived())
+	{
+		SCB->AIRCR = 0x05FA0004;
+		//BOOT_reset();
+	}
+  }
+
+void initVariant() 
+{ 
+	Serial.begin(115200);
+	Serial1.begin(115200);
 }
+
 
 #define LEUART0_RXDATAXP ((uint32_t *) (0x40084018UL))
 #define USART1_RXDATAXP  ((uint32_t *) (0x4000C418UL))
 #define SCB_AIRCR        ((uint32_t *) (0xE000ED0CUL))
 #define RXDATAXP_BREAK   ((uint32_t)        (1 << 15))
-
+/* check for reset is handled inside UARTClass now but thought I should keep this around just in case
 void check_for_reset(void)
 {
   if((*LEUART0_RXDATAXP & RXDATAXP_BREAK) || (*USART1_RXDATAXP & RXDATAXP_BREAK)) {
@@ -117,7 +118,7 @@ void check_for_reset(void)
     *SCB_AIRCR = 0x05FA0004;  // Write to the Application Interrupt/Reset Command Register to reset
   }
 }
-
+*/
 
 
 // -------------------------------------------------------------------------------------------------------------

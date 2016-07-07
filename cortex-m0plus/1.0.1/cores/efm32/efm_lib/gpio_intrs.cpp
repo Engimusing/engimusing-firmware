@@ -17,8 +17,8 @@
 */
 
 #include "gpio_intrs.h"
-
-extern LEUARTClass Serial;
+#include "UARTClass.h"
+//extern LEUARTClass Serial;
 
 INTRClass INTR;
 
