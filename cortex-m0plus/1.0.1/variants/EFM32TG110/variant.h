@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include "Arduino.h"
-#include "../../cores/efm32/efm_lib/timer.h"
 
 #define EFMZG_LEUART_CLKDIV 0x59D0
 #define EFMTG_LEUART_CLKDIV 0x77C0
@@ -33,7 +32,32 @@
 #define LEUART_CLKDIV EFMZG_LEUART_CLKDIV
 
 
-extern TimersLP Timers;
+
+
+//add 6 to the A# to get the channel.
+static const uint8_t A0  = 11;
+static const uint8_t A1  = 12;
+
+#define ADC_RESOLUTION		12
+
+// DACC
+
+#define DACC_INTERFACE		DACC
+#define DACC_INTERFACE_ID	ID_DACC
+#define DACC_RESOLUTION		12
+#define DACC_ISR_HANDLER    DACC_Handler
+#define DACC_ISR_ID         DACC_IRQn
+
+
+
+// PWM Resolution
+
+#define PWM_INTERFACE        PWM
+#define PWM_INTERFACE_ID     ID_PWM
+#define PWM_FREQUENCY	     1000
+#define PWM_MAX_DUTY_CYCLE   255
+#define PWM_MIN_DUTY_CYCLE   0
+#define PWM_RESOLUTION	     16
 
 
 void print_gpio_regs(void);

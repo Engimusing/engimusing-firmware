@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include "Arduino.h"
-#include "../../cores/efm32/efm_lib/timer.h"
 
 #define EFMZG_LEUART_CLKDIV	0x59D0
 #define EFMTG_LEUART_CLKDIV	0x77C0
@@ -35,8 +34,9 @@
 #define EFMZG_USART_CLKDIV  	0x0A65
 
 
-extern TimersLP Timers;
+static const uint8_t A0  = -1;//No ADC on Zero Gecko
 
+#define ADC_RESOLUTION		0
 
 void print_gpio_regs(void);
 

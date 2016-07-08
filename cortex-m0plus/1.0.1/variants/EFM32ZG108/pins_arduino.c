@@ -36,6 +36,9 @@ const uint8_t iPins[]          = {0,0,   7,    8,   14,   15,   12,   13,    0, 
 const uint8_t adcPorts[14]       = {0};
 const uint8_t adcPins[14]        = {0};
 
+const uint32_t adcChannel[14] =  {0};
+const ADC_SingleInput_TypeDef adcChannelNum[14] =  {adcSingleInpCh0};
+
 // ACMP Pins
 const uint8_t acmpPorts[14] = {0};
 const uint8_t acmpPins[14]  = {0};
