@@ -67,6 +67,13 @@ const uint32_t timerRoutes[] = {0, // 0
 				TIMER_ROUTE_LOCATION_LOC4 | TIMER_ROUTE_CC1PEN,  //12: PD7  - TIM1_CC1 #4
 				0};
 
+const uint32_t adcChannel[] =  {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,EM_ADC0, EM_ADC1, -1};
+const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
+														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
+														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
+														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh6, 
+														   adcSingleInpCh7, adcSingleInpCh0};
+
 // ------------------------------------------------------------------------------------------------------------
 
 // This function verifies the pin is valid for this variant

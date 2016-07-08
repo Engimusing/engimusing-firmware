@@ -25,7 +25,6 @@
 #include <string.h>
 
 #include "Arduino.h"
-#include "../../cores/efm32/efm_lib/timer.h"
 
 #define EFMZG_LEUART_CLKDIV 0x59D0
 #define EFMTG_LEUART_CLKDIV 0x77C0
@@ -33,8 +32,11 @@
 #define LEUART_CLKDIV EFMZG_LEUART_CLKDIV
 
 
+static const uint8_t A0  = 2;
+static const uint8_t A1  = 3;
+static const uint8_t A2 = 11;
 
-extern TimersLP Timers;
+#define ADC_RESOLUTION		12
 
 
 void print_gpio_regs(void);

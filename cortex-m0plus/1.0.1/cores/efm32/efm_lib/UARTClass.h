@@ -85,6 +85,7 @@ extern void serialEvent() __attribute__((weak));
 void serialEventRun(void)
   {
   if (Serial.available() && serialEvent) serialEvent();
+  if (Serial1.available() && serialEvent) serialEvent();
 
   }
 

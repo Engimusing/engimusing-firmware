@@ -19,6 +19,42 @@
 
 #pragma once
 
+#include <em_device.h>
+
+
+#if !defined(ADC_COUNT) || (ADC_COUNT == 0)
+
+/** Dummy typedef for when no ADC on processor **/
+typedef enum
+{
+  /* Differential mode disabled */
+    adcSingleInpCh0      = 0,
+    adcSingleInpCh1      = 0,
+    adcSingleInpCh2      = 0,
+    adcSingleInpCh3      = 0,
+    adcSingleInpCh4      = 0,
+    adcSingleInpCh5      = 0,
+    adcSingleInpCh6      = 0,
+    adcSingleInpCh7      = 0,
+    adcSingleInpTemp     = 0,
+    adcSingleInpVDDDiv3  = 0,
+    adcSingleInpVDD      = 0,
+    adcSingleInpVSS      = 0,
+    adcSingleInpVrefDiv2 = 0,
+    adcSingleInpDACOut0  = 0,
+    adcSingleInpDACOut1  = 0,
+    adcSingleInpATEST    = 0,
+    adcSingleInpCh0Ch1   = 0,
+    adcSingleInpCh2Ch3   = 0,
+    adcSingleInpCh4Ch5   = 0,
+    adcSingleInpCh6Ch7   = 0,
+    adcSingleInpDiff0    = 0,
+} ADC_SingleInput_TypeDef;
+
+#endif
+
+
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -72,7 +108,7 @@ extern "C"{
 //#include "efm_lib/LEUARTClass.h"
 #include "efm_lib/UARTClass.h"
 #include "efm_lib/timer.h"
-#include "efm_lib/analog.h"
+//#include "efm_lib/analog.h"
 #include "efm_lib/efm_gpio.h"
 #include "efm_lib/gpio_intrs.h"
 #endif
@@ -81,6 +117,7 @@ extern "C"{
 
 #include "wiring_digital.h"
 
+#include "wiring_analog.h"
 
 // undefine stdlib's abs if encountered
 #ifdef abs
@@ -108,5 +145,41 @@ extern "C"{
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 
 #define bit(b) (1UL << (b))
+
+/**
+ * Pin Attributes to be OR-ed
+ */
+#define PIN_ATTR_COMBO         (1UL<<0)
+#define PIN_ATTR_ANALOG        (1UL<<1)
+#define PIN_ATTR_DIGITAL       (1UL<<2)
+#define PIN_ATTR_PWM           (1UL<<3)
+#define PIN_ATTR_TIMER         (1UL<<4)
+
+
+/* Definitions and types for pins */
+typedef enum _EAnalogChannel
+{
+  NO_ADC=-1,
+  EM_ADC0=0,
+  EM_ADC1,
+  EM_ADC2,
+  EM_ADC3,
+  EM_ADC4,
+  EM_ADC5,
+  EM_ADC6,
+  EM_ADC7,
+  EM_ADC8,
+  EM_ADC9,
+  EM_ADC10,
+  EM_ADC11,
+  EM_ADC12,
+  EM_ADC13,
+  EM_ADC14,
+  EM_ADC15,
+  EM_DAC0,
+  EM_DAC1
+} EAnalogChannel ;
+
+
 
 #include "wiring_constants.h"

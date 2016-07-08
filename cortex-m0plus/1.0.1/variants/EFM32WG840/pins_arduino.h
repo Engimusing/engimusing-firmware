@@ -19,6 +19,8 @@
 #pragma once
 
 #include "../../cores/efm32/efm_lib/efm_pin_config.h"
+#include "Arduino.h"
+#include "em_adc.h"
 
 typedef void (*voidFuncPtr)(void);
 
@@ -35,6 +37,8 @@ void init_efm32(void);
 #define TIMER_ROUTE_LOCATION_LOC3           (0x3 << 16)          // Shifted mode LOC3 for TIMER_ROUTE
 #define TIMER_ROUTE_LOCATION_LOC4           (0x4 << 16)          // Shifted mode LOC4 for TIMER_ROUTE
 #define TIMER_ROUTE_LOCATION_LOC5           (0x5 << 16)          // Shifted mode LOC5 for TIMER_ROUTE
+
+#define PINS_COUNT 65
 
 extern const uint8_t dPins[];
 extern const uint8_t dPorts[];
@@ -53,6 +57,8 @@ extern const uint8_t timerCCindex[];
 extern const uint32_t timerRoutes[];
 extern const uint8_t ledPorts[];
 extern const uint8_t ledPins[];
+extern const uint32_t adcChannel[];
+extern const ADC_SingleInput_TypeDef adcChannelNum[];
 
 #ifdef __cplusplus
 extern "C" {

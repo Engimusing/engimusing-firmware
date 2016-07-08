@@ -32,6 +32,15 @@ const uint8_t iPins[11]  = {0,0, 15,   12,    3,    2,   11,    1,    0,    0,  
 const uint8_t adcPorts[11]  = {0,0,PORTD,PORTD, 0, 0, 0, 0, 0, 0, PORTD};
 const uint8_t adcPins[11]   = {0,0,  4,    6,   0, 0, 0, 0, 0, 0,   7  };
 
+
+const uint32_t adcChannel[] =  {-1,-1,EM_ADC4,EM_ADC6,-1,-1,-1,-1,-1,-1, -1, EM_ADC7};
+const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh4,
+														   adcSingleInpCh6,adcSingleInpCh0,adcSingleInpCh0,
+														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
+														   adcSingleInpCh0,adcSingleInpCh0, adcSingleInpCh7};
+
+
+
 // ACMP Pins                    0  1  2  3   4     5     6     7     8    9  10   
 const uint8_t acmpPorts[11] = {0, 0, 0, 0,PORTC,PORTC,PORTC,PORTC,PORTC, 0,PORTE};
 const uint8_t acmpPins[11]  = {0, 0, 0, 0,  3,    2,    4,    1,    0,   0, 13  };
