@@ -183,3 +183,5 @@ typedef enum _EAnalogChannel
 
 
 #include "wiring_constants.h"
+
+#define INPUT INPUT_
