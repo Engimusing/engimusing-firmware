@@ -41,8 +41,8 @@ const uint8_t acmpPins[]       = {0,0,   0,    0,   14,   15,    0,    0,    0, 
 
 // DAC Pins
 //                                       5     6    17    18    23    24     1     21    8     13    14
-const uint8_t dacPorts[]       = {0,0,   0,    0, PORTC,PORTC,   0,    0,    0,    0,    0,     0,    0,0};
-const uint8_t dacPins[]        = {0,0,   0,    0,   14,   15,    0,    0,    0,    0,    0,     0,    0,0};
+const uint8_t dacPorts[]       = {0,0,   0,    0, 0,0,   0,    0,    0,    0,    PORTB,     0,    0, PORTB};
+const uint8_t dacPins[]        = {0,0,   0,    0,   0,   0,    0,    0,    0,    0,    11,     0,    0, 11};
 
 //                                     X1    X2     X3    X4    X5    X6    X7    SWO   LED  SDA  SCL
 //                                      5     6     17    18    23    24     1     21    8    13   14
@@ -67,7 +67,7 @@ const uint32_t timerRoutes[] = {0, // 0
 				TIMER_ROUTE_LOCATION_LOC4 | TIMER_ROUTE_CC1PEN,  //12: PD7  - TIM1_CC1 #4
 				0};
 
-const uint32_t adcChannel[] =  {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,EM_ADC0, EM_ADC1, -1};
+const uint32_t adcChannel[] =  {-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,EM_DAC0,EM_ADC0, EM_ADC1, EM_DAC0};
 const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
 														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
 														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
@@ -92,6 +92,6 @@ void init( void )
   init_efm32();
 
   GPIO_config(PORTB,  11, OUTPUT);      // Configure Green LED
-  GPIO->P[PORTB].DOUTSET = (1 << 11);   // Green LED off
+  GPIO->P[PORTB].DOUTSET = (0 << 11);   // Green LED off
 }
 
