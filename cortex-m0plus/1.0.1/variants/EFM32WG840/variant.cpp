@@ -78,16 +78,17 @@
 RingBuffer rx_buffer1;
 RingBuffer rx_buffer2;
 
-UARTClass Serial(USART1, USART1_RX_IRQn, &rx_buffer1, USART_ROUTE_LOCATION_LOC0, cmuClock_USART1);
-UARTClass Serial1(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC1, cmuClock_LEUART0);
+UARTClass Serial(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC2, cmuClock_LEUART0);
+UARTClass Serial1(LEUART1, LEUART1_IRQn, &rx_buffer1, LEUART_ROUTE_LOCATION_LOC0, cmuClock_LEUART1);
+
 
 // IT handlers
-void USART1_RX_IRQHandler(void)
+void LEUART0_IRQHandler(void)
 {
   Serial.IrqHandler();
 }
 
-void LEUART0_IRQHandler(void)
+void LEUART1_IRQHandler(void)
 {
   Serial1.IrqHandler();
 }
