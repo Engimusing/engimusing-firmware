@@ -258,7 +258,7 @@ const uint32_t timerRoutes[] = {0, // 0
 // LED Pins                    Red,  Blue,  Green
 const uint8_t ledPorts[3]  = {PORTD, PORTA, PORTA};
 const uint8_t ledPins[3]   = {  8,     6,    15  };
-
+const uint8_t ledId[3] = { 36, 7, 64 };
 // ------------------------------------------------------------------------------------------------------------
 
 // This function verifies the pin is valid for this variant
