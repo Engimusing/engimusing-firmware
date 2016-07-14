@@ -38,8 +38,18 @@ static const uint8_t A3  = 31;
 static const uint8_t A4  = 32;
 static const uint8_t A5  = 33;
 static const uint8_t A6  = 34;
+static const uint8_t A7  = 35;
 
 #define ADC_RESOLUTION		12
+
+// DACC
+
+#define DACC_INTERFACE		DACC
+#define DACC_INTERFACE_ID	ID_DACC
+#define DACC_RESOLUTION		12
+#define DACC_ISR_HANDLER    DACC_Handler
+#define DACC_ISR_ID         DACC_IRQn
+
 
 void print_gpio_regs(void);
 
