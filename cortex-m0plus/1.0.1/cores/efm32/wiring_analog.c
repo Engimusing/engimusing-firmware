@@ -46,7 +46,18 @@ static inline uint32_t mapResolution(uint32_t value, uint32_t from, uint32_t to)
 	if (from > to)
 		return value + ( 1 << (from-to - 1)) >> (from-to);
 	else
-		return value << (to-from);
+	{
+		uint32_t mappedVal = value << (to-from);
+		if(mappedVal != 0)
+		{
+			//make it so max value of from = max value of to 
+			// also maintain that 0 == 0
+			// probably not the best best way to do this but it does make 0 and max value both work
+			mappedVal |= ((1 << (to-from)) - 1);
+		}
+		return mappedVal;
+		
+	}
 }
 
 eAnalogReference analog_reference = AR_DEFAULT;
@@ -237,8 +248,11 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 
 #if defined(EFM32WG)
 	if (pwmChannel[ulPin] != 0) {
+
+		
 		ulValue = mapResolution(ulValue, _writeResolution, PWM_RESOLUTION);
 
+		
 		uint32_t chan = pwmChannel[ulPin];
 		
 		
