@@ -235,13 +235,11 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 #endif 
 	}
 
-#if 0
-	if ((attr & PIN_ATTR_PWM) == PIN_ATTR_PWM) {
+#if defined(EFM32WG)
+	if (pwmChannel[ulPin] != 0) {
 		ulValue = mapResolution(ulValue, _writeResolution, PWM_RESOLUTION);
 
-		uint32_t chan = g_APinDescription[ulPin].ulPWMChannel;
-		
-		
+		uint32_t chan = pwmChannel[ulPin];
 		
 		
 		if (!PWMEnabled) {
@@ -251,25 +249,45 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 			{
 				CMU_ClockEnable(cmuClock_TIMER0, true);
 			}
-			else
+			else if(chan < 64)
 			{
 				CMU_ClockEnable(cmuClock_TIMER1, true);
+			}
+			else if(chan < 96)
+			{
+				CMU_ClockEnable(cmuClock_TIMER2, true);
+			}
+			else 
+			{
+				CMU_ClockEnable(cmuClock_TIMER3, true);
 			}
 			//PWMEnabled = 1;
 		}
 		TIMER_TypeDef *timer = TIMER0;
 		
-		if(chan >= 32)
+		if(chan < 32)
+		{
+			timer = TIMER0;
+		}
+		else if(chan < 64)
 		{
 			timer = TIMER1;
+		}else if(chan < 96)
+		{
+			timer = TIMER2;
+		}
+		else 
+		{
+			timer = TIMER3;
+			
 		}
 		
 		
 		if (!pinEnabled[ulPin]) 
 		{
 			// Setup PWM for this pin
-			GPIO_PinModeSet( g_APinDescription[ulPin].pPort, g_APinDescription[ulPin].ulPin,
-                   g_APinDescription[ulPin].ulPinType, 0 );
+			GPIO_PinModeSet( dPorts[ulPin], dPins[ulPin],
+                   gpioModePushPull, 0 );
 			
 			
 			//setup the CC output for the timer

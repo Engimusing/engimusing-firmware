@@ -155,7 +155,7 @@ const uint8_t dacPins[]  = {0,   0,    0,    0,    0,    0,    0,    0,    0,   
 //                         64
 			    0};
 
-
+#if OLD_TIMERS
 // GPIO Timer Ports         0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
 const uint8_t timerPorts[]={0, PORTA,PORTA,PORTA,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,PORTB,
 //                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31
@@ -256,6 +256,83 @@ const uint32_t timerRoutes[] = {0, // 0
 				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC1PEN, //63 PE15 TIM3_CC1 #0
 				  TIMER_ROUTE_LOCATION_LOC0 | TIMER_ROUTE_CC2PEN}; //64 PA15 TIM3_CC2 #0
 
+				  
+				  
+#else
+	const uint32_t pwmChannel[] = {0, // 0
+				  PWM0_CH0_LOC0,  // 1  PA0 TIM0_CC0 #0/1/4
+				  PWM0_CH1_LOC0, // 2  PA1 TIM0_CC1 #0/1
+				  PWM0_CH2_LOC0, // 3  PA2 TIM0_CC2 #0/1
+				  0, // 4  PA3
+				  0, // 5  PA4
+				  0, // 6  PA5
+				  PWM1_CH0_LOC3, // 15 PB7	TIM1_CC0 #3
+				  PWM1_CH1_LOC3, // 16 PB8	TIM1_CC1 #3
+				  0, // 9  PB3
+				  0, //10  PB4
+				  0, //11  PB5
+				  0, //12  PB6
+				  0, //13  PC4
+				  0, //14  PC5
+				  PWM1_CH0_LOC3, //15  PB7 TIM1_CC0 #3
+				  PWM1_CH1_LOC3, //16  PB8 TIM1_CC1 #3
+				  PWM2_CH0_LOC1, //17 PA12 TIM2_CC0 #1
+				  PWM2_CH1_LOC1, //18 PA13 TIM2_CC1 #1
+				  PWM2_CH2_LOC1, //19 PA14 TIM2_CC2 #1
+				  PWM1_CH2_LOC3, //21 PB11 TIM1_CC2 #3
+				  0,
+				  0,
+				  0,
+				  0, //24 PB13
+				  0, //25 PB14
+				  0, 
+				  0,
+				  0, //28  PD0
+				  PWM0_CH0_LOC3, //29  PD1 TIM0_CC0 #3
+				  PWM0_CH1_LOC3, //30  PD2 TIM0_CC1 #3
+				  PWM0_CH2_LOC3, //31  PD3 TIM0_CC2 #3
+				  0, //32  PD4
+				  0, //33  PD5
+				  PWM1_CH0_LOC4, //34  PD6 TIM1_CC0 #4
+				  PWM1_CH1_LOC4, //35  PD7 TIM1_CC1 #4
+				  0, //36  PD8
+				  0, //37  PC6
+				  0, //38  PC7
+				  0,
+				  0,
+				  0, //41  PE4
+				  0, //42  PE5
+				  0, //43  PE6
+				  0, //44  PE7
+				  0, //45 PC12
+				  PWM1_CH0_LOC0, //46 PC13 TIM1_CC0 #0
+				  PWM1_CH1_LOC0, //47 PC14 TIM1_CC1 #0
+				  PWM1_CH2_LOC0, //48 PC15 TIM1_CC2 #0
+				  0,
+				  0,
+				  PWM0_CH2_LOC5, //51  PF2 TIM0_CC2 #5
+				  0, //52  PF3
+				  0, //53  PF4
+				  0, //54  PF5
+				  0,
+				  0,
+				  0, //57  PE8
+				  PWM1_CH0_LOC0, //58 PE10 TIM1_CC0 #1
+				  PWM1_CH1_LOC1, //59 PE11 TIM1_CC1 #1
+				  PWM1_CH2_LOC1, //60 PE12 TIM1_CC2 #1
+				  0, //61 PE13
+				  PWM3_CH0_LOC0, //62 PE14 TIM3_CC0 #0
+				  PWM3_CH1_LOC0, //63 PE15 TIM3_CC1 #0
+				  PWM3_CH2_LOC0}; //64 PA15 TIM3_CC2 #0
+
+
+#endif
+
+
+
+				  
+				  
+				  
 // LED Pins                    Red,  Blue,  Green
 const uint8_t ledPorts[3]  = {PORTD, PORTA, PORTA};
 const uint8_t ledPins[3]   = {  8,     6,    15  };

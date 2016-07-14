@@ -51,6 +51,15 @@ static const uint8_t A7  = 35;
 #define DACC_ISR_ID         DACC_IRQn
 
 
+// PWM Resolution
+
+#define PWM_INTERFACE        PWM
+#define PWM_INTERFACE_ID     ID_PWM
+#define PWM_FREQUENCY	     1000
+#define PWM_MAX_DUTY_CYCLE   255
+#define PWM_MIN_DUTY_CYCLE   0
+#define PWM_RESOLUTION	     16
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
