@@ -195,7 +195,7 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 
 	if (adcChannel[ulPin] != NO_ADC) {
 		
-#if defined(EFM32TG) || defined(EFM32WG)
+#if defined(EFM32TG) || defined(EFM32WG840)
 		EAnalogChannel channel = adcChannel[ulPin];
 		if (channel == EM_DAC0 || channel == EM_DAC1) {
 			
@@ -246,7 +246,7 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 #endif 
 	}
 
-#if defined(EFM32WG)
+#if defined(EFM32WG840)
 	if (pwmChannel[ulPin] != 0) {
 
 		
