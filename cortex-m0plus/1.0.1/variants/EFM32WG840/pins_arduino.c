@@ -259,6 +259,8 @@ const uint32_t timerRoutes[] = {0, // 0
 				  
 				  
 #else
+#define TIMER_COUNT 4
+
 	const uint32_t pwmChannel[] = {0, // 0
 				  PWM0_CH0_LOC0,  // 1  PA0 TIM0_CC0 #0/1/4
 				  PWM0_CH1_LOC0, // 2  PA1 TIM0_CC1 #0/1

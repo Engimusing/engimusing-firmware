@@ -77,6 +77,13 @@ UARTClass::UARTClass( Leuart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, ui
 void UARTClass::begin( const uint32_t dwBaudRate )
 {
 	
+	//for now lets not allow any other baudrates!!!!! 
+	// Remove before distributing to customers!!!!!
+	if(dwBaudRate != 115200)
+		return;
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
+	
   // Configure PMC
 	
   if(_pUart)

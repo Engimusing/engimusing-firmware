@@ -246,7 +246,8 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 #endif 
 	}
 
-#if defined(EFM32WG840)
+#if defined(EFM32WG840) || defined(EFM32G232)
+
 	if (pwmChannel[ulPin] != 0) {
 
 		
@@ -273,7 +274,9 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 			}
 			else 
 			{
+				#if TIMER_COUNT > 3
 				CMU_ClockEnable(cmuClock_TIMER3, true);
+				#endif
 			}
 			//PWMEnabled = 1;
 		}
@@ -292,7 +295,9 @@ void analogWrite(uint32_t ulPin, uint32_t ulValue) {
 		}
 		else 
 		{
+#if TIMER_COUNT > 3
 			timer = TIMER3;
+#endif
 			
 		}
 		
