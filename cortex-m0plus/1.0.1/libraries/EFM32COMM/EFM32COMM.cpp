@@ -21,6 +21,7 @@
 
 extern UARTClass Serial;
 extern UARTClass Serial1;
+extern INTRClass INTR;
 // --------------------------------- Basic JSON Communication Class -------------------------
 
 EFM32COMMClass::EFM32COMMClass()
@@ -393,41 +394,50 @@ void detectorSwitchClass::switchMsg(uint8_t currentSwitch)
 }
 
 
+// ------------------------------- Momentary Switch Class ------------------------
+void momentarySwitchClass::begin(uint8_t _pin, const char* mod, uint8_t bounceCount)
+{
+	
+  myPin = _pin;
+  myBounceCnt = bounceCount;
+  pinMode(_pin, INPUT_PU_FILTER);
+  myEventInProgress = 0;
+  
+  INTR.attachIntrCounter(_pin, RISING);
+  
+  MQTTBaseHandler::begin(mod, true);
+	
+}
+
+void momentarySwitchClass::update(void)
+{
+  if(millis() > myTick + 10) {
+    myTick = millis();
+    uint8_t sw_int = INTR.read_clr_nints(myPin);
+
+	uint8_t currentSwitch = (digitalRead(myPin) & 0x01);
+		
+    if((myEventInProgress == 0) && (sw_int > 0)) { // switch event happened
+      myEventInProgress = 1;
+    } else if((myEventInProgress > 0) && (myEventInProgress < myBounceCnt)) { // wait until bounce count
+      myEventInProgress++;
+    } else if(myEventInProgress >= myBounceCnt) { // report event	 
+		if(currentSwitch == HIGH) //Check to see if the pin is still high, debounces the signal
+		{	
+			COMM.sendMessage((const char*)myModule, "SWITCH", "CLOSED");
+	    }
+		myEventInProgress = 0;
+	}
+     
+  }
+}
+
 
 #if 0
 
 
 
-// ------------------------------- Momentary Switch Class ------------------------
 
-void momentarySwitchClass::begin(uint8_t _pin, const char* mod, uint8_t bounce_count)
-{
-  pin = _pin;
-  intrPinMode(pin, INPUT_PU_FILTER);
-  module = (uint8_t*)mod;
-  INTR.attachIntrCounter(pin, RISING);
-  event_in_progress = 0;
-  bounce_cnt = bounce_count;
-  tick = 0;
-}
-
-void momentarySwitchClass::update(void)
-{
-  if(millis() > tick + 100) {
-    tick = millis();
-    uint8_t sw_int = INTR.read_clr_nints(pin);
-
-    if((event_in_progress == 0) && (sw_int > 0) ) { // switch event happened
-      event_in_progress = 1;
-    } else if((event_in_progress > 0) && (event_in_progress < bounce_cnt)) { // wait until bounce count
-      event_in_progress++;
-    } else if(event_in_progress >= bounce_cnt) { // report event
-      Serial.printf("{\"TOP\":\"%s?/SWITCH\",\"PLD\":\"CLOSED\"}\r\n", module);
-      event_in_progress = 0;
-      return;
-    }
-  }
-}
 
 
 

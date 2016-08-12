@@ -138,24 +138,22 @@ class detectorSwitchClass : public MQTTBaseHandler
 };
 
 
+// ------------------------------- Momentary Switch Class -------------------------
+
+class momentarySwitchClass : public MQTTBaseHandler
+{
+ public:
+  void begin(uint8_t _pin, const char* module, uint8_t bounceCount);
+  void update(void); // publish changes in switch state
+ private:
+  uint32_t myPin;  // connector pin connected to switch
+  uint8_t myEventInProgress; // switch event in progress
+  uint8_t myBounceCnt; // bounce filter value, 0 = no filter, 0xff = momentary
+};
+
 #if 0
 
 
-
-// ------------------------------- Momentary Switch Class -------------------------
-
-class momentarySwitchClass
-{
- public:
-  void begin(uint8_t _pin, const char* module, uint8_t bounce_count);
-  void update(void); // publish changes in switch state
- private:
-  uint8_t* module;
-  uint32_t tick;
-  uint8_t pin;  // connector pin connected to switch
-  uint8_t event_in_progress; // switch event in progress
-  uint8_t bounce_cnt; // bounce filter value, 0 = no filter, 0xff = momentary
-};
 
 
 

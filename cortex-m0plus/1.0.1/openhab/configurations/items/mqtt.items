@@ -10,6 +10,7 @@ String LED1state "LED1[%s]" {mqtt="<[localbroker:EFM/BOARD/LED1?/LED:state:defau
 Switch LED2 {mqtt=">[localbroker:EFM/BOARD/LED2/CTL:command:*:${command}], <[localbroker:EFM/BOARD/LED2?/LED:state:default]"}
 String LED2state "LED2[%s]" {mqtt="<[localbroker:EFM/BOARD/LED2?/LED:state:default]"}
 String SWITCH1state "SWITCH1[%s]" {mqtt="<[localbroker:EFM/BOARD/SWITCH1?/SWITCH:state:default]"}
+String SWITCH2state "SWITCH2[%s]" {mqtt="<[localbroker:EFM/BOARD/SWITCH2?/SWITCH:state:default]"}
 
 
 

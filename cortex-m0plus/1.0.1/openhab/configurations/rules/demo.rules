@@ -14,6 +14,7 @@ end
          
 		 
 //Example showing how to connect the status of a switch on the board to a light
+// using an on off switch
 /*
 rule "HAB LED0 Command"
   when Item SWITCH1state received update then
@@ -27,4 +28,20 @@ rule "HAB LED0 Command"
     }
 end
 */	 
+
+//Example showing how to connect the status of a switch on the board to a light
+// using a momentary switch
+rule "HAB LED0 Command"
+  when Item SWITCH2state received update then
+	println(SWITCH2state.state)
+    if(LED0.state==ON) {
+      sendCommand(LED0, OFF)
+      println("LED0 ON")
+    } else if(LED0.state==OFF) {
+      sendCommand(LED0, ON)
+      println("LED0 OFF")
+    }
+end
+	 
+		 
 		 
