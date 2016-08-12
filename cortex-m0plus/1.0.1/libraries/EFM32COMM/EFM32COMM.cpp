@@ -19,11 +19,9 @@
 #include "EFM32COMM.h"
 #include <Arduino.h>
 
-extern LEUARTClass Serial;
-
+extern UARTClass Serial;
+extern UARTClass Serial1;
 // --------------------------------- Basic JSON Communication Class -------------------------
-
-uint8_t EFM32COMMClass::decode_done = 0;
 
 EFM32COMMClass::EFM32COMMClass()
 {
@@ -32,7 +30,10 @@ EFM32COMMClass::EFM32COMMClass()
   isCnt = 0;
   charCnt = 0;
   state = Idle;
-  subscribe_heartbeat = 300;
+  subscribe_heartbeat = 30000; //30 second heartbeat
+  myHeatbeatTick = 0;
+  myRootModule = 0;
+  
 }
 
 int8_t EFM32COMMClass::decode(void)
@@ -46,7 +47,6 @@ int8_t EFM32COMMClass::decode(void)
       return 0;
     }
   }
-  decode_done = 0;
   return 0;
 }
 
@@ -64,7 +64,7 @@ int8_t EFM32COMMClass::getInputString(char c)
       addCharToInputString('\r');
       addCharToInputString('\n');
       addCharToInputString('\0');
-      //Serial.printf("%s\r\n",inputString);
+	  
       int8_t r = parseLine();
       inputString[0]  = '\0';
       isCnt = 0;
@@ -102,16 +102,17 @@ int8_t EFM32COMMClass::parseLine(void)
     if( ((c[0] == '{') || (c[0] == ',')) && (c[1] == '\"')) {
       if((c[2] == 'T') && (c[3] == 'O') && (c[4] == 'P')) {
 	r = getToken(&c[5], item_topic, MODULE_STRING_LENGTH);
-	if(debug) {Serial.printf("TOP = %s\r\n", item_topic);}
+	if(debug) {Serial1.printf("TOP = %s\r\n", item_topic);}
       }
       if((c[2] == 'P') && (c[3] == 'L') && (c[4] == 'D')) {
 	r += getToken(&c[5], item_payload, ITEM_PAYLOAD_LENGTH);
-	if(debug) {Serial.printf("PLD = %s\r\n", item_payload);}
+	if(debug) {Serial1.printf("PLD = %s\r\n", item_payload);}
       }
     }
   }
-  if(debug) {Serial.printf("topic   = %s\r\n", topic);}
-  if(debug) {Serial.printf("payload = %s\r\n\r\n", payload);}
+  if(debug) {Serial1.printf("topic   = %s\r\n", topic);}
+  if(debug) {Serial1.printf("payload = %s\r\n\r\n", payload);}
+   if(debug) {Serial1.println(r);}
   return r;
 }
 
@@ -145,80 +146,257 @@ int8_t EFM32COMMClass::compare_token(uint8_t* inTok, const char* cmpTok)
   return 1;
 }
 
+template <typename T> 
+void EFM32COMMClass::sendMessage(const char* mod, const char* subTop, T payload)
+{
+    Serial.print("{\"TOP\":\"");
+	Serial.print(mod);
+	Serial.print("?/");
+	Serial.print(subTop);
+	Serial.print("\",\"PLD\":\"");
+	Serial.print(payload);
+	Serial.print("\"}\r\n");
+}
+
+void EFM32COMMClass::subscribe(const char* mod)
+{
+	
+	Serial.print("{\"TOP\":\"");
+	Serial.print((const char*)mod);
+	Serial.print("/#\",\"PLD\":\"SUB\"}\r\n");
+}
+
+void EFM32COMMClass::registerModule(MQTTBaseHandler *module)
+{
+	module->myNextHandler = myRootModule;
+	myRootModule = module;
+}
+
+void EFM32COMMClass::update()
+{
+	MQTTBaseHandler *curHandler;
+	if(decode())
+	{
+		curHandler = myRootModule;
+		while(curHandler)
+		{
+			if(curHandler->decode())
+			{
+				curHandler = 0;
+			}else
+			{
+				curHandler = curHandler->myNextHandler;
+			}
+		}
+	}
+	
+	curHandler = myRootModule;
+	while(curHandler)
+	{
+		curHandler->update();
+		
+		curHandler = curHandler->myNextHandler;
+	}
+		
+		
+	if(millis() > myHeatbeatTick + subscribe_heartbeat)
+	{
+		myHeatbeatTick = millis();
+		curHandler = myRootModule;
+		while(curHandler)
+		{
+			if(curHandler->mySubOnHeartbeat)
+			{
+				subscribe(curHandler->myModule);	
+			}
+			curHandler = curHandler->myNextHandler;
+		}
+	}
+		
+		
+	
+}
+
+
 EFM32COMMClass COMM;
 
-// ------------------------------- Detector Switch Class -------------------------
 
-void detectorSwitchClass::begin(uint8_t _pin, const char* mod, uint8_t bounce_count)
+	
+void MQTTBaseHandler::begin(const char* module, bool subOnHeartbeat)
 {
-  pin = _pin;
-  module = (uint8_t*)mod;
-  bounce_cnt = bounce_count;
-  intrPinMode(pin, INPUT_PU_FILTER);
-  switch_state = (~intrDigitalRead(pin) & 0x01);
-  switch_msg(switch_state);
-  event_in_progress = 0;
+  myModule = module;
+  COMM.registerModule(this);
+  COMM.subscribe((const char*)myModule);
+  mySubOnHeartbeat  = subOnHeartbeat;
+  myTick = 0;
+}
+
+void MQTTBaseHandler::update(void)
+{
+
+}
+
+uint8_t MQTTBaseHandler::decode(void)
+{
+		return 0;
+}
+
+uint8_t MQTTBaseHandler::isTopicThisModule()
+{
+  int8_t j = 0;
+  int8_t mlen = strlen((char*)myModule);
+  int8_t tlen = strlen((char*)COMM.topic);
+  if((tlen < mlen) || (COMM.topic[mlen] != '/')) {
+    return 0;
+  }
+  // compare module
+  for(int i = 0; i < mlen; i++, j++) {
+    if(COMM.topic[j] != myModule[i]) {
+      return 0;
+    }
+  }
+  return j+1;
+}
+
+// ------------------------------- On/Off Control Class --------------------------
+
+void onOffCtlClass::begin(uint8_t _pin, const char* mod, uint8_t act)
+{
+	
+   static const char *onoff[]   = {"OFF","ON"};
+
+  myPin = _pin;
+  myActive = act;
+  if(myActive == HIGH) {
+    myOn = HIGH;
+    myOff = LOW;
+  } else {
+    myOn = LOW;
+    myOff = HIGH;
+  }
+
+  pinMode(myPin, OUTPUT);       // LED
+
+  MQTTBaseHandler::begin(mod, true);
+  
+  uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : ~digitalRead(myPin);
+  COMM.sendMessage((const char*)myModule, "LED", onoff[val & 0x01]);
+	  
+}
+
+uint8_t onOffCtlClass::decode(void)
+{
+  static const char *onoff[]   = {"OFF","ON"};
+
+  int8_t j = isTopicThisModule();
+  if(j == 0)
+  {
+	  return 0;
+  }  
+  
+  if(COMM.compare_token(&COMM.topic[j],"CTL")) {
+    
+	if(COMM.compare_token(COMM.payload,"ON")) {
+      setPinState(HIGH);
+    } else if(COMM.compare_token(COMM.payload,"OFF")) {
+	  setPinState(LOW);
+    } else if(COMM.compare_token(COMM.payload,"STATUS")) {
+      uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : ~digitalRead(myPin);
+      COMM.sendMessage((const char*)myModule, "LED", onoff[val & 0x01]);
+    } else {return 0;}
+    return 1;
+  }
+}
+
+void onOffCtlClass::setPinState(uint8_t on)
+{
+	static const char *onoff[]   = {"OFF","ON"};
+	
+	//Set the state of the pin
+	if(on == HIGH)
+	{
+		digitalWrite(myPin, myOn);
+	}
+	else
+	{
+		digitalWrite(myPin, myOff);
+	}
+	
+	//send the current state to any subscribers
+	uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : ~digitalRead(myPin);
+    COMM.sendMessage((const char*)myModule, "LED", onoff[val & 0x01]);
+}
+
+
+// ------------------------------- Detector Switch Class -------------------------
+void detectorSwitchClass::begin(uint8_t _pin, const char* mod, uint8_t bounceCount)
+{
+	
+  myPin = _pin;
+  myBounceCnt = bounceCount;
+  pinMode(_pin, INPUT_PU_FILTER);
+  mySwitchState = (~digitalRead(_pin) & 0x01);
+  myEventInProgress = 0;
+  
+  MQTTBaseHandler::begin(mod, true);
+  
+  switchMsg(mySwitchState);
+  
 }
 
 void detectorSwitchClass::update(void)
 {
-  if(millis() > tick + 100) {
-    tick = millis();
-    uint8_t current_switch = (~intrDigitalRead(pin) & 0x01);
+  if(millis() > myTick + 100) {
+    myTick = millis();
+    uint8_t currentSwitch = (~digitalRead(myPin) & 0x01);
 
-    if((event_in_progress == 0) && (switch_state != current_switch) ) { // switch event happened
-      event_in_progress = 1;
-    } else if((event_in_progress > 0) && (event_in_progress < bounce_cnt)) { // wait until bounce count
-      event_in_progress++;
-    } else if(event_in_progress >= bounce_cnt) { // report event
-      if(switch_state != current_switch) {
-	switch_state = current_switch;
-	switch_msg(current_switch);
-      }
-      event_in_progress = 0;
-      return;
-    }
-    if(tick_5s++ >= COMM.subscribe_heartbeat) { // subscribe every 5s for a heartbeat
-      tick_5s = 0;
-      Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
+    if((myEventInProgress == 0) && (mySwitchState != currentSwitch) ) { // switch event happened
+        myEventInProgress = 1;
+	} else if(mySwitchState == currentSwitch)// not really an event
+	{
+		myEventInProgress = 0;
+    } else if((myEventInProgress > 0) && (myEventInProgress < myBounceCnt)) { // wait until bounce count
+      myEventInProgress++;
+    } else if(myEventInProgress >= myBounceCnt) { // report event
+		mySwitchState = currentSwitch;
+		switchMsg(currentSwitch);
     }
   }
 }
 
-void detectorSwitchClass::decode(void)
+uint8_t detectorSwitchClass::decode(void)
 {
-  if(COMM.decode_done) {return;}
-  int8_t j = 0;
-  int8_t mlen = strlen((char*)module);
-  int8_t tlen = strlen((char*)COMM.topic);
-  if((tlen < mlen) || (COMM.topic[mlen] != '/')) {
-    return;
+  int8_t j = isTopicThisModule();
+  if(j == 0)
+  {
+	  return 0;
   }
-  // compare module
-  for(int i = 0; i < mlen; i++, j++) {
-    if(COMM.topic[j] != module[i]) {
-      return;
-    }
-  }
-  j++;
+  
   if(COMM.compare_token(&COMM.topic[j],"SWITCH")) {
-    switch_msg(~intrDigitalRead(pin) & 0x1);
-    COMM.decode_done = 1;
-    return;
+    switchMsg(mySwitchState);
+    return 1;
   }
 }
 
-void detectorSwitchClass::switch_msg(uint8_t current_switch)
+void detectorSwitchClass::switchMsg(uint8_t currentSwitch)
 {
-
-  Serial.printf("{\"TOP\":\"%s?/SWITCH\",\"PLD\":\"", module);
-
-  if(current_switch) {
-    Serial.printf("CLOSED\"}\r\n");
-  } else {
-    Serial.printf("OPEN\"}\r\n");
-  }
+	
+   if(currentSwitch)
+   {
+	   COMM.sendMessage((const char*)myModule, "SWITCH", "CLOSED");
+   }
+   else
+   {
+	   COMM.sendMessage((const char*)myModule, "SWITCH", "OPEN");
+   }
+	   
 }
+
+
+
+#if 0
+
+
 
 // ------------------------------- Momentary Switch Class ------------------------
 
@@ -251,70 +429,7 @@ void momentarySwitchClass::update(void)
   }
 }
 
-// ------------------------------- On/Off Control Class --------------------------
 
-void onOffCtlClass::begin(uint8_t _pin, const char* mod, uint8_t act)
-{
-  pin = _pin;
-  module = (uint8_t*)mod;
-  active = act;
-  if(active == HIGH) {
-    on = HIGH;
-    off = LOW;
-  } else {
-    on = LOW;
-    off = HIGH;
-  }
-
-  pinMode(pin, OUTPUT);       // LED
-
-  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
-  tick = 0;
-  tick_5s = 0;
-}
-
-void onOffCtlClass::update(void)
-{
-  if(millis() > tick + 100) {
-    tick = millis();
-    if(tick_5s++ >= COMM.subscribe_heartbeat) { // subscribe every 5s for a heartbeat
-      tick_5s = 0;
-      Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
-    }
-  }
-}
-
-void onOffCtlClass::decode(void)
-{
-  if(COMM.decode_done) {return;}
-  static const char *onoff[]   = {"OFF","ON"};
-
-  int8_t j = 0;
-  int8_t mlen = strlen((char*)module);
-  int8_t tlen = strlen((char*)COMM.topic);
-  if((tlen < mlen) || (COMM.topic[mlen] != '/')) {
-    return;
-  }
-  // compare module
-  for(int i = 0; i < mlen; i++, j++) {
-    if(COMM.topic[j] != module[i]) {
-      return;
-    }
-  }
-  j++;
-  if(COMM.compare_token(&COMM.topic[j],"CTL")) {
-    if(COMM.compare_token(COMM.payload,"ON")) {
-      digitalWrite(pin, on);
-    } else if(COMM.compare_token(COMM.payload,"OFF")) {
-      digitalWrite(pin, off);
-    } else if(COMM.compare_token(COMM.payload,"STATUS")) {
-      uint8_t val = (active == HIGH) ? digitalRead(pin) : ~digitalRead(pin);
-      Serial.printf("{\"TOP\":\"%s?/LED\",\"PLD\":\"%s\"}\r\n",module, onoff[val & 0x01]);
-    } else {return;}
-    COMM.decode_done = 1;
-    return;
-  }
-}
 
 // ------------------------------- Tone Control Class ----------------------------
 
@@ -582,6 +697,7 @@ void cpuTempClass::decode(void)
 }
 
 
+#endif
 
 
 

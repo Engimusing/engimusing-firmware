@@ -20,9 +20,9 @@
 
 #include "Arduino.h"
 
-extern INTRClass INTR;
-extern LEUARTClass Serial;
-extern AnalogLP Analog;
+//extern INTRClass INTR;
+extern UARTClass Serial;
+//extern AnalogLP Analog;
 
 // --------------------------------- Basic JSON Communication Class -------------------------
 
@@ -41,17 +41,30 @@ enum giState {
   gettingLine,
 };
 
+class MQTTBaseHandler;
+
 class EFM32COMMClass
 {
  public:
   uint8_t* topic;
   uint8_t* payload;
-  static uint8_t decode_done;
   EFM32COMMClass();
   int8_t decode(void);
   int8_t add_module(uint8_t*, void (*cmd)(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*));
   int8_t compare_token(uint8_t* inTok, const char* cmpTok);
+  
+  template <typename T> 
+  void  sendMessage(const char* mod, const char* subTop, T payload);
+  void  subscribe(const char* mod);
+  
+  void registerModule(MQTTBaseHandler *module);
+  
+  void update();
+  
   uint32_t subscribe_heartbeat;
+  
+  
+  
  private:
   int8_t getInputString(char);
   int8_t substrcmp(uint8_t* str, uint8_t* sub, uint8_t start);
@@ -64,28 +77,70 @@ class EFM32COMMClass
   uint8_t isCnt;
   uint8_t charCnt;
   giState state;
+  uint32_t myHeatbeatTick;
+  MQTTBaseHandler *myRootModule;
+  
+  
 };
 
 extern EFM32COMMClass COMM;
 
-// --------------------------------- Detector Switch Class -------------------------
+	
+class MQTTBaseHandler
+{
+	
+  friend class EFM32COMMClass;
+  
+ public:
+  
+  virtual void begin(const char* module, bool subOnHeartbeat = true);
+  virtual void update(void);
+  virtual uint8_t decode(void);
+ protected:
+  virtual uint8_t isTopicThisModule();
+  const char* myModule;
+  bool mySubOnHeartbeat;
+  uint32_t myTick;
+  MQTTBaseHandler* myNextHandler;
+};
 
-class detectorSwitchClass
+	
+// ------------------------------- On/Off Control Class -------------------------
+
+class onOffCtlClass : public MQTTBaseHandler
 {
  public:
-  void begin(uint8_t _pin, const char* module, uint8_t bounce_count);
-  void update(void); // publish changes in switch state
-  void decode(void);
+  virtual void begin(uint8_t _pin, const char* module, uint8_t active);
+  virtual uint8_t decode(void);
+  virtual void setPinState(uint8_t _on);
  private:
-  uint8_t* module;
-  uint32_t tick;
-  uint32_t tick_5s;
-  uint32_t pin;  // connector pin connected to switch
-  uint8_t event_in_progress; // switch event in progress
-  uint32_t switch_state;
-  uint8_t bounce_cnt; // bounce filter value, 0 = no filter, 0xff = momentary
-  void switch_msg(uint8_t current_switch);
+  uint32_t myPin;
+  uint8_t myActive;
+  uint8_t myOn;
+  uint8_t myOff;
 };
+
+// --------------------------------- Detector Switch Class -------------------------
+
+class detectorSwitchClass : public MQTTBaseHandler
+{
+ public:
+  virtual void  begin(uint8_t _pin, const char* module, uint8_t bounceCount);
+  virtual void  update(void); // publish changes in switch state
+  virtual uint8_t decode(void);
+ protected:
+  void switchMsg(uint8_t currentSwitch);
+  uint32_t myPin;  // connector pin connected to switch
+  uint8_t myEventInProgress; // switch event in progress
+  uint32_t mySwitchState;
+  uint8_t myBounceCnt; // bounce filter value, 0 = no filter, 0xff = momentary
+  
+};
+
+
+#if 0
+
+
 
 // ------------------------------- Momentary Switch Class -------------------------
 
@@ -102,23 +157,7 @@ class momentarySwitchClass
   uint8_t bounce_cnt; // bounce filter value, 0 = no filter, 0xff = momentary
 };
 
-// ------------------------------- On/Off Control Class -------------------------
 
-class onOffCtlClass
-{
- public:
-  void begin(uint8_t _pin, const char* module, uint8_t active);
-  void update(void);
-  void decode(void);
- private:
-  uint8_t* module;
-  uint32_t tick;
-  uint32_t tick_5s;
-  uint32_t pin;
-  uint8_t active;
-  uint8_t on;
-  uint8_t off;
-};
 
 // ------------------------------- Tone Control Class -------------------------
 
@@ -191,3 +230,6 @@ class cpuTempClass
   void publishCPUtempF(void);
 };
 
+
+
+#endif

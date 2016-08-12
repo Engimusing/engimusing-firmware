@@ -24,8 +24,10 @@
 // using a ring buffer (I think), in which head is the index of the location
 // to which to write the next incoming character and tail is the index of the
 // location from which to read.
-#define SERIAL_BUFFER_SIZE 64
-#define SERIAL_BUFFER_MASK 0x003F;
+
+//bumped up the size so that more than one mqtt command would fit on the buffer at a time.
+#define SERIAL_BUFFER_SIZE 256
+#define SERIAL_BUFFER_MASK 0x00FF;
 
 class RingBuffer
 {
