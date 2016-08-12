@@ -1,0 +1,13 @@
+sitemap demo label="Main Menu"
+Frame label="Demo" {
+        Text item=temperature icon="1stfloor" 
+		//Having switch sends the commands and the text shows the
+		// current status send back from the board
+		Switch item=LED0 
+		Text item=LED0state icon="light"
+		Switch item=LED1
+		Text item=LED1state icon="light"
+		Switch item=LED2
+		Text item=LED2state icon="light"
+		Text item=SWITCH1state icon="door"
+}

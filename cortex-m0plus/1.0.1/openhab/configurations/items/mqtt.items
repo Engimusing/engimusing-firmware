@@ -1,0 +1,20 @@
+String temperature "temp [%s]" {mqtt="<[localbroker:EFM/BOARD/STRING?/TEST123:state:default]"}
+
+
+//example of how to connect a light switch upto mqtt
+//Connects the LED of a board upto a switch in the GUI. All so connects the status command up to the LED
+Switch LED0 {mqtt=">[localbroker:EFM/BOARD/LED0/CTL:command:*:${command}], <[localbroker:EFM/BOARD/LED0?/LED:state:default]"}
+String LED0state "LED0[%s]" {mqtt="<[localbroker:EFM/BOARD/LED0?/LED:state:default]"}
+Switch LED1 {mqtt=">[localbroker:EFM/BOARD/LED1/CTL:command:*:${command}], <[localbroker:EFM/BOARD/LED1?/LED:state:default]"}
+String LED1state "LED1[%s]" {mqtt="<[localbroker:EFM/BOARD/LED1?/LED:state:default]"}
+Switch LED2 {mqtt=">[localbroker:EFM/BOARD/LED2/CTL:command:*:${command}], <[localbroker:EFM/BOARD/LED2?/LED:state:default]"}
+String LED2state "LED2[%s]" {mqtt="<[localbroker:EFM/BOARD/LED2?/LED:state:default]"}
+String SWITCH1state "SWITCH1[%s]" {mqtt="<[localbroker:EFM/BOARD/SWITCH1?/SWITCH:state:default]"}
+
+
+
+//strings used to publish status requests. 
+String Led0StatusCommand "[%s]" { mqtt=">[localbroker:EFM/BOARD/LED0/CTL:command:*:STATUS]" }
+String Led1StatusCommand "[%s]" { mqtt=">[localbroker:EFM/BOARD/LED1/CTL:command:*:STATUS]" }
+String Led2StatusCommand "[%s]" { mqtt=">[localbroker:EFM/BOARD/LED2/CTL:command:*:STATUS]" }
+String Switch1StatusCommand "[%s]" { mqtt=">[localbroker:EFM/BOARD/SWITCH1/SWITCH:command:*:STATUS]" }

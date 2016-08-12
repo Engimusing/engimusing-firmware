@@ -1,0 +1,30 @@
+
+   
+//rule for getting the initial stats of the LEDS
+rule "Initialize LED STATUS" 
+  when  
+    System started  
+  then            
+    println("Getting LED States")    
+	Led0StatusCommand.sendCommand("Status")  
+	Led1StatusCommand.sendCommand("Status") 
+	Led2StatusCommand.sendCommand("Status") 
+	Switch1StatusCommand.sendCommand("Status") 
+end 
+         
+		 
+//Example showing how to connect the status of a switch on the board to a light
+/*
+rule "HAB LED0 Command"
+  when Item SWITCH1state received update then
+	println(SWITCH1state.state)
+    if(SWITCH1state.state=="CLOSED") {
+      sendCommand(LED0, ON)
+      println("LED0 ON")
+    } else if(SWITCH1state.state=="OPEN") {
+      sendCommand(LED0, OFF)
+      println("LED0 OFF")
+    }
+end
+*/	 
+		 
