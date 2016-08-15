@@ -1,6 +1,10 @@
+
+#include <Wire.h>
+
 #include "Arduino.h"
 
 #include <EFM32COMM.h>
+
 /*
   EFMUSB Commands:
   {"TOP":"EFM/BOARD/LED0/CTL","PLD":"ON"}
@@ -23,6 +27,7 @@ onOffCtlClass LEDCtrl1;
 onOffCtlClass LEDCtrl2;
 detectorSwitchClass Switch1;
 momentarySwitchClass Switch2;
+tmp102Class TMP102;
 void setup()
 {
   Serial.begin(115200);
@@ -33,6 +38,11 @@ void setup()
   //pick one or the other since they use the same pin.
   //Switch1.begin(51, "EFM/BOARD/SWITCH1", 10);
   Switch2.begin(51, "EFM/BOARD/SWITCH2", 10);
+  TMP102.begin("EFM/BOARD/TMP102", &Wire0, 11, 10000);
+  //other 3 DF11 slots on the Wonder Gecko board
+  //TMP102.begin("EFM/BOARD/TMP102", &Wire1, 24, 10000);
+  //TMP102.begin("EFM/BOARD/TMP102", &Wire2, 60, 10000);
+  //TMP102.begin("EFM/BOARD/TMP102", &Wire3, 42, 10000);
 }
 //int lastMillisOn = 0;
 //int lastMillisOff = 1000;
@@ -54,4 +64,3 @@ void loop()
   }*/
 
 }
-

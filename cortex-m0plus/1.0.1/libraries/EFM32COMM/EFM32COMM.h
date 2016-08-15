@@ -24,6 +24,8 @@
 extern UARTClass Serial;
 //extern AnalogLP Analog;
 
+class TwoWire;
+
 // --------------------------------- Basic JSON Communication Class -------------------------
 
 #define MODULE_TABLE_ENTRIES    8
@@ -143,13 +145,49 @@ class detectorSwitchClass : public MQTTBaseHandler
 class momentarySwitchClass : public MQTTBaseHandler
 {
  public:
-  void begin(uint8_t _pin, const char* module, uint8_t bounceCount);
-  void update(void); // publish changes in switch state
+  virtual void begin(uint8_t _pin, const char* module, uint8_t bounceCount);
+  virtual void update(void); // publish changes in switch state
  private:
   uint32_t myPin;  // connector pin connected to switch
   uint8_t myEventInProgress; // switch event in progress
   uint8_t myBounceCnt; // bounce filter value, 0 = no filter, 0xff = momentary
 };
+
+
+
+
+// ------------------------------- i2cSingleRegisterClass -------------------------
+
+class i2cSingleRegisterClass : public MQTTBaseHandler
+{
+ public:
+  virtual void begin(const char* mod, TwoWire *_wire, uint32_t _enablePin, uint8_t _address, uint8_t _registerToRead, uint32_t _dataSize, uint32_t _updateDelay);
+  virtual void update(void); // publish changes in switch state
+  virtual uint8_t decode(void);
+  
+ protected:
+  
+  virtual void requestI2CData();
+  virtual void sendMQTTData();
+  
+  TwoWire *myWire;
+  uint8_t myAddress; 
+  uint8_t myDataSize; 
+  uint8_t myReadRegister;
+  uint32_t myUpdateDelay;
+};
+
+class tmp102Class : public i2cSingleRegisterClass
+{
+	public:
+		virtual void begin(const char* mode, TwoWire *_wire, uint32_t _enablePin, uint32_t _updateDelay);
+	protected:
+		virtual void sendMQTTData();
+	
+};
+
+
+
 
 #if 0
 

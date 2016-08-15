@@ -49,6 +49,9 @@ static const uint8_t A6  = 34;
 #define PWM_MIN_DUTY_CYCLE   0
 #define PWM_RESOLUTION	     16
 
+
+
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);

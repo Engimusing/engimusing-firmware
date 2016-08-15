@@ -12,6 +12,10 @@ String LED2state "LED2[%s]" {mqtt="<[localbroker:EFM/BOARD/LED2?/LED:state:defau
 String SWITCH1state "SWITCH1[%s]" {mqtt="<[localbroker:EFM/BOARD/SWITCH1?/SWITCH:state:default]"}
 String SWITCH2state "SWITCH2[%s]" {mqtt="<[localbroker:EFM/BOARD/SWITCH2?/SWITCH:state:default]"}
 
+String TMP102CState "Temperature[%s deg C]" {mqtt="<[localbroker:EFM/BOARD/TMP102?/DEG_C:state:default]"}
+String TMP102FState "Temperature[%s deg F]" {}
+
+
 
 
 //strings used to publish status requests. 
@@ -19,3 +23,4 @@ String Led0StatusCommand "[%s]" { mqtt=">[localbroker:EFM/BOARD/LED0/CTL:command
 String Led1StatusCommand "[%s]" { mqtt=">[localbroker:EFM/BOARD/LED1/CTL:command:*:STATUS]" }
 String Led2StatusCommand "[%s]" { mqtt=">[localbroker:EFM/BOARD/LED2/CTL:command:*:STATUS]" }
 String Switch1StatusCommand "[%s]" { mqtt=">[localbroker:EFM/BOARD/SWITCH1/SWITCH:command:*:STATUS]" }
+String TMP102StatusCommand "[%s]" { mqtt=">[localbroker:EFM/BOARD/TMP102/STATUS:command:*:STATUS]" }

@@ -10,4 +10,7 @@ Frame label="Demo" {
 		Switch item=LED2
 		Text item=LED2state icon="light"
 		Text item=SWITCH1state icon="door"
+		
+		Text item=TMP102CState icon="temperature"
+		Text item=TMP102FState icon="temperature"
 }

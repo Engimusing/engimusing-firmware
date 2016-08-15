@@ -10,7 +10,8 @@ rule "Initialize LED STATUS"
 	Led1StatusCommand.sendCommand("Status") 
 	Led2StatusCommand.sendCommand("Status") 
 	Switch1StatusCommand.sendCommand("Status") 
-end 
+	TMP102StatusCommand.sendCommand("STATUS") 
+end  
          
 		 
 //Example showing how to connect the status of a switch on the board to a light
@@ -44,4 +45,10 @@ rule "HAB LED0 Command"
 end
 	 
 		 
+		 
+//Example showing how to convet from Celceis to Ferenhiet
+rule "HAB LED00 Command"
+  when Item TMP102CState received update then
+    postUpdate(TMP102FState, (new Double(TMP102CState.state.toString) * 1.8f) + 32.0f);
+end
 		 

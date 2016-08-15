@@ -60,6 +60,41 @@ static const uint8_t A7  = 35;
 #define PWM_MIN_DUTY_CYCLE   0
 #define PWM_RESOLUTION	     16
 
+
+// Wire Interfaces (I2C)
+
+#define WIRE_INTERFACES_COUNT 4
+
+#define PIN_WIRE0_SDA         (13u) //PD6
+#define PIN_WIRE0_SCL         (14u) //PD7
+#define WIRE0_INTERFACE       I2C1
+#define WIRE0_LOC    0
+#define WIRE0_ISR_HANDLER     I2C1_Handler
+#define WIRE0_CLOCK				cmuClock_I2C1
+
+#define PIN_WIRE1_SDA         (1u) //PD6
+#define PIN_WIRE1_SCL         (2u) //PD7
+#define WIRE1_INTERFACE       I2C0
+#define WIRE1_LOC    0
+#define WIRE1_ISR_HANDLER     I2C0_Handler
+#define WIRE1_CLOCK				cmuClock_I2C0
+
+#define PIN_WIRE2_SDA         (21u) //PD6
+#define PIN_WIRE2_SCL         (22u) //PD7
+#define WIRE2_INTERFACE       I2C1
+#define WIRE2_LOC    1
+#define WIRE2_ISR_HANDLER     I2C1_Handler
+#define WIRE2_CLOCK				cmuClock_I2C1
+
+#define PIN_WIRE3_SDA         (34u) //PD6
+#define PIN_WIRE3_SCL         (35u) //PD7
+#define WIRE3_INTERFACE       I2C0
+#define WIRE3_LOC    1
+#define WIRE3_ISR_HANDLER     I2C0_Handler
+#define WIRE3_CLOCK				cmuClock_I2C0
+
+
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);

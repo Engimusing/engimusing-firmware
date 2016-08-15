@@ -18,10 +18,12 @@
 
 #include "EFM32COMM.h"
 #include <Arduino.h>
+#include <Wire.h>
 
 extern UARTClass Serial;
 extern UARTClass Serial1;
 extern INTRClass INTR;
+
 // --------------------------------- Basic JSON Communication Class -------------------------
 
 EFM32COMMClass::EFM32COMMClass()
@@ -432,14 +434,86 @@ void momentarySwitchClass::update(void)
   }
 }
 
+// ------------------------------- i2cSingleRegisterClass -------------------------
+void i2cSingleRegisterClass::begin(const char* mod, TwoWire *_wire, uint32_t _enablePin, uint8_t _address, uint8_t _registerToRead, uint32_t _dataSize, uint32_t _updateDelay)
+{
+  pinMode(_enablePin, OUTPUT);
+  digitalWrite(_enablePin, HIGH);
+  
+  myAddress = _address;
+  myDataSize = _dataSize;
+  myUpdateDelay = _updateDelay;
+  myWire = _wire;
+  _wire->begin();
+  myReadRegister = _registerToRead;
+  
+  MQTTBaseHandler::begin(mod, true);
+  
+  //give the slave a slight delay so it can turn on.
+  delay(50);
+  requestI2CData();
+  sendMQTTData();
+  
+}
+
+void i2cSingleRegisterClass::update(void)
+{
+  if(millis() > myTick + myUpdateDelay) {
+    myTick = millis();
+    requestI2CData();
+    sendMQTTData();
+  }
+}
+
+uint8_t i2cSingleRegisterClass::decode(void)
+{
+  int8_t j = isTopicThisModule();
+  if(j == 0)
+  {
+	  return 0;
+  }
+  
+  if(COMM.compare_token(&COMM.topic[j],"STATUS")) {
+    requestI2CData();
+    sendMQTTData();
+    return 1;
+  }
+}
+
+void i2cSingleRegisterClass::requestI2CData()
+{
+	 //read register 0 from the I2C slave
+  myWire->beginTransmission(myAddress);
+  myWire->write(myReadRegister);//register address
+  myWire->requestFrom(myAddress, myDataSize); //read 2 bytes
+  myWire->endTransmission();
+}
+
+void i2cSingleRegisterClass::sendMQTTData()
+{
+	//by default don't send anything but read the wire result
+	for(int i = 0; i < myDataSize; i++)
+	{
+		byte b = myWire->read();
+	}
+}
+
+void tmp102Class::begin(const char* mod, TwoWire *_wire, uint32_t _enablePin, uint32_t _updateDelay)
+{
+	i2cSingleRegisterClass::begin(mod, _wire, _enablePin, 0x48, 0x00, 2, _updateDelay);
+}
+	
+void tmp102Class::sendMQTTData()
+{
+	byte msb = myWire->read(); 
+	byte lsb = myWire->read(); 
+	int temp = ((msb << 8) | lsb) >> 4;
+	float degc = temp/16.0f;
+	COMM.sendMessage((const char*)myModule, "DEG_C", degc);
+	
+}
 
 #if 0
-
-
-
-
-
-
 
 // ------------------------------- Tone Control Class ----------------------------
 
