@@ -79,14 +79,9 @@ class UARTClass : public HardwareSerial
 
 extern UARTClass Serial;
 extern UARTClass Serial1;
+extern UARTClass Serial2;
 
 extern void serialEventRun(void) __attribute__((weak));
 extern void serialEvent() __attribute__((weak));
-void serialEventRun(void)
-  {
-  if (Serial.available() && serialEvent) serialEvent();
-  if (Serial1.available() && serialEvent) serialEvent();
-
-  }
 
 #endif // _UART_CLASS_

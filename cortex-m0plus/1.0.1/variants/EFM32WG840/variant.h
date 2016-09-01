@@ -93,6 +93,15 @@ static const uint8_t A7  = 35;
 #define WIRE3_ISR_HANDLER     I2C0_Handler
 #define WIRE3_CLOCK				cmuClock_I2C0
 
+#define SPI_INTERFACES_COUNT 1
+
+#define SPI_INTERFACE        USART0
+#define SPI_INTERFACE_ID     USART_ROUTE_LOCATION_LOC1
+#define SPI_CLK	cmuClock_USART0
+#define SPI_CHANNELS_NUM 1
+#define PIN_SPI0_MOSI 44
+#define PIN_SPI0_MISO 43
+#define PIN_SPI0_SCK 42
 
 
 void print_gpio_regs(void);

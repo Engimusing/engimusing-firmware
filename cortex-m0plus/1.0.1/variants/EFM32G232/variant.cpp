@@ -134,3 +134,12 @@ void print_gpio_regs(void)
   Serial.printf(" IEN             = %x\r\n",GPIO->IEN);
   Serial.printf(" IF              = %x\r\n",GPIO->IF);
 }
+
+extern void serialEventRun(void) __attribute__((weak));
+extern void serialEvent() __attribute__((weak));
+void serialEventRun(void)
+{
+if (Serial.available() && serialEvent) serialEvent();
+if (Serial1.available() && serialEvent) serialEvent();
+
+}

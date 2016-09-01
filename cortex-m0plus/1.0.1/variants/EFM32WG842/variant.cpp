@@ -19,7 +19,7 @@
 
 #include "Arduino.h"
 #include "variant.h"
-
+#include "efm_lib/efm_gpio.h"
 /*
   EM4 Pin retention:
   output enable
@@ -76,14 +76,16 @@
 
 RingBuffer rx_buffer1;
 RingBuffer rx_buffer2;
+RingBuffer rx_buffer3;
 
-UARTClass Serial(USART1, USART1_RX_IRQn, &rx_buffer1, USART_ROUTE_LOCATION_LOC0, cmuClock_USART1);
-UARTClass Serial1(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC1, cmuClock_LEUART0);
+UARTClass Serial(LEUART1, LEUART1_IRQn, &rx_buffer1, LEUART_ROUTE_LOCATION_LOC0, cmuClock_LEUART1);
+UARTClass Serial1(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC2, cmuClock_LEUART0);
+UARTClass Serial2(USART1, USART1_RX_IRQn, &rx_buffer3, USART_ROUTE_LOCATION_LOC1, cmuClock_USART1);
 
 // IT handlers
 void USART1_RX_IRQHandler(void)
 {
-  Serial.IrqHandler();
+  Serial2.IrqHandler();
 }
 
 void LEUART0_IRQHandler(void)
@@ -91,9 +93,14 @@ void LEUART0_IRQHandler(void)
   Serial1.IrqHandler();
 }
 
+void LEUART1_IRQHandler(void)
+{
+  Serial.IrqHandler();
+}
+
 void check_for_reset()
   {
-	if(Serial.isResetReceived() || Serial1.isResetReceived())
+	if(Serial.isResetReceived() || Serial1.isResetReceived() || Serial2.isResetReceived())
 	{
 		SCB->AIRCR = 0x05FA0004;
 		//BOOT_reset();
@@ -104,6 +111,7 @@ void initVariant()
 { 
 	Serial.begin(115200);
 	Serial1.begin(115200);
+	Serial2.begin(115200);	
 }
 
 // -------------------------------------------------------------------------------------------------------------
@@ -129,4 +137,14 @@ void print_gpio_regs(void)
   Serial.printf(" GPIO->EXTIFALL  = %x\r\n",GPIO->EXTIFALL);
   Serial.printf(" IEN             = %x\r\n",GPIO->IEN);
   Serial.printf(" IF              = %x\r\n",GPIO->IF);
+}
+
+extern void serialEventRun(void) __attribute__((weak));
+extern void serialEvent() __attribute__((weak));
+void serialEventRun(void)
+{
+if (Serial.available() && serialEvent) serialEvent();
+if (Serial1.available() && serialEvent) serialEvent();
+if (Serial2.available() && serialEvent) serialEvent();
+
 }
