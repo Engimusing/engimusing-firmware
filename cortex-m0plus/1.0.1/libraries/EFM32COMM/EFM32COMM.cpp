@@ -435,10 +435,13 @@ void momentarySwitchClass::update(void)
 }
 
 // ------------------------------- i2cSingleRegisterClass -------------------------
-void i2cSingleRegisterClass::begin(const char* mod, TwoWire *_wire, uint32_t _enablePin, uint8_t _address, uint8_t _registerToRead, uint32_t _dataSize, uint32_t _updateDelay)
+void i2cSingleRegisterClass::begin(const char* mod, TwoWire *_wire, int32_t _enablePin, uint8_t _address, uint8_t _registerToRead, uint32_t _dataSize, uint32_t _updateDelay)
 {
-  pinMode(_enablePin, OUTPUT);
-  digitalWrite(_enablePin, HIGH);
+  if(_enablePin > 0)
+  {
+	pinMode(_enablePin, OUTPUT);
+	digitalWrite(_enablePin, HIGH);
+  }
   
   myAddress = _address;
   myDataSize = _dataSize;
@@ -498,7 +501,7 @@ void i2cSingleRegisterClass::sendMQTTData()
 	}
 }
 
-void tmp102Class::begin(const char* mod, TwoWire *_wire, uint32_t _enablePin, uint32_t _updateDelay)
+void tmp102Class::begin(const char* mod, TwoWire *_wire, int32_t _enablePin, uint32_t _updateDelay)
 {
 	i2cSingleRegisterClass::begin(mod, _wire, _enablePin, 0x48, 0x00, 2, _updateDelay);
 }

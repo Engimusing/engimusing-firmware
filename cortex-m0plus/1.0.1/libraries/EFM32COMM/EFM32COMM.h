@@ -161,7 +161,7 @@ class momentarySwitchClass : public MQTTBaseHandler
 class i2cSingleRegisterClass : public MQTTBaseHandler
 {
  public:
-  virtual void begin(const char* mod, TwoWire *_wire, uint32_t _enablePin, uint8_t _address, uint8_t _registerToRead, uint32_t _dataSize, uint32_t _updateDelay);
+  virtual void begin(const char* mod, TwoWire *_wire, int32_t _enablePin, uint8_t _address, uint8_t _registerToRead, uint32_t _dataSize, uint32_t _updateDelay);
   virtual void update(void); // publish changes in switch state
   virtual uint8_t decode(void);
   
@@ -180,7 +180,7 @@ class i2cSingleRegisterClass : public MQTTBaseHandler
 class tmp102Class : public i2cSingleRegisterClass
 {
 	public:
-		virtual void begin(const char* mode, TwoWire *_wire, uint32_t _enablePin, uint32_t _updateDelay);
+		virtual void begin(const char* mode, TwoWire *_wire, int32_t _enablePin, uint32_t _updateDelay);
 	protected:
 		virtual void sendMQTTData();
 	
