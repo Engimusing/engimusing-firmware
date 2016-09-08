@@ -620,8 +620,6 @@ void cpuTempClass::publishCPUtempF(void)
 
 uint8_t cpuTempClass::decode(void)
 {
-  Serial.printf(".");
-
   int8_t j = isTopicThisModule();
   if(j == 0) {
     return 0;
