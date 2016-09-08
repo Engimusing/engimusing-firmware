@@ -21,13 +21,23 @@
   {"TOP":"EFMUSB/CPU/VDD"}
 */
 
+// LED pin numbers
 #define GREEN_LED    13
 #define BLUE_LED     14
 #define RED_LED      15
 
+// Instantiate classes for each the LEDs on the EFMUSB CPU board
+// The onOffCtlClass allows for turning the LEDs on and off and
+// requesting their status
+
 onOffCtlClass EFMREDLED;
 onOffCtlClass EFMBLUELED;
 onOffCtlClass EFMGREENLED;
+
+// Instantiate classes for the CPU temperature and supply voltage
+// These classes can be used to read the values or can be set up
+// to periodically report the values
+
 cpuVDDClass EFMCPUVDD;
 cpuTempClass EFMCPUTMP;
 
@@ -35,26 +45,27 @@ void setup()
 {
   Serial.begin(115200);
 
+  // Start each of the LED services
+  // The first parameter is the LED pin
+  // The second parameter is the module name
+  // The third parameter is the on state for the LEDs
   EFMREDLED.begin(RED_LED, "EFMUSB/RED/LED", LOW);
   EFMBLUELED.begin(BLUE_LED, "EFMUSB/BLUE/LED", LOW);
   EFMGREENLED.begin(GREEN_LED, "EFMUSB/GREEN/LED", LOW);
-  EFMCPUVDD.begin("EFMUSB/CPU/VDD", 50);
-  EFMCPUTMP.begin("EFMUSB/CPU/TEMP", 50, 50);
+
+  // Start each of the CPU services
+  // The first parameter is the module name
+  // The other parameters are time values in tenths of seconds
+  // The CPUVDD will send a status every 10 seconds
+  EFMCPUVDD.begin("EFMUSB/CPU", 100);
+  // The CPUTEMP has two possible status options
+  // The first number is 5 seconds for a Farenheit reading
+  // The second number is 5 seconds for a Celcius reading
+  EFMCPUTMP.begin("EFMUSB/CPU", 50, 50);
 }
 
 void loop()
 {
-  if (COMM.decode()) {
-    EFMREDLED.decode();
-    EFMBLUELED.decode();
-    EFMGREENLED.decode();
-    EFMCPUVDD.decode();
-    EFMCPUTMP.decode();
-  }
-  EFMREDLED.update();
-  EFMBLUELED.update();
-  EFMGREENLED.update();
-  EFMCPUVDD.update();
-  EFMCPUTMP.update();
+  COMM.update();
 }
 
