@@ -20,9 +20,7 @@
 
 #include "Arduino.h"
 
-//extern INTRClass INTR;
 extern UARTClass Serial;
-//extern AnalogLP Analog;
 
 class TwoWire;
 
@@ -56,7 +54,7 @@ class EFM32COMMClass
   int8_t compare_token(uint8_t* inTok, const char* cmpTok);
   
   template <typename T> 
-  void  sendMessage(const char* mod, const char* subTop, T payload);
+    void  sendMessage(const char* mod, const char* subTop, T payload);
   void  subscribe(const char* mod);
   
   void registerModule(MQTTBaseHandler *module);
@@ -187,6 +185,41 @@ class tmp102Class : public i2cSingleRegisterClass
 };
 
 
+// ------------------------------- CPU VDD ADC Class -------------------------
+
+class cpuVDDClass : public MQTTBaseHandler
+{
+ public:
+  virtual void begin(const char* module, uint32_t interval);
+  virtual void update(void);
+  virtual uint8_t decode(void);
+ private:
+  uint8_t* module;
+  uint32_t tick;
+  uint32_t current;
+  uint32_t interval;
+  void publishCPUvoltage(void);
+};
+
+// ------------------------------- CPU Temperature Class -------------------------
+
+class cpuTempClass : public MQTTBaseHandler
+{
+ public:
+  virtual void begin(const char* module, uint32_t Finterval, uint32_t Cinterval);
+  virtual void update(void);
+  virtual uint8_t decode(void);
+ private:
+  uint8_t* module;
+  uint32_t tick;
+  uint32_t currentF;
+  uint32_t currentC;
+  uint32_t intervalF;
+  uint32_t intervalC;
+  void publishCPUtempC(void);
+  void publishCPUtempF(void);
+};
+
 
 
 #if 0
@@ -229,41 +262,6 @@ class adcCtlClass
   uint32_t interval;
   uint32_t pin;
   void publishADCvoltage(void);
-};
-
-// ------------------------------- CPU VDD ADC Class -------------------------
-
-class cpuVDDClass
-{
- public:
-  void begin(const char* module, uint32_t interval);
-  void update(void);
-  void decode(void);
- private:
-  uint8_t* module;
-  uint32_t tick;
-  uint32_t current;
-  uint32_t interval;
-  void publishCPUvoltage(void);
-};
-
-// ------------------------------- CPU Temperature Class -------------------------
-
-class cpuTempClass
-{
- public:
-  void begin(const char* module, uint32_t Finterval, uint32_t Cinterval);
-  void update(void);
-  void decode(void);
- private:
-  uint8_t* module;
-  uint32_t tick;
-  uint32_t currentF;
-  uint32_t currentC;
-  uint32_t intervalF;
-  uint32_t intervalC;
-  void publishCPUtempC(void);
-  void publishCPUtempF(void);
 };
 
 

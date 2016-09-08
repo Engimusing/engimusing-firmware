@@ -17,6 +17,9 @@
 */
 
 #include "analog.h"
+#include "Arduino.h"
+
+/*
 #include "efm_devinfo.h"
 #include "em_device.h"
 #include "UARTClass.h"
@@ -24,9 +27,10 @@
 extern "C" {
 #include "pins_arduino.h"
 }
+*/
+
 
 AnalogLP Analog;
-
 
 AnalogLP::AnalogLP()
 {
@@ -200,6 +204,7 @@ void AnalogLP::analogReadResolution(uint8_t bits)
 }
 
 
+
 void print_adc_regs(void)
 {
 #if defined(ADC_COUNT)
@@ -239,3 +244,4 @@ void print_adc_regs(void)
   Serial.println("");
 #endif
 }
+

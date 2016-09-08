@@ -17,12 +17,16 @@
 */
 
 #include "EFM32COMM.h"
+#include "efm_lib/analog.h"
+
+
 #include <Arduino.h>
 #include <Wire.h>
 
 extern UARTClass Serial;
 extern UARTClass Serial1;
 extern INTRClass INTR;
+extern AnalogLP  Analog;
 
 // --------------------------------- Basic JSON Communication Class -------------------------
 
@@ -293,16 +297,15 @@ uint8_t onOffCtlClass::decode(void)
 
   int8_t j = isTopicThisModule();
   if(j == 0)
-  {
-	  return 0;
-  }  
+    {
+      return 0;
+    }  
   
   if(COMM.compare_token(&COMM.topic[j],"CTL")) {
-    
-	if(COMM.compare_token(COMM.payload,"ON")) {
+    if(COMM.compare_token(COMM.payload,"ON")) {
       setPinState(HIGH);
     } else if(COMM.compare_token(COMM.payload,"OFF")) {
-	  setPinState(LOW);
+      setPinState(LOW);
     } else if(COMM.compare_token(COMM.payload,"STATUS")) {
       uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : ~digitalRead(myPin);
       COMM.sendMessage((const char*)myModule, "LED", onoff[val & 0x01]);
@@ -516,6 +519,128 @@ void tmp102Class::sendMQTTData()
 	
 }
 
+// ------------------------------- CPU VDD ADC Class -----------------------------
+
+void cpuVDDClass::begin(const char* mod, uint32_t intrval)
+{
+  module = (uint8_t*)mod;
+  interval = intrval;
+
+  MQTTBaseHandler::begin(mod, true);
+
+  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
+  tick = 0;
+}
+
+void cpuVDDClass::update(void)
+{
+  if(millis() > tick + 100) {
+    tick = millis();
+    if(interval != 0) {
+      if(current <= 0) {
+	current = interval;
+	publishCPUvoltage();
+      } else {
+	current--;
+      }
+    }
+  }
+}
+
+void cpuVDDClass::publishCPUvoltage(void)
+{
+  uPvdd vddval = Analog.analogReadVDD();
+  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%d\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
+}
+
+uint8_t cpuVDDClass::decode(void)
+{
+  int8_t j = isTopicThisModule();
+  if(j == 0) {
+    return 0;
+  }
+
+  if(COMM.compare_token(&COMM.topic[j],"VDD")) {
+    publishCPUvoltage();
+  } else {return 0;}
+  return 1;
+}
+
+
+
+// ------------------------------- CPU Temperature Class -------------------------
+
+
+void cpuTempClass::begin(const char* mod, uint32_t Fintrval, uint32_t Cintrval)
+{
+  module = (uint8_t*)mod;
+  intervalF = Fintrval;
+  intervalC = Cintrval;
+
+  MQTTBaseHandler::begin(mod, true);
+
+  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
+  tick = 0;
+}
+
+void cpuTempClass::update(void)
+{
+  if(millis() > tick + 100) {
+    tick = millis();
+    if(intervalC != 0) {
+      if(currentC <= 0) {
+	currentC = intervalC;
+	publishCPUtempC();
+      } else {
+	currentC--;
+      }
+    }
+    if(intervalF != 0) {
+      if(currentF <= 0) {
+	currentF = intervalF;
+	publishCPUtempF();
+      } else {
+	currentF--;
+      }
+    }
+  }
+}
+
+void cpuTempClass::publishCPUtempC(void)
+{
+  temperature tempval = Analog.analogReadTemp();
+  Serial.printf("{\"TOP\":\"%s?/TMPC\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeC, tempval.fracC);
+}
+
+void cpuTempClass::publishCPUtempF(void)
+{
+  temperature tempval = Analog.analogReadTemp();
+  Serial.printf("{\"TOP\":\"%s?/TMPF\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeF, tempval.fracF);
+}
+
+uint8_t cpuTempClass::decode(void)
+{
+  Serial.printf(".");
+
+  int8_t j = isTopicThisModule();
+  if(j == 0) {
+    return 0;
+  }
+
+  if(COMM.compare_token(&COMM.topic[j],"TMPC")) {
+    publishCPUtempC();
+  } else if(COMM.compare_token(&COMM.topic[j],"TMPF")) {
+    publishCPUtempF();
+  } else {return 0;}
+  return 1;
+}
+
+
+
+
+
+
+
 #if 0
 
 // ------------------------------- Tone Control Class ----------------------------
@@ -651,137 +776,6 @@ void adcCtlClass::decode(void)
   }
 }
 
-// ------------------------------- CPU VDD ADC Class -----------------------------
-
-void cpuVDDClass::begin(const char* mod, uint32_t intrval)
-{
-  module = (uint8_t*)mod;
-  interval = intrval;
-
-  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
-  tick = 0;
-}
-
-void cpuVDDClass::update(void)
-{
-  if(millis() > tick + 100) {
-    tick = millis();
-    if(interval != 0) {
-      if(current <= 0) {
-	current = interval;
-	publishCPUvoltage();
-      } else {
-	current--;
-      }
-    }
-  }
-}
-
-void cpuVDDClass::publishCPUvoltage(void)
-{
-  uPvdd vddval = Analog.analogReadVDD();
-  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%d\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
-}
-
-void cpuVDDClass::decode(void)
-{
-  if(COMM.decode_done) {return;}
-
-  int8_t j = 0;
-  int8_t mlen = strlen((char*)module);
-  int8_t tlen = strlen((char*)COMM.topic);
-  if((tlen < mlen) || (COMM.topic[mlen] != '/')) {
-    return;
-  }
-  // compare module
-  for(int i = 0; i < mlen; i++, j++) {
-    if(COMM.topic[j] != module[i]) {
-      return;
-    }
-  }
-  j++;
-  if(COMM.compare_token(&COMM.topic[j],"ADC")) {
-    publishCPUvoltage();
-    COMM.decode_done = 1;
-    return;
-  }
-}
-
-// ------------------------------- CPU Temperature Class -------------------------
-
-void cpuTempClass::begin(const char* mod, uint32_t Fintrval, uint32_t Cintrval)
-{
-  module = (uint8_t*)mod;
-  intervalF = Fintrval;
-  intervalC = Cintrval;
-
-  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
-  tick = 0;
-}
-
-void cpuTempClass::update(void)
-{
-  if(millis() > tick + 100) {
-    tick = millis();
-    if(intervalC != 0) {
-      if(currentC <= 0) {
-	currentC = intervalC;
-	publishCPUtempC();
-      } else {
-	currentC--;
-      }
-    }
-    if(intervalF != 0) {
-      if(currentF <= 0) {
-	currentF = intervalF;
-	publishCPUtempF();
-      } else {
-	currentF--;
-      }
-    }
-  }
-}
-
-void cpuTempClass::publishCPUtempC(void)
-{
-  temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s?/TMPC\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeC, tempval.fracC);
-}
-
-void cpuTempClass::publishCPUtempF(void)
-{
-  temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s?/TMPF\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeF, tempval.fracF);
-}
-
-void cpuTempClass::decode(void)
-{
-  if(COMM.decode_done) {return;}
-
-  int8_t j = 0;
-  int8_t mlen = strlen((char*)module);
-  int8_t tlen = strlen((char*)COMM.topic);
-  if((tlen < mlen) || (COMM.topic[mlen] != '/')) {
-    return;
-  }
-  // compare module
-  for(int i = 0; i < mlen; i++, j++) {
-    if(COMM.topic[j] != module[i]) {
-      return;
-    }
-  }
-  j++;
-  if(COMM.compare_token(&COMM.topic[j],"TMPC")) {
-    publishCPUtempC();
-    COMM.decode_done = 1;
-    return;
-  }
-  if(COMM.compare_token(&COMM.topic[j],"TMPF")) {
-    publishCPUtempF();
-    COMM.decode_done = 1;
-    return;
-  }
-}
 
 
 #endif
