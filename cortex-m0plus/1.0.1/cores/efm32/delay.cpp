@@ -20,6 +20,7 @@
 #include "em_device.h"
 #include "pins_arduino.h"
 #include "efm_lib/coreclk.h"
+#include "efm_lib/UARTClass.h"
 
 // Tick Counter united by ms
 static volatile uint32_t _ulTickCount = 0;
@@ -69,7 +70,11 @@ extern "C" {
 	return ;
       }
 
-    /*
+    uint32_t start = micros();
+    while ((micros() - start) < usec)
+        ;
+    #if 0 //this way stalled on the Energy micro
+	/*
      *  The following loop:
      *
      *    for (; ul; ul--) {
@@ -86,6 +91,7 @@ extern "C" {
     // VARIANT_MCK / 1000000 == cycles needed to delay 1uS
     //                     3 == cycles used in a loop
     uint32_t n = usec * (VARIANT_MCK / 1000000) / 3;
+	Serial.println(n);
     __asm__ __volatile__(
 			 "1:              \n"
 			 "   sub %0, #1   \n" // substract 1 from %0 (n)
@@ -94,6 +100,7 @@ extern "C" {
 			 :                    // no input
 			 :                    // no clobber
 			 );
+#endif
     // https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html
     // https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Volatile
   }

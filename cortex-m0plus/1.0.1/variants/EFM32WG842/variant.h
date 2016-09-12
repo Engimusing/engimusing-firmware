@@ -31,13 +31,14 @@
 #define EFMWG_LEUART_CLKDIV 0x77C0
 #define LEUART_CLKDIV EFMZG_LEUART_CLKDIV
 
-static const uint8_t A0  = 21;
-static const uint8_t A1  = 22;
-static const uint8_t A2  = 23;
-static const uint8_t A3  = 24;
-static const uint8_t A4  = 25;
-static const uint8_t A5  = 26;
-static const uint8_t A6  = 27;
+static const uint8_t A0  = 28;
+static const uint8_t A1  = 29;
+static const uint8_t A2  = 30;
+static const uint8_t A3  = 31;
+static const uint8_t A4  = 32;
+static const uint8_t A5  = 33;
+static const uint8_t A6  = 34;
+static const uint8_t A7  = 35;
 
 #define ADC_RESOLUTION		12
 
