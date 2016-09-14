@@ -95,14 +95,22 @@ static const uint8_t A7  = 35;
 
 #define SPI_INTERFACES_COUNT 1
 
-#define SPI_INTERFACE        USART0
+#define SPI_INTERFACE        USART2
 #define SPI_INTERFACE_ID     USART_ROUTE_LOCATION_LOC1
-#define SPI_CLK	cmuClock_USART0
+#define SPI_CLK	cmuClock_USART2
 #define SPI_CHANNELS_NUM 1
-#define PIN_SPI0_MOSI 44
-#define PIN_SPI0_MISO 43
-#define PIN_SPI0_SCK 42
+#define PIN_SPI0_MOSI 9
+#define PIN_SPI0_MISO 10
+#define PIN_SPI0_SCK 11
 
+
+#define SPI1_INTERFACE        USART0
+#define SPI1_INTERFACE_ID     USART_ROUTE_LOCATION_LOC1
+#define SPI1_CLK	cmuClock_USART0
+#define SPI1_CHANNELS_NUM 1
+#define PIN_SPI1_MOSI 44
+#define PIN_SPI1_MISO 43
+#define PIN_SPI1_SCK 42
 
 void print_gpio_regs(void);
 
