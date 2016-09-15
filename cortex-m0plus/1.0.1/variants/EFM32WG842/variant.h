@@ -43,6 +43,16 @@ static const uint8_t A7  = 35;
 #define ADC_RESOLUTION		12
 
 
+// PWM Resolution
+
+#define PWM_INTERFACE        PWM
+#define PWM_INTERFACE_ID     ID_PWM
+#define PWM_FREQUENCY	     1000
+#define PWM_MAX_DUTY_CYCLE   255
+#define PWM_MIN_DUTY_CYCLE   0
+#define PWM_RESOLUTION	     16
+
+
 // Wire Interfaces (I2C)
 
 #define WIRE_INTERFACES_COUNT 1
