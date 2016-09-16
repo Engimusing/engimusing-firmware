@@ -57,6 +57,10 @@ extern const uint32_t timerRoutes[];
 extern const uint32_t adcChannel[];
 extern const ADC_SingleInput_TypeDef adcChannelNum[];
 
+extern const uint8_t ledPorts[];
+extern const uint8_t ledPins[];
+extern const uint8_t ledId[];
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus

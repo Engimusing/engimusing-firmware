@@ -74,6 +74,10 @@ const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0,adcSingleInpCh
 														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh6, 
 														   adcSingleInpCh7, adcSingleInpCh0};
 
+const uint8_t ledPorts[1]  = {PORTB};
+const uint8_t ledPins[1]   = { 11 };
+const uint8_t ledIds[1] = {13};
+														   
 // ------------------------------------------------------------------------------------------------------------
 
 // This function verifies the pin is valid for this variant

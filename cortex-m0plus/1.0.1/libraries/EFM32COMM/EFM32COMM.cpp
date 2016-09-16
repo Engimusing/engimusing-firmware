@@ -333,6 +333,13 @@ void onOffCtlClass::setPinState(uint8_t on)
     COMM.sendMessage((const char*)myModule, "LED", onoff[val & 0x01]);
 }
 
+uint8_t onOffCtlClass::pinState()
+{
+	uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : ~digitalRead(myPin);
+	return val;
+}
+
+
 
 // ------------------------------- Detector Switch Class -------------------------
 void detectorSwitchClass::begin(uint8_t _pin, const char* mod, uint8_t bounceCount)
@@ -398,6 +405,10 @@ void detectorSwitchClass::switchMsg(uint8_t currentSwitch)
 	   
 }
 
+uint32_t detectorSwitchClass::switchState(void)
+{
+	return mySwitchState;
+}
 
 // ------------------------------- Momentary Switch Class ------------------------
 void momentarySwitchClass::begin(uint8_t _pin, const char* mod, uint8_t bounceCount)

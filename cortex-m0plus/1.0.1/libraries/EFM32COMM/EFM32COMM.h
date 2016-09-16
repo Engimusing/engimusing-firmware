@@ -113,6 +113,7 @@ class onOffCtlClass : public MQTTBaseHandler
   virtual void begin(uint8_t _pin, const char* module, uint8_t active);
   virtual uint8_t decode(void);
   virtual void setPinState(uint8_t _on);
+  virtual uint8_t pinState();
  private:
   uint32_t myPin;
   uint8_t myActive;
@@ -128,6 +129,7 @@ class detectorSwitchClass : public MQTTBaseHandler
   virtual void  begin(uint8_t _pin, const char* module, uint8_t bounceCount);
   virtual void  update(void); // publish changes in switch state
   virtual uint8_t decode(void);
+  virtual uint32_t switchState(void);
  protected:
   void switchMsg(uint8_t currentSwitch);
   uint32_t myPin;  // connector pin connected to switch
