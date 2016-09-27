@@ -1,4 +1,4 @@
-/*
+"""
   Copyright (c) 2015 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -14,7 +14,7 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+"""
 
 #!/usr/bin/env python
 
@@ -27,8 +27,12 @@ import time
 import json
 import paho.mqtt.client as mqtt
 
+from sets import Set
+subscriptions = Set()
+
+
 def getSerialPort():
-    s = serial.Serial(port="/dev/ttyUSB0",
+    s = serial.Serial(port="COM3",
                       baudrate=115200, 
                       bytesize=8,
                       parity='N',
@@ -129,6 +133,7 @@ class toMQTT(threading.Thread):
         while not self.stoprequest.isSet():
             try:
                 result = self.fromSerialPort_q.get(False, 0)
+                print result
                 if len(result[1]) > 10:
                     dict = json.loads(result[1].rstrip())
                     pTopic  = dict['TOP']
@@ -141,6 +146,7 @@ class toMQTT(threading.Thread):
                         pRetain = False
                         mqttp.publish(pTopic, payload=pPayload, qos=pQos, retain=pRetain)
                     else:
+                        subscriptions.add(str(pTopic))
                         mqttc.subscribe(str(pTopic))
             except Queue.Empty:
                 continue
@@ -155,12 +161,12 @@ def on_connectc(mqttc, userdata, rc):
     print("mqttc connected with result code "+str(rc))
     #Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    """
-    mqttc.subscribe("some/topic")
+    
+    # mqttc.subscribe("some/topic")
     for s in subscriptions:
-        print "Subscribed to: " + subscriptions
+        print "Subscribed to: " + s
         mqttc.subscribe(s)
-    """
+    
 
 toSerialPort_q = Queue.Queue()
 
