@@ -65,9 +65,9 @@ const uint32_t timerRoutes[11] = {0, // 0
 				  TIMER_ROUTE_LOCATION_LOC4 | TIMER_ROUTE_CC1PEN};//10: PD7  - TIM1_CC1 #4
 
 // LED Pins                    Red,  Blue,  Green
-const uint8_t ledPorts[1]  = {PORTA, PORTA, PORTA};
-const uint8_t ledPins[1]   = {  8,     9,    10  };
-const uint8_t ledIds[1] = {13,14,15};
+const uint8_t ledPorts[3]  = {PORTA, PORTA, PORTA};
+const uint8_t ledPins[3]   = {  8,     9,    10  };
+const uint8_t ledIds[3] = {13,14,15};
 // ------------------------------------------------------------------------------------------------------------
 
 // This function verifies the pin is valid for this variant
