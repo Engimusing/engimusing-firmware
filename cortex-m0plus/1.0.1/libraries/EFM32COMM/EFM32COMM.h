@@ -53,8 +53,18 @@ class EFM32COMMClass
   int8_t add_module(uint8_t*, void (*cmd)(uint8_t*, uint8_t*, uint8_t*, uint8_t*, uint8_t*));
   int8_t compare_token(uint8_t* inTok, const char* cmpTok);
   
-  template <typename T> 
-    void  sendMessage(const char* mod, const char* subTop, T payload);
+	template <typename T> 
+	void sendMessage(const char* mod, const char* subTop, T payload)
+	{
+		Serial.print("{\"TOP\":\"");
+		Serial.print(mod);
+		Serial.print("?/");
+		Serial.print(subTop);
+		Serial.print("\",\"PLD\":\"");
+		Serial.print(payload);
+		Serial.print("\"}\r\n");
+	}
+
   void  subscribe(const char* mod);
   
   void registerModule(MQTTBaseHandler *module);

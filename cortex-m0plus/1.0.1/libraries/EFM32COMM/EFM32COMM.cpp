@@ -153,17 +153,6 @@ int8_t EFM32COMMClass::compare_token(uint8_t* inTok, const char* cmpTok)
   return 1;
 }
 
-template <typename T> 
-void EFM32COMMClass::sendMessage(const char* mod, const char* subTop, T payload)
-{
-    Serial.print("{\"TOP\":\"");
-	Serial.print(mod);
-	Serial.print("?/");
-	Serial.print(subTop);
-	Serial.print("\",\"PLD\":\"");
-	Serial.print(payload);
-	Serial.print("\"}\r\n");
-}
 
 void EFM32COMMClass::subscribe(const char* mod)
 {
