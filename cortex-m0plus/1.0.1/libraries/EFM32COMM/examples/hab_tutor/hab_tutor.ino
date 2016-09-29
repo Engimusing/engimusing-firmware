@@ -59,8 +59,8 @@ momentarySwitchClass HABS1;
 momentarySwitchClass HABS2;
 detectorSwitchClass HABREED;
 onOffCtlClass HABLED;
-toneCtlClass HABBUZZ;
-adcCtlClass HABPOT;
+//toneCtlClass HABBUZZ;
+//adcCtlClass HABPOT;
 onOffCtlClass EFMREDLED;
 onOffCtlClass EFMBLUELED;
 onOffCtlClass EFMGREENLED;
@@ -81,39 +81,16 @@ void setup()
   EFMCPUVDD.begin("EFMUSB/CPU/VDD", 50);
   EFMCPUTMP.begin("EFMUSB/CPU/TEMP", 50, 50);
 
-  HABLTS.begin(LTSENS_PIN, "HAB/LTSENSOR", 2);
-  HABS1.begin(SW1_PIN, "HAB/SW1", 2);
-  HABS2.begin(SW2_PIN, "HAB/SW2", 2);
-  HABREED.begin(REEDSW_PIN, "HAB/REED", 2);
+  HABLTS.begin(LTSENS_PIN, "HAB/LTSENSOR", 20);
+  HABS1.begin(SW1_PIN, "HAB/SW1", 20);
+  HABS2.begin(SW2_PIN, "HAB/SW2", 20);
+  HABREED.begin(REEDSW_PIN, "HAB/REED", 20);
   HABLED.begin(HABLED_PIN, "HAB/LED", HIGH);
-  HABBUZZ.begin(BUZZER_PIN, "HAB/BUZZER");
-  HABPOT.begin(POT_PIN, "HAB/POT", 50);
+  //HABBUZZ.begin(BUZZER_PIN, "HAB/BUZZER");
+  //HABPOT.begin(POT_PIN, "HAB/POT", 50);
 }
 
 void loop()
 {
-  if (COMM.decode()) {
-    HABREED.decode();
-    HABLED.decode();
-    HABBUZZ.decode();
-    HABPOT.decode();
-    EFMREDLED.decode();
-    EFMBLUELED.decode();
-    EFMGREENLED.decode();
-    EFMCPUVDD.decode();
-    EFMCPUTMP.decode();
-  }
-  HABLTS.update();
-  HABS1.update();
-  HABS2.update();
-  HABREED.update();
-  HABLED.update();
-  HABBUZZ.update();
-  HABPOT.update();
-  EFMREDLED.update();
-  EFMBLUELED.update();
-  EFMGREENLED.update();
-  EFMCPUVDD.update();
-  EFMCPUTMP.update();
+  COMM.update();
 }
-
