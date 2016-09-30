@@ -726,13 +726,14 @@ void adcCtlClass::update(void)
 
 void adcCtlClass::publishADCvoltage(void)
 {
+#if defined(ADC_COUNT)
   uint32_t r = Analog.analogReadVDDsample();
   Analog.analogReference(INTERNALVDD);
   Analog.analogReadResolution(RES_12BITS);
   uint32_t v = Analog.analogReadPin(adcPin);
   uint32_t mV =  ((v * r)/4096);
   COMM.sendMessage((const char*)myModule, "ADC", ((float)mV / 1000.0f));
-  
+#endif 
 
 }
 
