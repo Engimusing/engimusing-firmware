@@ -155,7 +155,6 @@ const uint8_t dacPins[]  = {0,   0,    0,    0,    0,    0,    0,    0,    0,   
 //                         64
 			    0};
 
-#if OLD_TIMERS
 // GPIO Timer Ports         0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
 const uint8_t timerPorts[]={0, PORTA,PORTA,PORTA,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,  0  ,PORTB,
 //                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31
@@ -258,7 +257,7 @@ const uint32_t timerRoutes[] = {0, // 0
 
 				  
 				  
-#else
+
 #define TIMER_COUNT 4
 
 	const uint32_t pwmChannel[] = {0, // 0
@@ -328,7 +327,6 @@ const uint32_t timerRoutes[] = {0, // 0
 				  PWM3_CH2_LOC0}; //64 PA15 TIM3_CC2 #0
 
 
-#endif
 
 
 

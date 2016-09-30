@@ -220,7 +220,6 @@ class cpuVDDClass : public MQTTBaseHandler
   virtual uint8_t decode(void);
  private:
   uint8_t* module;
-  uint32_t tick;
   uint32_t current;
   uint32_t interval;
   void publishCPUvoltage(void);
@@ -236,7 +235,6 @@ class cpuTempClass : public MQTTBaseHandler
   virtual uint8_t decode(void);
  private:
   uint8_t* module;
-  uint32_t tick;
   uint32_t currentF;
   uint32_t currentC;
   uint32_t intervalF;
@@ -250,12 +248,11 @@ class cpuTempClass : public MQTTBaseHandler
 class adcCtlClass : public MQTTBaseHandler
 {
  public:
-  void begin(uint8_t _pin, const char* module, uint32_t interval);
-  void update(void);
-  uint8_t decode(void);
+  virtual void begin(uint8_t _pin, const char* module, uint32_t interval);
+  virtual void update(void);
+  virtual uint8_t decode(void);
  private:
   uint8_t* module;
-  uint32_t tick;
   uint32_t current;
   uint32_t interval;
   uint32_t adcPin;
@@ -263,25 +260,15 @@ class adcCtlClass : public MQTTBaseHandler
 };
 
 
-
-#if 0
-
-
-
-
-
 // ------------------------------- Tone Control Class -------------------------
 
-class toneCtlClass
+class toneCtlClass : public MQTTBaseHandler
 {
  public:
-  void begin(uint8_t _pin, const char* module);
-  void update(void);
-  void decode(void);
+  virtual void begin(uint8_t _pin, const char* module);
+  virtual uint8_t decode(void);
  private:
   uint8_t* module;
-  uint32_t tick;
-  uint32_t tick_5s;
   uint32_t pin;
   uint32_t tone_freq;
   uint32_t tone_duration;
@@ -290,5 +277,3 @@ class toneCtlClass
 };
 
 
-
-#endif

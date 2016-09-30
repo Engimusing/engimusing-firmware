@@ -47,6 +47,7 @@ const uint8_t acmpPins[11]  = {0, 0, 0, 0,  3,    2,    4,    1,    0,   0, 13  
 const uint8_t dacPorts[11] = {0, 0, 0, 0, 0, 0,PORTB, 0, 0, 0, 0};
 const uint8_t dacPins[11]  = {0, 0, 0, 0, 0, 0,  11,  0, 0, 0, 0};
 
+
 // Timer Pins                      0 1   2     3     4     5     6     7     8   9   10   
 const uint8_t timerPorts[11]    = {0,0,PORTC,PORTD,PORTB,PORTB,PORTB,PORTA,PORTA,0,PORTE};
 const uint8_t timerPins[11]     = {0,0, 15,    6,    8,    7,   11,    0,    0,  0,  13};

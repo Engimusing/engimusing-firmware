@@ -754,8 +754,6 @@ uint8_t adcCtlClass::decode(void)
 
 
 
-#if 0
-
 // ------------------------------- Tone Control Class ----------------------------
 
 void toneCtlClass::begin(uint8_t _pin, const char* mod)
@@ -771,43 +769,25 @@ void toneCtlClass::begin(uint8_t _pin, const char* mod)
 
   TimersLP Timer;
 
-  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
-  tick = 0;
-  tick_5s = 0;
+  MQTTBaseHandler::begin(mod, true);
+    
 }
 
-void toneCtlClass::update(void)
-{
-  if(millis() > tick + 100) {
-    tick = millis();
-    if(tick_5s++ >= COMM.subscribe_heartbeat) { // subscribe every 5s for a heartbeat
-      tick_5s = 0;
-      Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
-    }
-  }
-}
 
-void toneCtlClass::decode(void)
+uint8_t toneCtlClass::decode(void)
 {
-  if(COMM.decode_done) {return;}
+
   static const char *onoff[]   = {"OFF","ON"};
 
-  int8_t j = 0;
-  int8_t mlen = strlen((char*)module);
-  int8_t tlen = strlen((char*)COMM.topic);
-  if((tlen < mlen) || (COMM.topic[mlen] != '/')) {
-    return;
-  }
-  // compare module
-  for(int i = 0; i < mlen; i++, j++) {
-    if(COMM.topic[j] != module[i]) {
-      return;
-    }
-  }
-  j++;
+  int8_t j = isTopicThisModule();
+  if(j == 0)
+    {
+      return 0;
+    }  
+  
   if(COMM.compare_token(&COMM.topic[j],"TONE")) {
     if(COMM.compare_token(COMM.payload,"ON")) {
-      Timer.noTone(pin);
+	  Timer.noTone(pin);
       Timer.tone(pin, tone_freq, tone_duration);
       tone_state = 1;
     } else if(COMM.compare_token(COMM.payload,"OFF")) {
@@ -821,18 +801,14 @@ void toneCtlClass::decode(void)
     } else if(COMM.compare_token(COMM.payload,"D")) {
       tone_duration = atoi((char*)&COMM.payload[1]);
     } else if(COMM.compare_token(COMM.payload,"STATUS")) {
-      Serial.printf("{\"TOP\":\"%s?/TONE\",\"PLD\":\"%s\"}\r\n",module, onoff[tone_state]);
-    } else {return;}
-    COMM.decode_done = 1;
-    return;
+      COMM.sendMessage((const char*)myModule, "TONE", onoff[tone_state]);
+    } else {return 0;}
+    return 1;
   }
+	
 }
 
 
-
-
-
-#endif
 
 
 
