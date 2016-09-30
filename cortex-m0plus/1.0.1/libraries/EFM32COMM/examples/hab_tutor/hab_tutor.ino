@@ -59,7 +59,7 @@ momentarySwitchClass HABS1;
 momentarySwitchClass HABS2;
 detectorSwitchClass HABREED;
 onOffCtlClass HABLED;
-//toneCtlClass HABBUZZ;
+toneCtlClass HABBUZZ;
 adcCtlClass HABPOT;
 onOffCtlClass EFMREDLED;
 onOffCtlClass EFMBLUELED;
@@ -86,7 +86,7 @@ void setup()
   HABS2.begin(SW2_PIN, "HAB/SW2", 20);
   HABREED.begin(REEDSW_PIN, "HAB/REED", 20);
   HABLED.begin(HABLED_PIN, "HAB/LED", HIGH);
-  //HABBUZZ.begin(BUZZER_PIN, "HAB/BUZZER");
+  HABBUZZ.begin(BUZZER_PIN, "HAB/BUZZER");
   HABPOT.begin(POT_PIN, "HAB/POT", 50);
 }
 
