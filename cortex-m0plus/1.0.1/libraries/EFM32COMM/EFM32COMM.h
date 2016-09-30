@@ -163,6 +163,19 @@ class momentarySwitchClass : public MQTTBaseHandler
   uint8_t myBounceCnt; // bounce filter value, 0 = no filter, 0xff = momentary
 };
 
+class digtalQre1113SwitchClass : public MQTTBaseHandler
+{
+ public:
+  virtual void begin(uint8_t _pin, const char* module, uint8_t bounceCount, uint32_t onThreshold = 400);
+  virtual uint8_t readPin();
+  virtual void update(void); // publish changes in switch state
+ private:
+  uint32_t myOnThreshold;
+  uint32_t myPin;  // connector pin connected to switch
+  uint8_t myEventInProgress; // switch event in progress
+  uint8_t myBounceCnt; // bounce filter value, 0 = no filter, 0xff = momentary
+};
+
 
 
 
@@ -232,6 +245,23 @@ class cpuTempClass : public MQTTBaseHandler
   void publishCPUtempF(void);
 };
 
+// ------------------------------- ADC Pin Class -------------------------
+
+class adcCtlClass : public MQTTBaseHandler
+{
+ public:
+  void begin(uint8_t _pin, const char* module, uint32_t interval);
+  void update(void);
+  uint8_t decode(void);
+ private:
+  uint8_t* module;
+  uint32_t tick;
+  uint32_t current;
+  uint32_t interval;
+  uint32_t adcPin;
+  void publishADCvoltage(void);
+};
+
 
 
 #if 0
@@ -257,23 +287,6 @@ class toneCtlClass
   uint32_t tone_duration;
   uint32_t tone_state;
   TimersLP Timer;
-};
-
-// ------------------------------- ADC Pin Class -------------------------
-
-class adcCtlClass
-{
- public:
-  void begin(uint8_t _pin, const char* module, uint32_t interval);
-  void update(void);
-  void decode(void);
- private:
-  uint8_t* module;
-  uint32_t tick;
-  uint32_t current;
-  uint32_t interval;
-  uint32_t pin;
-  void publishADCvoltage(void);
 };
 
 

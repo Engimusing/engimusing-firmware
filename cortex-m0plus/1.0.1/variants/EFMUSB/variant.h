@@ -34,7 +34,7 @@
 
 static const uint8_t A0  = 2;
 static const uint8_t A1  = 3;
-static const uint8_t A2 = 11;
+static const uint8_t A2 = 10;
 
 #define ADC_RESOLUTION		12
 

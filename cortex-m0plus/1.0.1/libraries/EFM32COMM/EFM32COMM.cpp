@@ -437,6 +437,72 @@ void momentarySwitchClass::update(void)
   }
 }
 
+// ------------------------------- Momentary Switch Class ------------------------
+void digtalQre1113SwitchClass::begin(uint8_t _pin, const char* mod, uint8_t bounceCount, uint32_t onThreshold)
+{
+	
+  myPin = _pin;
+  myBounceCnt = bounceCount;
+  pinMode(_pin, INPUT);
+  myEventInProgress = 0;
+  myOnThreshold = onThreshold;
+  
+  MQTTBaseHandler::begin(mod, true);
+	
+}
+
+uint8_t digtalQre1113SwitchClass::readPin()
+{
+	//Returns value from the QRE1113 
+  //Lower numbers mean more refleacive
+  //More than 3000 means nothing was reflected.
+  pinMode( myPin, OUTPUT );
+  digitalWrite( myPin, HIGH );  
+  
+  //delay(1);
+  delayMicroseconds(10);
+  
+  pinMode( myPin, INPUT );
+
+  long time = micros();
+  
+  //time how long the input is HIGH, but quit after 3ms as nothing happens after that
+  while (digitalRead(myPin) == HIGH && micros() - time < 3000); 
+  
+  int diff = micros() - time;
+  
+  if(diff > myOnThreshold)
+  {
+	  return 0;
+  }else
+  {
+	  return 1;
+  }
+  
+  
+}
+
+void digtalQre1113SwitchClass::update(void)
+{
+  if(millis() > myTick + 10) {
+    myTick = millis();
+
+	uint8_t currentSwitch = readPin();
+		
+    if((myEventInProgress == 0) && (currentSwitch == HIGH)) { // switch event happened
+      myEventInProgress = 1;
+    } else if((myEventInProgress > 0) && (myEventInProgress < myBounceCnt) && (currentSwitch == HIGH)) { // wait until bounce count
+      myEventInProgress++;
+    } else if(myEventInProgress >= myBounceCnt && (currentSwitch == LOW) ) { // report event	 
+			
+		COMM.sendMessage((const char*)myModule, "SWITCH", "CLOSED");
+	    
+		myEventInProgress = 0;
+	}
+     
+  }
+}
+
 // ------------------------------- i2cSingleRegisterClass -------------------------
 void i2cSingleRegisterClass::begin(const char* mod, TwoWire *_wire, int32_t _enablePin, uint8_t _address, uint8_t _registerToRead, uint32_t _dataSize, uint32_t _updateDelay)
 {
@@ -528,14 +594,12 @@ void cpuVDDClass::begin(const char* mod, uint32_t intrval)
 
   MQTTBaseHandler::begin(mod, true);
 
-  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
-  tick = 0;
 }
 
 void cpuVDDClass::update(void)
 {
-  if(millis() > tick + 100) {
-    tick = millis();
+  if(millis() > myTick + 100) {
+    myTick = millis();
     if(interval != 0) {
       if(current <= 0) {
 	current = interval;
@@ -550,7 +614,7 @@ void cpuVDDClass::update(void)
 void cpuVDDClass::publishCPUvoltage(void)
 {
   uPvdd vddval = Analog.analogReadVDD();
-  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%d\"}\r\n",module, vddval.wholeVDD, vddval.fracVDD);
+  COMM.sendMessage((const char*)myModule, "ADC", ((float)vddval.mVolts / 1000.0f));
 }
 
 uint8_t cpuVDDClass::decode(void)
@@ -579,14 +643,12 @@ void cpuTempClass::begin(const char* mod, uint32_t Fintrval, uint32_t Cintrval)
 
   MQTTBaseHandler::begin(mod, true);
 
-  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
-  tick = 0;
 }
 
 void cpuTempClass::update(void)
 {
-  if(millis() > tick + 100) {
-    tick = millis();
+  if(millis() > myTick + 100) {
+    myTick = millis();
     if(intervalC != 0) {
       if(currentC <= 0) {
 	currentC = intervalC;
@@ -609,13 +671,13 @@ void cpuTempClass::update(void)
 void cpuTempClass::publishCPUtempC(void)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s?/TMPC\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeC, tempval.fracC);
+  COMM.sendMessage((const char*)myModule, "TMPC", ((float)tempval.tenthsC / 10.0f));
 }
 
 void cpuTempClass::publishCPUtempF(void)
 {
   temperature tempval = Analog.analogReadTemp();
-  Serial.printf("{\"TOP\":\"%s?/TMPF\",\"PLD\":\"%d.%d\"}\r\n",module, tempval.wholeF, tempval.fracF);
+  COMM.sendMessage((const char*)myModule, "TMPF", ((float)tempval.tenthsF / 10.0f));
 }
 
 uint8_t cpuTempClass::decode(void)
@@ -634,7 +696,60 @@ uint8_t cpuTempClass::decode(void)
 }
 
 
+// ------------------------------- ADC Pin Class ---------------------------------
 
+void adcCtlClass::begin(uint8_t _AdcPin, const char* mod, uint32_t intrval)
+{
+  adcPin = _AdcPin;
+  module = (uint8_t*)mod;
+  interval = intrval;
+
+  MQTTBaseHandler::begin(mod, true);
+  
+
+}
+
+void adcCtlClass::update(void)
+{
+  if(millis() > myTick + 100) {
+    myTick = millis();
+    if(interval != 0) {
+      if(current <= 0) {
+	current = interval;
+	publishADCvoltage();
+      } else {
+	current--;
+      }
+    }
+  }
+}
+
+void adcCtlClass::publishADCvoltage(void)
+{
+  uint32_t r = Analog.analogReadVDDsample();
+  Analog.analogReference(INTERNALVDD);
+  Analog.analogReadResolution(RES_12BITS);
+  uint32_t v = Analog.analogReadPin(adcPin);
+  uint32_t mV =  ((v * r)/4096);
+  COMM.sendMessage((const char*)myModule, "ADC", ((float)mV / 1000.0f));
+  
+
+}
+
+uint8_t adcCtlClass::decode(void)
+{
+  int8_t j = isTopicThisModule();
+  if(j == 0)
+  {
+	  return 0;
+  }
+  
+  if(COMM.compare_token(&COMM.topic[j],"ADC")) {
+    publishADCvoltage();
+    return 1;
+  }
+  
+}
 
 
 
@@ -713,66 +828,7 @@ void toneCtlClass::decode(void)
   }
 }
 
-// ------------------------------- ADC Pin Class ---------------------------------
 
-void adcCtlClass::begin(uint8_t _pin, const char* mod, uint32_t intrval)
-{
-  pin = _pin;
-  module = (uint8_t*)mod;
-  interval = intrval;
-
-  Serial.printf("{\"TOP\":\"%s/#\",\"PLD\":\"SUB\"}\r\n",module);
-  tick = 0;
-}
-
-void adcCtlClass::update(void)
-{
-  if(millis() > tick + 100) {
-    tick = millis();
-    if(interval != 0) {
-      if(current <= 0) {
-	current = interval;
-	publishADCvoltage();
-      } else {
-	current--;
-      }
-    }
-  }
-}
-
-void adcCtlClass::publishADCvoltage(void)
-{
-  uint32_t r = Analog.analogReadVDDsample();
-  Analog.analogReference(INTERNALVDD);
-  Analog.analogReadResolution(RES_12BITS);
-  uint32_t v = Analog.analogReadPin(pin);
-  uint32_t mV =  ((v * r)/4096);
-  Serial.printf("{\"TOP\":\"%s?/ADC\",\"PLD\":\"%d.%d\"}\n\r",module, mV/1000, mV%1000);
-}
-
-void adcCtlClass::decode(void)
-{
-  if(COMM.decode_done) {return;}
-
-  int8_t j = 0;
-  int8_t mlen = strlen((char*)module);
-  int8_t tlen = strlen((char*)COMM.topic);
-  if((tlen < mlen) || (COMM.topic[mlen] != '/')) {
-    return;
-  }
-  // compare module
-  for(int i = 0; i < mlen; i++, j++) {
-    if(COMM.topic[j] != module[i]) {
-      return;
-    }
-  }
-  j++;
-  if(COMM.compare_token(&COMM.topic[j],"ADC")) {
-    publishADCvoltage();
-    COMM.decode_done = 1;
-    return;
-  }
-}
 
 
 
