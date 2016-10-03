@@ -30,6 +30,8 @@
 //#define LEUART_Init //
 //#define USART_InitAsync //
 
+extern void check_for_reset ( void ) __attribute__((weak));
+
 // Constructors ////////////////////////////////////////////////////////////////
 
 UARTClass::UARTClass( Uart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk)
@@ -268,7 +270,7 @@ void UARTClass::IrqHandler( void )
 	}else if(_breakCommandState == BreakReceived && ((0xFF & readData) == 'r'))
 	{
 		_breakCommandState = ResetReceived;
-		 // if(checkForReset) checkForReset();
+		if(check_for_reset) check_for_reset();
 	}/*else if(_breakCommandState == BreakReceived && ((0xFF & readData) == 'i'))
 	{
 		int i = 0;

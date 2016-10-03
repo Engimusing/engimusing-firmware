@@ -74,7 +74,7 @@ const uint32_t timerRoutes[] = {0, // 0
 
 const uint8_t ledPorts[1]  = {PORTB};
 const uint8_t ledPins[1]   = { 11 };
-const uint8_t ledIds[1] = {13};
+const uint8_t ledId[1] = {13};
 
 // This function verifies the pin is valid for this variant
 // 2-13
