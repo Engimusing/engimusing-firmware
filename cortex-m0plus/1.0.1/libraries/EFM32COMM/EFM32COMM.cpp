@@ -585,6 +585,29 @@ void tmp102Class::sendMQTTData()
 	
 }
 
+void mxl90616Class::begin(const char* mod, TwoWire *_wire, int32_t _enablePin, uint32_t _updateDelay)
+{
+	i2cSingleRegisterClass::begin(mod, _wire, _enablePin, 0x5A, 0x07, 2, _updateDelay);
+}
+	
+void mxl90616Class::sendMQTTData()
+{
+	byte data_low = myWire->read(); 
+	byte data_high = myWire->read(); 
+	double tempFactor = 0.02; // 0.02 degrees per LSB (measurement resolution of the MLX90614)
+	double tempData = 0x0000; // zero out the data
+	int frac; // data past the decimal point
+
+	// This masks off the error bit of the high byte, then moves it left 8 bits and adds the low byte.
+	tempData = (double)(((data_high & 0x007F) << 8) + data_low);
+	tempData = (tempData * tempFactor)-0.01;
+
+	float celcius = tempData - 273.15;
+	
+	COMM.sendMessage((const char*)myModule, "DEG_C", celcius);
+	
+}
+
 // ------------------------------- CPU VDD ADC Class -----------------------------
 
 void cpuVDDClass::begin(const char* mod, uint32_t intrval)

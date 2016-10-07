@@ -165,7 +165,8 @@
 
 
 // I2C address 0x69 could be 0x68 depends on your wiring. 
-int MPU9150_I2C_ADDRESS = 0x68;
+#define MPU9150_I2C_ADDRESS 0x68;
+int currentI2CAddress = MPU9150_I2C_ADDRESS;
 
 
 //Variables where our values can be stored
@@ -194,10 +195,7 @@ void mpu9150Class::begin(const char* mod, TwoWire *_wire, int32_t _standbyPin, u
   myUpdateDelay = _updateDelay;
   
   MQTTBaseHandler::begin(mod, true);
-  
-  //give the slave a slight delay so it can turn on.
-  delay(50);
-  
+    
   // Clear the 'sleep' bit to start the sensor.
   mpu9150Class::writeSensor(MPU9150_PWR_MGMT_1, 0);
 
@@ -309,13 +307,13 @@ void mpu9150Class::sendMQTTAccelData()
 //http://pansenti.wordpress.com/2013/03/26/pansentis-invensense-mpu-9150-software-for-arduino-is-now-on-github/
 //Thank you to pansenti for setup code.
 void mpu9150Class::setupCompass(){
-  MPU9150_I2C_ADDRESS = 0x0C;      //change Adress to Compass
+  currentI2CAddress = 0x0C;      //change Adress to Compass
 
   writeSensor(0x0A, 0x00); //PowerDownMode
   writeSensor(0x0A, 0x0F); //SelfTest
   writeSensor(0x0A, 0x00); //PowerDownMode
 
-  MPU9150_I2C_ADDRESS = 0x69;      //change Adress to MPU
+  currentI2CAddress = MPU9150_I2C_ADDRESS;      //change Adress to MPU
 
   writeSensor(0x24, 0x40); //Wait for Data at Slave0
   writeSensor(0x25, 0x8C); //Set i2c address at slave0 at 0x0C
@@ -341,37 +339,39 @@ void mpu9150Class::setupCompass(){
 ////////////////////////////////////////////////////////////
 
 int mpu9150Class::readSensor(int addrL, int addrH){
-  myWire->beginTransmission(MPU9150_I2C_ADDRESS);
+  myWire->beginTransmission(currentI2CAddress);
   myWire->write(addrL);
   myWire->endTransmission(false);
 
-  myWire->requestFrom(MPU9150_I2C_ADDRESS, 1, true);
+  myWire->requestFrom(currentI2CAddress, 1, true);
   byte L = myWire->read();
 
-  myWire->beginTransmission(MPU9150_I2C_ADDRESS);
+  myWire->beginTransmission(currentI2CAddress);
   myWire->write(addrH);
   myWire->endTransmission(false);
 
-  myWire->requestFrom(MPU9150_I2C_ADDRESS, 1, true);
+  myWire->requestFrom(currentI2CAddress, 1, true);
   byte H = myWire->read();
 
   return (H<<8)+L;
 }
 
 int mpu9150Class::readSensor(int addr){
-  myWire->beginTransmission(MPU9150_I2C_ADDRESS);
+  myWire->beginTransmission(currentI2CAddress);
   myWire->write(addr);
   myWire->endTransmission(false);
 
-  myWire->requestFrom(MPU9150_I2C_ADDRESS, 1, true);
+  myWire->requestFrom(currentI2CAddress, 1, true);
   return myWire->read();
 }
 
 int mpu9150Class::writeSensor(int addr,int data){
-  myWire->beginTransmission(MPU9150_I2C_ADDRESS);
+	Serial.println("Write A");
+  myWire->beginTransmission(currentI2CAddress);
   myWire->write(addr);
   myWire->write(data);
   myWire->endTransmission(true);
-
+	Serial.println("Write B");
+  
   return 1;
 }

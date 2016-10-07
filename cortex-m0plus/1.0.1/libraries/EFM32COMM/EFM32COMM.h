@@ -209,6 +209,14 @@ class tmp102Class : public i2cSingleRegisterClass
 	
 };
 
+class mxl90616Class : public i2cSingleRegisterClass
+{
+	public:
+		virtual void begin(const char* mode, TwoWire *_wire, int32_t _enablePin, uint32_t _updateDelay);
+	protected:
+		virtual void sendMQTTData();
+	
+};
 
 // ------------------------------- CPU VDD ADC Class -------------------------
 

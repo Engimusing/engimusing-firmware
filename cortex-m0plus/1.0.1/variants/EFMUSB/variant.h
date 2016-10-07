@@ -38,6 +38,14 @@ static const uint8_t A2 = 10;
 
 #define ADC_RESOLUTION		12
 
+#define WIRE_INTERFACES_COUNT 1
+
+#define PIN_WIRE0_SDA         (11u) //PA0
+#define PIN_WIRE0_SCL         (12u) //PA1
+#define WIRE0_INTERFACE       I2C0
+#define WIRE0_LOC    0
+#define WIRE0_ISR_HANDLER     I2C0_Handler
+#define WIRE0_CLOCK				cmuClock_I2C0
 
 void print_gpio_regs(void);
 
