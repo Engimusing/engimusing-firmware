@@ -19,6 +19,8 @@
 // EFM32G232
 
 #include <stdint.h>
+#include "wiring_constants.h"
+#include "efm_lib/efm_gpio.h"
 #include "pins_arduino.h"
 
 
@@ -342,12 +344,14 @@ void init( void )
 {
   init_efm32();
 
-  GPIO_config(PORTA,  8, OUTPUT);      // Configure Green LED
-  GPIO_config(PORTA,  9, OUTPUT);      // Configure Blue LED
-  GPIO_config(PORTA, 10, OUTPUT);      // Configure Red LED
-  GPIO->P[PORTA].DOUTSET = (1 << 8);   // Green LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 9);   // Blue LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 10);  // Red LED off
+  pinMode(ledId[0], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[0], HIGH);   // Green LED off
+  
+  pinMode(ledId[1], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[1], HIGH);   // Green LED off
+  
+  pinMode(ledId[2], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[2], HIGH);   // Green LED off
 }
 
 /*

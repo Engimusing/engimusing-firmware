@@ -19,6 +19,8 @@
 // EFM32WG840
 
 #include <stdint.h>
+#include "wiring_constants.h"
+#include "efm_lib/efm_gpio.h"
 #include "pins_arduino.h"
 
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
@@ -352,13 +354,15 @@ uint8_t valid_pin(uint8_t pin) {
 void init( void )
 {
   init_efm32();
-
-  GPIO_config(PORTD,  8, OUTPUT);      // Configure Green LED
-  GPIO_config(PORTA,  6, OUTPUT);      // Configure Blue LED
-  GPIO_config(PORTA, 15, OUTPUT);      // Configure Red LED
-  GPIO->P[PORTD].DOUTSET = (1 << 8);   // Green LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 6);   // Blue LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 15);  // Red LED off
+  
+  pinMode(ledId[0], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[0], HIGH);   // Green LED off
+  
+  pinMode(ledId[1], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[1], HIGH);   // Green LED off
+  
+  pinMode(ledId[2], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[2], HIGH);   // Green LED off
 }
 
 /*

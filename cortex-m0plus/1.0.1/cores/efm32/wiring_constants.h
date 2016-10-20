@@ -25,39 +25,43 @@ extern "C"{
 #define LOW             (0x0)
 #define HIGH            (0x1)
 
-// GPIO
-#define PIN_MODE_GPIO0                        (0x0)
-#define GPIO_DISABLED                        (0x00)
-#define DISABLED_PULLUP                      (0x01)
-#define INPUT_                                (0x02)
-#define INPUT_PULLUP                         (0x03)
-#define INPUT_PULLDOWN                       (0x04)
-#define INPUT_FILTER                         (0x05)
-#define INPUT_PU_FILTER                      (0x06)
-#define INPUT_PD_FILTER                      (0x07)
-#define WIRED_OR                             (0x08)
-#define WIRED_OR_PULLDOWN                    (0x09)
-#define OUTPUT                               (0x0A)
-#define OUTPUT_LOWEST_DRIVE                  (0x0B)
-#define OUTPUT_LOW_DRIVE                     (0x0C)
-#define OUTPUT_HIGH_DRIVE                    (0x0D)
-#define WIRED_AND                            (0x0E)
-#define WIRED_AND_LOWEST_DRIVE               (0x0F)
-#define PIN_MODE_GPIO1                        (0x1)
-#define WIRED_AND_LOW_DRIVE                  (0x10)
-#define WIRED_AND_HIGH_DRIVE                 (0x11)
-#define WIRED_AND_FILTER                     (0x12)
-#define WIRED_AND_FILTER_LOWEST_DRIVE        (0x13)
-#define WIRED_AND_FILTER_LOW_DRIVE           (0x14)
-#define WIRED_AND_FILTER_HIGH_DRIVE          (0x15)
-#define WIRED_AND_PULLUP                     (0x16)
-#define WIRED_AND_PULLUP_LOWEST_DRIVE        (0x17)
-#define WIRED_AND_PULLUP_LOW_DRIVE           (0x18)
-#define WIRED_AND_PULLUP_HIGH_DRIVE          (0x19)
-#define WIRED_AND_PU_FILTER                  (0x1A)
-#define WIRED_AND_PU_FILTER_LOWEST_DRIVE     (0x1B)
-#define WIRED_AND_PU_FILTER_LOW_DRIVE        (0x1C)
-#define WIRED_AND_PU_FILTER_HIGH_DRIVE       (0x1D)
+// GPIO enumeration
+typedef enum
+{
+	PIN_MODE_GPIO0 = (0x0),
+	GPIO_DISABLED = (0x00),
+	PIN_MODE_GPIO1 = (0x1),
+	DISABLED_PULLUP = (0x01),
+	INPUT_ = (0x02),
+	INPUT_PULLUP = (0x03),
+	INPUT_PULLDOWN = (0x04),
+	INPUT_FILTER = (0x05),
+	INPUT_PU_FILTER = (0x06),
+	INPUT_PD_FILTER = (0x07),
+	WIRED_OR = (0x08),
+	WIRED_OR_PULLDOWN = (0x09),
+	OUTPUT = (0x0A),
+	OUTPUT_LOWEST_DRIVE = (0x0B),
+	OUTPUT_LOW_DRIVE = (0x0C),
+	OUTPUT_HIGH_DRIVE = (0x0D),
+	WIRED_AND = (0x0E),
+	WIRED_AND_LOWEST_DRIVE = (0x0F),
+	WIRED_AND_LOW_DRIVE = (0x10),
+	WIRED_AND_HIGH_DRIVE = (0x11),
+	WIRED_AND_FILTER = (0x12),
+	WIRED_AND_FILTER_LOWEST_DRIVE = (0x13),
+	WIRED_AND_FILTER_LOW_DRIVE = (0x14),
+	WIRED_AND_FILTER_HIGH_DRIVE = (0x15),
+	WIRED_AND_PULLUP = (0x16),
+	WIRED_AND_PULLUP_LOWEST_DRIVE = (0x17),
+	WIRED_AND_PULLUP_LOW_DRIVE = (0x18),
+	WIRED_AND_PULLUP_HIGH_DRIVE = (0x19),
+	WIRED_AND_PU_FILTER = (0x1A),
+	WIRED_AND_PU_FILTER_LOWEST_DRIVE = (0x1B),
+	WIRED_AND_PU_FILTER_LOW_DRIVE =(0x1C),
+	WIRED_AND_PU_FILTER_HIGH_DRIVE = (0x1D),
+} WiringModeTypeDef;
+
 
 // Analog Comparator
 #define PIN_MODE_ACMP                         (0x2)

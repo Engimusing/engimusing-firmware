@@ -17,6 +17,8 @@
 */
 
 #include <stdint.h>
+#include "wiring_constants.h"
+#include "efm_lib/efm_gpio.h"
 #include "pins_arduino.h"
 
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
@@ -76,7 +78,7 @@ const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0,adcSingleInpCh
 
 const uint8_t ledPorts[1]  = {PORTB};
 const uint8_t ledPins[1]   = { 11 };
-const uint8_t ledIds[1] = {13};
+const uint8_t ledId[1] = {13};
 														   
 // ------------------------------------------------------------------------------------------------------------
 
@@ -95,7 +97,7 @@ void init( void )
 {
   init_efm32();
 
-  GPIO_config(PORTB,  11, OUTPUT);      // Configure Green LED
-  GPIO->P[PORTB].DOUTSET = (0 << 11);   // Green LED off
+  pinMode(ledId[0], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[0], HIGH);   // Green LED off
 }
 

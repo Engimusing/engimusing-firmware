@@ -19,6 +19,8 @@
 // EFM32WG842
 
 #include <stdint.h>
+#include "wiring_constants.h"
+#include "efm_lib/efm_gpio.h"
 #include "pins_arduino.h"
 
 // LED Pins                    Red,  Blue,  Green
@@ -245,13 +247,15 @@ uint8_t valid_pin(uint8_t pin) {
 void init( void )
 {
   init_efm32();
-
-  GPIO_config(PORTA, 12, OUTPUT);      // Configure Green LED
-  GPIO_config(PORTA, 13, OUTPUT);      // Configure Blue LED
-  GPIO_config(PORTA, 14, OUTPUT);      // Configure Red LED
-  GPIO->P[PORTA].DOUTSET = (1 << 12);   // Green LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 13);   // Blue LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 14);  // Red LED off
+  
+  pinMode(ledId[0], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[0], HIGH);   // Green LED off
+  
+  pinMode(ledId[1], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[1], HIGH);   // Green LED off
+  
+  pinMode(ledId[2], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[2], HIGH);   // Green LED off
 }
 
 /*

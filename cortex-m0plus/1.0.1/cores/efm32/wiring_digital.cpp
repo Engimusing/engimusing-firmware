@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2015 Engimusing LLC.  All right reserved.
+  Copyright (c) 2014 Arduino.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -16,12 +16,12 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-#include "efm_pin_config.h"
 #include "pins_arduino.h"
-#include "cmsis.h"
+#include "em_device.h"
 
-uint8_t pinMode(uint32_t pin, uint32_t mode)
+#define INPUT INPUT_
+
+uint8_t pinMode(uint32_t pin, WiringModeTypeDef mode)
 {
   if(valid_pin(pin)) {
     GPIO_config(dPorts[pin], dPins[pin], mode);
@@ -30,7 +30,7 @@ uint8_t pinMode(uint32_t pin, uint32_t mode)
   return 0;
 }
 
-uint8_t intrPinMode(uint32_t pin, uint32_t mode)
+uint8_t intrPinMode(uint32_t pin, WiringModeTypeDef mode)
 {
   if(valid_pin(pin)) {
     GPIO_config(iPorts[pin], iPins[pin], mode);
@@ -80,125 +80,125 @@ void GPIO_pinMode(GPIO_Port_TypeDef port, uint32_t pin, GPIO_Mode_TypeDef mode)
 }
 
 
-void GPIO_config(uint32_t port, uint32_t pin, uint32_t ulMode)
+void GPIO_config(uint32_t port, uint32_t pin, WiringModeTypeDef ulMode)
 {
-  uint32_t mode = GPIO_MODE_DISABLED;
+  GPIO_Mode_TypeDef mode = gpioModeDisabled;
 
   switch(ulMode) {
   case DISABLED_PULLUP:
-    mode = GPIO_MODE_DISABLED;
+    mode = gpioModeDisabled;
     GPIO->P[port].DOUTSET = 1 << pin;
     break;
   case INPUT:
-    mode = GPIO_MODE_INPUT;
+    mode = gpioModeInput;
     break;
   case INPUT_FILTER:
-    mode = GPIO_MODE_INPUT;
+    mode = gpioModeInput;
     break;
   case INPUT_PULLDOWN:
-    mode = GPIO_MODE_INPUTPULL;
+    mode = gpioModeInputPull;
     GPIO->P[port].DOUTCLR = 1 << pin;
     break;
   case INPUT_PULLUP:
-    mode = GPIO_MODE_INPUTPULL;
+    mode = gpioModeInputPull;
     GPIO->P[port].DOUTSET = 1 << pin;
     break;
   case INPUT_PD_FILTER:
-    mode = GPIO_MODE_INPUTPULLFILTER;
+    mode = gpioModeInputPullFilter;
     GPIO->P[port].DOUTCLR = 1 << pin;
     break;
   case INPUT_PU_FILTER:
-    mode = GPIO_MODE_INPUTPULLFILTER;
+    mode = gpioModeInputPullFilter;
     GPIO->P[port].DOUTSET = 1 << pin;
     break;
   case OUTPUT:
-    mode = GPIO_MODE_PUSHPULL;
+    mode = gpioModePushPull;
     GPIO->P[port].CTRL = DRIVEMODE_STANDARD;
     break;
   case OUTPUT_LOWEST_DRIVE:
-    mode = GPIO_MODE_PUSHPULL;
+    mode = gpioModePushPull;
     GPIO->P[port].CTRL = DRIVEMODE_LOWEST;
     break;
   case OUTPUT_LOW_DRIVE:
-    mode = GPIO_MODE_PUSHPULL;
+    mode = gpioModePushPull;
     GPIO->P[port].CTRL = DRIVEMODE_LOW;
     break;
   case OUTPUT_HIGH_DRIVE:
-    mode = GPIO_MODE_PUSHPULL;
+    mode = gpioModePushPull;
     GPIO->P[port].CTRL = DRIVEMODE_HIGH;
     break;
   case WIRED_OR:
-    mode = GPIO_MODE_WIREDOR;
+    mode = gpioModeWiredOr;
     break;
   case WIRED_OR_PULLDOWN:
-    mode = GPIO_MODE_WIREDORPULLDOWN;
+    mode = gpioModeWiredOrPullDown;
     break;
   case WIRED_AND:
-    mode = GPIO_MODE_WIREDAND;
+    mode = gpioModeWiredAnd;
     break;
   case WIRED_AND_LOWEST_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVE;
+    mode = gpioModeWiredAndDrive;
     GPIO->P[port].CTRL = DRIVEMODE_LOWEST;
     break;
   case WIRED_AND_LOW_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVE;
+    mode = gpioModeWiredAndDrive;
     GPIO->P[port].CTRL = DRIVEMODE_LOW;
     break;
   case WIRED_AND_HIGH_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVE;
+    mode = gpioModeWiredAndDrive;
     GPIO->P[port].CTRL = DRIVEMODE_HIGH;
     break;
   case WIRED_AND_FILTER:
-    mode = GPIO_MODE_WIREDANDFILTER;
+    mode = gpioModeWiredAndFilter;
     break;
   case WIRED_AND_FILTER_LOWEST_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVEFILTER;
+    mode = gpioModeWiredAndDriveFilter;
     GPIO->P[port].CTRL = DRIVEMODE_LOWEST;
     break;
   case WIRED_AND_FILTER_LOW_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVEFILTER;
+    mode = gpioModeWiredAndDriveFilter;
     GPIO->P[port].CTRL = DRIVEMODE_LOW;
     break;
   case WIRED_AND_FILTER_HIGH_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVEFILTER;
+    mode = gpioModeWiredAndDriveFilter;
     GPIO->P[port].CTRL = DRIVEMODE_HIGH;
     break;
   case WIRED_AND_PULLUP:
-    mode = GPIO_MODE_WIREDANDPULLUP;
+    mode = gpioModeWiredAndPullUp;
   case WIRED_AND_PULLUP_LOWEST_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVEPULLUP;
+    mode = gpioModeWiredAndDrivePullUp;
     GPIO->P[port].CTRL = DRIVEMODE_LOWEST;
     break;
   case WIRED_AND_PULLUP_LOW_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVEPULLUP;
+    mode = gpioModeWiredAndDrivePullUp;
     GPIO->P[port].CTRL = DRIVEMODE_LOW;
     break;
   case WIRED_AND_PULLUP_HIGH_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVEPULLUP;
+    mode = gpioModeWiredAndDrivePullUp;
     GPIO->P[port].CTRL = DRIVEMODE_HIGH;
     break;
   case WIRED_AND_PU_FILTER:
-    mode = GPIO_MODE_WIREDANDPULLUPFILTER;
+    mode = gpioModeWiredAndPullUpFilter;
     GPIO->P[port].CTRL = DRIVEMODE_STANDARD;
     break;
   case WIRED_AND_PU_FILTER_LOWEST_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVEPULLUPFILTER;
+    mode = gpioModeWiredAndDrivePullUpFilter;
     GPIO->P[port].CTRL = DRIVEMODE_LOWEST;
     break;
   case WIRED_AND_PU_FILTER_LOW_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVEPULLUPFILTER;
+    mode = gpioModeWiredAndDrivePullUpFilter;
     GPIO->P[port].CTRL = DRIVEMODE_LOW;
     break;
   case WIRED_AND_PU_FILTER_HIGH_DRIVE:
-    mode = GPIO_MODE_WIREDANDDRIVEPULLUPFILTER;
+    mode = gpioModeWiredAndDrivePullUpFilter;
     GPIO->P[port].CTRL = DRIVEMODE_HIGH;
     break;
   case GPIO_DISABLED:
   default:
-    mode = GPIO_MODE_DISABLED;
+    mode = gpioModeDisabled;
     break;
   }
-  GPIO_pinMode(port, pin, mode);
+  GPIO_pinMode((GPIO_Port_TypeDef)port, pin, mode);
 }
 
 
@@ -206,4 +206,3 @@ void pinDrive(GPIO_Port_TypeDef port, GPIO_DriveMode_TypeDef ulDrive)
 {
   GPIO->P[port].CTRL = ulDrive;
 }
-

@@ -45,6 +45,27 @@
 #define WIRE0_ISR_HANDLER     I2C0_Handler
 #define WIRE0_CLOCK				cmuClock_I2C0
 
+#define PIN_WIRE1_SDA         (11u) //PD6
+#define PIN_WIRE1_SCL         (12u) //PD7
+#define WIRE1_INTERFACE       I2C0
+#define WIRE1_LOC    1
+#define WIRE1_ISR_HANDLER     I2C0_Handler
+#define WIRE1_CLOCK				cmuClock_I2C0
+
+#define PIN_WIRE2_SDA         (11u) //PD6
+#define PIN_WIRE2_SCL         (12u) //PD7
+#define WIRE2_INTERFACE       I2C0
+#define WIRE2_LOC    1
+#define WIRE2_ISR_HANDLER     I2C0_Handler
+#define WIRE2_CLOCK				cmuClock_I2C0
+
+#define PIN_WIRE3_SDA         (11u) //PD6
+#define PIN_WIRE3_SCL         (12u) //PD7
+#define WIRE3_INTERFACE       I2C0
+#define WIRE3_LOC    1
+#define WIRE3_ISR_HANDLER     I2C0_Handler
+#define WIRE3_CLOCK				cmuClock_I2C0
+
 static const uint8_t A0  = -1;//No ADC on Zero Gecko
 
 #define ADC_RESOLUTION		0

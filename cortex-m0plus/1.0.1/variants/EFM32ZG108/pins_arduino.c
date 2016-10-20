@@ -17,6 +17,8 @@
 */
 
 #include <stdint.h>
+#include "wiring_constants.h"
+#include "efm_lib/efm_gpio.h"
 #include "pins_arduino.h"
 
 
@@ -79,7 +81,7 @@ const uint8_t ledId[1] = {13};
 // This function verifies the pin is valid for this variant
 // 2-13
 uint8_t valid_pin(uint8_t pin) {
-  if((pin < 2) || (pin > 13)) {
+  if( (pin > 13)) {
     return 0;
   } else {
     return 1;
@@ -92,8 +94,8 @@ void init( void )
 {
   init_efm32();
 
-  GPIO_config(PORTB,  11, OUTPUT);      // Configure Green LED
-  GPIO->P[PORTB].DOUTSET = (1 << 11);   // Green LED off
+  pinMode(ledId[0], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[0], LOW);   // Green LED off
 }
 
 

@@ -18,9 +18,14 @@
 
 #pragma once
 
+#include "wiring_constants.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+	void GPIO_config(uint32_t port, uint32_t pin, WiringModeTypeDef ulMode);
 
 
   /**
@@ -30,8 +35,8 @@ extern "C" {
    * \param ulPin The number of the pin whose mode you wish to set
    * \param ulMode Can be INPUT, OUTPUT, INPUT_PULLUP or INPUT_PULLDOWN
    */
-  extern uint8_t pinMode( uint32_t dwPin, uint32_t dwMode ) ;
-  extern uint8_t intrPinMode(uint32_t pin, uint32_t mode);
+  extern uint8_t pinMode( uint32_t dwPin, WiringModeTypeDef dwMode ) ;
+  extern uint8_t intrPinMode(uint32_t pin, WiringModeTypeDef mode);
 
   /**
    * \brief Write a HIGH or a LOW value to a digital pin.

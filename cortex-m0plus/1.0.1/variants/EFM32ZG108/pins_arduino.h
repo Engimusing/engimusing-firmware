@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include "../../cores/efm32/efm_lib/efm_pin_config.h"
 #include "Arduino.h"
 
 typedef void (*voidFuncPtr)(void);

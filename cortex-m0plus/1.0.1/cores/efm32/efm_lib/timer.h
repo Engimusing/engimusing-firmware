@@ -21,7 +21,6 @@
 
 
 #include "efm_cmu_config.h"
-#include "efm_pin_config.h"
 #include "efm_emu.h"
 #include "wiring_digital.h"
 #include "efm_timer.h"

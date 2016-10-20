@@ -17,12 +17,14 @@
 */
 
 #include <stdint.h>
+#include "wiring_constants.h"
+#include "efm_lib/efm_gpio.h"
 #include "pins_arduino.h"
 
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
 // Digital Pins             0  1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
-const uint8_t dPorts[]   = {0, 0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE,  9,  9,PORTA,PORTA,PORTA};
-const uint8_t dPins[]    = {0, 0, 15,   12,    8,    7,   11,    1,    0,    2,   13,    0,  0,  8,    9,    10};
+const uint8_t dPorts[]   = {0, 0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE,  PORTA,PORTA,PORTA,PORTA,PORTA};
+const uint8_t dPins[]    = {0, 0, 15,   12,    8,    7,   11,    1,    0,    2,   13,    0,  1,  8,    9,    10};
 
 // GPIO Interrupt Pins      0 1   2     3     4     5     6     7     8     9    10
 const uint8_t iPorts[11] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA,  0,  PORTC};
@@ -69,12 +71,13 @@ const uint32_t timerRoutes[11] = {0, // 0
 // LED Pins                    Red,  Blue,  Green
 const uint8_t ledPorts[3]  = {PORTA, PORTA, PORTA};
 const uint8_t ledPins[3]   = {  8,     9,    10  };
+const uint8_t ledId[3]   = {  13,    14,    15  };
 
 // ------------------------------------------------------------------------------------------------------------
 
 // This function verifies the pin is valid for this variant
 uint8_t valid_pin(uint8_t pin) {
-  if((pin < 2) || (pin == 11) || (pin == 12) || (pin > 15)) {
+  if((pin < 2) || (pin > 15)) {
     return 0;
   } else {
     return 1;
@@ -87,11 +90,13 @@ void init( void )
 {
   init_efm32();
 
-  GPIO_config(PORTA,  8, OUTPUT);      // Configure Green LED
-  GPIO_config(PORTA,  9, OUTPUT);      // Configure Blue LED
-  GPIO_config(PORTA, 10, OUTPUT);      // Configure Red LED
-  GPIO->P[PORTA].DOUTSET = (1 << 8);   // Green LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 9);   // Blue LED off
-  GPIO->P[PORTA].DOUTSET = (1 << 10);  // Red LED off
+  pinMode(ledId[0], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[0], HIGH);   // Green LED off
+  
+  pinMode(ledId[1], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[1], HIGH);   // Green LED off
+  
+  pinMode(ledId[2], OUTPUT);      // Configure Green LED
+  digitalWrite(ledId[2], HIGH);   // Green LED off
 }
 

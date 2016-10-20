@@ -336,15 +336,23 @@ void TwoWire::onService(void) {
 static void Wire0_Init(void) {
 
   CMU_ClockEnable(cmuClock_HFPER, true);
+  CMU_ClockEnable(cmuClock_GPIO, true);
 
   pinMode(
 		  PIN_WIRE0_SDA,
-		  gpioModeWiredAndPullUpFilter);
+		  WIRED_AND_PU_FILTER);
   digitalWrite(PIN_WIRE0_SDA, 1);
   pinMode(
 		  PIN_WIRE0_SCL,
-		  gpioModeWiredAndPullUpFilter);
+		  WIRED_AND_PU_FILTER);
   digitalWrite(PIN_WIRE0_SCL, 1);
+  
+  //reset the state of the slave by sending 9 clk signals while SDA is high
+  for (int i = 0; i < 9; i++)
+  {
+	  digitalWrite(PIN_WIRE0_SCL, 0);
+	  digitalWrite(PIN_WIRE0_SCL, 1);
+  }
 			
   //NVIC_DisableIRQ(I2C0_IRQn);
   //NVIC_ClearPendingIRQ(I2C0_IRQn);
@@ -378,16 +386,23 @@ void WIRE0_ISR_HANDLER(void) {
 static void Wire1_Init(void) {
 
   CMU_ClockEnable(cmuClock_HFPER, true);
+  CMU_ClockEnable(cmuClock_GPIO, true);
 
-	
   pinMode(
 		  PIN_WIRE1_SDA,
-		  gpioModeWiredAndPullUpFilter);
-  digitalWrite(PIN_WIRE1_SDA, 1);
+		  WIRED_AND_PU_FILTER);
+  digitalWrite(PIN_WIRE0_SDA, 1);
   pinMode(
 		  PIN_WIRE1_SCL,
-		  gpioModeWiredAndPullUpFilter);
+		  WIRED_AND_PU_FILTER);
   digitalWrite(PIN_WIRE1_SCL, 1);
+  
+  //reset the state of the slave by sending 9 clk signals while SDA is high
+  for (int i = 0; i < 9; i++)
+  {
+	  digitalWrite(PIN_WIRE1_SCL, 0);
+	  digitalWrite(PIN_WIRE1_SCL, 1);
+  }
 		  
   //NVIC_DisableIRQ(I2C0_IRQn);
   //NVIC_ClearPendingIRQ(I2C0_IRQn);
@@ -419,17 +434,23 @@ void WIRE1_ISR_HANDLER(void) {
 static void Wire2_Init(void) {
 
   CMU_ClockEnable(cmuClock_HFPER, true);
-	
-	
+  CMU_ClockEnable(cmuClock_GPIO, true);
+
   pinMode(
 		  PIN_WIRE2_SDA,
-		  gpioModeWiredAndPullUpFilter);
+		  WIRED_AND_PU_FILTER);
   digitalWrite(PIN_WIRE2_SDA, 1);
   pinMode(
 		  PIN_WIRE2_SCL,
-		  gpioModeWiredAndPullUpFilter);
+		  WIRED_AND_PU_FILTER);
   digitalWrite(PIN_WIRE2_SCL, 1);
   
+  //reset the state of the slave by sending 9 clk signals while SDA is high
+  for (int i = 0; i < 9; i++)
+  {
+	  digitalWrite(PIN_WIRE2_SCL, 0);
+	  digitalWrite(PIN_WIRE2_SCL, 1);
+  }  
   
   //NVIC_DisableIRQ(I2C0_IRQn);
   //NVIC_ClearPendingIRQ(I2C0_IRQn);
@@ -456,17 +477,23 @@ void WIRE2_ISR_HANDLER(void) {
 static void Wire3_Init(void) {
 
   CMU_ClockEnable(cmuClock_HFPER, true);
-	
-	
+  CMU_ClockEnable(cmuClock_GPIO, true);
+
   pinMode(
 		  PIN_WIRE3_SDA,
-		  gpioModeWiredAndPullUpFilter);
+		  WIRED_AND_PU_FILTER);
   digitalWrite(PIN_WIRE3_SDA, 1);
   pinMode(
 		  PIN_WIRE3_SCL,
-		  gpioModeWiredAndPullUpFilter);
+		  WIRED_AND_PU_FILTER);
   digitalWrite(PIN_WIRE3_SCL, 1);
   
+  //reset the state of the slave by sending 9 clk signals while SDA is high
+  for (int i = 0; i < 9; i++)
+  {
+	  digitalWrite(PIN_WIRE3_SCL, 0);
+	  digitalWrite(PIN_WIRE3_SCL, 1);
+  }
 
   //NVIC_DisableIRQ(I2C0_IRQn);
   //NVIC_ClearPendingIRQ(I2C0_IRQn);

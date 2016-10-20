@@ -24,6 +24,7 @@
 #include "em_cmu.h"
 #include "pins_arduino.h"
 #include "em_emu.h"
+#include "efm_lib/efm_gpio.h"
 
 #ifdef __cplusplus
 extern "C" {
