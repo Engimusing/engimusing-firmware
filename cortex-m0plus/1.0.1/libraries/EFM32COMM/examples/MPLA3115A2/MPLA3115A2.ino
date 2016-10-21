@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to setup the MQTT client for the HTU21D RS232x2 Engimusing board
- *  There are 3 devices on this board. An LED and an HTU21D temperature and humidity sensor. 
+/* Example for how to setup the MQTT client for the MPLA3115A RS232x2 Engimusing board
+ *  There are 3 devices on this board. An LED and an MPLA3115A temperature and altitude sensor. 
  *  See http://www.engimusing.com/products/reedsw-1 for more information about the board.
  */
 
@@ -33,8 +33,8 @@
   {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"OFF"}
   {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFMZG108/BOARD/HTU21D/DEC_C","PLD":"STATUS"}
-  {"TOP":"EFMZG108/BOARD/HTU21D/HUM","PLD":"STATUS"}
+  {"TOP":"EFMZG108/BOARD/MPLA3115A/DEC_C","PLD":"STATUS"}
+  {"TOP":"EFMZG108/BOARD/MPLA3115A/ALT_M","PLD":"STATUS"}
 */
 
 //MQTT class defintions
@@ -43,7 +43,7 @@
 // whenever COMM.update() is called.
 onOffCtlClass LEDCtrl;
 
-mpla3115a2Class htu21d;
+mpla3115a2Class mpla3115a;
 
 void setup()
 {
@@ -54,7 +54,7 @@ void setup()
   LEDCtrl.begin(13, "EFMZG108/BOARD/LED", HIGH);
 
   //Initialize the Humidity sensor
-  htu21d.begin("EFMZG108/BOARD/HTU21D", &Wire0, 3, 5000);
+  mpla3115a.begin("EFMZG108/BOARD/MPLA3115A", &Wire0, 3, 5000);
   
 }
 

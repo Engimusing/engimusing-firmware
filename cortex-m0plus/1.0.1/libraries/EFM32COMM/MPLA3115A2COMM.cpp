@@ -100,7 +100,7 @@ void mpla3115a2Class::begin(const char* mod, TwoWire *_wire, int32_t _enablePin,
    if(_enablePin > 0)
   {
 	pinMode(_enablePin, OUTPUT);
-	digitalWrite(_enablePin, LOW);
+	digitalWrite(_enablePin, HIGH);
   }
   
   myWire = _wire;
@@ -113,13 +113,18 @@ void mpla3115a2Class::begin(const char* mod, TwoWire *_wire, int32_t _enablePin,
   
   //give the slave a slight delay so it can turn on.
   delay(50);
-
-
-  if(IIC_Read(WHO_AM_I) == 196) 
-    Serial1.println("MPL3115A2 online!");
-  else
-    Serial1.println("No response - check connections");
-
+  
+  int value = IIC_Read(WHO_AM_I);
+  while(value != 196)
+  {
+	if(value == 196) 
+		Serial1.println("MPL3115A2 online!");
+	else
+		Serial1.println("No response - check connections");
+	delay(1000);
+	value = IIC_Read(WHO_AM_I);
+  }
+  
   // Configure the sensor
   setModeAltimeter(); // Measure altitude above sea level in meters
  
@@ -166,7 +171,7 @@ void mpla3115a2Class::sendMQTTTempData()
 
 void mpla3115a2Class::sendMQTTAltitudeData()
 {
-	COMM.sendMessage((const char*)myModule, "ALT", readAltitude());	
+	COMM.sendMessage((const char*)myModule, "ALT_M", readAltitude());	
 }
 
 void mpla3115a2Class::sendMQTTPressureData()
@@ -184,7 +189,7 @@ float mpla3115a2Class::readAltitude()
   while( (IIC_Read(STATUS) & (1<<1)) == 0)
   {
       if(++counter > 100) return(-999); //Error out
-      delay(1);
+      delay(10);
   }
   
   // Read pressure registers
@@ -198,7 +203,7 @@ float mpla3115a2Class::readAltitude()
   while(myWire->available() < 3)
   {
     if(counter++ > 100) return(-999); //Error out
-    delay(1);
+    delay(10);
   }
 
   byte msb, csb, lsb;
@@ -236,7 +241,7 @@ float mpla3115a2Class::readPressure()
   while( (IIC_Read(STATUS) & (1<<2)) == 0)
   {
       if(++counter > 100) return(-999); //Error out
-      delay(1);
+      delay(10);
   }
 
   // Read pressure registers
@@ -250,7 +255,7 @@ float mpla3115a2Class::readPressure()
   while(myWire->available() < 3)
   {
     if(counter++ > 100) return(-999); //Error out
-    delay(1);
+    delay(10);
   }
 
   byte msb, csb, lsb;
@@ -282,7 +287,7 @@ float mpla3115a2Class::readTemp()
   while( (IIC_Read(STATUS) & (1<<1)) == 0)
   {
       if(++counter > 100) return(-999); //Error out
-      delay(1);
+      delay(10);
   }
   
   // Read temperature registers
@@ -296,7 +301,7 @@ float mpla3115a2Class::readTemp()
   while(myWire->available() < 2)
   {
     if(++counter > 100) return(-999); //Error out
-    delay(1);
+    delay(10);
   }
 
   byte msb, lsb;
