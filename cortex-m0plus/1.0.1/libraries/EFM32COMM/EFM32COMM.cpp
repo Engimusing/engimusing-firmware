@@ -585,12 +585,12 @@ void tmp102Class::sendMQTTData()
 	
 }
 
-void mxl90616Class::begin(const char* mod, TwoWire *_wire, int32_t _enablePin, uint32_t _updateDelay)
+void mlx90616Class::begin(const char* mod, TwoWire *_wire, int32_t _enablePin, uint32_t _updateDelay)
 {
 	i2cSingleRegisterClass::begin(mod, _wire, _enablePin, 0x5A, 0x07, 2, _updateDelay);
 }
 	
-void mxl90616Class::sendMQTTData()
+void mlx90616Class::sendMQTTData()
 {
 	byte data_low = myWire->read(); 
 	byte data_high = myWire->read(); 
