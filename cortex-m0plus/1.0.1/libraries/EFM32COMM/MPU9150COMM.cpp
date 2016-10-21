@@ -237,7 +237,7 @@ uint8_t mpu9150Class::decode(void)
 
 void mpu9150Class::getTemp(float& temp)
 {
-	temp = ( (float) mpu9150Class::readSensor(MPU9150_TEMP_OUT_L,MPU9150_TEMP_OUT_H) + 12412.0f) / 340.0f;
+	temp = (( (float) mpu9150Class::readSensor(MPU9150_TEMP_OUT_L,MPU9150_TEMP_OUT_H)) / 340.0f) + 35.0;
 }
 
 void mpu9150Class::sendMQTTTempData()
@@ -352,8 +352,8 @@ int mpu9150Class::readSensor(int addrL, int addrH){
 
   myWire->requestFrom(currentI2CAddress, 1, true);
   byte H = myWire->read();
-
-  return (H<<8)+L;
+  
+  return (int16_t)(H<<8)+L;
 }
 
 int mpu9150Class::readSensor(int addr){
