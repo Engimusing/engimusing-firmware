@@ -10,7 +10,8 @@
 
 #include "SPI.h"
 
-#define SERIAL Serial
+#define DEBUGPRINTLN(x)
+//#define DEBUGPRINTLN(x) Serial.println(x)
 
 
 USART_InitSync_TypeDef usartInit = USART_INITSYNC_DEFAULT;
@@ -27,7 +28,7 @@ SPIClass::SPIClass(USART_TypeDef *_spi, uint32_t _id, CMU_Clock_TypeDef UartClk,
 }
 
 void SPIClass::begin() {
-	SERIAL.println("ASDFASDF");
+	DEBUGPRINTLN("ASDFASDF");
 	
 	
 	GPIO_PinModeSet(
@@ -94,12 +95,12 @@ void SPIClass::begin() {
 	CMU_ClockEnable(spi_clk, true);
 	//CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFRCO);
  
-	SERIAL.println("CONFIG");
-	SERIAL.println(id);
-	SERIAL.println(spi_clk);
-	SERIAL.println(mode[0]);
-	SERIAL.println(bitOrder[0] ? 1 : 0);
-	SERIAL.println("ENDCONFIG");
+	DEBUGPRINTLN("CONFIG");
+	DEBUGPRINTLN(id);
+	DEBUGPRINTLN(spi_clk);
+	DEBUGPRINTLN(mode[0]);
+	DEBUGPRINTLN(bitOrder[0] ? 1 : 0);
+	DEBUGPRINTLN("ENDCONFIG");
 	
 	// Default speed set to 4Mhz
 	//usartInit.msbf = true;//bitOrder[0];
@@ -138,7 +139,7 @@ void SPIClass::begin(uint8_t _pin) {
 	
 	pinMode(
 		  _pin,
-		  gpioModeWiredAndPullUpFilter);
+		  WIRED_AND_PU_FILTER);
   digitalWrite(_pin, 1);
 	
 
@@ -184,7 +185,7 @@ void SPIClass::setClockDivider(uint8_t _pin, uint8_t _divider) {
 byte SPIClass::transfer(byte _pin, uint8_t _data, SPITransferMode _mode) {
 
 	//SERIAL.print(":w:");
-	//SERIAL.println(_data);
+	//DEBUGPRINTLN(_data);
 	/*while (!(spi->STATUS & USART_STATUS_TXBL));
 	
 	spi->TXDATA = (uint32_t)_data;
@@ -199,7 +200,7 @@ byte SPIClass::transfer(byte _pin, uint8_t _data, SPITransferMode _mode) {
 	out = USART_SpiTransfer(spi, _data);
 
 	/*SERIAL.print("data:");
-	SERIAL.println(_data);*/
+	DEBUGPRINTLN(_data);*/
 	/*uint8_t out = 0;
 	for(int i = 0; i < 8; i++)
 	{
@@ -213,7 +214,7 @@ byte SPIClass::transfer(byte _pin, uint8_t _data, SPITransferMode _mode) {
 	
 	
 	/*SERIAL.print("read:");
-	SERIAL.println(out);*/
+	DEBUGPRINTLN(out);*/
 	
     return out & 0xFF;
 }
@@ -241,7 +242,7 @@ SPIClass SPI(SPI_INTERFACE, SPI_INTERFACE_ID, SPI_CLK, &SPI0Pins
 #if SPI_INTERFACES_COUNT > 1
 static void SPI_1_Init(void) {
 	
-	SERIAL.println("SPI_1_Init");
+	DEBUGPRINTLN("SPI_1_Init");
 	
 
   GPIO_PinModeSet(
