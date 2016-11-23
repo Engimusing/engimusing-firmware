@@ -60,6 +60,8 @@ typedef void (*gcSpiHandleTx)(void);
 
 extern unsigned char wlan_tx_buffer[];
 
+extern SPIClass *theCcspi;
+
 //*****************************************************************************
 //
 // Prototypes for the APIs.

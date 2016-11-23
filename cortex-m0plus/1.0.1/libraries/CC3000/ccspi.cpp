@@ -140,6 +140,8 @@ tSpiInformation sSpiInformation;
 /* Static buffer for 5 bytes of SPI HEADER */
 unsigned char tSpiReadHeader[] = {READ, 0, 0, 0, 0};
 
+SPIClass *theCcspi = 0;
+
 void SpiWriteDataSynchronous(unsigned char *data, unsigned short size);
 void SpiWriteAsync(const unsigned char *data, unsigned short size);
 void SpiPauseSpi(void);
@@ -251,12 +253,12 @@ int init_spi(void)
 
   /* Initialise SPI (Mode 1) */
   
-  SPI.setDataMode(SPI_MODE1);
-  SPI.setBitOrder(true);
-  //SPI.setClockDivider(g_SPIspeed);
+  theCcspi->setDataMode(SPI_MODE1);
+  theCcspi->setBitOrder(true);
+  //theCcspi->setClockDivider(g_SPIspeed);
   DEBUGPRINT_F("\tCC3000: init_spi1\n\r");
   
-  SPI.begin();
+  theCcspi->begin();
 	
   DEBUGPRINT_F("\tCC3000: init_spi2\n\r");
   
@@ -333,7 +335,7 @@ long SpiWrite(unsigned char *pUserBuffer, unsigned short usLength)
   pUserBuffer[4] = 0;
 
   usLength += (SPI_HEADER_SIZE + ucPad);
-  DEBUGPRINT_F("SPI State:");
+  DEBUGPRINT_F("SPI State:asdf");
 	DEBUGPRINT_F(sSpiInformation.ulSpiState);
   /* The magic number that resides at the end of the TX/RX buffer (1 byte after the allocated size)
    * for the purpose of overrun detection. If the magic number is overwritten - buffer overrun
@@ -404,7 +406,7 @@ void SpiWriteDataSynchronous(unsigned char *data, unsigned short size)
   unsigned short loc;
   for (loc = 0; loc < size; loc ++) 
   {
-      SPI.transfer(data[loc]);
+      theCcspi->transfer(data[loc]);
 #if (DEBUG_MODE == 1)
       if (!(loc==size-1))
       {
@@ -432,10 +434,10 @@ void SpiReadDataSynchronous(unsigned char *data, unsigned short size)
   unsigned short i = 0;
   
   DEBUGPRINT_F("\tCC3000: SpiReadDataSynchronous\n\r");
-  SPI.setDataMode(SPI_MODE1);
+  theCcspi->setDataMode(SPI_MODE1);
   for (i = 0; i < size; i ++)
   {
-    data[i] = SPI.transfer(0x03);
+    data[i] = theCcspi->transfer(0x03);
     //DEBUGPRINT_F("  ");
     //DEBUGPRINT_HEX(data[i]);
   }
@@ -759,7 +761,7 @@ void SPI_IRQ(void)
 
 void cc3k_int_poll()
 {
-  //DEBUGPRINT_F(digitalRead(g_irqPin));
+  DEBUGPRINT_F(digitalRead(g_irqPin));
   if (digitalRead(g_irqPin) == LOW && ccspi_is_in_irq == 0 && ccspi_int_enabled != 0) {
     SPI_IRQ();
   }
