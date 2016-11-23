@@ -109,7 +109,7 @@ class MomentarySwitchModule : public MqttModule
 
 };
 
-class DigtalQre1113SwitchModule : public MqttModule
+class DigitalQre1113SwitchModule : public MqttModule
 {
 
  public:

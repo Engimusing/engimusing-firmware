@@ -63,14 +63,12 @@ MqttCC3000Port WiFiPort(
 OnOffCtlModule LEDCtrl0;
 OnOffCtlModule LEDCtrl1;
 OnOffCtlModule LEDCtrl2;
-//detectorSwitchClass Switch1;
-//momentarySwitchClass Switch2;
+//DetectorSwitchModule Switch1;
+//MomentarySwitchModule Switch2;
 Tmp102Module TMP102;
 Mpu9150Module htu21d;
 void setup()
 {
-  
-  Serial.begin(115200);
 
   WiFiPort.begin(HUB);
   
@@ -79,15 +77,15 @@ void setup()
   LEDCtrl2.begin(HUB, ledId[2], "EFM/BOARD/LED2", LOW);
 
   //pick one or the other since they use the same pin.
-  //Switch1.begin(51, "EFM/BOARD/SWITCH1", 10);
-  //Switch2.begin(51, "EFM/BOARD/SWITCH2", 10);
+  //Switch1.begin(HUB, 51, "EFM/BOARD/SWITCH1", 10);
+  //Switch2.begin(HUB, 51, "EFM/BOARD/SWITCH2", 10);
   TMP102.begin(HUB, "EFM/BOARD/TMP102", &Wire0, 0, 10000);
   htu21d.begin(HUB, "EFM/BOARD/TMP102", &Wire0, 0, 6, 10000);
   
   //other 3 DF11 slots on the Wonder Gecko board
-  //TMP102.begin("EFM/BOARD/TMP102", &Wire1, 24, 10000);
-  //TMP102.begin("EFM/BOARD/TMP102", &Wire2, 60, 10000);
-  //TMP102.begin("EFM/BOARD/TMP102", &Wire3, 42, 10000);
+  //TMP102.begin(HUB, "EFM/BOARD/TMP102", &Wire1, 24, 10000);
+  //TMP102.begin(HUB, "EFM/BOARD/TMP102", &Wire2, 60, 10000);
+  //TMP102.begin(HUB, "EFM/BOARD/TMP102", &Wire3, 42, 10000);
 }
 //int lastMillisOn = 0;
 //int lastMillisOff = 1000;
@@ -97,7 +95,7 @@ void loop()
 {
   HUB.update();
    
-  /* //example of how to turn on and off a light using the onOffCtlClass
+  /* //example of how to turn on and off a light using the OnOffCtlModule
      //status of the pin will be sent to the MQTT broker.
   if(millis() > lastMillisOff + 2000)
   {

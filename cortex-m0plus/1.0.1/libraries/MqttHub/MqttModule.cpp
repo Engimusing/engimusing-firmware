@@ -263,7 +263,7 @@ void MomentarySwitchModule::update(void)
 }
 
 // ------------------------------- Momentary Switch Class ------------------------
-void DigtalQre1113SwitchModule::begin(MqttHub &hub, uint8_t pin, const char* mod, uint8_t bounceCount, uint32_t onThreshold)
+void DigitalQre1113SwitchModule::begin(MqttHub &hub, uint8_t pin, const char* mod, uint8_t bounceCount, uint32_t onThreshold)
 {
 	
   myPin = pin;
@@ -276,7 +276,7 @@ void DigtalQre1113SwitchModule::begin(MqttHub &hub, uint8_t pin, const char* mod
 	
 }
 
-uint8_t DigtalQre1113SwitchModule::readPin()
+uint8_t DigitalQre1113SwitchModule::readPin()
 {
 	//Returns value from the QRE1113 
   //Lower numbers mean more refleacive
@@ -307,7 +307,7 @@ uint8_t DigtalQre1113SwitchModule::readPin()
   
 }
 
-void DigtalQre1113SwitchModule::update(void)
+void DigitalQre1113SwitchModule::update(void)
 {
   if(millis() > myTick + 10) {
     myTick = millis();
