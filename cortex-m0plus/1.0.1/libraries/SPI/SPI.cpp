@@ -240,29 +240,12 @@ SPIClass SPI(SPI_INTERFACE, SPI_INTERFACE_ID, SPI_CLK, &SPI0Pins
 #endif
 
 #if SPI_INTERFACES_COUNT > 1
-static void SPI_1_Init(void) {
-	
-	DEBUGPRINTLN("SPI_1_Init");
-	
 
-  GPIO_PinModeSet(
-    g_APinDescription[PIN_SPI1_MOSI].pPort,
-    g_APinDescription[PIN_SPI1_MOSI].ulPin,
-    g_APinDescription[PIN_SPI1_MOSI].ulPinType,
-    g_APinDescription[PIN_SPI1_MOSI].ulPinConfiguration);
-	  GPIO_PinModeSet(
-    g_APinDescription[PIN_SPI1_MISO].pPort,
-    g_APinDescription[PIN_SPI1_MISO].ulPin,
-    g_APinDescription[PIN_SPI1_MISO].ulPinType,
-    g_APinDescription[PIN_SPI1_MISO].ulPinConfiguration);
-	  GPIO_PinModeSet(
-    g_APinDescription[PIN_SPI1_SCK].pPort,
-    g_APinDescription[PIN_SPI1_SCK].ulPin,
-    g_APinDescription[PIN_SPI1_SCK].ulPinType,
-    g_APinDescription[PIN_SPI1_SCK].ulPinConfiguration);
-	
-	
-}
+const SPIPinSettings SPI1Pins = {
+	PIN_SPI1_MOSI,
+	PIN_SPI1_MISO,
+	PIN_SPI1_SCK
+};
 
-SPIClass SPI1(SPI1_INTERFACE, SPI1_INTERFACE_ID, SPI1_CLK, SPI_1_Init);
+SPIClass SPI1(SPI1_INTERFACE, SPI1_INTERFACE_ID, SPI1_CLK,&SPI1Pins);
 #endif
