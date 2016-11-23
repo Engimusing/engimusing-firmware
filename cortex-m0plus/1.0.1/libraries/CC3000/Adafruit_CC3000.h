@@ -35,7 +35,7 @@
 #endif
 
 #define WLAN_CONNECT_TIMEOUT 10000  // how long to wait, in milliseconds
-#define RXBUFFERSIZE  64 // how much to buffer on the incoming side
+#define RXBUFFERSIZE  256 // how much to buffer on the incoming side
 #define TXBUFFERSIZE  32 // how much to buffer on the outgoing side
 
 #define WIFI_ENABLE 1
@@ -102,9 +102,11 @@ class Adafruit_CC3000_Client : public Print {
 // header in a later change to make this cleaner.
 #include "Adafruit_CC3000_Server.h"
 
+class USARTClass;
+
 class Adafruit_CC3000 {
   public:
-  Adafruit_CC3000(uint8_t csPin, uint8_t irqPin, uint8_t vbatPin, uint8_t spispeed = SPI_CLOCK_DIVIDER);
+  Adafruit_CC3000(uint8_t csPin, uint8_t irqPin, uint8_t vbatPin, SPIClass &spi, uint8_t spispeed = SPI_CLOCK_DIVIDER, UARTClass *debugPrinter = NULL);
     bool     begin(uint8_t patchReq = 0, bool useSmartConfigData = false);
     void     reboot(uint8_t patchReq = 0);
     void     stop(void);

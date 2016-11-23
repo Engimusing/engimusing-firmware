@@ -184,7 +184,7 @@ bool Adafruit_CC3000::scanSSIDs(uint32_t time)
     @brief  Instantiates a new CC3000 class
 */
 /**************************************************************************/
-Adafruit_CC3000::Adafruit_CC3000(uint8_t csPin, uint8_t irqPin, uint8_t vbatPin, uint8_t SPIspeed)
+Adafruit_CC3000::Adafruit_CC3000(uint8_t csPin, uint8_t irqPin, uint8_t vbatPin, SPIClass &spi, uint8_t SPIspeed, UARTClass *debugPrinter)
 {
   _initialised = false;
   g_csPin = csPin;
@@ -197,7 +197,10 @@ Adafruit_CC3000::Adafruit_CC3000(uint8_t csPin, uint8_t irqPin, uint8_t vbatPin,
   ulCC3000Connected     = 0;
   ulSocket              = 0;
   ulSmartConfigFinished = 0;
-   CC3KPrinter = &Serial;
+   CC3KPrinter = debugPrinter;
+   
+   theCcspi = &spi;
+   
  /* #if defined(UDR0) || defined(UDR1) || defined(CORE_TEENSY) || ( defined (__arm__) && defined (__SAM3X8E__) )
   CC3KPrinter = &Serial;
   #else
@@ -584,17 +587,14 @@ bool Adafruit_CC3000::getIPAddress(uint32_t *retip, uint32_t *netmask, uint32_t 
 {
   if (!_initialised)
   {
-	Serial.println("Not initialised");
 	return false;
   }
   if (!ulCC3000Connected) 
   {
-	Serial.println("Not Connected");
 	return false;
   }
   if (!ulCC3000DHCP)
   {
-	Serial.println("Not DHCP");
 	return false;
   }
 
@@ -607,7 +607,6 @@ bool Adafruit_CC3000::getIPAddress(uint32_t *retip, uint32_t *netmask, uint32_t 
 	memcpy(retip, ipconfig.aucIP, 4);
   
 	printIPdotsRev(*retip);
-	Serial.println("Invalid Address");
 	return false;
   }
 
@@ -1045,12 +1044,10 @@ bool Adafruit_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
     /* MEME: not sure why this is absolutely required but the cc3k freaks
        if you dont. maybe bootup delay? */
     // Setup a 4 second SSID scan
-    Serial.println("Start waiting");
 	scanSSIDs(4000);
     // Wait for results
     //delay(4500);
     scanSSIDs(0);
-    Serial.println("Done waiting");
     /* Attempt to connect to an access point */
     if (CC3KPrinter != 0) {
       CC3KPrinter->print(F("\n\rConnecting to ")); 
@@ -1431,6 +1428,7 @@ uint8_t Adafruit_CC3000_Client::read(void)
       close();
       return 0;
     }
+	//Serial.println((const char*)&_rx_buf[_rx_buf_idx]);
     //if (CC3KPrinter != 0) { CC3KPrinter->println("Read "); CC3KPrinter->print(bufsiz); CC3KPrinter->println(" bytes"); }
     _rx_buf_idx = 0;
   }
