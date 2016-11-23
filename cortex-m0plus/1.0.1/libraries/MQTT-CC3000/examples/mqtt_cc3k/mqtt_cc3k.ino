@@ -59,10 +59,10 @@ boolean CC3000connect(const char* wlan_ssid, const char* wlan_pass, uint8_t wlan
 
 // Setup a feed called 'photocell' for publishing.
 // Notice MQTT paths for AIO follow the form: <username>/feeds/<feedname>
-Adafruit_MQTT_Publish photocell = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/photocell");
+//Adafruit_MQTT_Publish photocell = Adafruit_MQTT_Publish(&mqtt, AIO_USERNAME "/feeds/photocell");
 
 // Setup a feed called 'onoff' for subscribing to changes.
-Adafruit_MQTT_Subscribe onoffbutton = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/onoff");
+//Adafruit_MQTT_Subscribe onoffbutton = Adafruit_MQTT_Subscribe(&mqtt, AIO_USERNAME "/feeds/onoff");
 
 /*************************** Sketch Code ************************************/
 
@@ -78,16 +78,20 @@ void setup() {
   if (!cc3000.begin())
       halt("Failed");
 
-  mqtt.subscribe(&onoffbutton);
+  //mqtt.subscribe(&onoffbutton);
 
   while (! CC3000connect(WLAN_SSID, WLAN_PASS, WLAN_SECURITY)) {
     Serial.println(F("Retrying WiFi"));
     delay(1000);
   }
+
+  MQTT_connect();
+
+  mqtt.subscribe("EFM/BOARD/LED0/CTL", 0);
 }
 
 uint32_t x=0;
-
+uint32_t pingTime=0;
 void loop() {
   // Make sure to reset watchdog every loop iteration!
   //Watchdog.reset();
@@ -99,28 +103,33 @@ void loop() {
 
   // this is our 'wait for incoming subscription packets' busy subloop
   Adafruit_MQTT_Subscribe *subscription;
-  while ((subscription = mqtt.readSubscription(1000))) {
-    if (subscription == &onoffbutton) {
-      Serial.print(F("Got: "));
-      Serial.println((char *)onoffbutton.lastread);
+  while ((subscription = mqtt.readSubscription())) {
+    //if (subscription == &onoffbutton) 
+    {
+      Serial.print(F("Top:"));
+      Serial.println((char *)subscription->lastTopic);
+      Serial.print(F("PLD:"));
+      Serial.println((char *)subscription->lastread);
     }
   }
 
   // Now we can publish stuff!
-  Serial.print(F("\nSending photocell val "));
-  Serial.print(x);
-  Serial.print("...");
-  if (! photocell.publish(x++)) {
+  //Serial.print(F("\nSending photocell val "));
+  //Serial.print(x);
+  //Serial.print("...");
+  /*if (! photocell.publish(x++)) {
     Serial.println(F("Failed"));
   } else {
     Serial.println(F("OK!"));
+  }*/
+  if(millis() > pingTime + 1000)
+  {
+    pingTime = millis();
+    // ping the server to keep the mqtt connection alive
+    if(! mqtt.ping()) {
+      Serial.println(F("MQTT Ping failed."));
+    }
   }
-
-  // ping the server to keep the mqtt connection alive
-  if(! mqtt.ping()) {
-    Serial.println(F("MQTT Ping failed."));
-  }
-
 }
 
 // Function to connect and reconnect as necessary to the MQTT server.

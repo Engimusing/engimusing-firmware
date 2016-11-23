@@ -95,7 +95,7 @@
 // Largest full packet we're able to send.
 // Need to be able to store at least ~90 chars for a connect packet with full
 // 23 char client ID.
-#define MAXBUFFERSIZE (150)
+#define MAXBUFFERSIZE (256)
 
 #define MQTT_CONN_USERNAMEFLAG    0x80
 #define MQTT_CONN_PASSWORDFLAG    0x40
@@ -105,27 +105,24 @@
 #define MQTT_CONN_WILLFLAG        0x04
 #define MQTT_CONN_CLEANSESSION    0x02
 
-// how many subscriptions we want to be able to track
-#define MAXSUBSCRIPTIONS 5
-
 // how much data we save in a subscription object
 // eg max-subscription-payload-size
 #define SUBSCRIPTIONDATALEN 20
-
-class AdafruitIO_Feed;  // forward decl
-
-//Function pointer that returns an int
-typedef void (*SubscribeCallbackUInt32Type)(uint32_t);
-// returns a double
-typedef void (*SubscribeCallbackDoubleType)(double);
-// returns a chunk of raw data
-typedef void (*SubscribeCallbackBufferType)(char *str, uint16_t len);
-// returns an io data wrapper instance
-typedef void (AdafruitIO_Feed::*SubscribeCallbackIOType)(char *str, uint16_t len);
+#define MODULE_STRING_LENGTH   40
+#define MAX_PENDING_SUBS 10
 
 extern void printBuffer(uint8_t *buffer, uint16_t len);
 
-class Adafruit_MQTT_Subscribe;  // forward decl
+class Adafruit_MQTT;
+
+struct Adafruit_MQTT_Subscribe {
+ public:
+  char lastTopic[MODULE_STRING_LENGTH];
+  uint8_t lastread[SUBSCRIPTIONDATALEN];
+  // Number valid bytes in lastread. Limited to SUBSCRIPTIONDATALEN-1 to
+  // ensure nul terminating lastread.
+  uint16_t datalen;
+};
 
 class Adafruit_MQTT {
  public:
@@ -177,20 +174,18 @@ class Adafruit_MQTT {
   bool publish(const char *topic, const char *payload, uint8_t qos = 0);
   bool publish(const char *topic, uint8_t *payload, uint16_t bLen, uint8_t qos = 0);
 
-  // Add a subscription to receive messages for a topic.  Returns true if the
-  // subscription could be added or was already present, false otherwise.
-  // Must be called before connect(), subscribing after the connection
-  // is made is not currently supported.
-  bool subscribe(Adafruit_MQTT_Subscribe *sub);
+  // Add a subscription to receive messages for a topic.  
+  // Must be called after connect(), 
+  void subscribe(const char *topic, uint8_t qos);
 
   // Unsubscribe from a previously subscribed MQTT topic.
-  bool unsubscribe(Adafruit_MQTT_Subscribe *sub);
+  bool unsubscribe(const char *topic, uint8_t qos);
 
   // Check if any subscriptions have new messages.  Will return a reference to
   // an Adafruit_MQTT_Subscribe object which has a new message.  Should be called
   // in the sketch's loop function to ensure new messages are recevied.  Note
   // that subscribe should be called first for each topic that receives messages!
-  Adafruit_MQTT_Subscribe *readSubscription(int16_t timeout=0);
+  Adafruit_MQTT_Subscribe *readSubscription();
 
   void processPackets(int16_t timeout);
 
@@ -233,8 +228,11 @@ class Adafruit_MQTT {
   uint16_t packet_id_counter;
 
  private:
-  Adafruit_MQTT_Subscribe *subscriptions[MAXSUBSCRIPTIONS];
 
+  Adafruit_MQTT_Subscribe sub_storage[MAX_PENDING_SUBS];
+  int8_t current_pending_sub;
+  int8_t current_next_sub;
+  
   void    flushIncoming(uint16_t timeout);
 
   // Functions to generate MQTT packets.
@@ -246,54 +244,5 @@ class Adafruit_MQTT {
   uint8_t pingPacket(uint8_t *packet);
   uint8_t pubackPacket(uint8_t *packet, uint16_t packetid);
 };
-
-
-class Adafruit_MQTT_Publish {
- public:
-  Adafruit_MQTT_Publish(Adafruit_MQTT *mqttserver, const char *feed, uint8_t qos = 0);
-
-  bool publish(const char *s);
-  bool publish(double f, uint8_t precision=2);  // Precision controls the minimum number of digits after decimal.
-                                                // This might be ignored and a higher precision value sent.
-  bool publish(int32_t i);
-  bool publish(uint32_t i);
-  bool publish(uint8_t *b, uint16_t bLen);
-
-
-private:
-  Adafruit_MQTT *mqtt;
-  const char *topic;
-  uint8_t qos;
-};
-
-class Adafruit_MQTT_Subscribe {
- public:
-  Adafruit_MQTT_Subscribe(Adafruit_MQTT *mqttserver, const char *feedname, uint8_t q=0);
-
-  void setCallback(SubscribeCallbackUInt32Type callb);
-  void setCallback(SubscribeCallbackDoubleType callb);
-  void setCallback(SubscribeCallbackBufferType callb);
-  void setCallback(AdafruitIO_Feed *io, SubscribeCallbackIOType callb);
-  void removeCallback(void);
-
-  const char *topic;
-  uint8_t qos;
-
-  uint8_t lastread[SUBSCRIPTIONDATALEN];
-  // Number valid bytes in lastread. Limited to SUBSCRIPTIONDATALEN-1 to
-  // ensure nul terminating lastread.
-  uint16_t datalen;
-
-  SubscribeCallbackUInt32Type callback_uint32t;
-  SubscribeCallbackDoubleType callback_double;
-  SubscribeCallbackBufferType callback_buffer;
-  SubscribeCallbackIOType     callback_io;
-
-  AdafruitIO_Feed *io_feed;
-
- private:
-  Adafruit_MQTT *mqtt;
-};
-
 
 #endif

@@ -30,6 +30,8 @@
 // delay in ms between calls of available()
 #define MQTT_CC3000_INTERAVAILDELAY 10
 
+//#define DEBUG_PRINT(x) Serial.println(x);
+//#define DEBUG_PRINTLN(x) Serial.println(x);
 
 // CC3000-specific version of the Adafruit_MQTT class.
 // Note that this is defined as a header-only class to prevent issues with using
@@ -56,17 +58,57 @@ class Adafruit_MQTT_CC3000 : public Adafruit_MQTT {
 
     //Watchdog.reset();
 
+    int dotCount = 0;
+    int i = 0;
+    uint32_t currentByte = 0;
+    //convert ip4 string to ip integer
+    while(servername[i] != '\0' && i < 15)
+    {
+        if(servername[i] == '.')
+        {
+           dotCount++;
+           ip <<= 8;
+           ip += currentByte;
+           currentByte = 0;
+        }else
+        {      
+           if(servername[i] > '9' || servername[i] < '0')
+           {
+               i = 256;
+               dotCount = 0;
+           }else
+           {
+              currentByte *= 10;
+              currentByte += servername[i] - '0';
+                  
+              if(currentByte > 255)
+              {
+                  i = 256;
+                  dotCount = 0;
+              }
+           }
+        }
+        i++;
+    }       
+    
+    if(dotCount == 3)
+    {
+       ip <<= 8;
+       ip += currentByte;
+       serverip = ip;
+    }
+    
     // look up IP address
     if (serverip == 0) {
       // Try looking up the website's IP address using CC3K's built in getHostByName
       strcpy_P((char *)buffer, servername);
-      Serial.print((char *)buffer); Serial.print(F(" -> "));
+      //Serial.print((char *)buffer); Serial.print(F(" -> "));
       uint8_t dnsretries = 5;
 
       //Watchdog.reset();
       while (ip == 0) {
         if (! cc3000->getHostByName((char *)buffer, &ip)) {
-          Serial.println(F("Couldn't resolve!"));
+          //Serial.println(F("Couldn't resolve!"));
           dnsretries--;
           //Watchdog.reset();
         }
@@ -77,7 +119,7 @@ class Adafruit_MQTT_CC3000 : public Adafruit_MQTT {
 
       serverip = ip;
       cc3000->printIPdotsRev(serverip);
-      Serial.println();
+      //Serial.println();
     }
 
     //Watchdog.reset();
@@ -114,7 +156,7 @@ class Adafruit_MQTT_CC3000 : public Adafruit_MQTT {
         char c = mqttclient.read();
         timeout = t;  // reset the timeout
         buffer[len] = c;
-        //DEBUG_PRINTLN((uint8_t)c, HEX);
+        //DEBUG_PRINTLN(c);
         len++;
         if (len == maxlen) {  // we read all we want, bail
           DEBUG_PRINT(F("Read packet:\t"));
@@ -126,6 +168,7 @@ class Adafruit_MQTT_CC3000 : public Adafruit_MQTT {
       timeout -= MQTT_CC3000_INTERAVAILDELAY;
       delay(MQTT_CC3000_INTERAVAILDELAY);
     }
+	//Serial.println(":");
     return len;
   }
 
