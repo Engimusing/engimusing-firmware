@@ -93,7 +93,12 @@ static const uint8_t A7  = 35;
 #define WIRE3_ISR_HANDLER     I2C0_Handler
 #define WIRE3_CLOCK				cmuClock_I2C0
 
-#define SPI_INTERFACES_COUNT 1
+
+//for the 4 DF11 board each of these is one of the DF11 connections.
+// SPI 0 is the top right connection when the board has the RS232 on the left and the 
+// Energy Micro on top. Then the rest of the SPI go counter clockwise from there.
+// On this particular board SPI 1,2, and 3 cannot be used at the same time since they us the same USART
+#define SPI_INTERFACES_COUNT 4
 
 #define SPI_INTERFACE        USART2
 #define SPI_INTERFACE_ID     USART_ROUTE_LOCATION_LOC1
@@ -103,22 +108,52 @@ static const uint8_t A7  = 35;
 #define PIN_SPI0_MISO 10
 #define PIN_SPI0_SCK 11
 
-
 #define SPI1_INTERFACE        USART0
-#define SPI1_INTERFACE_ID     USART_ROUTE_LOCATION_LOC1
+#define SPI1_INTERFACE_ID     USART_ROUTE_LOCATION_LOC4
 #define SPI1_CLK	cmuClock_USART0
 #define SPI1_CHANNELS_NUM 1
-#define PIN_SPI1_MOSI 44
-#define PIN_SPI1_MISO 43
-#define PIN_SPI1_SCK 42
+#define PIN_SPI1_MOSI 15
+#define PIN_SPI1_MISO 16
+#define PIN_SPI1_SCK 24
 
-#define CC3000_INTERFACES_COUNT 1
+#define SPI2_INTERFACE        USART0
+#define SPI2_INTERFACE_ID     USART_ROUTE_LOCATION_LOC1
+#define SPI2_CLK	cmuClock_USART0
+#define SPI2_CHANNELS_NUM 1
+#define PIN_SPI2_MOSI 44
+#define PIN_SPI2_MISO 43
+#define PIN_SPI2_SCK 42
 
-#define PIN_CC3000_0_CS 33
-#define PIN_CC3000_0_IRQ 46
-#define PIN_CC3000_0_VBAT 12
+#define SPI3_INTERFACE        USART0
+#define SPI3_INTERFACE_ID     USART_ROUTE_LOCATION_LOC0
+#define SPI3_CLK	cmuClock_USART0
+#define SPI3_CHANNELS_NUM 1
+#define PIN_SPI3_MOSI 58
+#define PIN_SPI3_MISO 59
+#define PIN_SPI3_SCK 60
+
+//There line up with the 4 SPI's defined above.
+#define CC3000_INTERFACES_COUNT 4
+
+#define PIN_CC3000_0_CS 12
+#define PIN_CC3000_0_IRQ 33
+#define PIN_CC3000_0_VBAT 46
 #define CC3000_0_SPI SPI
 
+#define PIN_CC3000_1_CS 25
+#define PIN_CC3000_1_IRQ 19
+#define PIN_CC3000_1_VBAT 48
+#define CC3000_1_SPI SPI1
+
+#define PIN_CC3000_2_CS 41
+#define PIN_CC3000_2_IRQ 30
+#define PIN_CC3000_2_VBAT 45
+#define CC3000_2_SPI SPI2
+
+#define PIN_CC3000_3_CS 61
+#define PIN_CC3000_3_IRQ 6
+#define PIN_CC3000_3_VBAT 47
+#define CC3000_3_SPI SPI3
 
 
 void print_gpio_regs(void);

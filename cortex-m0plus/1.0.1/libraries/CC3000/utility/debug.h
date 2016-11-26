@@ -49,26 +49,36 @@ void printDec16(uint16_t h);
 #define PRINT_F(__s)         DEBUGPRINT(FLASHIFY(__s))
 
 #if (DEBUG_MODE != 0)
+/*
 #define DEBUGPRINT_F(__s)         DEBUGPRINT(FLASHIFY(__s))
 #define DEBUGPRINT_DEC(x)  printDec(x)
 #define DEBUGPRINT_DEC16(x)  printDec16(x)
 #define DEBUGPRINT_HEX(x)  printHex(x)
 #define DEBUGPRINT_HEX16(x)  printHex16(x)
-#else
-
-/*
-#define DEBUGPRINT_F(__s)    
-#define DEBUGPRINT_DEC(x) 
-#define DEBUGPRINT_DEC16(x)
-#define DEBUGPRINT_HEX(x)
-#define DEBUGPRINT_HEX16(x) 
 */
+
 #define DEBUGPRINT_F(__s)  Serial.println(__s)    
 #define DEBUGPRINT_DEC(x) printDec(x)
 #define DEBUGPRINT_DEC16(x) printDec16(x)
 #define DEBUGPRINT_HEX(x) printHex(x)
 #define DEBUGPRINT_HEX16(x) printHex16(x)
 
+#else
+
+
+#define DEBUGPRINT_F(__s)    
+#define DEBUGPRINT_DEC(x) 
+#define DEBUGPRINT_DEC16(x)
+#define DEBUGPRINT_HEX(x)
+#define DEBUGPRINT_HEX16(x) 
+
+/*
+#define DEBUGPRINT_F(__s)  Serial.println(__s)    
+#define DEBUGPRINT_DEC(x) printDec(x)
+#define DEBUGPRINT_DEC16(x) printDec16(x)
+#define DEBUGPRINT_HEX(x) printHex(x)
+#define DEBUGPRINT_HEX16(x) printHex16(x)
+*/
 #endif
 
 extern UARTClass* CC3KPrinter;

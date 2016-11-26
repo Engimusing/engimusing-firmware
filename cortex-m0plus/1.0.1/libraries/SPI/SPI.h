@@ -76,7 +76,18 @@ class SPIClass {
 
 #if SPI_INTERFACES_COUNT > 0
 extern SPIClass SPI;
+#endif
+
+#if SPI_INTERFACES_COUNT > 1
 extern SPIClass SPI1;
+#endif
+
+#if SPI_INTERFACES_COUNT > 2
+extern SPIClass SPI2;
+#endif
+
+#if SPI_INTERFACES_COUNT > 3
+extern SPIClass SPI3;
 #endif
 
 #endif
