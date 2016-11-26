@@ -98,6 +98,23 @@ struct Cc3000PinConfig
    SPIClass& spi;
 };
 
+#if CC3000_INTERFACES_COUNT > 0
+extern Cc3000PinConfig cc3000_0_pinConfig;
+#endif
+#if CC3000_INTERFACES_COUNT > 1
+extern Cc3000PinConfig cc3000_1_pinConfig;
+#endif
+#if CC3000_INTERFACES_COUNT > 2
+extern Cc3000PinConfig cc3000_2_pinConfig;
+#endif
+#if CC3000_INTERFACES_COUNT > 3
+extern Cc3000PinConfig cc3000_3_pinConfig;
+#endif
+
+
+
+
+
 struct Cc3000WlanConfig
 {
    const char* ssid;

@@ -112,6 +112,15 @@ static const uint8_t A7  = 35;
 #define PIN_SPI1_MISO 43
 #define PIN_SPI1_SCK 42
 
+#define CC3000_INTERFACES_COUNT 1
+
+#define PIN_CC3000_0_CS 33
+#define PIN_CC3000_0_IRQ 46
+#define PIN_CC3000_0_VBAT 12
+#define CC3000_0_SPI SPI
+
+
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);

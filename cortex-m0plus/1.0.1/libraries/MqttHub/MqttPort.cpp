@@ -186,48 +186,41 @@ int8_t MqttSerialPort::getToken(char* str, char* item, char tok_length)
   }
 }
 
+//define up to 4 default cc3000 pin configurations
+#if CC3000_INTERFACES_COUNT > 0
+Cc3000PinConfig cc3000_0_pinConfig = {
+   PIN_CC3000_0_CS,
+   PIN_CC3000_0_IRQ,
+   PIN_CC3000_0_VBAT,
+   CC3000_0_SPI
+};
+#endif
 
-#if 0
-/*************************** CC3000 Pins ***********************************/
+#if CC3000_INTERFACES_COUNT > 1
+Cc3000PinConfig cc3000_1_pinConfig = {
+   PIN_CC3000_1_CS,
+   PIN_CC3000_1_IRQ,
+   PIN_CC3000_1_VBAT,
+   CC3000_1_SPI
+};
+#endif
 
-//PINS FOR WG840
-//#define ADAFRUIT_CC3000_IRQ   33  // MUST be an interrupt pin!
-//#define ADAFRUIT_CC3000_VBAT  46  // VBAT & CS can be any digital pins.
-//#define ADAFRUIT_CC3000_CS    12
+#if CC3000_INTERFACES_COUNT > 2
+Cc3000PinConfig cc3000_2_pinConfig = {
+   PIN_CC3000_2_CS,
+   PIN_CC3000_2_IRQ,
+   PIN_CC3000_2_VBAT,
+   CC3000_2_SPI
+};
+#endif
 
-// Use hardware SPI for the remaining pins
-// On an UNO, SCK = 13, MISO = 12, and MOSI = 11
-///
-
-
-//PINS for WG842
-#define ADAFRUIT_CC3000_IRQ   60  // MUST be an interrupt pin!
-#define ADAFRUIT_CC3000_VBAT  52  // VBAT & CS can be any digital pins.
-#define ADAFRUIT_CC3000_CS    12
-///
-
-/************************* WiFi Access Point *********************************/
-
-#define WLAN_SSID       "SSID"        // cannot be longer than 32 characters!
-#define WLAN_PASS       "PASSWORD"
-#define WLAN_SECURITY   WLAN_SEC_WPA2  // Can be: WLAN_SEC_UNSEC, WLAN_SEC_WEP,
-                                       //         WLAN_SEC_WPA or WLAN_SEC_WPA2
-
-/************************* Adafruit.io Setup *********************************/
-
-#define AIO_SERVER      "192.168.1.14"
-#define AIO_SERVERPORT  1883
-#define AIO_USERNAME    "username"
-#define AIO_KEY         "username"
-
-/************ Global State (you don't need to change this!) ******************/
-
-// Setup the main CC3000 class, just like a normal CC3000 sketch.
-//Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS, ADAFRUIT_CC3000_IRQ, ADAFRUIT_CC3000_VBAT);
-
-// Setup the CC3000 MQTT class by passing in the CC3000 class and MQTT server and login details.
-//Adafruit_MQTT_CC3000 mqtt(&cc3000, AIO_SERVER, AIO_SERVERPORT, AIO_USERNAME, AIO_KEY);
-
+#if CC3000_INTERFACES_COUNT > 3
+Cc3000PinConfig cc3000_3_pinConfig = {
+   PIN_CC3000_3_CS,
+   PIN_CC3000_3_IRQ,
+   PIN_CC3000_3_VBAT,
+   CC3000_3_SPI
+};
 #endif
 
 // Function to connect and reconnect as necessary to the MQTT server.
