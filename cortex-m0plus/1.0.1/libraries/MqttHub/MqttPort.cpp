@@ -208,8 +208,8 @@ int8_t MqttSerialPort::getToken(char* str, char* item, char tok_length)
 
 /************************* WiFi Access Point *********************************/
 
-#define WLAN_SSID       "NETGEAR_ASDF5"        // cannot be longer than 32 characters!
-#define WLAN_PASS       "TimothyDGeorgeLedaMShurtleff"
+#define WLAN_SSID       "SSID"        // cannot be longer than 32 characters!
+#define WLAN_PASS       "PASSWORD"
 #define WLAN_SECURITY   WLAN_SEC_WPA2  // Can be: WLAN_SEC_UNSEC, WLAN_SEC_WEP,
                                        //         WLAN_SEC_WPA or WLAN_SEC_WPA2
 
