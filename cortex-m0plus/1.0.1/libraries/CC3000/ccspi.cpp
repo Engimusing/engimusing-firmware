@@ -363,7 +363,10 @@ long SpiWrite(unsigned char *pUserBuffer, unsigned short usLength)
      * device, so the state will move to IDLE and once again to not IDLE due to IRQ */
     tSLInformation.WlanInterruptDisable();
 
-    while (sSpiInformation.ulSpiState != eSPI_STATE_IDLE);
+    while (sSpiInformation.ulSpiState != eSPI_STATE_IDLE){
+       //delay(10);
+       //spiFinishRead();
+    }
 
     sSpiInformation.ulSpiState = eSPI_STATE_WRITE_IRQ;
     sSpiInformation.pTxPacket = pUserBuffer;
@@ -651,6 +654,9 @@ void WlanInterruptDisable()
   DEBUGPRINT_F("\tCC3000: WlanInterruptDisable\n\r");
   ccspi_int_enabled = 0;
   detachInterrupt(g_IRQnum);
+  
+  //finish any pending reads from any previous interrupts
+  spiFinishRead();
 }
 
 //*****************************************************************************
@@ -714,7 +720,6 @@ char *sendWLFWPatch(unsigned long *Length) {
 void SPI_IRQ(void)
 {
   ccspi_is_in_irq = 1;
-
   DEBUGPRINT_F("\tCC3000: Entering SPI_IRQ\n\r");
     
   if (sSpiInformation.ulSpiState == eSPI_STATE_POWERUP)
@@ -724,17 +729,12 @@ void SPI_IRQ(void)
   }
   else if (sSpiInformation.ulSpiState == eSPI_STATE_IDLE)
   {
+     //Serial.println("STATE_IDLE");
     DEBUGPRINT_F("IDLE\n\r");
     sSpiInformation.ulSpiState = eSPI_STATE_READ_IRQ;    
-    /* IRQ line goes down - start reception */
 
-    CC3000_ASSERT_CS;
-
-    // Wait for TX/RX Compete which will come as DMA interrupt
-    SpiReadHeader();
-    sSpiInformation.ulSpiState = eSPI_STATE_READ_EOT;
-    DEBUGPRINT_F("SSICont\n\r");
-    SSIContReadOperation();
+    DEBUGPRINT_F("\tCC3000: Leaving SPI_IRQ\n\r");
+    return;
   }
   else if (sSpiInformation.ulSpiState == eSPI_STATE_WRITE_IRQ)
   {
@@ -742,12 +742,38 @@ void SPI_IRQ(void)
     sSpiInformation.ulSpiState = eSPI_STATE_IDLE;
     CC3000_DEASSERT_CS;
   }
-
+   else if ( sSpiInformation.ulSpiState == eSPI_STATE_READ_IRQ || 
+                sSpiInformation.ulSpiState == eSPI_STATE_READ_EOT   )  
+   {
+      DEBUGPRINT_F("\tCC3000: Leaving SPI_IRQ\n\r");
+      return;
+   }
   DEBUGPRINT_F("\tCC3000: Leaving SPI_IRQ\n\r");
 
   ccspi_is_in_irq = 0;
   return;
 }
+
+void spiFinishRead()
+{
+   //Serial.println("READ_IRQ_ENTERED");
+   if( sSpiInformation.ulSpiState == eSPI_STATE_READ_IRQ )    
+   {
+      //Serial.println("READ_IRQ");
+       /* IRQ line goes down - start reception */
+       CC3000_ASSERT_CS;
+       // Wait for TX/RX Compete which will come as DMA interrupt
+       SpiReadHeader();
+       sSpiInformation.ulSpiState = eSPI_STATE_READ_EOT;
+       DEBUGPRINT_F("SSICont\n\r");
+       SSIContReadOperation();
+       
+       ccspi_is_in_irq = 0;
+   }   
+}
+ 
+
+
 
 //*****************************************************************************
 //
@@ -761,10 +787,12 @@ void SPI_IRQ(void)
 
 void cc3k_int_poll()
 {
-  DEBUGPRINT_F(digitalRead(g_irqPin));
+  //DEBUGPRINT_F(digitalRead(g_irqPin));
   if (digitalRead(g_irqPin) == LOW && ccspi_is_in_irq == 0 && ccspi_int_enabled != 0) {
     SPI_IRQ();
   }
+  
+  spiFinishRead();
 }
 
 void printIRQ()

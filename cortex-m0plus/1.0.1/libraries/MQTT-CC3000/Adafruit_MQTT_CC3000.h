@@ -149,6 +149,7 @@ class Adafruit_MQTT_CC3000 : public Adafruit_MQTT {
     uint16_t len = 0;
     int16_t t = timeout;
 
+    spiFinishRead();
     while (mqttclient.connected() && (timeout >= 0)) {
       //DEBUG_PRINT('.');
       while (mqttclient.available()) {

@@ -585,6 +585,7 @@ bool Adafruit_CC3000::setMacAddress(uint8_t address[6])
 /**************************************************************************/
 bool Adafruit_CC3000::getIPAddress(uint32_t *retip, uint32_t *netmask, uint32_t *gateway, uint32_t *dhcpserv, uint32_t *dnsserv)
 {
+   spiFinishRead();
   if (!_initialised)
   {
 	return false;
@@ -947,9 +948,17 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
 
   if (lEventType == HCI_EVNT_WLAN_UNSOL_DISCONNECT)
   {
+     DEBUGPRINT_F("DISCONNECTED!!!");
     ulCC3000Connected = 0;
     ulCC3000DHCP      = 0;
     ulCC3000DHCP_configured = 0;
+    
+    //wifi is disconnected so lets close all the sockets as well.
+     for(int i = 0; i < MAX_SOCKETS; i++)
+     {
+      closed_sockets[i] = true;
+     }
+   
   }
   
   if (lEventType == HCI_EVNT_WLAN_UNSOL_DHCP)
@@ -970,6 +979,7 @@ void CC3000_UsynchCallback(long lEventType, char * data, unsigned char length)
   }
 
   if (lEventType == HCI_EVNT_BSD_TCP_CLOSE_WAIT) {
+     DEBUGPRINT_F("TCP CLOSED!!!");
     uint8_t socketnum;
     socketnum = data[0];
     //PRINT_F("TCP Close wait #"); printDec(socketnum);
@@ -1086,7 +1096,7 @@ bool Adafruit_CC3000::connectToAP(const char *ssid, const char *key, uint8_t sec
       if (CC3KPrinter != 0) CC3KPrinter->println(F("Timed out!"));
     }
   } while (!checkConnected());
-
+  
   return true;
 }
 
@@ -1164,7 +1174,8 @@ bool Adafruit_CC3000::checkConnected(void)
 /**************************************************************************/
 bool Adafruit_CC3000::checkDHCP(void)
 {
-  return ulCC3000DHCP ? true : false;
+   spiFinishRead();
+   return ulCC3000DHCP ? true : false;
 }
 
 /**************************************************************************/
@@ -1245,6 +1256,7 @@ Adafruit_CC3000_Client Adafruit_CC3000::connectTCP(uint32_t destIP, uint16_t des
     return Adafruit_CC3000_Client();
   }
   //if (CC3KPrinter != 0) CC3KPrinter->println(F("DONE"));
+  
   return Adafruit_CC3000_Client(tcp_socket);
 }
 

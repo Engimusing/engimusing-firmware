@@ -53,6 +53,11 @@ void MqttPort::publishMessage(const char* topic, const char* payload)
    //Implement in Derrived Class
 }
 
+void MqttPort::forwardMessage(const char* topic, const char* payload)
+{
+   //Implement in Derrived Class
+}
+
 int8_t MqttPort::decode()
 {
 	//implement in derrived class.
@@ -99,15 +104,27 @@ void MqttSerialPort::publishMessage(const char* topic, const char* payload)
 	mySerial->print("\"}\r\n");
 }
 
+void MqttSerialPort::forwardMessage(const char* topic, const char* payload)
+{
+   //Serial port doesn't need to handle subscriptions differently.
+   publishMessage(topic, payload);
+}
+
 int8_t MqttSerialPort::decode(void)
 {
-  if (mySerial->available()) {
+  int remainingReads = 1000;
+  while (mySerial->available() && remainingReads > 0) {
     char c = (char)mySerial->read(); // get the new byte:
     if(isgraph(c)) {
-      return getInputString(c);
+      uint8_t r = getInputString(c);
+      if(r > 0)
+      {
+         return r;
+      }
     } else {
       return 0;
     }
+    remainingReads--;
   }
   return 0;
 }
@@ -119,7 +136,8 @@ int8_t MqttSerialPort::getInputString(char c)
     myIsCnt = 0;
     addCharToInputString(c);
     return 0;
-  } else if(myState != Idle) {
+  }
+  else if(myState != Idle) {
     if(c == '}') {
       myState = Idle;
       addCharToInputString(c);
@@ -131,7 +149,8 @@ int8_t MqttSerialPort::getInputString(char c)
       myInputString[0]  = '\0';
       myIsCnt = 0;
       return r;
-    } else {
+    } 
+    else {
       addCharToInputString(c);
       return 0;
     }
@@ -145,6 +164,7 @@ void MqttSerialPort::addCharToInputString(char c)
   if(myIsCnt >= COMM_STRING_LENGTH) {
     myIsCnt = 0;
     myState = Idle;
+    myInputString[0] = '\0';
   }
 }
 
@@ -154,7 +174,8 @@ int8_t MqttSerialPort::parseLine(void)
 
   myTopicBuffer[0]   = '\0';
   myPayloadBuffer[0] = '\0';
-
+  bool foundTop  = false;
+  bool foundPld = false;
   int8_t r = 0;
 
   for(myIsCnt = 0; myInputString[myIsCnt] != '\0'; myIsCnt++) {
@@ -162,13 +183,23 @@ int8_t MqttSerialPort::parseLine(void)
     if( ((c[0] == '{') || (c[0] == ',')) && (c[1] == '\"')) {
       if((c[2] == 'T') && (c[3] == 'O') && (c[4] == 'P')) {
 	r = getToken(&c[5], myTopicBuffer, MODULE_STRING_LENGTH);
+   foundTop = true;
 	   }
       if((c[2] == 'P') && (c[3] == 'L') && (c[4] == 'D')) {
 	r += getToken(&c[5], myPayloadBuffer, ITEM_PAYLOAD_LENGTH);
+   foundPld = true;
 	  }
     }
   }
-  return r;
+  
+  if(foundPld and foundTop)
+  {
+      return r;   
+  }else
+  {
+     return 0;
+  }
+  
 }
 
 int8_t MqttSerialPort::getToken(char* str, char* item, char tok_length)
@@ -233,10 +264,10 @@ void MqttCC3000Port::MQTT_connect() {
     return;
   }
 
-  //mySerial->print("Connecting to MQTT... ");
+  //Serial.println("Connecting to MQTT... ");
 
   while ((ret = myMqttCc3000.connect()) != 0) { // connect will return 0 for connected
-       //mySerial->println(mqtt.connectErrorString(ret));
+       //Serial.println(myMqttCc3000.connectErrorString(ret));
        if (ret < 0)
             CC3000connect(myCc3000, myWlanConfig.ssid, myWlanConfig.pass, myWlanConfig.security);  // y0w, lets connect to wifi again
        //mySerial->println("Retrying MQTT connection in 5 seconds...");
@@ -298,19 +329,27 @@ void MqttCC3000Port::subscribe(const char* mod)
 	
 }
 
-
-
-
 int8_t MqttCC3000Port::decode(void)
 {
+   
+  //Serial.println("DECODE");
+   
   MQTT_connect();
 
   myMqttCc3000.processPackets(10);
 
   if(millis() > myPingTime + 10000)
   {
+      //Serial.println("Ping");
       myPingTime = millis();
-      myMqttCc3000.ping();
+      if(!myMqttCc3000.ping())
+      {
+         //Ping failed so we are no longer connected to the 
+         // MQTT server. We should attempt a reconnect.
+         //Serial.println("Ping Failed!!!");
+         myMqttCc3000.disconnectServer();
+         return 0;
+      }
   }
 
   
@@ -321,7 +360,7 @@ int8_t MqttCC3000Port::decode(void)
 	  myPayload = (char*)subscription->lastread;
 	  return 1;
   }
-  
+  //Serial.println("DECODE END");
   return 0;
 }
 
@@ -330,6 +369,19 @@ void MqttCC3000Port::publishMessage(const char* topic, const char* payload)
 	myMqttCc3000.publish(topic, payload, 0);
 }
 
+void MqttCC3000Port::forwardMessage(const char* topic, const char* payload)
+{
+   if(payload[0] == 'S' &&
+      payload[1] == 'U' &&
+      payload[2] == 'B' &&
+      payload[3] == '\0')
+   {
+      myMqttCc3000.subscribe(topic, 0);
+   }else
+   {
+      myMqttCc3000.publish(topic, payload, 0);      
+   }   
+}
 
 
 

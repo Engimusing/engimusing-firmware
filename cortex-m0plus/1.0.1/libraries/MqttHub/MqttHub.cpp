@@ -59,6 +59,9 @@ void MqttHub::update()
 {
 	MqttModule *curModule = myRootModule;
 	MqttPort *curPort = myRootPort;
+   
+   bool processed = false;
+   
 	while(curPort)
 	{
 		if(curPort->decode())
@@ -69,11 +72,30 @@ void MqttHub::update()
 				if(curModule->decode(curPort->myTopic, curPort->myPayload))
 				{
 					curModule = 0;
+               processed = true;
 				}else
 				{
 					curModule = curModule->myNextModule;
 				}
 			}
+         
+         //check to see if this hub handled the message. If not send it to all the other ports.
+         if(!processed)
+         {
+            MqttPort *curSendPort = myRootPort;
+            while(curSendPort)
+            {
+               if(curSendPort != curPort)
+               {
+                  curSendPort->forwardMessage(curPort->myTopic, curPort->myPayload);
+               }
+               curSendPort = curSendPort->myNextPort;
+            }
+            
+            
+         }
+         
+         
 		}
 		curPort = curPort->myNextPort;
 	}

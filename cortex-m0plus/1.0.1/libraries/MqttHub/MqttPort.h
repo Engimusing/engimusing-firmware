@@ -39,6 +39,9 @@ class MqttPort
   
   virtual void publishMessage(const char* topic, const char* payload);
   
+  //slightly different than publish since it needs to handle subscriptions correctly as well.
+  virtual void forwardMessage(const char* topic, const char* payload);
+  
  protected: 
   
   MqttPort* myNextPort;
@@ -61,11 +64,11 @@ class MqttSerialPort : public MqttPort
   virtual int8_t decode(void);
   
   virtual void  subscribe(const char* mod);
-
-  protected: 
   
-   virtual void publishMessage(const char* topic, const char* payload);
-  
+  virtual void publishMessage(const char* topic, const char* payload);
+   
+  virtual void forwardMessage(const char* topic, const char* payload);
+   
   protected:
   
      int8_t getInputString(char);
@@ -146,8 +149,10 @@ class MqttCC3000Port : public MqttPort
   virtual void begin(MqttHub &hub);
   
   virtual void MQTT_connect();
-  protected: 
-   virtual void publishMessage(const char* topic, const char* payload);
+  
+  virtual void publishMessage(const char* topic, const char* payload);
+  
+  virtual void forwardMessage(const char* topic, const char* payload);
   
  protected:
   

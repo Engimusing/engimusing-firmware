@@ -85,5 +85,6 @@ extern char *sendBootLoaderPatch(unsigned long *Length);
 extern char *sendWLFWPatch(unsigned long *Length);
 extern void SPI_IRQ(void);
 extern void printIRQ();
+extern void spiFinishRead();
 #endif
 
