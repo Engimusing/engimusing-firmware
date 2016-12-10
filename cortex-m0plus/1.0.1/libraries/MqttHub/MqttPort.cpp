@@ -258,7 +258,7 @@ Cc3000PinConfig cc3000_3_pinConfig = {
 // Should be called in the loop function and it will take care if connecting.
 void MqttCC3000Port::MQTT_connect() {
   int8_t ret;
-
+  
   // Stop if already connected.
   if (myMqttCc3000.connected()) {
     return;
@@ -267,6 +267,17 @@ void MqttCC3000Port::MQTT_connect() {
   //Serial.println("Connecting to MQTT... ");
 
   while ((ret = myMqttCc3000.connect()) != 0) { // connect will return 0 for connected
+       myConnectFails++;
+       
+       //too many failures lets reboot the EFM
+       //probably worth tracking down why the connection cannot
+       // reconnect but for now this is probably good enough.
+       if(myConnectFails >= myMaxConnectFails)
+       {
+          /* Write to the Application Interrupt/Reset Command Register to reset
+         * the EFM32. See section 9.3.7 in the reference manual. */
+         SCB->AIRCR = 0x05FA0004;
+       }
        //Serial.println(myMqttCc3000.connectErrorString(ret));
        if (ret < 0)
             CC3000connect(myCc3000, myWlanConfig.ssid, myWlanConfig.pass, myWlanConfig.security);  // y0w, lets connect to wifi again
@@ -274,7 +285,7 @@ void MqttCC3000Port::MQTT_connect() {
        myMqttCc3000.disconnect();
        delay(5000);  // wait 5 seconds
   }
-
+   myConnectFails = 0;
 }
 
 
@@ -288,6 +299,8 @@ MqttCC3000Port::MqttCC3000Port(Cc3000PinConfig &pinConfig,
    , myCc3000(pinConfig.csPin, pinConfig.irqPin, pinConfig.vbatPin, pinConfig.spi)
    , myMqttCc3000(&myCc3000, mqttServerConfig.server, mqttServerConfig.port, mqttServerConfig.cid, mqttServerConfig.user, mqttServerConfig.pass)
    , myPingTime(0)
+   , myConnectFails(0)
+   , myMaxConnectFails(3)
 {
 	
 }

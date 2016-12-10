@@ -165,5 +165,6 @@ class MqttCC3000Port : public MqttPort
   Cc3000WlanConfig &myWlanConfig;
   MqttServerConfig &myMqttServerConfig;
   
-  
+  uint8_t myConnectFails;
+  uint8_t myMaxConnectFails;
 };
