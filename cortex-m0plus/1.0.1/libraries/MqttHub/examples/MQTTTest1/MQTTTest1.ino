@@ -26,18 +26,6 @@
 
 MqttHub HUB;
 
-//PINS FOR WG840
-//#define ADAFRUIT_CC3000_IRQ   33  // MUST be an interrupt pin!
-//#define ADAFRUIT_CC3000_VBAT  46  // VBAT & CS can be any digital pins.
-//#define ADAFRUIT_CC3000_CS    12
-
-Cc3000PinConfig pinConfig = {
-  12, //CS
-  60, //IRQ
-  52, //VBAT
-  SPI //SPI
-};
-
 Cc3000WlanConfig wlanConfig = {
   "SSID", //ssid to connect to
   "password", // passcode for the wlan
@@ -55,32 +43,38 @@ MqttServerConfig mqttServerConfig = {
 // pass the three configuration structs from
 // above to the wifi port in order to configure it.
 MqttCC3000Port WiFiPort(
-  pinConfig,
+  cc3000_0_pinConfig,
   wlanConfig,
   mqttServerConfig
   );
 
+MqttSerialPort SerialPort;
+
 OnOffCtlModule LEDCtrl0;
 OnOffCtlModule LEDCtrl1;
 OnOffCtlModule LEDCtrl2;
-//DetectorSwitchModule Switch1;
-//MomentarySwitchModule Switch2;
+//detectorSwitchClass Switch1;
+//momentarySwitchClass Switch2;
 Tmp102Module TMP102;
 Mpu9150Module htu21d;
 void setup()
 {
+  
+  Serial.begin(115200);
 
   WiFiPort.begin(HUB);
+  SerialPort.begin(HUB, Serial1);
+
   
   LEDCtrl0.begin(HUB, ledId[0], "EFM/BOARD/LED0", LOW);
   LEDCtrl1.begin(HUB, ledId[1], "EFM/BOARD/LED1", LOW);
   LEDCtrl2.begin(HUB, ledId[2], "EFM/BOARD/LED2", LOW);
 
   //pick one or the other since they use the same pin.
-  //Switch1.begin(HUB, 51, "EFM/BOARD/SWITCH1", 10);
-  //Switch2.begin(HUB, 51, "EFM/BOARD/SWITCH2", 10);
-  TMP102.begin(HUB, "EFM/BOARD/TMP102", &Wire0, 0, 10000);
-  htu21d.begin(HUB, "EFM/BOARD/TMP102", &Wire0, 0, 6, 10000);
+  //Switch1.begin(51, "EFM/BOARD/SWITCH1", 10);
+  //Switch2.begin(51, "EFM/BOARD/SWITCH2", 10);
+  //TMP102.begin(HUB, "EFM/BOARD/TMP102", &Wire0, 0, 10000);
+  //htu21d.begin(HUB, "EFM/BOARD/TMP102", &Wire0, 0, 6, 10000);
   
   //other 3 DF11 slots on the Wonder Gecko board
   //TMP102.begin(HUB, "EFM/BOARD/TMP102", &Wire1, 24, 10000);
@@ -95,7 +89,7 @@ void loop()
 {
   HUB.update();
    
-  /* //example of how to turn on and off a light using the OnOffCtlModule
+  /* //example of how to turn on and off a light using the onOffCtlClass
      //status of the pin will be sent to the MQTT broker.
   if(millis() > lastMillisOff + 2000)
   {

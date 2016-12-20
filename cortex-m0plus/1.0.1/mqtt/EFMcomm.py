@@ -26,13 +26,13 @@ import serial
 import time
 import json
 import paho.mqtt.client as mqtt
+import sys
 
 from sets import Set
 subscriptions = Set()
 
-
 def getSerialPort():
-    s = serial.Serial(port="COM3",
+    s = serial.Serial(port=sys.argv[1],
                       baudrate=115200, 
                       bytesize=8,
                       parity='N',
@@ -133,7 +133,6 @@ class toMQTT(threading.Thread):
         while not self.stoprequest.isSet():
             try:
                 result = self.fromSerialPort_q.get(False, 0)
-                print result
                 if len(result[1]) > 10:
                     dict = json.loads(result[1].rstrip())
                     pTopic  = dict['TOP']
@@ -183,6 +182,8 @@ def on_message(mqttc, userdata, msg):
         print "toSerialPort_q full"
 
 def main(args):
+
+
     # Create a single input and a single output queue for all threads.
     fromSerialPort_q = Queue.Queue()
     serialPort = getSerialPort()
@@ -211,9 +212,9 @@ def main(args):
     mqttc.loop_stop()
 
 if __name__ == '__main__':
-    import sys
     main(sys.argv[1:])
-
+if __name__ == 'efmcomm__main__':
+    main(sys.argv[1:])
 
 
 
