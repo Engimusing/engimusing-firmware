@@ -49,11 +49,15 @@ extern const uint8_t acmpPorts[];
 extern const uint8_t acmpPins[];
 extern const uint8_t dacPorts[];
 extern const uint8_t dacPins[];
+
 extern const uint8_t timerPorts[];
 extern const uint8_t timerPins[];
 extern const uint8_t timerPinMap[];
 extern const uint8_t timerCCindex[];
 extern const uint32_t timerRoutes[];
+
+extern const uint32_t pwmChannel[];
+
 extern const uint8_t ledPorts[];
 extern const uint8_t ledPins[];
 extern const uint8_t ledId[];

@@ -263,16 +263,16 @@ void MomentarySwitchModule::update(void)
 }
 
 // ------------------------------- Momentary Switch Class ------------------------
-void DigitalQre1113SwitchModule::begin(MqttHub &hub, uint8_t pin, const char* mod, uint8_t bounceCount, uint32_t onThreshold)
+void DigitalQre1113SwitchModule::begin(MqttHub &hub, uint8_t pin, const char* module, uint8_t bounceCount, uint32_t enablePin, uint32_t onThreshold)
 {
-	
+  
   myPin = pin;
   myBounceCnt = bounceCount;
   pinMode(pin, INPUT);
   myEventInProgress = 0;
   myOnThreshold = onThreshold;
   
-  MqttModule::begin(hub, mod, true);
+  MqttModule::begin(hub, module, true);
 	
 }
 

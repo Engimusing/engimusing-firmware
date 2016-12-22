@@ -113,7 +113,7 @@ class DigitalQre1113SwitchModule : public MqttModule
 {
 
  public:
-  virtual void begin(MqttHub &hub, uint8_t pin, const char* module, uint8_t bounceCount, uint32_t onThreshold = 400);
+  virtual void begin(MqttHub &hub, uint8_t pin, const char* module, uint8_t bounceCount, uint32_t enablePin = 0, uint32_t onThreshold = 400);
   virtual uint8_t readPin();
   virtual void update(void); // publish changes in switch state
  
