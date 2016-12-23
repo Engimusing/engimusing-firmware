@@ -133,8 +133,6 @@ void Mq7Module::sendCurCo2State()
     {
         myHub->sendMessage((const char*)myModule, "CO2LEVEL", "HIGH");	
     }
-    myHub->sendMessage((const char*)myModule, "CO2LEVEL", myAlertState);	
-    myHub->sendMessage((const char*)myModule, "CO2LEVEL", analogRead(myGasSensorPin));	
 }
 
 uint8_t Mq7Module::decode(const char* topic, const char* payload)
