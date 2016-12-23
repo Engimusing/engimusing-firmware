@@ -247,7 +247,7 @@ extern "C" {
 #endif 
     }
 
-#if defined(EFM32WG840) || defined(EFM32G232)
+#if defined(EFM32WG842) || defined(EFM32WG840) || defined(EFM32G232)
 
     if (pwmChannel[ulPin] != 0) {
 

@@ -101,7 +101,7 @@ void OnOffCtlModule::begin(MqttHub &hub, uint8_t pin, const char* mod, uint8_t a
   MqttModule::begin(hub, mod, true);
   
   uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : ~digitalRead(myPin);
-  myHub->sendMessage((const char*)myModule, "LED", onoff[val & 0x01]);
+  myHub->sendMessage((const char*)myModule, "SWITCH", onoff[val & 0x01]);
 	  
 }
 
@@ -122,7 +122,7 @@ uint8_t OnOffCtlModule::decode(const char* topic, const char* payload)
       setPinState(LOW);
     } else if(compare_token(payload,"STATUS")) {
       uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : ~digitalRead(myPin);
-      myHub->sendMessage((const char*)myModule, "LED", onoff[val & 0x01]);
+      myHub->sendMessage((const char*)myModule, "SWITCH", onoff[val & 0x01]);
     } else {return 0;}
     return 1;
   }
@@ -143,13 +143,13 @@ void OnOffCtlModule::setPinState(uint8_t on)
 	}
 	
 	//send the current state to any subscribers
-	uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : ~digitalRead(myPin);
-   myHub->sendMessage((const char*)myModule, "LED", onoff[val & 0x01]);
+	uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : !digitalRead(myPin);
+   myHub->sendMessage((const char*)myModule, "SWITCH", onoff[val & 0x01]);
 }
 
 uint8_t OnOffCtlModule::pinState()
 {
-	uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : ~digitalRead(myPin);
+	uint8_t val = (myActive == HIGH) ? digitalRead(myPin) : !digitalRead(myPin);
 	return val;
 }
 
@@ -271,6 +271,10 @@ void DigitalQre1113SwitchModule::begin(MqttHub &hub, uint8_t pin, const char* mo
   pinMode(pin, INPUT);
   myEventInProgress = 0;
   myOnThreshold = onThreshold;
+  
+  pinMode(enablePin, OUTPUT);
+  digitalWrite(enablePin, LOW);
+  
   
   MqttModule::begin(hub, module, true);
 	

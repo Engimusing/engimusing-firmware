@@ -35,7 +35,7 @@ class Noa1212Module : public MqttModule
     };
     
  public:
-  virtual void begin(MqttHub &hub, const char* mod, int32_t powerPin, int32_t gain1Pin, int32_t gain2Pin, int32_t inputPin, GainSetting gainSetting = HIGH_GAIN, uint32_t updateDelay = 60000, uint32_t numSamples = 1000);
+  virtual void begin(MqttHub &hub, const char* mod, int32_t powerPin, int32_t gain1Pin, int32_t gain2Pin, int32_t inputPin, GainSetting gainSetting = HIGH_GAIN, uint32_t updateDelay = 60000, uint32_t numSamples = 100);
   virtual void update(void); // publish changes in switch state
   virtual uint8_t decode(const char* topic, const char* payload);
     
