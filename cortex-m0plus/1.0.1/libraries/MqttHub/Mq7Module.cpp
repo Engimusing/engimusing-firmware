@@ -15,15 +15,6 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* 
- HTU21D Humidity Sensor Example Code
- By: Nathan Seidle
- SparkFun Electronics
- Date: September 15th, 2013
- License: This code is public domain but you buy me a beer if you use this and we meet someday (Beerware license).
- 
- Get humidity and temperature from the HTU21D sensor.
- */
 
  #include "Mq7Module.h"
 
