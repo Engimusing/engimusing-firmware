@@ -29,10 +29,10 @@
 //This value causes the Garage Door PWM controlled relay to output 5V
 #define HIGH_PWM_VALUE 255
 
-//If the sensor is higher than this for more than TIME_THRESHOLD then there is a CO2 problem
+//If the sensor is higher than this for more than TIME_THRESHOLD then there is a CO problem
 #define ALERT_THRESHOLD 800
 
-//For now require 10 seconds above the alert threshold before it reports a CO2 problem
+//For now require 10 seconds above the alert threshold before it reports a CO problem
 #define TIME_THRESHOLD 10000
 
 // ------------------------------- Mq7Module -------------------------
@@ -111,18 +111,18 @@ void Mq7Module::update(void)
   
     if(millis() > myTick + myUpdateDelay) {
         myTick = millis();
-        sendCurCo2State();
+        sendCurCoState();
     }
 }
 
-void Mq7Module::sendCurCo2State()
+void Mq7Module::sendCurCoState()
 {
     if(myAlertState == NO_PROBLEM || myAlertState == POTENTIAL_PROBLEM)
     {
-        myHub->sendMessage((const char*)myModule, "CO2LEVEL", "LOW");	
+        myHub->sendMessage((const char*)myModule, "COLEVEL", "LOW");	
     }else if(myAlertState == PROBLEM || myAlertState == POTENTIAL_RECOVERY)
     {
-        myHub->sendMessage((const char*)myModule, "CO2LEVEL", "HIGH");	
+        myHub->sendMessage((const char*)myModule, "COLEVEL", "HIGH");	
     }
 }
 
@@ -135,7 +135,7 @@ uint8_t Mq7Module::decode(const char* topic, const char* payload)
   }
   
   if(compare_token(&topic[j],"STATUS")) {
-    sendCurCo2State();
+    sendCurCoState();
     return 1;
   }
 }

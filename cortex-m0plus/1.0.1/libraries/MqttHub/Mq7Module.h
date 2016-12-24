@@ -45,7 +45,7 @@ class Mq7Module : public MqttModule
     };
     
  protected:
-  virtual void sendCurCo2State();
+  virtual void sendCurCoState();
 
   int32_t myPwmCtlPin;
   int32_t myGasSensorPin;

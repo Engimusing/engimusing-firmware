@@ -17,7 +17,7 @@
 */
 /* Example for how to setup the MQTT client for the Garage Door Controller Engimusing board
  *  This board is intended to be connected up to a garage door opener to allow for remote
- *  control of the garage door. Also provides temperature and CO2 detector for the garage.
+ *  control of the garage door. Also provides temperature and CO detector for the garage.
  *  See http://www.engimusing.com/collections/project-kits/products/garage-1 for more 
  *  information about the board.
  */
@@ -32,12 +32,40 @@
 
 #include <Wire.h>
 /*
-  EFMZG108 Commands:
-  {"TOP":"GDOOR/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"GDOOR/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"GDOOR/BOARD/LED/CTL","PLD":"STATUS"}
+  GDOOR Commands:
+  {"TOP":"GDOOR/BOARD/LED_RED/CTL","PLD":"ON"}
+  {"TOP":"GDOOR/BOARD/LED_RED/CTL","PLD":"OFF"}
+  {"TOP":"GDOOR/BOARD/LED_RED/CTL","PLD":"STATUS"}
+  
+  {"TOP":"GDOOR/BOARD/LED_GREEN/CTL","PLD":"ON"}
+  {"TOP":"GDOOR/BOARD/LED_GREEN/CTL","PLD":"OFF"}
+  {"TOP":"GDOOR/BOARD/LED_GREEN/CTL","PLD":"STATUS"}
+  
+  {"TOP":"GDOOR/BOARD/LED_BLUE/CTL","PLD":"ON"}
+  {"TOP":"GDOOR/BOARD/LED_BLUE/CTL","PLD":"OFF"}
+  {"TOP":"GDOOR/BOARD/LED_BLUE/CTL","PLD":"STATUS"}
 
-  {"TOP":"GDOOR/BOARD/TMP102/DEC_C","PLD":"STATUS"}
+  {"TOP":"GDOOR/BOARD/TMP102","PLD":"STATUS"}
+  
+  {"TOP":"GDOOR/BOARD/MQ7","PLD":"STATUS"}
+  
+  {"TOP":"GDOOR/BOARD/NOA1212","PLD":"STATUS"}
+  
+  {"TOP":"GDOOR/BOARD/DCRELAY1/CTL","PLD":"ON"}
+  {"TOP":"GDOOR/BOARD/DCRELAY1/CTL","PLD":"OFF"}
+  {"TOP":"GDOOR/BOARD/DCRELAY1/CTL","PLD":"STATUS"}
+  
+  {"TOP":"GDOOR/BOARD/DCRELAY2/CTL","PLD":"ON"}
+  {"TOP":"GDOOR/BOARD/DCRELAY2/CTL","PLD":"OFF"}
+  {"TOP":"GDOOR/BOARD/DCRELAY2/CTL","PLD":"STATUS"}
+  
+  {"TOP":"GDOOR/BOARD/MON1","PLD":"STATUS"}
+  {"TOP":"GDOOR/BOARD/MON2","PLD":"STATUS"}
+  {"TOP":"GDOOR/BOARD/MON3","PLD":"STATUS"}
+  {"TOP":"GDOOR/BOARD/MON4","PLD":"STATUS"}
+  {"TOP":"GDOOR/BOARD/MON5","PLD":"STATUS"}
+  {"TOP":"GDOOR/BOARD/MON6","PLD":"STATUS"}
+  
 */
 
 MqttHub HUB;
@@ -95,7 +123,7 @@ void setup()
   ReflectiveSensorSwitch2.begin(HUB, 15, "GDOOR/BOARD/QRE2", 10, 45);
 
   //The large round orange object on the side of the garage door board with more on it
-  // is the MQ7 CO2 detector.
+  // is the MQ7 CO detector.
   Mq7.begin(HUB, "GDOOR/BOARD/MQ7", 48, 33, 10000);
   
   //Light sensor that is on the front of the board.

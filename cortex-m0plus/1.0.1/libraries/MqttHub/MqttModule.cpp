@@ -199,7 +199,7 @@ uint8_t DetectorSwitchModule::decode(const char* topic, const char* payload)
 	  return 0;
   }
   
-  if(compare_token(&topic[j],"SWITCH")) {
+  if(compare_token(&topic[j],"STATUS")) {
     switchMsg(mySwitchState);
     return 1;
   }
