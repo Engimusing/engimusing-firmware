@@ -30,6 +30,7 @@ MqttHub::MqttHub()
   myHeatbeatTick = 0;
   myRootModule = 0;
   myRootPort = 0;
+  myNextSubscribeModule = 0;
 }
 
 void MqttHub::subscribe(const char* mod)
@@ -57,11 +58,19 @@ void MqttHub::registerPort(MqttPort *port)
 
 void MqttHub::processPortInput()
 {
-    MqttModule *curModule = myRootModule;
+    
+}
+
+
+
+void MqttHub::update()
+{
+	
+  MqttModule *curModule = myRootModule;
 	MqttPort *curPort = myRootPort;
    
    bool processed = false;
-   
+   //Process the ports to see if there are any incoming messages
 	while(curPort)
 	{
 		if(curPort->decode())
@@ -72,7 +81,7 @@ void MqttHub::processPortInput()
 				if(curModule->decode(curPort->myTopic, curPort->myPayload))
 				{
 					curModule = 0;
-               processed = true;
+                    processed = true;
 				}else
 				{
 					curModule = curModule->myNextModule;
@@ -96,6 +105,7 @@ void MqttHub::processPortInput()
 		curPort = curPort->myNextPort;
 	}
     
+    //process the modules updates
     curModule = myRootModule;
 	while(curModule)
 	{
@@ -103,30 +113,26 @@ void MqttHub::processPortInput()
 		
 		curModule = curModule->myNextModule;
 	}
-}
-
-
-
-void MqttHub::update()
-{
-	
-    processPortInput();
-		
+    
+    //only one subscribe per update() call
+    // subscribe based on the heatbeat value
 	if(millis() > myHeatbeatTick + mySubscribeHeartbeat)
 	{
 		myHeatbeatTick = millis();
-		MqttModule *curModule = myRootModule;
-		while(curModule)
-		{
-            if(curModule->mySubOnHeartbeat)
-			{
-				subscribe(curModule->myModule);	
-			}
-            //Process prot input after every subscription to clear out subacks
-            processPortInput();
-            
-			curModule = curModule->myNextModule;
-		}
+        if(myNextSubscribeModule == 0)
+        {
+            myNextSubscribeModule = myRootModule;
+        }
+    }
+    
+    if(myNextSubscribeModule != 0)
+    {
+        if(myNextSubscribeModule->mySubOnHeartbeat)
+        {
+            subscribe(myNextSubscribeModule->myModule);	
+        }
+      
+        myNextSubscribeModule = myNextSubscribeModule->myNextModule;
 	}
 }
 

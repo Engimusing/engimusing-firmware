@@ -349,7 +349,7 @@ int8_t MqttCC3000Port::decode(void)
    
   MQTT_connect();
 
-  myMqttCc3000.processPackets(10);
+  myMqttCc3000.processPackets(1);
 
   if(millis() > myPingTime + 10000)
   {

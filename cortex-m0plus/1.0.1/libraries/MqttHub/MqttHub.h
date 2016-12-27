@@ -63,6 +63,7 @@ class MqttHub
 	uint32_t myHeatbeatTick;
 	MqttModule *myRootModule;
 	MqttPort *myRootPort;
+	MqttModule *myNextSubscribeModule;
 	
 };
 

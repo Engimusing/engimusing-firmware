@@ -720,7 +720,7 @@ void Adafruit_MQTT::subscribe(const char *topic, uint8_t qos)
     sendPacket(buffer, len);
     //process any packets that came in as a result of the subscription.
     // this prevents any packets from piling up and locking up the program
-    processPackets(10);
+    processPackets(1);
 }
 
 
