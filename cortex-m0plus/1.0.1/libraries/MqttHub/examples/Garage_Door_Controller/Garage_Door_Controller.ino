@@ -179,8 +179,5 @@ void loop()
             dcRelay2TurnOnTime = -1;
             DcRelay2.setPinState(LOW);
         }
-  }
-  
-1
-  
+  }  
 }
