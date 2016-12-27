@@ -70,7 +70,6 @@
 */
 
 MqttHub HUB;
-MqttCC3000Port wifiPort;
 
 Cc3000WlanConfig wlanConfig = {
   "SSID", //ssid to connect to
@@ -88,7 +87,7 @@ MqttServerConfig mqttServerConfig = {
 
 // pass the three configuration structs 
 //to the wifi port in order to configure it.
-MqttCC3000Port WiFiPort(
+MqttCC3000Port wifiPort(
   cc3000_0_pinConfig, //Configuration defined based on the device
   wlanConfig, //defined above
   mqttServerConfig //defined above
