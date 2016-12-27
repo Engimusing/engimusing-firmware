@@ -78,7 +78,7 @@ Cc3000WlanConfig wlanConfig = {
 };
 
 MqttServerConfig mqttServerConfig = {
-  "192.168.1.14", //mqtt server address to connect to
+  "192.168.1.20", //mqtt server address to connect to
   1883, //mqtt port to connect to 
   "EFM32WG842", //name for this device to send to the server
   "username", // username to access the mqtt server
@@ -142,9 +142,10 @@ void setup()
   //On the side of the garage door board with less on it there are
   // three QRE1113 reflectivity sensors. These work well as proximity sensor
   // buttons.
-  ReflectiveSensorSwitch0.begin(HUB, 30, "GDOOR/BOARD/QRE0", 10, 1);
-  ReflectiveSensorSwitch1.begin(HUB, 31, "GDOOR/BOARD/QRE1", 10, 3);
-  ReflectiveSensorSwitch2.begin(HUB, 15, "GDOOR/BOARD/QRE2", 10, 45);
+  // WIFI loops slower so we need to have a lower bounce value
+  ReflectiveSensorSwitch0.begin(HUB, 30, "GDOOR/BOARD/QRE0", 3, 1); 
+  ReflectiveSensorSwitch1.begin(HUB, 31, "GDOOR/BOARD/QRE1", 3, 3);
+  ReflectiveSensorSwitch2.begin(HUB, 15, "GDOOR/BOARD/QRE2", 3, 45);
 
   //The large round orange object on the side of the garage door board with more on it
   // is the MQ7 CO detector.

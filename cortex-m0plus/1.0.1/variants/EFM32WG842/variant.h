@@ -86,7 +86,7 @@ static const uint8_t A7  = 35;
 
 #define PIN_CC3000_0_CS 12
 #define PIN_CC3000_0_IRQ 60
-#define PIN_CC3000_0_VBAT 51
+#define PIN_CC3000_0_VBAT 52
 #define CC3000_0_SPI SPI
 
 

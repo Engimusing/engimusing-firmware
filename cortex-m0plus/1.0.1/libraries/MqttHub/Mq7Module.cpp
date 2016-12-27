@@ -30,7 +30,7 @@
 #define HIGH_PWM_VALUE 255
 
 //If the sensor is higher than this for more than TIME_THRESHOLD then there is a CO problem
-#define ALERT_THRESHOLD 800
+#define ALERT_THRESHOLD 950
 
 //For now require 10 seconds above the alert threshold before it reports a CO problem
 #define TIME_THRESHOLD 10000

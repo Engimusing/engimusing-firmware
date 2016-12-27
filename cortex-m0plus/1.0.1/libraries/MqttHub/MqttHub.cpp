@@ -55,9 +55,9 @@ void MqttHub::registerPort(MqttPort *port)
 	myRootPort = port;
 }
 
-void MqttHub::update()
+void MqttHub::processPortInput()
 {
-	MqttModule *curModule = myRootModule;
+    MqttModule *curModule = myRootModule;
 	MqttPort *curPort = myRootPort;
    
    bool processed = false;
@@ -91,34 +91,40 @@ void MqttHub::update()
                }
                curSendPort = curSendPort->myNextPort;
             }
-            
-            
-         }
-         
-         
+          }         
 		}
 		curPort = curPort->myNextPort;
 	}
-	
-	curModule = myRootModule;
+    
+    curModule = myRootModule;
 	while(curModule)
 	{
 		curModule->update();
 		
 		curModule = curModule->myNextModule;
 	}
-		
+}
+
+
+
+void MqttHub::update()
+{
+	
+    processPortInput();
 		
 	if(millis() > myHeatbeatTick + mySubscribeHeartbeat)
 	{
 		myHeatbeatTick = millis();
-		curModule = myRootModule;
+		MqttModule *curModule = myRootModule;
 		while(curModule)
 		{
-      	if(curModule->mySubOnHeartbeat)
+            if(curModule->mySubOnHeartbeat)
 			{
 				subscribe(curModule->myModule);	
 			}
+            //Process prot input after every subscription to clear out subacks
+            processPortInput();
+            
 			curModule = curModule->myNextModule;
 		}
 	}

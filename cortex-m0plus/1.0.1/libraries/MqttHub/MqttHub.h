@@ -57,6 +57,8 @@ class MqttHub
 	
  protected:
  
+    void processPortInput();
+    
 	uint32_t mySubscribeHeartbeat;
 	uint32_t myHeatbeatTick;
 	MqttModule *myRootModule;
