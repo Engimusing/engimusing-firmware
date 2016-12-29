@@ -19,9 +19,6 @@
 #pragma once
 
 #include "Arduino.h"
-#include "Adafruit_MQTT_CC3000.h"
-#include <Adafruit_CC3000.h>
-#include "Adafruit_MQTT.h"
 
 #include "MqttHub.h"
 
@@ -101,70 +98,5 @@ struct Cc3000PinConfig
    SPIClass& spi;
 };
 
-#if CC3000_INTERFACES_COUNT > 0
-extern Cc3000PinConfig cc3000_0_pinConfig;
-#endif
-#if CC3000_INTERFACES_COUNT > 1
-extern Cc3000PinConfig cc3000_1_pinConfig;
-#endif
-#if CC3000_INTERFACES_COUNT > 2
-extern Cc3000PinConfig cc3000_2_pinConfig;
-#endif
-#if CC3000_INTERFACES_COUNT > 3
-extern Cc3000PinConfig cc3000_3_pinConfig;
-#endif
 
 
-
-
-
-struct Cc3000WlanConfig
-{
-   const char* ssid;
-   const char* pass; 
-   uint8_t security;
-};
-
-struct MqttServerConfig
-{
-     const char *server;
-     uint16_t port;
-     const char *cid;
-     const char *user;
-     const char *pass;
-};
-
-
-class MqttCC3000Port : public MqttPort
-{
-   
- public:
- 
-  MqttCC3000Port(Cc3000PinConfig &pinConfig, Cc3000WlanConfig &wlanConfig, MqttServerConfig &mqttServerConfig);
-  
-  virtual int8_t decode(void);
-
-  virtual void subscribe(const char* mod);
-  
-  virtual void begin(MqttHub &hub);
-  
-  virtual void MQTT_connect();
-  
-  virtual void publishMessage(const char* topic, const char* payload);
-  
-  virtual void forwardMessage(const char* topic, const char* payload);
-  
- protected:
-  
-  Adafruit_CC3000 myCc3000;
-  Adafruit_MQTT_CC3000 myMqttCc3000;
-  
-  int myPingTime;
-  
-  Cc3000PinConfig &myPinConfig;
-  Cc3000WlanConfig &myWlanConfig;
-  MqttServerConfig &myMqttServerConfig;
-  
-  uint8_t myConnectFails;
-  uint8_t myMaxConnectFails;
-};

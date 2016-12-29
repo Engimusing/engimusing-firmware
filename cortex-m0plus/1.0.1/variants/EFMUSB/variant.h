@@ -47,6 +47,26 @@ static const uint8_t A2 = 10;
 #define WIRE0_ISR_HANDLER     I2C0_Handler
 #define WIRE0_CLOCK				cmuClock_I2C0
 
+#define SPI_INTERFACES_COUNT 1
+
+#define SPI_INTERFACE        USART1
+#define SPI_INTERFACE_ID     USART_ROUTE_LOCATION_LOC0
+#define SPI_CLK	cmuClock_USART1
+#define SPI_CHANNELS_NUM 1
+#define PIN_SPI0_MOSI 6
+#define PIN_SPI0_MISO 7
+#define PIN_SPI0_SCK 11
+
+//not enough room for CC3000 MQTT on this board.
+// could probably get CC3000 to work by itself though
+#define CC3000_INTERFACES_COUNT 0 
+/*
+#define PIN_CC3000_0_CS 12
+#define PIN_CC3000_0_IRQ 60
+#define PIN_CC3000_0_VBAT 52
+#define CC3000_0_SPI SPI
+*/
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);

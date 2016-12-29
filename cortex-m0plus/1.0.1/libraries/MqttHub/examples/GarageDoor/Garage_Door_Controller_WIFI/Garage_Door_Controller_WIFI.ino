@@ -26,6 +26,7 @@
 //Include the EFM32COMM to get the MQTT client classes
 #include <MqttHub.h>
 #include <MqttPort.h>
+#include <MqttCC3000Port.h>
 #include <MqttModule.h>
 
 #include <Mq7Module.h>
@@ -206,3 +207,6 @@ void loop()
         }
   }  
 }
+
+
+

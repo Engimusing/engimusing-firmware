@@ -5,6 +5,7 @@
 
 #include <MqttHub.h>
 #include <MqttPort.h>
+#include <MqttCC3000Port.h>
 #include <MqttModule.h>
 #include <Mpu9150Module.h>
 /*
