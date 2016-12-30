@@ -1,4 +1,5 @@
 /*
+  Copyright (c) 2016 Engimusing LLC.  All right reserved.
   Copyright (c) 2011 Arduino.  All right reserved.
 
   This library is free software; you can redistribute it and/or
