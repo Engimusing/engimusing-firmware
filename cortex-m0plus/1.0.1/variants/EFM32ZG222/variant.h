@@ -26,6 +26,8 @@
 
 #include "Arduino.h"
 
+#define LED_BUILTIN 15
+
 #define EFMZG_LEUART_CLKDIV 0x59D0
 #define EFMTG_LEUART_CLKDIV 0x77C0
 #define EFMWG_LEUART_CLKDIV 0x77C0
