@@ -59,7 +59,7 @@ class MqttCC3000Port : public MqttPort
    
  public:
  
-  MqttCC3000Port(Cc3000PinConfig &pinConfig, Cc3000WlanConfig &wlanConfig, MqttServerConfig &mqttServerConfig);
+  MqttCC3000Port(Cc3000PinConfig &pinConfig, Cc3000WlanConfig &wlanConfig, MqttServerConfig &mqttServerConfig, UARTClass &serial = Serial1);
   
   virtual int8_t decode(void);
 
@@ -86,6 +86,8 @@ class MqttCC3000Port : public MqttPort
   
   uint8_t myConnectFails;
   uint8_t myMaxConnectFails;
+ 
+  UARTClass &mySerial;
 };
 
 #endif

@@ -5,40 +5,40 @@
 
 //#define STATICIP
 
-#define SERIAL Serial1
+//#define SERIAL Serial1
 
-#define halt(s) { SERIAL.println(F( s )); while(1);  }
+//#define halt(s) { SERIAL.println(F( s )); while(1);  }
 
 
 //uint16_t checkFirmwareVersion(void);
-bool displayConnectionDetails(Adafruit_CC3000 &cc3000);
+bool displayConnectionDetails(Adafruit_CC3000 &cc3000, UARTClass &LocalSerial);
 
-boolean CC3000connect(Adafruit_CC3000 &cc3000, const char* wlan_ssid, const char* wlan_pass, uint8_t wlan_security) {
+boolean CC3000connect(Adafruit_CC3000 &cc3000, const char* wlan_ssid, const char* wlan_pass, uint8_t wlan_security, UARTClass &LocalSerial) {
   //Watchdog.reset();
     
   // Check for compatible firmware
   //if (checkFirmwareVersion() < 0x113)   halt("Wrong firmware version!");
   
   // Delete any old connection data on the module
-  SERIAL.println(F("\nDeleting old connection profiles"));
-  if (!cc3000.deleteProfiles())     halt("Failed!");
+  LocalSerial.println(F("\nDeleting old connection profiles"));
+  if (!cc3000.deleteProfiles())     return false;//halt("Failed!");
 
 #ifdef STATICIP
-  SERIAL.println(F("Setting static IP"));
+  LocalSerial.println(F("Setting static IP"));
   uint32_t ipAddress = cc3000.IP2U32(192, 168, 1, 23);
   uint32_t netMask = cc3000.IP2U32(255, 255, 255, 0);
   uint32_t defaultGateway = cc3000.IP2U32(192, 168, 1, 1);
   uint32_t dns = cc3000.IP2U32(8, 8, 4, 4);
   
   if (!cc3000.setStaticIPAddress(ipAddress, netMask, defaultGateway, dns)) {
-    Serial.println(F("Failed to set static IP!"));
+    LocalSerial.println(F("Failed to set static IP!"));
     while(1);
   }
 #endif
 
   // Attempt to connect to an access point
-  SERIAL.print(F("\nAttempting to connect to ")); 
-  SERIAL.print(wlan_ssid); SERIAL.print(F("..."));
+  LocalSerial.print(F("\nAttempting to connect to ")); 
+  LocalSerial.print(wlan_ssid); LocalSerial.print(F("..."));
 
   //Watchdog.disable();
   // try 3 times
@@ -47,12 +47,12 @@ boolean CC3000connect(Adafruit_CC3000 &cc3000, const char* wlan_ssid, const char
   }
   
   //Watchdog.enable(8000);
-  SERIAL.println(F("Connected!"));
+  LocalSerial.println(F("Connected!"));
 
 uint8_t retries;
 #ifndef STATICIP  
   /* Wait for DHCP to complete */
-  SERIAL.println(F("Requesting DHCP"));
+  LocalSerial.println(F("Requesting DHCP"));
   retries = 100;
   while (!cc3000.checkDHCP())
   {
@@ -64,7 +64,7 @@ uint8_t retries;
 #endif
   /* Display the IP address DNS, Gateway, etc.  */
   retries = 10;
-  while (! displayConnectionDetails(cc3000)) {
+  while (! displayConnectionDetails(cc3000, LocalSerial)) {
     //Watchdog.reset();
     delay(1000);
     retries--;
@@ -89,13 +89,13 @@ uint8_t retries;
   
   if(!cc3000.getFirmwareVersion(&major, &minor))
   {
-    Serial.println(F("Unable to retrieve the firmware version!\r\n"));
+    LocalSerial.println(F("Unable to retrieve the firmware version!\r\n"));
     version = 0;
   }
   else
   {
-    Serial.print(F("Firmware V. : "));
-    Serial.print(major); Serial.print(F(".")); Serial.println(minor);
+    LocalSerial.print(F("Firmware V. : "));
+    LocalSerial.print(major); LocalSerial.print(F(".")); LocalSerial.println(minor);
     version = major; version <<= 8; version |= minor;
   }
   return version;
@@ -107,23 +107,23 @@ uint8_t retries;
     @brief  Tries to read the IP address and other connection details
 */
 /**************************************************************************/
-bool displayConnectionDetails(Adafruit_CC3000 &cc3000)
+bool displayConnectionDetails(Adafruit_CC3000 &cc3000, UARTClass &LocalSerial)
 {
   uint32_t ipAddress, netmask, gateway, dhcpserv, dnsserv;
   
   if(!cc3000.getIPAddress(&ipAddress, &netmask, &gateway, &dhcpserv, &dnsserv))
   {
-    SERIAL.println(F("Unable to retrieve the IP Address!\r\n"));
+    LocalSerial.println(F("Unable to retrieve the IP Address!\r\n"));
     return false;
   }
   else
   {
-    SERIAL.print(F("\nIP Addr: ")); cc3000.printIPdotsRev(ipAddress);
-    SERIAL.print(F("\nNetmask: ")); cc3000.printIPdotsRev(netmask);
-    SERIAL.print(F("\nGateway: ")); cc3000.printIPdotsRev(gateway);
-    SERIAL.print(F("\nDHCPsrv: ")); cc3000.printIPdotsRev(dhcpserv);
-    SERIAL.print(F("\nDNSserv: ")); cc3000.printIPdotsRev(dnsserv);
-    SERIAL.println();
+    LocalSerial.print(F("\r\nIP Addr: ")); cc3000.printIPdotsRev(ipAddress);
+    LocalSerial.print(F("\r\nNetmask: ")); cc3000.printIPdotsRev(netmask);
+    LocalSerial.print(F("\r\nGateway: ")); cc3000.printIPdotsRev(gateway);
+    LocalSerial.print(F("\r\nDHCPsrv: ")); cc3000.printIPdotsRev(dhcpserv);
+    LocalSerial.print(F("\r\nDNSserv: ")); cc3000.printIPdotsRev(dnsserv);
+    LocalSerial.println();
     return true;
   }
 }

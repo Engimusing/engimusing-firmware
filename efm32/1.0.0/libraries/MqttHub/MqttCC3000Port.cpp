@@ -89,7 +89,7 @@ void MqttCC3000Port::MQTT_connect() {
        }
        //Serial.println(myMqttCc3000.connectErrorString(ret));
        if (ret < 0)
-            CC3000connect(myCc3000, myWlanConfig.ssid, myWlanConfig.pass, myWlanConfig.security);  // y0w, lets connect to wifi again
+            CC3000connect(myCc3000, myWlanConfig.ssid, myWlanConfig.pass, myWlanConfig.security, mySerial);  // y0w, lets connect to wifi again
        //mySerial->println("Retrying MQTT connection in 5 seconds...");
        myMqttCc3000.disconnect();
        delay(5000);  // wait 5 seconds
@@ -100,16 +100,19 @@ void MqttCC3000Port::MQTT_connect() {
 
 MqttCC3000Port::MqttCC3000Port(Cc3000PinConfig &pinConfig, 
                                                  Cc3000WlanConfig &wlanConfig,
-                                                 MqttServerConfig &mqttServerConfig) 
+                                                 MqttServerConfig &mqttServerConfig,
+                                                 UARTClass &serial
+                                                 ) 
    : MqttPort()
    , myPinConfig(pinConfig)
    , myWlanConfig(wlanConfig)
    , myMqttServerConfig(mqttServerConfig)
-   , myCc3000(pinConfig.csPin, pinConfig.irqPin, pinConfig.vbatPin, pinConfig.spi)
+   , myCc3000(pinConfig.csPin, pinConfig.irqPin, pinConfig.vbatPin, pinConfig.spi, SPI_CLOCK_DIVIDER, &serial)
    , myMqttCc3000(&myCc3000, mqttServerConfig.server, mqttServerConfig.port, mqttServerConfig.cid, mqttServerConfig.user, mqttServerConfig.pass)
    , myPingTime(0)
    , myConnectFails(0)
    , myMaxConnectFails(3)
+   , mySerial(serial)
 {
 	
 }
@@ -121,7 +124,7 @@ void MqttCC3000Port::begin(MqttHub &hub)
    // Initialise the CC3000 module
    myCc3000.begin();
   
-   while (! CC3000connect(myCc3000, myWlanConfig.ssid, myWlanConfig.pass, myWlanConfig.security)) {
+   while (! CC3000connect(myCc3000, myWlanConfig.ssid, myWlanConfig.pass, myWlanConfig.security, mySerial)) {
       delay(1000);
    }
 

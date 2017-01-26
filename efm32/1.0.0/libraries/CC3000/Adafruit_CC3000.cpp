@@ -232,9 +232,9 @@ Adafruit_CC3000::Adafruit_CC3000(uint8_t csPin, uint8_t irqPin, uint8_t vbatPin,
 bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
 {
   if (_initialised) return true;
-	if (CC3KPrinter != 0) {
-      CC3KPrinter->println(F("Begin!"));
-    }
+  
+  DEBUGPRINT_F("Begin!");
+  
   /*#ifndef CORE_ADAX
   // determine irq #
   for (uint8_t i=0; i<sizeof(dreqinttable); i+=2) {
@@ -255,10 +255,9 @@ bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
 
   init_spi();
   
-  if (CC3KPrinter != 0) {
-      CC3KPrinter->println(F("After SPI!"));
-    }
   
+  DEBUGPRINT_F("After SPI!");
+    
   DEBUGPRINT_F("init\n\r");
   wlan_init(CC3000_UsynchCallback,
             sendWLFWPatch, sendDriverPatch, sendBootLoaderPatch,
@@ -269,9 +268,8 @@ bool Adafruit_CC3000::begin(uint8_t patchReq, bool useSmartConfigData)
   DEBUGPRINT_F("start\n\r");
 
   wlan_start(patchReq);
-   if (CC3KPrinter != 0) {
-      CC3KPrinter->println(F("After wlan start!"));
-    }
+  DEBUGPRINT_F("After wlan start!");
+ 
   DEBUGPRINT_F("ioctl\n\r");
   // Check if we should erase previous stored connection details
   // (most likely written with data from the SmartConfig app)
