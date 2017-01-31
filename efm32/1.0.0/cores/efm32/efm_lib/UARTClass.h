@@ -81,6 +81,8 @@ class UARTClass : public HardwareSerial
 extern UARTClass Serial;
 extern UARTClass Serial1;
 extern UARTClass Serial2;
+extern UARTClass Serial3;
+extern UARTClass Serial4;
 
 extern void serialEventRun(void) __attribute__((weak));
 extern void serialEvent() __attribute__((weak));

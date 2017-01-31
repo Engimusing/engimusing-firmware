@@ -78,36 +78,65 @@
 //		   LEUART_ROUTE_LOCATION_LOC1, CMU_LFBCLKEN0_LEUART0, LEUART_CLKDIV);
 
 
+RingBuffer rx_buffer0;
 RingBuffer rx_buffer1;
 RingBuffer rx_buffer2;
+RingBuffer rx_buffer3;
+RingBuffer rx_buffer4;
 
-UARTClass Serial(LEUART0, LEUART0_IRQn, &rx_buffer1, LEUART_ROUTE_LOCATION_LOC2, cmuClock_LEUART0);
-UARTClass Serial1(LEUART1, LEUART1_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC0, cmuClock_LEUART1);
+UARTClass Serial(USART0, USART0_RX_IRQn, &rx_buffer0, USART_ROUTE_LOCATION_LOC0, cmuClock_USART0);
+UARTClass Serial1(LEUART0, LEUART0_IRQn, &rx_buffer1, LEUART_ROUTE_LOCATION_LOC2, cmuClock_LEUART0);
+UARTClass Serial2(LEUART1, LEUART1_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC0, cmuClock_LEUART1);
+UARTClass Serial3(USART1, USART1_RX_IRQn, &rx_buffer3, USART_ROUTE_LOCATION_LOC0, cmuClock_USART1);
+UARTClass Serial4(USART2, USART2_RX_IRQn, &rx_buffer4, USART_ROUTE_LOCATION_LOC0, cmuClock_USART2);
+
 
 // IT handlers
-void LEUART0_IRQHandler(void)
+void USART0_RX_IRQHandler(void)
 {
   Serial.IrqHandler();
 }
 
-void LEUART1_IRQHandler(void)
+void LEUART0_IRQHandler(void)
 {
   Serial1.IrqHandler();
 }
 
+void LEUART1_IRQHandler(void)
+{
+  Serial2.IrqHandler();
+}
+
+void USART1_RX_IRQHandler(void)
+{
+  Serial3.IrqHandler();
+}
+
+void USART2_RX_IRQHandler(void)
+{
+  Serial4.IrqHandler();
+}
+
 void check_for_reset()
-  {
-	if(Serial.isResetReceived() || Serial1.isResetReceived())
+{
+	if(Serial.isResetReceived() || 
+        Serial1.isResetReceived() || 
+        Serial2.isResetReceived() || 
+        Serial3.isResetReceived() || 
+        Serial4.isResetReceived())
 	{
 		SCB->AIRCR = 0x05FA0004;
 		//BOOT_reset();
 	}
-  }
+}
 
 void initVariant() 
 { 
 	Serial.begin(115200);
 	Serial1.begin(115200);
+    Serial2.begin(115200);
+    Serial3.begin(115200);
+    Serial4.begin(115200);
 }
 
 // -------------------------------------------------------------------------------------------------------------
@@ -141,5 +170,8 @@ void serialEventRun(void)
 {
 if (Serial.available() && serialEvent) serialEvent();
 if (Serial1.available() && serialEvent) serialEvent();
+if (Serial2.available() && serialEvent) serialEvent();
+if (Serial3.available() && serialEvent) serialEvent();
+if (Serial4.available() && serialEvent) serialEvent();
 
 }
