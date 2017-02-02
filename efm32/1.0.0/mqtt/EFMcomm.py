@@ -28,6 +28,11 @@ import json
 import paho.mqtt.client as mqtt
 import sys
 
+try:
+    import fcntl
+except:
+    pass
+
 from sets import Set
 subscriptions = Set()
 
@@ -37,13 +42,8 @@ mqttPort = 1883
 mqttUsername = "username"
 mqttPassword = "password"
 
-try:
-    import fcntl
-except:
-    pass
-
 def getSerialPort():
-    s = serial.Serial(port=sys.argv[1],
+    s = serial.Serial(port=serialPort,
                       baudrate=115200, 
                       bytesize=8,
                       parity='N',
@@ -150,7 +150,8 @@ class toMQTT(threading.Thread):
         self.fromSerialPort_q = fromSerialPort_q
 
         mqttp.on_connect = on_connectp
-        mqttp.connect("localhost",1883,60)
+        mqttp.username_pw_set(mqttUsername, mqttPassword)
+        mqttp.connect(mqttHostAddress,mqttPort,60)
 
         self.stoprequest = threading.Event()
 
@@ -224,17 +225,19 @@ def main(args):
         mqttUsername = args[3]
     if len(args) > 4:
         mqttPassword = args[4]
-
-
+    
+    
+    
     # Create a single input and a single output queue for all threads.
     fromSerialPort_q = Queue.Queue()
     serialPort = getSerialPort()
 
     mqttc.on_connect = on_connectc
     mqttc.on_message = on_message
-
+    
     mqttc.username_pw_set(mqttUsername, mqttPassword)
     mqttc.connect(mqttHostAddress,mqttPort,60)
+
 
     toSer    = toSerialThread(toSerialPort_q=toSerialPort_q, serialPort=serialPort)
     fromSer  = fromSerialThread(fromSerialPort_q=fromSerialPort_q, serialPort=serialPort)
