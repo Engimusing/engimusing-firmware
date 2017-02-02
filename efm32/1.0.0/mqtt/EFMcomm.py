@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
   Copyright (c) 2015 Engimusing LLC.  All right reserved.
 
@@ -16,8 +18,6 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 """
 
-#!/usr/bin/env python
-
 import os
 import threading
 import Queue
@@ -28,13 +28,19 @@ import json
 import paho.mqtt.client as mqtt
 import sys
 
+from sets import Set
+subscriptions = Set()
+
+serialPort = "COM1"
+mqttHostAddress = "localhost"
+mqttPort = 1883
+mqttUsername = "username"
+mqttPassword = "password"
+
 try:
     import fcntl
 except:
     pass
-
-from sets import Set
-subscriptions = Set()
 
 def getSerialPort():
     s = serial.Serial(port=sys.argv[1],
@@ -202,6 +208,22 @@ def on_message(mqttc, userdata, msg):
         print "toSerialPort_q full"
 
 def main(args):
+    print args
+    global serialPort
+    global mqttHostAddress
+    global mqttPort
+    global mqttUsername
+    global mqttPassword
+    if len(args) > 0:
+        serialPort = args[0]
+    if len(args) > 1:
+        mqttHostAddress = args[1]
+    if len(args) > 2:
+        mqttPort = args[2]
+    if len(args) > 3:
+        mqttUsername = args[3]
+    if len(args) > 4:
+        mqttPassword = args[4]
 
 
     # Create a single input and a single output queue for all threads.
@@ -210,7 +232,9 @@ def main(args):
 
     mqttc.on_connect = on_connectc
     mqttc.on_message = on_message
-    mqttc.connect("localhost",1883,60)
+
+    mqttc.username_pw_set(mqttUsername, mqttPassword)
+    mqttc.connect(mqttHostAddress,mqttPort,60)
 
     toSer    = toSerialThread(toSerialPort_q=toSerialPort_q, serialPort=serialPort)
     fromSer  = fromSerialThread(fromSerialPort_q=fromSerialPort_q, serialPort=serialPort)
