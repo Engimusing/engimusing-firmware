@@ -28,6 +28,11 @@ import json
 import paho.mqtt.client as mqtt
 import sys
 
+try:
+    import fcntl
+except:
+    pass
+
 from sets import Set
 subscriptions = Set()
 
@@ -40,6 +45,14 @@ def getSerialPort():
                       timeout=0.05,
                       xonxoff=0,
                       rtscts=0)
+    try:
+        fcntl.flock(s.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError:
+        print 'Port {0} is busy'.format(sys.argv[1])
+        sys.exit(-1)
+    except:
+        pass #windows doesn't have fcntl so ignore this
+
     if(s.isOpen() == False):
         s.open()
     if(s.isOpen() == True):
@@ -64,6 +77,8 @@ class toSerialThread(threading.Thread):
                 self.serialPort.write(toSerialPortString)
             except Queue.Empty:
                 continue
+            except serial.SerialException:
+                continue
 
     def join(self, timeout=None):
         self.stoprequest.set()
@@ -85,7 +100,12 @@ class fromSerialThread(threading.Thread):
 
     def run(self):
         while not self.stoprequest.isSet():
-            fromSerialPortString = self.serialPort.read(200).translate(None, string.whitespace)
+            try:
+                fromSerialPortString = self.serialPort.read(200).translate(None, string.whitespace)
+            except serial.SerialException:
+                print 'Serial port closed'
+                os._exit(-1)
+                
             self.jsonStr += fromSerialPortString
             if '{' in self.jsonStr:
                 result = self.jsonStr.partition('{')
