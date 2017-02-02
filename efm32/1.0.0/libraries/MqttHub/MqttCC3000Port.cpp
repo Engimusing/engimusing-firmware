@@ -24,7 +24,7 @@
 #include <Adafruit_CC3000.h>
 #include "Adafruit_MQTT.h"
 
-#include "CC3000Helper.h"
+#include "CC3000helper.h"
 
 //define up to 4 default cc3000 pin configurations
 #if CC3000_INTERFACES_COUNT > 0
