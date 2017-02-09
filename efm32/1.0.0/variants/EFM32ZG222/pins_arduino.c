@@ -37,9 +37,9 @@ const uint8_t adcPins[11]   = {0,0,  4,    6,   0, 0, 0, 0, 0, 0,   7  };
 
 const uint32_t adcChannel[] =  {-1,-1,EM_ADC4,EM_ADC6,-1,-1,-1,EM_DAC0,-1,-1, -1, EM_ADC7};
 const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh4,
-														   adcSingleInpCh6,adcSingleInpCh0,adcSingleInpCh0,
-														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
-														   adcSingleInpCh0,adcSingleInpCh0, adcSingleInpCh7};
+						  adcSingleInpCh6,adcSingleInpCh0,adcSingleInpCh0,
+						  adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
+						  adcSingleInpCh0,adcSingleInpCh0, adcSingleInpCh7};
 
 
 
