@@ -1,0 +1,9 @@
+sitemap garage label="My Home Automation"
+{
+    Frame label="OpenHAB MQTT  Garage Tutorial" {
+        Group item=GARAGE_MQTT label="MQTT Controlled Garage" icon="garagedoor"
+    }
+    
+
+}
+

@@ -1,0 +1,25 @@
+
+
+Group THERM_MQTT (Thermostat_Tutorial)
+	//Switches to control the led light on the front of the thermostat controller board
+    Switch LED0_THERM_MQTT "LED - Red" (THERM_MQTT) {mqtt=">[localbroker:THERM/BOARD/LED_RED/CTL:command:*:${command}], <[localbroker:THERM/BOARD/LED_RED?/SWITCH:state:default]"}
+    Switch LED1_THERM_MQTT "LED - Blue" (THERM_MQTT) {mqtt=">[localbroker:THERM/BOARD/LED_GREEN/CTL:command:*:${command}], <[localbroker:THERM/BOARD/LED_GREEN?/SWITCH:state:default]"}
+    Switch LED2_THERM_MQTT "LED - Green" (THERM_MQTT) {mqtt=">[localbroker:THERM/BOARD/LED_BLUE/CTL:command:*:${command}], <[localbroker:THERM/BOARD/LED_BLUE?/SWITCH:state:default]"}
+    
+    //Switches to control the led light on the back of the thermostat controller board
+    Switch LED_COOL_THERM_MQTT "LED - Cool" (THERM_MQTT) {mqtt=">[localbroker:THERM/BOARD/LED_COOL/CTL:command:*:${command}], <[localbroker:THERM/BOARD/LED_COOL?/SWITCH:state:default]"}
+    Switch LED_HEAT_THERM_MQTT "LED - Heat" (THERM_MQTT) {mqtt=">[localbroker:THERM/BOARD/LED_HEAT/CTL:command:*:${command}], <[localbroker:THERM/BOARD/LED_HEAT?/SWITCH:state:default]"}
+    Switch LED_FAN_THERM_MQTT "LED - Fan" (THERM_MQTT) {mqtt=">[localbroker:THERM/BOARD/LED_FAN/CTL:command:*:${command}], <[localbroker:THERM/BOARD/LED_FAN?/SWITCH:state:default]"}
+    
+    //Switches to control the led light on the front of the thermostat controller board
+    Switch AQH3213_COOL_MQTT "AQH3213 Cool" (THERM_MQTT) {mqtt=">[localbroker:THERM/BOARD/AQH3213_COOL/CTL:command:*:${command}], <[localbroker:THERM/BOARD/AQH3213_COOL?/SWITCH:state:default]"}
+    Switch AQH3213_HEAT_MQTT "AQH3213 Heat" (THERM_MQTT) {mqtt=">[localbroker:THERM/BOARD/AQH3213_HEAT/CTL:command:*:${command}], <[localbroker:THERM/BOARD/AQH3213_HEAT?/SWITCH:state:default]"}
+    Switch AQH3213_FAN_MQTT "AQH3213 Fan" (THERM_MQTT) {mqtt=">[localbroker:THERM/BOARD/AQH3213_FAN/CTL:command:*:${command}], <[localbroker:THERM/BOARD/AQH3213_FAN?/SWITCH:state:default]"}
+       
+    //TMP102 temperature reading
+    String TMP102CState "Temperature[%s °C]" <temperature> (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/TMP102?/DEG_C:state:default]"}
+    
+    String QRE1113State0 "Button 0 State[%s]" (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/QRE0?/SWITCH:state:default]"}
+    String QRE1113State1 "Button 1 State[%s]" (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/QRE1?/SWITCH:state:default]"}
+    String QRE1113State2 "Button 2 State[%s]" (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/QRE2?/SWITCH:state:default]"}
+    

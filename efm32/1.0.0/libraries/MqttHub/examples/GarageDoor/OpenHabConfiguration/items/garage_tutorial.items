@@ -1,0 +1,28 @@
+
+
+Group GARAGE_MQTT (Garage_Tutorial)
+	//Switches to control the led light on the front of the garage controller board
+    Switch LED0_GARAGE_MQTT "LED - Red" (GARAGE_MQTT) {mqtt=">[localbroker:GDOOR/BOARD/LED_RED/CTL:command:*:${command}], <[localbroker:GDOOR/BOARD/LED_RED?/SWITCH:state:default]"}
+    Switch LED1_GARAGE_MQTT "LED - Blue" (GARAGE_MQTT) {mqtt=">[localbroker:GDOOR/BOARD/LED_GREEN/CTL:command:*:${command}], <[localbroker:GDOOR/BOARD/LED_GREEN?/SWITCH:state:default]"}
+    Switch LED2_GARAGE_MQTT "LED - Green" (GARAGE_MQTT) {mqtt=">[localbroker:GDOOR/BOARD/LED_BLUE/CTL:command:*:${command}], <[localbroker:GDOOR/BOARD/LED_BLUE?/SWITCH:state:default]"}
+    //TMP102 temperature reading
+    String TMP102CState "Temperature[%s °C]" <temperature> (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/TMP102?/DEG_C:state:default]"}
+    
+    String QRE1113State0 "ButtonState[%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/QRE0?/SWITCH:state:default]"}
+    String QRE1113State1 "ButtonState[%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/QRE1?/SWITCH:state:default]"}
+    String QRE1113State2 "ButtonState[%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/QRE2?/SWITCH:state:default]"}
+    
+    String MQ7State "CO Level[%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/MQ7?/COLEVEL:state:default]"}
+    
+    String NOA1212State "Light Level[%s lux]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/NOA1212?/LIGHT:state:default]"}
+    
+    Switch DCRelay1 "Door Control 1" (GARAGE_MQTT) {mqtt=">[localbroker:GDOOR/BOARD/DCRELAY1/CTL:command:*:${command}], <[localbroker:GDOOR/BOARD/DCRELAY1?/SWITCH:state:default]"}
+    Switch DCRelay2 "Door Control 2" (GARAGE_MQTT) {mqtt=">[localbroker:GDOOR/BOARD/DCRELAY2/CTL:command:*:${command}], <[localbroker:GDOOR/BOARD/DCRELAY2?/SWITCH:state:default]"}
+    
+    String MonitorState1 "Monitor 1 [%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/MON1?/SWITCH:state:default]"}
+    String MonitorState2 "Monitor 2 [%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/MON2?/SWITCH:state:default]"}
+    String MonitorState3 "Monitor 3 [%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/MON3?/SWITCH:state:default]"}
+    String MonitorState4 "Monitor 4 [%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/MON4?/SWITCH:state:default]"}
+    String MonitorState5 "Monitor 5 [%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/MON5?/SWITCH:state:default]"}
+    String MonitorState6 "Monitor 6 [%s]" (GARAGE_MQTT) {mqtt="<[localbroker:GDOOR/BOARD/MON6?/SWITCH:state:default]"}
+    
