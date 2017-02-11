@@ -20,6 +20,8 @@ int extMode = 57;
 int displayOn = 54;
 int dispScs = 62;
 
+#define spi SPI1
+
 // the setup function runs once when you press reset or power the board
 void setup() {
   // initialize digital pin 13 as an output.
@@ -30,11 +32,16 @@ void setup() {
   pinMode(displayOn, OUTPUT);
   pinMode(dispScs, OUTPUT);
   digitalWrite(extMode, HIGH);
-  digitalWrite(displayOn, HIGH);
+  digitalWrite(displayOn, LOW);
   digitalWrite(extComm, LOW);
   digitalWrite(dispScs, LOW);
+
+  delay(100);
+  digitalWrite(displayOn, HIGH);
   
-  SPI.begin();
+  //The LCD screen is LSB not MSB!!!! This is important, the EM won't be able to comunicate with the LCD screen unless this is false.
+  spi.setBitOrder(false);
+  spi.begin();
   
 }
 int count = 0;
@@ -63,26 +70,26 @@ void loop() {
   digitalWrite(dispScs, HIGH);   // turn the LED on (HIGH is the voltage level)
   //delay(1);
   unsigned short col,row;
-  SPI.transfer(0x01); //Update command 0x04 for clear
+  spi.transfer(0x01); //Update command 0x04 for clear
 
   
   
   for (row = 1; row <= 128; row ++) 
   {
-    SPI.transfer(row);
+    spi.transfer(row);
     for (col = 0; col < 16; col++) 
     {
       if(row == yLoc && xLoc/8 == col)
       {
         int bit = (xLoc - ((xLoc/8)*8));
-        SPI.transfer(0x01 << bit);
+        spi.transfer(0x01 << bit);
       }
       else
-        SPI.transfer(0xff);
+        spi.transfer(0xff);
     }
-    SPI.transfer(0xff);
+    spi.transfer(0xff);
   }
-  SPI.transfer(0xff);
+  spi.transfer(0xff);
   digitalWrite(dispScs, LOW);   // turn the LED on (HIGH is the voltage level)
   //Serial.println("FRAME!");
   if(count2 == 5)
