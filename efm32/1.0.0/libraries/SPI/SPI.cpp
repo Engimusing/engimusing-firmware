@@ -49,19 +49,7 @@ void SPIClass::begin() {
     dPins[ pinSettings->clkPin],
     gpioModePushPull,
    1);
-	
-	GPIO_PinModeSet(
-    (GPIO_Port_TypeDef)dPorts[13 ],
-    dPins[ 13],
-    gpioModeInput,
-   0);
-   
-   GPIO_PinModeSet(
-    (GPIO_Port_TypeDef)dPorts[14 ],
-    dPins[14],
-    gpioModeInput,
-   0);
-	
+
 	/*//setup SPI Pins
 	pinMode(
 		  pinSettings->mosiPin,
