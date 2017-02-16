@@ -1,0 +1,9 @@
+sitemap thermostat label="My Home Automation"
+{
+    Frame label="OpenHAB MQTT  Thermostat Tutorial" {
+        Group item=THERM_MQTT label="MQTT Controlled Thermostat" icon="temperature"
+    }
+    
+
+}
+

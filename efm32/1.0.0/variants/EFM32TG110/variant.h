@@ -62,6 +62,16 @@ static const uint8_t A1  = 12;
 #define PWM_RESOLUTION	     16
 
 
+#define SPI_INTERFACES_COUNT 1
+
+#define SPI_INTERFACE        USART0
+#define SPI_INTERFACE_ID     USART_ROUTE_LOCATION_LOC3
+#define SPI_CLK	cmuClock_USART0
+#define SPI_CHANNELS_NUM 1
+#define PIN_SPI0_MOSI 7
+#define PIN_SPI0_MISO 6
+#define PIN_SPI0_SCK 5
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);

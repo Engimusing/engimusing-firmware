@@ -66,7 +66,7 @@ static const uint8_t A7  = 35;
 #define WIRE0_ISR_HANDLER     I2C0_Handler
 #define WIRE0_CLOCK				cmuClock_I2C0
 
-#define SPI_INTERFACES_COUNT 1
+#define SPI_INTERFACES_COUNT 2
 
 #define SPI_INTERFACE        USART2
 #define SPI_INTERFACE_ID     USART_ROUTE_LOCATION_LOC1
