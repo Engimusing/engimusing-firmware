@@ -40,7 +40,8 @@
 */
 
 MqttHub HUB;
-MqttSerialPort serialPort;
+MqttSerialPort serialPort1;
+MqttSerialPort serialPort2;
 
 //MQTT class defintions
 // The EFM32COMM classes are automatically registered with the COMM 
@@ -52,7 +53,8 @@ Htu21dModule htu21d;
 
 void setup()
 {
-  serialPort.begin(HUB, Serial);
+  serialPort1.begin(HUB, Serial);  
+  serialPort2.begin(HUB, Serial1);
   
   //Initialize the on off control to connect it to
   // the LED that is on the board

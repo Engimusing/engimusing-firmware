@@ -36,7 +36,8 @@
 */
 
 MqttHub HUB;
-MqttSerialPort serialPort;
+MqttSerialPort serialPort1;
+MqttSerialPort serialPort2;
 
 //MQTT class defintions
 // The EFM32COMM classes are automatically registered with the COMM 
@@ -49,7 +50,8 @@ DetectorSwitchModule TiltSwitch2;
 
 void setup()
 {
-  serialPort.begin(HUB, Serial);
+  serialPort1.begin(HUB, Serial);
+  serialPort2.begin(HUB, Serial1);
 
   //In order to enable the TILT sensor we need to pull
   // the DIODE_EN wire to ground
