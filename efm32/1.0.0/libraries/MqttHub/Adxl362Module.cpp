@@ -21,6 +21,8 @@
 
 #include "Adxl362Module.h"
 
+#if SPI_INTERFACES_COUNT > 0
+
 #include <Arduino.h>
 
 
@@ -78,3 +80,4 @@ void Adxl362Module::sendMQTTAdxlData()
 	myHub->sendMessage((const char*)myModule, "Z_ACCEL", (int16_t)z);	
 }
 
+#endif

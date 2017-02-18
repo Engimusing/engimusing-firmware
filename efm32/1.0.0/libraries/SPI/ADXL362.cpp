@@ -23,14 +23,6 @@ ADXL362::ADXL362() {
 
 }
 
-
-//backwards compatability
-void ADXL362::begin()
-{
-	begin(21, 22, 20, &SPI);
-
-}
-
 //
 //  begin()
 //  Initial SPI setup, soft reset of device

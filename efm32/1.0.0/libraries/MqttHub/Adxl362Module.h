@@ -19,6 +19,9 @@
 #pragma once
 
 #include "Arduino.h"
+
+#if SPI_INTERFACES_COUNT > 0
+
 #include "MqttModule.h"
 
 #include "ADXL362.h"
@@ -42,3 +45,4 @@ class Adxl362Module : public MqttModule
   
 };
 
+#endif
