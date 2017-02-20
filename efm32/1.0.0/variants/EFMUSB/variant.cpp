@@ -77,12 +77,12 @@ RingBuffer rx_buffer1;
 RingBuffer rx_buffer2;
 
 UARTClass Serial(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC1, cmuClock_LEUART0);
-UARTClass Serial1(USART1, USART1_RX_IRQn, &rx_buffer1, USART_ROUTE_LOCATION_LOC0, cmuClock_USART1);
+//UARTClass Serial1(USART1, USART1_RX_IRQn, &rx_buffer1, USART_ROUTE_LOCATION_LOC0, cmuClock_USART1);
 
 // IT handlers
 void USART1_RX_IRQHandler(void)
 {
-  Serial1.IrqHandler();
+ // Serial1.IrqHandler();
 }
 
 void LEUART0_IRQHandler(void)
@@ -92,7 +92,7 @@ void LEUART0_IRQHandler(void)
 
 void check_for_reset()
 {
-  if(Serial.isResetReceived() || Serial1.isResetReceived())
+  if(Serial.isResetReceived() )//|| Serial1.isResetReceived())
     {
       SCB->AIRCR = 0x05FA0004;
       //BOOT_reset();
@@ -135,6 +135,6 @@ extern void serialEvent() __attribute__((weak));
 void serialEventRun(void)
 {
 if (Serial.available() && serialEvent) serialEvent();
-if (Serial1.available() && serialEvent) serialEvent();
+//if (Serial1.available() && serialEvent) serialEvent();
 
 }

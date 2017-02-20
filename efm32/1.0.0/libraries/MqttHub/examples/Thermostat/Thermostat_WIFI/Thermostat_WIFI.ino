@@ -77,8 +77,8 @@
 MqttHub HUB;
 
 Cc3000WlanConfig wlanConfig = {
-  "NETGEAR_ASDF5", //ssid to connect to
-  "TimothyDGeorgeLedaMShurtleff", // passcode for the wlan
+  "SSID", //ssid to connect to
+  "password", // passcode for the wlan
   WLAN_SEC_WPA2 //security type for the wlan
 };
 
