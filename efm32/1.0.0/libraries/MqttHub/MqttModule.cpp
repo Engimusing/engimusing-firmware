@@ -1,4 +1,4 @@
-/*
+*
   Copyright (c) 2016 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -412,7 +412,7 @@ void Tmp102Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t e
 {
 	I2cSingleRegisterModule::begin(hub, mod, wire, enablePin, 0x48, 0x00, 2, updateDelay);
 }
-	
+
 void Tmp102Module::sendMQTTData()
 {
 	if(myWire)
@@ -420,14 +420,16 @@ void Tmp102Module::sendMQTTData()
       byte msb = myWire->read(); 
       byte lsb = myWire->read(); 
       int temp = ((msb << 8) | lsb) >> 4;
+      if(temp & 0x800) {
+	temp = ~(temp & 0x7FF) + 1;
+      }
       float degc = temp/16.0f;
       myHub->sendMessage((const char*)myModule, "DEG_C", degc);
   }
   else
   {
-      myHub->sendMessage((const char*)myModule, "DEG_C", "33.45");
+      myHub->sendMessage((const char*)myModule, "DEG_C", "NOREADING");
   }
-   
 }
 
 void Mlx90616Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint32_t updateDelay)
