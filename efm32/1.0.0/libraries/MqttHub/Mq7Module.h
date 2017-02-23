@@ -55,5 +55,6 @@ class Mq7Module : public MqttModule
   int8_t myState;
   uint32_t mySwitchStateDelay;
   uint32_t myAlertInitialTime;
+  uint32_t myAlertValue;
 };
 

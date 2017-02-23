@@ -107,7 +107,7 @@ void Mq7Module::update(void)
   {
       myAlertState = NO_PROBLEM;
   }
-
+  myAlertValue = val;
   
     if(millis() > myTick + myUpdateDelay) {
         myTick = millis();
@@ -117,12 +117,13 @@ void Mq7Module::update(void)
 
 void Mq7Module::sendCurCoState()
 {
+    myHub->sendMessage((const char*)myModule, "COLEVEL", myAlertValue);	
     if(myAlertState == NO_PROBLEM || myAlertState == POTENTIAL_PROBLEM)
     {
-        myHub->sendMessage((const char*)myModule, "COLEVEL", "LOW");	
+        myHub->sendMessage((const char*)myModule, "COALERT", "LOW");	
     }else if(myAlertState == PROBLEM || myAlertState == POTENTIAL_RECOVERY)
     {
-        myHub->sendMessage((const char*)myModule, "COLEVEL", "HIGH");	
+        myHub->sendMessage((const char*)myModule, "COALERT", "HIGH");	
     }
 }
 
