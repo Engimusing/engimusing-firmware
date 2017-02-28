@@ -20,8 +20,9 @@
 
 #include "./emlib/inc/em_adc.h"
 
-#define ADC_SINGLECTRL_INPUTSEL_TEMPSENS             (0x8)            // Shifted mode TEMP for ADC_SINGLECTRL
-#define ADC_SINGLECTRL_INPUTSEL_VDD_DIV3             (0x9)            // Shifted mode VDDDIV3 for ADC_SINGLECTRL
+#define ADC_SINGLECTRL_INPUTSEL_TEMPSENS             (0x8)
+#define ADC_SINGLECTRL_INPUTSEL_VDD_DIV3             (0x9)
+#define ADC_SINGLECTRL_INPUTSEL_VREFDIV2             (0xC)
 
 //#include "Arduino.h"
 //#include "io_types.h"
