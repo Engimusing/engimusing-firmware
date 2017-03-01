@@ -20,7 +20,11 @@
  *  See http://www.engimusing.com/products/tmp-3 for more information about the board.
  */
 
-//Include the EFM32COMM to get the MQTT client classes
+#if !defined(EFM32ZG108)
+#error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
+#endif
+
+//Include the MqttModule to get the MQTT client classes
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
@@ -40,9 +44,9 @@ MqttSerialPort serialPort1;
 MqttSerialPort serialPort2;
 
 //MQTT class defintions
-// The EFM32COMM classes are automatically registered with the COMM 
+// The MqttModule classes are automatically registered with the COMM 
 // object when begin() is called so they can be updated 
-// whenever COMM.update() is called.
+// whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
 Mlx90616Module MLX90616;

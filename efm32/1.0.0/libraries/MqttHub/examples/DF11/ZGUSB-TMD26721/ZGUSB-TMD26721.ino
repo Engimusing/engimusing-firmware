@@ -20,7 +20,11 @@
  *  See http://www.engimusing.com/products/TMD26721-1 for more information about the board.
  */
 
-//Include the EFM32COMM to get the MQTT client classes
+#if !defined(EFM32ZGUSB)
+#error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
+#endif
+ 
+//Include the MqttModule to get the MQTT client classes
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
@@ -39,9 +43,9 @@ MqttHub HUB;
 MqttSerialPort serialPort;
 
 //MQTT class defintions
-// The EFM32COMM classes are automatically registered with the COMM 
+// The MqttModule classes are automatically registered with the COMM 
 // object when begin() is called so they can be updated 
-// whenever COMM.update() is called.
+// whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
 Tmd26721Module TMD26721;

@@ -65,13 +65,13 @@ compiler.device.includes= "-I{runtime.hardware.path}/1.0.0/cores/efm32/efm_lib/C
 # ----------------
 
 ## Compile c files
-recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.device} {compiler.mcu} {compiler.efm} {compiler.c.flags} {compiler.c.extra_flags} {build.extra_flags} {includes} {compiler.device.includes} "{source_file}" -o "{object_file}"
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" "-D{upload.device}" {compiler.device} {compiler.mcu} {compiler.efm} {compiler.c.flags} {compiler.c.extra_flags} {build.extra_flags} {includes} {compiler.device.includes} "{source_file}" -o "{object_file}"
 
 ## Compile c++ files
-recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.device} {compiler.mcu} {compiler.efm} {compiler.cpp.flags} {compiler.cpp.extra_flags} {build.extra_flags} {includes} {compiler.device.includes} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" "-D{upload.device}" {compiler.device} {compiler.mcu} {compiler.efm} {compiler.cpp.flags} {compiler.cpp.extra_flags} {build.extra_flags} {includes} {compiler.device.includes} "{source_file}" -o "{object_file}"
 
 ## Compile S files
-recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.device} {compiler.mcu} {compiler.efm} {compiler.S.flags} {compiler.S.extra_flags} {build.extra_flags} {includes} {compiler.device.includes} "{source_file}" -o "{object_file}"
+recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" "-D{upload.device}" {compiler.device} {compiler.mcu} {compiler.efm} {compiler.S.flags} {compiler.S.extra_flags} {build.extra_flags} {includes} {compiler.device.includes} "{source_file}" -o "{object_file}"
 
 ## Create archives
 recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"

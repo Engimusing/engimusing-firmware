@@ -20,11 +20,15 @@
  *  See http://www.engimusing.com/products/reedsw-1 for more information about the board.
  */
 
+#if !defined(EFM32ZG108)
+#error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
+#endif
+
 #include <Wire.h>
 
 #include "Arduino.h"
 
-//Include the EFM32COMM to get the MQTT client classes
+//Include the MqttModule to get the MQTT client classes
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
@@ -44,9 +48,9 @@ MqttSerialPort serialPort1;
 MqttSerialPort serialPort2;
 
 //MQTT class defintions
-// The EFM32COMM classes are automatically registered with the COMM 
+// The MqttModule classes are automatically registered with the COMM 
 // object when begin() is called so they can be updated 
-// whenever COMM.update() is called.
+// whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
 Htu21dModule htu21d;

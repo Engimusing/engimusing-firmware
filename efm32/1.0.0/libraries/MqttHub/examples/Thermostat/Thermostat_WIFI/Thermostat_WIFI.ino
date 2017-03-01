@@ -23,7 +23,11 @@
  *  information about the board.
  */
 
-//Include the EFM32COMM to get the MQTT client classes
+#if !defined(EFM32WG842)
+#error Incorrect Board Selected! Please select Engimusing EFM32WG842 from the Tools->Board: menu.
+#endif
+ 
+ //Include the MqttModule to get the MQTT client classes
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttCC3000Port.h>
@@ -100,9 +104,9 @@ MqttCC3000Port wifiPort(
   );
 
 //MQTT class defintions
-// The EFM32COMM classes are automatically registered with the COMM 
+// The MqttModule classes are automatically registered with the COMM 
 // object when begin() is called so they can be updated 
-// whenever COMM.update() is called.
+// whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl_RED;
 OnOffCtlModule LEDCtrl_GREEN;
 OnOffCtlModule LEDCtrl_BLUE;
