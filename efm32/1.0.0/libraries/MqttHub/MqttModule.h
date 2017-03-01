@@ -159,6 +159,8 @@ class Tmp102Module : public I2cSingleRegisterModule
  
    protected:
       virtual void sendMQTTData();
+   protected:
+      bool myExtendedMode;
       
 };
 

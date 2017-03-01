@@ -355,9 +355,7 @@ void I2cSingleRegisterModule::begin(MqttHub &hub, const char* mod, TwoWire *wire
   
   //give the slave a slight delay so it can turn on.
   delay(50);
-  requestI2CData();
-  sendMQTTData();
-  
+
 }
 
 void I2cSingleRegisterModule::update(void)
@@ -409,8 +407,29 @@ void I2cSingleRegisterModule::sendMQTTData()
 }
 
 void Tmp102Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint32_t updateDelay)
-{
+{    
 	I2cSingleRegisterModule::begin(hub, mod, wire, enablePin, 0x48, 0x00, 2, updateDelay);
+    
+    myExtendedMode = false;
+    
+    if(myExtendedMode)
+    {
+        //turn on 13-bit exteneded mode
+        if(myWire)
+        {
+            myWire->beginTransmission(myAddress);
+            myWire->write(0x01);//register address
+            myWire->write(0x60); //write 2 byte configuration to turn on extended mode
+            myWire->write(0xB0); //write 2 byte configuration to turn on extended mode
+            myWire->endTransmission();
+        }
+    }
+    
+    requestI2CData();
+    sendMQTTData();
+  
+     
+      
 }
 
 void Tmp102Module::sendMQTTData()
@@ -419,9 +438,24 @@ void Tmp102Module::sendMQTTData()
   {
       byte msb = myWire->read(); 
       byte lsb = myWire->read(); 
-      int temp = ((msb << 8) | lsb) >> 4;
-      if(temp & 0x800) {
-	temp = ~(temp & 0x7FF) + 1;
+      int temp = 0.0;
+      if(myExtendedMode)
+      {
+          //calculate based on 13-bit input
+          temp = ((msb << 8) | lsb) >> 3;
+          if(temp & 0x1000) 
+          {
+              temp = ~(0xFFF) | (temp & 0xFFF); //sign extend the temp
+          }
+      }
+      else
+      {
+          //calculate based on 12-bit input
+          temp = ((msb << 8) | lsb) >> 4;
+          if(temp & 0x800) 
+          {
+               temp = ~(0x8FF) | (temp & 0x8FF); //sign extend the temp
+          }
       }
       float degc = temp/16.0f;
       myHub->sendMessage((const char*)myModule, "DEG_C", degc);
@@ -435,6 +469,9 @@ void Tmp102Module::sendMQTTData()
 void Mlx90616Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint32_t updateDelay)
 {
 	I2cSingleRegisterModule::begin(hub, mod, wire, enablePin, 0x5A, 0x07, 2, updateDelay);
+    
+    requestI2CData();
+    sendMQTTData();
 }
 	
 void Mlx90616Module::sendMQTTData()
