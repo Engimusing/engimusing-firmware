@@ -55,9 +55,9 @@ static const uint8_t A2 = 10;
 #define SPI_INTERFACE_ID     USART_ROUTE_LOCATION_LOC0
 #define SPI_CLK	cmuClock_USART1
 #define SPI_CHANNELS_NUM 1
-#define PIN_SPI0_MOSI 6
+#define PIN_SPI0_MOSI 8
 #define PIN_SPI0_MISO 7
-#define PIN_SPI0_SCK 11
+#define PIN_SPI0_SCK 5
 
 //not enough room for CC3000 MQTT on this board.
 // could probably get CC3000 to work by itself though
