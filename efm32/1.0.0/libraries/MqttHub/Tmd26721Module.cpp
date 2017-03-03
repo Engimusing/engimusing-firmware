@@ -132,21 +132,21 @@ void Tmd26721Module::sendMQTTProximityData()
     unsigned int data[2];
   
   // Start I2C Transmission
-  Wire0.beginTransmission(TMD26721_ADDRESS);
+  myWire->beginTransmission(TMD26721_ADDRESS);
   // Select data register
-  Wire0.write(PROXIMITY_LOW_DATA_REGISTER | WRITE_COMMAND);
+  myWire->write(PROXIMITY_LOW_DATA_REGISTER | WRITE_COMMAND);
   // Stop I2C Transmission
-  Wire0.endTransmission();
+  myWire->endTransmission();
   
   // Request 2 bytes of data
-  Wire0.requestFrom(TMD26721_ADDRESS, 2);
+  myWire->requestFrom(TMD26721_ADDRESS, 2);
   
   // Read 2 bytes of data
   // proximity lsb, proximity msb
-  if(Wire0.available() == 2)
+  if(myWire->available() == 2)
   {
-    data[0] = Wire0.read();
-    data[1] = Wire0.read();
+    data[0] = myWire->read();
+    data[1] = myWire->read();
   }
 
   // Convert the data
