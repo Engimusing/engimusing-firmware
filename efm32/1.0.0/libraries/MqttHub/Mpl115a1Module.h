@@ -28,12 +28,8 @@
 // Get your current altimiter setting from from the National
 // Weather Service - http://www.weather.gov
 // This value is often labeled "Barometer" or "Barometric Pressure" or just "Pressure"
-#define NWS_BARO 29.92 
+//#define NWS_BARO 29.92 
 
-// Pin definitions
-#define MPL115A1_ENABLE_PIN 30
-#define MPL115A1_SELECT_PIN 41
-#define MPL115A1_POWER_PIN 45
 
 // Masks for MPL115A1 SPI i/o
 #define MPL115A1_READ_MASK  0x80
