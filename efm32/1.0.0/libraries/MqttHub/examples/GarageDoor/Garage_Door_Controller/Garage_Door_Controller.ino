@@ -108,7 +108,7 @@ DetectorSwitchModule Monitor6;
 
 void setup()
 {
-  serialPort.begin(HUB, Serial1);
+  serialPort.begin(HUB, Serial2);
 
   //Initialize the on off control to connect it to
   // the LED that is on the board
