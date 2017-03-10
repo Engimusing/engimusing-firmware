@@ -30,7 +30,9 @@
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
-#include <Adxl362Module.h>
+#include <ADXL362Device.h>
+
+#include <SPI.h>
 
 /*
   EFMTG110 Commands:
@@ -51,7 +53,8 @@ MqttSerialPort serialPort2;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Adxl362Module adxl362;
+ADXL362Device ADXL362;
+SimpleMqttModule ADXLMqttMod;
 
 void setup()
 {
@@ -68,11 +71,10 @@ void setup()
   int accel_VIO = 2;
   int accel_VS = 3;
   int accel_CS = 4;
+  
   //Initialize the Humidity sensor
-  adxl362.begin(HUB, "EFMTG110/BOARD/ADXL", accel_VIO, accel_VS, accel_CS, SPI, 1000);
-
-  
-  
+  ADXL362.begin(accel_VIO, accel_VS, accel_CS, &SPI);
+  ADXLMqttMod.begin(HUB, &ADXL362, "EFMTG110/BOARD/ADXL", 1000);
 }
 
 //Part of light on off example
@@ -99,7 +101,4 @@ void loop()
     lastMillisOn = millis();
   }
   */
-
-
-  
 }
