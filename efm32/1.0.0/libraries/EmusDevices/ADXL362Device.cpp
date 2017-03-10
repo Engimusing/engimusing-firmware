@@ -19,7 +19,7 @@
   Based on code
   by Anne Mahaffey - hosted on http://annem.github.com/ADXL362
 */
-
+#if SPI_INTERFACES_COUNT > 0
 #include <ADXL362Device.h>
 #include <Arduino.h>
 
@@ -325,5 +325,5 @@ float ADXL362Device::numValues()
 {
     return 4; 
 }
-
+#endif
 
