@@ -20,7 +20,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-void MLX90616Device::begin(TwoWire *wire, int32_t enablePin, bool extendedMode)
+void MLX90616Device::begin(TwoWire *wire, int32_t enablePin)
 {    
     if(enablePin > 0)
     {

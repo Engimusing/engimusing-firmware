@@ -28,14 +28,13 @@ class MLX90616Device : public Device
 {
  
    public:
-        virtual void begin(TwoWire *wire, int32_t enablePin, bool extendedMode);
+        virtual void begin(TwoWire *wire, int32_t enablePin);
         virtual float temperature();
          
         virtual Device::ValueStruct readValue(int index);
         virtual float numValues(); 
         
    protected:   
-        bool myExtendedMode;
         TwoWire *myWire;
         uint8_t myAddress; 
         uint8_t myDataSize; 
