@@ -49,7 +49,8 @@ MqttSerialPort serialPort2;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Tmp102Module TMP102;
+TMP102Device TMP102;
+SimpleMqttModule TMP102MqttMod;
 
 void setup()
 {
@@ -62,7 +63,8 @@ void setup()
 
   //Initialize the tmp control class which will send the 
   // temperature over MQTT every 10 seconds
-  TMP102.begin(HUB, "EFMZG108/BOARD/TMP102", &Wire0, -1, 10000);
+  TMP102.begin(&Wire0, -1, true);
+  TMP102MqttMod.begin(HUB, &TMP102, "EFMZG108/BOARD/TMP102", "DEG_C", 1000);
 }
 
 //Part of light on off example

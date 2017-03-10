@@ -35,6 +35,8 @@
 #include <Mq7Module.h>
 #include <Noa1212Module.h>
 
+#include <TMP102Device.h>
+
 #include <Wire.h>
 /*
   GDOOR Commands:
@@ -84,7 +86,8 @@ OnOffCtlModule LEDCtrl_RED;
 OnOffCtlModule LEDCtrl_GREEN;
 OnOffCtlModule LEDCtrl_BLUE;
 
-Tmp102Module TMP102;
+TMP102Device TMP102;
+SimpleMqttModule TMP102MqttMod;
 
 DigitalQre1113SwitchModule ReflectiveSensorSwitch0;
 DigitalQre1113SwitchModule ReflectiveSensorSwitch1;
@@ -118,8 +121,9 @@ void setup()
 
   //Initialize the tmp control class which will send the 
   // temperature over MQTT every 10 seconds
-  TMP102.begin(HUB, "GDOOR/BOARD/TMP102", &Wire0, -1, 10000);
-
+  TMP102.begin(&Wire0, -1, true);
+  TMP102MqttMod.begin(HUB, &TMP102, "GDOOR/BOARD/TMP102", 10000);
+  
   //On the side of the garage door board with less on it there are
   // three QRE1113 reflectivity sensors. These work well as proximity sensor
   // buttons.

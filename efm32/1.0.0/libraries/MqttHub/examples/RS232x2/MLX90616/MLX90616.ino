@@ -16,9 +16,9 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 /* Example for how to setup the MQTT client for the MLX90616 RS232x2 Engimusing board
- *  There are 2 devices on this board. An LED and a MLX90616 IR temperature sensor. 
- *  See http://www.engimusing.com/products/tmp-3 for more information about the board.
- */
+    There are 2 devices on this board. An LED and a MLX90616 IR temperature sensor.
+    See http://www.engimusing.com/products/tmp-3 for more information about the board.
+*/
 
 #if !defined(EFM32ZG108)
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
@@ -29,6 +29,7 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
+#include <MLX90616Device.h>
 #include <Wire.h>
 /*
   EFMZG108 Commands:
@@ -44,25 +45,27 @@ MqttSerialPort serialPort1;
 MqttSerialPort serialPort2;
 
 //MQTT class defintions
-// The MqttModule classes are automatically registered with the COMM 
-// object when begin() is called so they can be updated 
+// The MqttModule classes are automatically registered with the COMM
+// object when begin() is called so they can be updated
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Mlx90616Module MLX90616;
+MLX90616Device MLX90616;
+SimpleMqttModule MLX90616MqttMod;
 
 void setup()
 {
-  serialPort1.begin(HUB, Serial); 
+  serialPort1.begin(HUB, Serial);
   serialPort2.begin(HUB, Serial1);
 
   //Initialize the on off control to connect it to
   // the LED that is on the board
   LEDCtrl.begin(HUB, 13, "EFMZG108/BOARD/LED", HIGH);
 
-  //Initialize the tmp control class which will send the 
+  //Initialize the tmp control class which will send the
   // temperature over MQTT every 5 seconds
-  MLX90616.begin(HUB, "EFMZG108/BOARD/MLX90616", &Wire0, -1, 5000);
+  MLX90616.begin(&Wire0, -1, 5000);
+  MLX90616MqttMod.begin(HUB, &MLX90616, "EFMZGUSB/BOARD/MLX90616", 10000);
 }
 
 //Part of light on off example
@@ -76,31 +79,31 @@ void loop()
   HUB.update();
 
   /*
-  //example of how to turn on and off a light using the OnOffCtlModule
-  //status of the pin will be sent to the MQTT broker.
-  if(millis() > lastMillisOff + 2000)
-  {
+    //example of how to turn on and off a light using the OnOffCtlModule
+    //status of the pin will be sent to the MQTT broker.
+    if(millis() > lastMillisOff + 2000)
+    {
     LEDCtrl.setPinState(LOW);
     lastMillisOff = millis();
-  }
-  if(millis() > lastMillisOn + 2000)
-  {
+    }
+    if(millis() > lastMillisOn + 2000)
+    {
     LEDCtrl.setPinState(HIGH);
     lastMillisOn = millis();
-  }
+    }
   */
 
   /*
-   * example of how to control the LED using one of the reed switches
-   */
-   /*
-   //If the led is not in the same state as the swich then 
-   // set it to the same as the swich. This check avoids
-   // setting the led state every time through the loop
-   if(LEDCtrl.pinState() != ReedSwitch0.switchState())
-   {
-      LEDCtrl.setPinState(ReedSwitch0.switchState());
-   }*/
-  
-  
+     example of how to control the LED using one of the reed switches
+  */
+  /*
+    //If the led is not in the same state as the swich then
+    // set it to the same as the swich. This check avoids
+    // setting the led state every time through the loop
+    if(LEDCtrl.pinState() != ReedSwitch0.switchState())
+    {
+     LEDCtrl.setPinState(ReedSwitch0.switchState());
+    }*/
+
+
 }

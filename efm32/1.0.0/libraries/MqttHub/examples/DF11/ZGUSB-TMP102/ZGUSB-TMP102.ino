@@ -29,6 +29,8 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
+#include <TMP102Device.h>
+
 #include <Wire.h>
 /*
   EFMZGUSB Commands:
@@ -48,7 +50,8 @@ MqttSerialPort serialPort;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Tmp102Module TMP102;
+TMP102Device TMP102;
+SimpleMqttModule TMP102MqttMod;
 
 void setup()
 {
@@ -60,7 +63,8 @@ void setup()
 
   //Initialize the tmp control class which will send the 
   // temperature over MQTT every 10 seconds
-  TMP102.begin(HUB, "EFMZGUSB/BOARD/TMP102", &Wire0, 5, 10000);
+  TMP102.begin(&Wire0, 5, true);
+  TMP102MqttMod.begin(HUB, &TMP102, "EFMZGUSB/BOARD/TMP102", 10000);
 }
 
 //Part of light on off example

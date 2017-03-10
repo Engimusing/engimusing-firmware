@@ -21,7 +21,8 @@
 #include "efm_lib/analog.h"
 
 #include <Arduino.h>
-#include <Wire.h>
+
+#include <Device.h>
 
 extern INTRClass INTR;
 extern AnalogLP  Analog;
@@ -332,42 +333,27 @@ void DigitalQre1113SwitchModule::update(void)
   }
 }
 
-// ------------------------------- I2cSingleRegisterModule -------------------------
-void I2cSingleRegisterModule::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint8_t address, uint8_t registerToRead, uint32_t dataSize, uint32_t updateDelay)
-{
-  if(enablePin > 0)
-  {
-	pinMode(enablePin, OUTPUT);
-	digitalWrite(enablePin, HIGH);
-  }
-  
-  myAddress = address;
-  myDataSize = dataSize;
-  myUpdateDelay = updateDelay;
-  myWire = wire;
-  if(myWire)
-  {
-     myWire->begin();
-  }
-  myReadRegister = registerToRead;
-  
-  MqttModule::begin(hub, mod, true);
-  
-  //give the slave a slight delay so it can turn on.
-  delay(50);
 
+void SimpleMqttModule::begin(MqttHub &hub, Device *device, const char* mod, uint32_t updateDelay)
+{    
+    myDevice = device;
+    myUpdateDelay = updateDelay;
+
+    MqttModule::begin(hub, mod, true);
+
+    sendMQTTData();
 }
 
-void I2cSingleRegisterModule::update(void)
+void SimpleMqttModule::update(void)
 {
+  myDevice->update();
   if(millis() > myTick + myUpdateDelay) {
     myTick = millis();
-    requestI2CData();
     sendMQTTData();
   }
 }
 
-uint8_t I2cSingleRegisterModule::decode(const char* topic, const char* payload)
+uint8_t SimpleMqttModule::decode(const char* topic, const char* payload)
 {
   int8_t j = isTopicThisModule(topic);
   if(j == 0)
@@ -376,122 +362,32 @@ uint8_t I2cSingleRegisterModule::decode(const char* topic, const char* payload)
   }
   
   if(compare_token(&topic[j],"STATUS")) {
-    requestI2CData();
     sendMQTTData();
     return 1;
   }
 }
 
-void I2cSingleRegisterModule::requestI2CData()
+void SimpleMqttModule::sendMQTTData()
 {
-  //read register 0 from the I2C slave
-  if(myWire)
-  {
-     myWire->beginTransmission(myAddress);
-     myWire->write(myReadRegister);//register address
-     myWire->requestFrom(myAddress, myDataSize); //read 2 bytes
-     myWire->endTransmission();
-   }
-}
-
-void I2cSingleRegisterModule::sendMQTTData()
-{
-   if(myWire)
-  {
-      //by default don't send anything but read the wire result
-      for(int i = 0; i < myDataSize; i++)
-      {
-         byte b = myWire->read();
-      }
-  }
-}
-
-void Tmp102Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint32_t updateDelay)
-{    
-	I2cSingleRegisterModule::begin(hub, mod, wire, enablePin, 0x48, 0x00, 2, updateDelay);
-    
-    myExtendedMode = false;
-    
-    if(myExtendedMode)
+    for(int i = 0; i < myDevice->numValues(); i++)
     {
-        //turn on 13-bit exteneded mode
-        if(myWire)
+        Device::ValueStruct valueStruct = myDevice->readValue(i);
+        switch(valueStruct.type)
         {
-            myWire->beginTransmission(myAddress);
-            myWire->write(0x01);//register address
-            myWire->write(0x60); //write 2 byte configuration to turn on extended mode
-            myWire->write(0xB0); //write 2 byte configuration to turn on extended mode
-            myWire->endTransmission();
-        }
+            case Device::TypeFloat:
+                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.decimal);
+                break;
+            case Device::TypeInt:
+                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.integer);
+                break;
+            case Device::TypeBool:
+                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.boolean);
+                break;
+            case Device::TypeCharArray:
+                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.charArray);
+                break;
+        }  
     }
-    
-    requestI2CData();
-    sendMQTTData();
-  
-     
-      
-}
-
-void Tmp102Module::sendMQTTData()
-{
-	if(myWire)
-  {
-      byte msb = myWire->read(); 
-      byte lsb = myWire->read(); 
-      int temp = 0.0;
-      if(myExtendedMode)
-      {
-          //calculate based on 13-bit input
-          temp = ((msb << 8) | lsb) >> 3;
-          if(temp & 0x1000) 
-          {
-              temp = ~(0xFFF) | (temp & 0xFFF); //sign extend the temp
-          }
-      }
-      else
-      {
-          //calculate based on 12-bit input
-          temp = ((msb << 8) | lsb) >> 4;
-          if(temp & 0x800) 
-          {
-               temp = ~(0x8FF) | (temp & 0x8FF); //sign extend the temp
-          }
-      }
-      float degc = temp/16.0f;
-      myHub->sendMessage((const char*)myModule, "DEG_C", degc);
-  }
-  else
-  {
-      myHub->sendMessage((const char*)myModule, "DEG_C", "NOREADING");
-  }
-}
-
-void Mlx90616Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint32_t updateDelay)
-{
-	I2cSingleRegisterModule::begin(hub, mod, wire, enablePin, 0x5A, 0x07, 2, updateDelay);
-    
-    requestI2CData();
-    sendMQTTData();
-}
-	
-void Mlx90616Module::sendMQTTData()
-{
-   if(myWire)
-   {
-      byte data_low = myWire->read(); 
-      byte data_high = myWire->read(); 
-      double tempFactor = 0.02; // 0.02 degrees per LSB (measurement resolution of the MLX90614)
-      double tempData = 0x0000; // zero out the data
-      int frac; // data past the decimal point
-
-      // This masks off the error bit of the high byte, then moves it left 8 bits and adds the low byte.
-      tempData = (double)(((data_high & 0x007F) << 8) + data_low);
-      tempData = (tempData * tempFactor)-0.01;
-
-      float celcius = tempData - 273.15;
-      
-      myHub->sendMessage((const char*)myModule, "DEG_C", celcius);
-   }
 }
 
 // ------------------------------- CPU VDD ADC Class -----------------------------

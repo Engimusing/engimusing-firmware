@@ -21,7 +21,7 @@
 #include "Arduino.h"
 #include "MqttHub.h"
 
-class TwoWire;
+class Device;
 
 //Base class for modules, modules are updated periotically and can handle messages recieved from a port
 class MqttModule
@@ -125,53 +125,20 @@ class DigitalQre1113SwitchModule : public MqttModule
 
 };
 
-
-
-
-// ------------------------------- I2cSingleRegisterModule -------------------------
-
-class I2cSingleRegisterModule : public MqttModule
-{
- 
- public:
-  virtual void begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint8_t address, uint8_t registerToRead, uint32_t dataSize, uint32_t updateDelay);
-  virtual void update(void); // publish changes in switch state
-  virtual uint8_t decode(const char* topic, const char* payload);
- 
- protected: 
-  virtual void requestI2CData();
-  virtual void sendMQTTData();
-  
- protected:
-  TwoWire *myWire;
-  uint8_t myAddress; 
-  uint8_t myDataSize; 
-  uint8_t myReadRegister;
-  uint32_t myUpdateDelay;
-
-};
-
-class Tmp102Module : public I2cSingleRegisterModule
+// ------------------------------- SimpleMqttModule -------------------------
+class SimpleMqttModule : public MqttModule
 {
  
    public:
-      virtual void begin(MqttHub &hub, const char* mode, TwoWire *wire, int32_t enablePin, uint32_t updateDelay);
- 
+        virtual void begin(MqttHub &hub, Device *device, const char* mod, uint32_t updateDelay);
+        virtual void update(void); // publish changes in switch state
+        virtual uint8_t decode(const char* topic, const char* payload);
    protected:
-      virtual void sendMQTTData();
+        virtual void sendMQTTData();
    protected:
-      bool myExtendedMode;
+        Device *myDevice;
+        uint32_t myUpdateDelay;
       
-};
-
-class Mlx90616Module : public I2cSingleRegisterModule
-{
-   public:
-      virtual void begin(MqttHub &hub, const char* mode, TwoWire *wire, int32_t enablePin, uint32_t updateDelay);
-   
-   protected:
-      virtual void sendMQTTData();
-   
 };
 
 // ------------------------------- CPU VDD ADC Class -------------------------
