@@ -15,18 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* 
- HTU21D Humidity Sensor Example Code
- By: Nathan Seidle
- SparkFun Electronics
- Date: September 15th, 2013
- License: This code is public domain but you buy me a beer if you use this and we meet someday (Beerware license).
- 
- Get humidity and temperature from the HTU21D sensor.
- */
 
- #include "Htu21dModule.h"
-
+#include <HTU21DDevice.h>
 #include <Arduino.h>
 #include <Wire.h>
 
@@ -41,74 +31,26 @@
 #define READ_USER_REG  0xE7
 #define SOFT_RESET  0xFE
 
+void HTU21DDevice::begin(TwoWire *wire, int32_t enablePin)
+{    
+    if(enablePin > 0)
+    {
+        pinMode(enablePin, OUTPUT);
+        digitalWrite(enablePin, HIGH);
+    }
+      
+    myWire = wire;
+    if(myWire)
+    {
+        myWire->begin();
+    }
 
-
-// ------------------------------- Htu21dModule -------------------------
-void Htu21dModule::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint32_t updateDelay)
-{
-   if(enablePin > 0)
-  {
-	pinMode(enablePin, OUTPUT);
-	digitalWrite(enablePin, HIGH);
-  }
-  
-  myWire = wire;
-  wire->begin();
-  myUpdateDelay = updateDelay;
-  
-  MqttModule::begin(hub, mod, true);
-  
-  //give the slave a slight delay so it can turn on.
-  delay(50);
-  
+    //give the slave a slight delay so it can turn on.
+    delay(50);
 }
-
-void Htu21dModule::update(void)
-{
-  if(millis() > myTick + myUpdateDelay) {
-    myTick = millis();
-    float temp = calcTemp(readTemp());
-	float humidity = calcHumidity(readHumidity());
-	
-    sendMQTTTempData(temp);
-	sendMQTTHumidityData(humidity);
-	
-  }
-}
-
-uint8_t Htu21dModule::decode(const char* topic, const char* payload)
-{
-  int8_t j = isTopicThisModule(topic);
-  if(j == 0)
-  {
-	  return 0;
-  }
-  
-  if(compare_token(&topic[j],"STATUS")) {
-    float temp = calcTemp(readTemp());
-	float humidity = calcHumidity(readHumidity());
-	
-    sendMQTTTempData(temp);
-	sendMQTTHumidityData(humidity);
-    return 1;
-  }
-}
-
-
-void Htu21dModule::sendMQTTTempData(float degc)
-{
-	myHub->sendMessage((const char*)myModule, "DEG_C", degc);	
-}
-
-void Htu21dModule::sendMQTTHumidityData(float hum)
-{
-	myHub->sendMessage((const char*)myModule, "HUM", hum);	
-}
-
-
 
 //Read the uncompensated temperature value
-unsigned int Htu21dModule::readTemp()
+unsigned int HTU21DDevice::readTemp()
 {
   //Request the temperature
   WIRE.beginTransmission(HTDU21D_ADDRESS);
@@ -142,7 +84,7 @@ unsigned int Htu21dModule::readTemp()
 }
 
 //Read the humidity
-unsigned int Htu21dModule::readHumidity()
+unsigned int HTU21DDevice::readHumidity()
 {
   byte msb, lsb, checksum;
 
@@ -177,7 +119,7 @@ unsigned int Htu21dModule::readHumidity()
 }
 
 //Given the raw temperature data, calculate the actual temperature
-float Htu21dModule::calcTemp(int SigTemp)
+float HTU21DDevice::calcTemp(int SigTemp)
 {
   float tempSigTemp = SigTemp / (float)65536; //2^16 = 65536
   float realTemperature = -46.85 + (175.72 * tempSigTemp); //From page 14
@@ -186,11 +128,59 @@ float Htu21dModule::calcTemp(int SigTemp)
 }
 
 //Given the raw humidity data, calculate the actual relative humidity
-float Htu21dModule::calcHumidity(int SigRH)
+float HTU21DDevice::calcHumidity(int SigRH)
 {
   float tempSigRH = SigRH / (float)65536; //2^16 = 65536
   float rh = -6 + (125 * tempSigRH); //From page 14
 
   return(rh);  
 }
+
+Device::ValueStruct HTU21DDevice::readValue(int index)
+{
+    Device::ValueStruct output;
+        
+    if(index == 0)
+    {
+        if(myWire)
+        {
+            float temp = calcTemp(readTemp());
+            output.type = Device::TypeFloat;
+            output.value.decimal = temp;
+        }
+        else
+        {
+            output.type = Device::TypeCharArray;
+            output.value.charArray = "NOREADING";
+        }    
+        output.name = "DEG_C";
+    }
+    else if(index == 1)
+    {
+        if(myWire)
+        {
+            float humidity = calcTemp(readHumidity());
+            output.type = Device::TypeFloat;
+            output.value.decimal = humidity;
+        }
+        else
+        {
+            output.type = Device::TypeCharArray;
+            output.value.charArray = "NOREADING";
+        }    
+        output.name = "HUM";
+    }
+    else
+    {
+        output.type = Device::TypeInvaild;
+        output.name = "";
+    } 
+    return output;
+}
+
+float HTU21DDevice::numValues()
+{
+    return 2; 
+}
+
 

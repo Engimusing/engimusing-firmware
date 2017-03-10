@@ -19,28 +19,26 @@
 #pragma once
 
 #include "Arduino.h"
-#include "MqttModule.h"
 
-extern UARTClass Serial;
+#include "Device.h"
 
 class TwoWire;
 
-class Htu21dModule : public MqttModule
+class HTU21DDevice : public Device
 {
- public:
-  virtual void begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint32_t updateDelay);
-  virtual void update(void); // publish changes in switch state
-  virtual uint8_t decode(const char* topic, const char* payload);
-  
- protected:
-  virtual void sendMQTTTempData(float degc);
-  virtual void sendMQTTHumidityData(float hum);
-  virtual unsigned int readTemp();
-  virtual unsigned int readHumidity();
-  virtual float calcTemp(int SigTemp);
-  virtual float calcHumidity(int SigRH);
-   
-  TwoWire *myWire; 
-  uint32_t myUpdateDelay;
+ 
+   public:
+        virtual void begin(TwoWire *wire, int32_t enablePin);
+        
+        virtual Device::ValueStruct readValue(int index);
+        virtual float numValues(); 
+        
+        virtual unsigned int readTemp();
+        virtual unsigned int readHumidity();
+        virtual float calcTemp(int SigTemp);
+        virtual float calcHumidity(int SigRH);
+        
+   protected:   
+        TwoWire *myWire;
+      
 };
-

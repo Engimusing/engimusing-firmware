@@ -32,7 +32,7 @@
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
-#include <Htu21dModule.h>
+#include <HTU21DDevice.h>
 /*
   EFMZG108 Commands:
   {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"ON"}
@@ -53,8 +53,8 @@ MqttSerialPort serialPort2;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Htu21dModule htu21d;
-
+HTU21DDevice HTU21D;
+SimpleMqttModule HTU21DMqttMod;
 void setup()
 {
   serialPort1.begin(HUB, Serial);  
@@ -65,7 +65,8 @@ void setup()
   LEDCtrl.begin(HUB, 13, "EFMZG108/BOARD/LED", HIGH);
 
   //Initialize the Humidity sensor
-  htu21d.begin(HUB, "EFMZG108/BOARD/HTU21D", &Wire0, 2, 5000);
+  HTU21D.begin(&Wire0, 2);
+  HTU21DMqttMod.begin(HUB, &HTU21D, "EFMZG108/BOARD/HTU21D", 5000);
   
 }
 
