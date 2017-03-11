@@ -130,7 +130,7 @@ class SimpleMqttModule : public MqttModule
 {
  
    public:
-        virtual void begin(MqttHub &hub, Device *device, const char* mod, uint32_t updateDelay);
+        virtual void begin(MqttHub &hub, Device &device, const char* mod, uint32_t updateDelay);
         virtual void update(void); // publish changes in switch state
         virtual uint8_t decode(const char* topic, const char* payload);
    protected:

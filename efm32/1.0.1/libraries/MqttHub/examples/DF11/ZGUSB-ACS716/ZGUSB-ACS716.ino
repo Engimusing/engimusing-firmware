@@ -65,7 +65,7 @@ void setup()
   // other implementations they may not be the same and can both be -1 which means neither is connected
   // The A0 parameter is the ADC pin that is connected to the ACS716 output pin.
   ACS716.begin(ACS716Device::ACS716_6BB, A1, A1, A0, 100);
-  ACS716MqttMod.begin(HUB, &ACS716, "EFMZGUSB/BOARD/ACS716", 10000);
+  ACS716MqttMod.begin(HUB, ACS716, "EFMZGUSB/BOARD/ACS716", 10000);
 }
 
 //Part of light on off example

@@ -334,9 +334,9 @@ void DigitalQre1113SwitchModule::update(void)
 }
 
 
-void SimpleMqttModule::begin(MqttHub &hub, Device *device, const char* mod, uint32_t updateDelay)
+void SimpleMqttModule::begin(MqttHub &hub, Device &device, const char* mod, uint32_t updateDelay)
 {    
-    myDevice = device;
+    myDevice = &device;
     myUpdateDelay = updateDelay;
 
     MqttModule::begin(hub, mod, true);

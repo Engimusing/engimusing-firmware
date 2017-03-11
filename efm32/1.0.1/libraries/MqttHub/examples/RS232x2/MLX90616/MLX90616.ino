@@ -65,7 +65,7 @@ void setup()
   //Initialize the tmp control class which will send the
   // temperature over MQTT every 10 seconds
   MLX90616.begin(&Wire0, -1);
-  MLX90616MqttMod.begin(HUB, &MLX90616, "EFMZGUSB/BOARD/MLX90616", 10000);
+  MLX90616MqttMod.begin(HUB, MLX90616, "EFMZGUSB/BOARD/MLX90616", 10000);
 }
 
 //Part of light on off example

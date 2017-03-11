@@ -133,7 +133,7 @@ void setup()
   //Initialize the tmp control class which will send the 
   // temperature over MQTT every 10 seconds
   TMP102.begin(&Wire0, -1, true);
-  TMP102MqttMod.begin(HUB, &TMP102, "THERM/BOARD/TMP102", 10000);
+  TMP102MqttMod.begin(HUB, TMP102, "THERM/BOARD/TMP102", 10000);
 
   //On the side of the garage door board with less on it there are
   // three QRE1113 reflectivity sensors. These work well as proximity sensor

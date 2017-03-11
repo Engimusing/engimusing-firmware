@@ -74,7 +74,7 @@ void setup()
   
   //Initialize the Humidity sensor
   ADXL362.begin(accel_VIO, accel_VS, accel_CS, &SPI);
-  ADXLMqttMod.begin(HUB, &ADXL362, "EFMTG110/BOARD/ADXL", 1000);
+  ADXLMqttMod.begin(HUB, ADXL362, "EFMTG110/BOARD/ADXL", 1000);
 }
 
 //Part of light on off example
