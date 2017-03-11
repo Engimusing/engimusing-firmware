@@ -63,7 +63,7 @@ void setup()
 
   //Initialize the tmp control class which will send the 
   // temperature over MQTT every 10 seconds
-  TMP102.begin(&Wire0, -1, true);
+  TMP102.begin(Wire0, -1, true);
   TMP102MqttMod.begin(HUB, TMP102, "EFMZG108/BOARD/TMP102", "DEG_C", 1000);
 }
 

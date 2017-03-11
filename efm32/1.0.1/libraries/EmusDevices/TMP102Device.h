@@ -28,7 +28,7 @@ class TMP102Device : public Device
 {
  
    public:
-        virtual void begin(TwoWire *wire, int32_t enablePin, bool extendedMode);
+        virtual void begin(TwoWire &wire, int32_t enablePin, bool extendedMode);
         virtual float temperature();
         
         virtual Device::ValueStruct readValue(int index);

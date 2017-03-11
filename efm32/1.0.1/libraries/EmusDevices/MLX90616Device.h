@@ -28,7 +28,7 @@ class MLX90616Device : public Device
 {
  
    public:
-        virtual void begin(TwoWire *wire, int32_t enablePin);
+        virtual void begin(TwoWire &wire, int32_t enablePin);
         virtual float temperature();
          
         virtual Device::ValueStruct readValue(int index);

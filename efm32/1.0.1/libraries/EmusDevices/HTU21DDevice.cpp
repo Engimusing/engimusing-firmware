@@ -31,7 +31,7 @@
 #define READ_USER_REG  0xE7
 #define SOFT_RESET  0xFE
 
-void HTU21DDevice::begin(TwoWire *wire, int32_t enablePin)
+void HTU21DDevice::begin(TwoWire &wire, int32_t enablePin)
 {    
     if(enablePin > 0)
     {
@@ -39,7 +39,7 @@ void HTU21DDevice::begin(TwoWire *wire, int32_t enablePin)
         digitalWrite(enablePin, HIGH);
     }
       
-    myWire = wire;
+    myWire = &wire;
     if(myWire)
     {
         myWire->begin();

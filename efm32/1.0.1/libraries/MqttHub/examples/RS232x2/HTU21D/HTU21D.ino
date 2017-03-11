@@ -65,7 +65,7 @@ void setup()
   LEDCtrl.begin(HUB, 13, "EFMZG108/BOARD/LED", HIGH);
 
   //Initialize the Humidity sensor
-  HTU21D.begin(&Wire0, 2);
+  HTU21D.begin(Wire0, 2);
   HTU21DMqttMod.begin(HUB, HTU21D, "EFMZG108/BOARD/HTU21D", 5000);
   
 }

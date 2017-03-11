@@ -20,7 +20,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-void TMP102Device::begin(TwoWire *wire, int32_t enablePin, bool extendedMode)
+void TMP102Device::begin(TwoWire &wire, int32_t enablePin, bool extendedMode)
 {    
     if(enablePin > 0)
     {
@@ -30,7 +30,7 @@ void TMP102Device::begin(TwoWire *wire, int32_t enablePin, bool extendedMode)
       
     myAddress = 0x48;
     myDataSize = 2;
-    myWire = wire;
+    myWire = &wire;
     if(myWire)
     {
      myWire->begin();

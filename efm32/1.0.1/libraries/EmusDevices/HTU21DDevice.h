@@ -28,7 +28,7 @@ class HTU21DDevice : public Device
 {
  
    public:
-        virtual void begin(TwoWire *wire, int32_t enablePin);
+        virtual void begin(TwoWire &wire, int32_t enablePin);
         
         virtual Device::ValueStruct readValue(int index);
         virtual float numValues(); 

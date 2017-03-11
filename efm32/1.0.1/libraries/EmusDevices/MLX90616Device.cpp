@@ -20,7 +20,7 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-void MLX90616Device::begin(TwoWire *wire, int32_t enablePin)
+void MLX90616Device::begin(TwoWire &wire, int32_t enablePin)
 {    
     if(enablePin > 0)
     {
@@ -30,7 +30,7 @@ void MLX90616Device::begin(TwoWire *wire, int32_t enablePin)
       
     myAddress = 0x5A;
     myDataSize = 2;
-    myWire = wire;
+    myWire = &wire;
     if(myWire)
     {
      myWire->begin();
