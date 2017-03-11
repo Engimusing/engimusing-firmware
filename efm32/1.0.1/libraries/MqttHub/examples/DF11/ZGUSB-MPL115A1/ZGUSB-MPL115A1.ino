@@ -29,7 +29,9 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
-#include <Mpl115a1Module.h>
+#include <MPL115A1Device.h>
+#include <SPI.h>
+
 /*
   EFMZGUSB Commands:
   {"TOP":"EFMZGUSB/BOARD/LED/CTL","PLD":"ON"}
@@ -48,7 +50,8 @@ MqttSerialPort serialPort;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Mpl115a1Module MPL115A1;
+MPL115A1Device MPL115A1;
+SimpleMqttModule MPL115A1MqttMod;
 
 void setup()
 {
@@ -60,7 +63,7 @@ void setup()
 
   //Initialize the tmp control class which will send the 
   // temperature over MQTT every 10 seconds
-  MPL115A1.begin(HUB, "EFMZGUSB/BOARD/MPL115A1", 10, 6, 4, SPI, 10000);
+  MPL115A1.begin(10, 6, 4, SPI);
 }
 
 //Part of light on off example

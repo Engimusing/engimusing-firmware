@@ -15,110 +15,75 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* 
- Get pressure and temperature data from MPL115A1 sensor.
- */
-
-#include "Mpl115a1Module.h"
-
-#if SPI_INTERFACES_COUNT > 0
 
 #include <Arduino.h>
 
 
-// ------------------------------- Mpl115a1Module -------------------------
-void Mpl115a1Module::begin(MqttHub &hub, const char* mod, uint32_t enablePin, uint32_t powerPin, uint32_t csPin, SPIClass &spi, uint32_t updateDelay)
-{
-  myUpdateDelay = updateDelay;
-  myCsPin = csPin;
-  
-  MqttModule::begin(hub, mod, true);
-  
+#if SPI_INTERFACES_COUNT > 0
+
+#include <MPL115A1Device.h>
+#include <SPI.h>
+
+// Masks for MPL115A1 SPI i/o
+#define MPL115A1_READ_MASK  0x80
+#define MPL115A1_WRITE_MASK 0x7F 
+
+// MPL115A1 register address map
+#define PRESH   0x00    // 80
+#define PRESL   0x02    // 82
+#define TEMPH   0x04    // 84
+#define TEMPL   0x06    // 86
+
+#define A0MSB   0x08    // 88
+#define A0LSB   0x0A    // 8A
+#define B1MSB   0x0C    // 8C
+#define B1LSB   0x0E    // 8E
+#define B2MSB   0x10    // 90
+#define B2LSB   0x12    // 92
+#define C12MSB  0x14    // 94
+#define C12LSB  0x16    // 96
+#define C11MSB  0x18    // 98
+#define C11LSB  0x1A    // 9A
+#define C22MSB  0x1C    // 9C
+#define C22LSB  0x1E    // 9E
+
+// Unit conversion macros
+#define FT_TO_M(x) ((long)((x)*(0.3048)))
+#define KPA_TO_INHG(x) ((x)*(0.295333727))
+#define KPA_TO_MMHG(x) ((x)*(7.50061683))
+#define KPA_TO_PSIA(x) ((x)*(0.145037738))
+#define KPA_TO_KGCM2(x) ((x)*(0.0102))
+#define INHG_TO_PSIA(x) ((x)*(0.49109778))
+#define DEGC_TO_DEGF(x) ((x)*(9.0/5.0)+32)
+
+void MPL115A1Device::begin(int32_t enablePin, int32_t powerPin, int32_t csPin, SPIClass &spi)
+{    
+
+    myCsPin = csPin;
 
     // initialize the chip select and enable pins
-  pinMode(enablePin, OUTPUT);
-  digitalWrite(enablePin, HIGH);
-  
-  
-   if(powerPin > 0)
-  {
-    pinMode(powerPin, OUTPUT);
-    digitalWrite(powerPin, HIGH);
-  }
-  
-  // set the chip select inactive, select signal is CS LOW
-  pinMode(csPin, OUTPUT);
-  digitalWrite(csPin, HIGH);
-  
-  mySpi = &spi;
-  
-  mySpi->begin(); 
-  
-  //give the slave a slight delay so it can turn on.
-  delay(100);
+    pinMode(enablePin, OUTPUT);
+    digitalWrite(enablePin, HIGH);
+
+    if(powerPin > 0)
+    {
+        pinMode(powerPin, OUTPUT);
+        digitalWrite(powerPin, HIGH);
+    }
+
+    // set the chip select inactive, select signal is CS LOW
+    pinMode(csPin, OUTPUT);
+    digitalWrite(csPin, HIGH);
+
+    mySpi = &spi;
+
+    mySpi->begin(); 
+
+    //give the slave a slight delay so it can turn on.
+    delay(100);
 }
 
-void Mpl115a1Module::update(void)
-{
-  if(millis() > myTick + myUpdateDelay) {
-    myTick = millis();
-	
-     sendMQTTTempData();
-     sendMQTTPressureData();
-	
-  }
-}
-
-uint8_t Mpl115a1Module::decode(const char* topic, const char* payload)
-{
-  int8_t j = isTopicThisModule(topic);
-  if(j == 0)
-  {
-	  return 0;
-  }
-  
-  if(compare_token(&topic[j],"STATUS")) {
-        sendMQTTTempData();
-        sendMQTTPressureData();
-    return 1;
-  }
-}
-
-void Mpl115a1Module::sendMQTTTempData()
-{
-    float tempC = calculateTemperatureC();
-    
-    myHub->sendMessage((const char*)myModule, "DEG_C", tempC);	
-}
-
-void Mpl115a1Module::sendMQTTPressureData()
-{
-    float kPA = calculatePressurekPa();
-    
-    myHub->sendMessage((const char*)myModule, "KPA", kPA);	
-}
-
-
-//leaving this out for now since it requires the current barometric pressure value from NWS to work
-/*long Mpl115a1Module::calculateAltitudeFt(float pressure_kPa) {
-
-  float delta;
-  long altitude_ft;
-
-
-  // See http://en.wikipedia.org/wiki/Barometric_formula
-  // If you're a pilot you need to know what's going on here,
-  // otherwise just know these steps calculate the barometric altitude (ft)
-  // based on the ratio of absolute barometric pressure (psia) to the
-  // altimiter setting (psia).
-  delta = KPA_TO_PSIA(pressure_kPa) / INHG_TO_PSIA( NWS_BARO );
-  //altitude_ft = (1 - pow(delta, (1 / 5.25587611))) / 0.0000068756;
-  altitude_ft = 0;
-  return altitude_ft;
-}*/
-
-
-float Mpl115a1Module::calculateTemperatureC() {
+float MPL115A1Device::calculateTemperatureC() {
 
   unsigned int uiTadc;
   unsigned char uiTH, uiTL;
@@ -138,12 +103,13 @@ float Mpl115a1Module::calculateTemperatureC() {
   // Temperature is a 10bit value
   uiTadc = uiTadc >> 6;
 
-  // -5.35 counts per °C, 472 counts is 25°C
-  return 25 + (uiTadc - 472) / -5.35;
+  // -5.35 counts per °C, 472 counts is 25°C was the original values.
+  // changed to 5.5 and 510 based on a forum post and now it is much more accurate.
+  return 25 + (uiTadc - 510.0) / -5.5;
 }
 
 
-float Mpl115a1Module::calculatePressurekPa() {
+float MPL115A1Device::calculatePressurekPa() {
 
   // See Freescale document AN3785 for detailed explanation
   // of this implementation.
@@ -290,7 +256,7 @@ float Mpl115a1Module::calculatePressurekPa() {
 }
 
 
-unsigned int Mpl115a1Module::readRegister(byte thisRegister) {
+unsigned int MPL115A1Device::readRegister(byte thisRegister) {
 
   byte result = 0;
 
@@ -308,7 +274,7 @@ unsigned int Mpl115a1Module::readRegister(byte thisRegister) {
 }
 
 
-void Mpl115a1Module::writeRegister(byte thisRegister, byte thisValue) {
+void MPL115A1Device::writeRegister(byte thisRegister, byte thisValue) {
 
   // select the MPL115A1
   digitalWrite(myCsPin, LOW);
@@ -322,4 +288,34 @@ void Mpl115a1Module::writeRegister(byte thisRegister, byte thisValue) {
 }
 
 
+Device::ValueStruct MPL115A1Device::readValue(int index)
+{
+    Device::ValueStruct output;
+    
+    if(index == 0)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = calculateTemperatureC();
+        output.name = "DEG_C";
+    }
+    else if(index == 1)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = calculatePressurekPa();
+        output.name = "KPA";
+    }
+    else
+    {
+        output.type = Device::TypeInvaild;
+        output.name = "";
+    } 
+    return output;
+}
+
+float MPL115A1Device::numValues()
+{
+    return 2; 
+}
+
 #endif
+
