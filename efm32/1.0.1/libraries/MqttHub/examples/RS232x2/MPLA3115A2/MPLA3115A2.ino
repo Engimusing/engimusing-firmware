@@ -33,19 +33,23 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
-#include <Mpla3115a2Module.h>
+#include <MPLA3115A2Device.h>
+#include <Wire.h>
+
 /*
   EFMZG108 Commands:
   {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"ON"}
   {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"OFF"}
   {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFMZG108/BOARD/MPLA3115A/DEC_C","PLD":"STATUS"}
-  {"TOP":"EFMZG108/BOARD/MPLA3115A/ALT_M","PLD":"STATUS"}
+  {"TOP":"EFMZG108/BOARD/MPLA3115A2/DEC_C","PLD":"STATUS"}
+  {"TOP":"EFMZG108/BOARD/MPLA3115A2/ALT_M","PLD":"STATUS"}
+  {"TOP":"EFMZG108/BOARD/MPLA3115A2/PRESSURE","PLD":"STATUS"}
 */
 
 MqttHub HUB;
-MqttSerialPort serialPort;
+MqttSerialPort serialPort1;
+MqttSerialPort serialPort2;
 
 //MQTT class defintions
 // The MqttModule classes are automatically registered with the COMM 
@@ -53,19 +57,21 @@ MqttSerialPort serialPort;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Mpla3115a2Module mpla3115a;
+MPLA3115A2Device MPLA3115A2;
+SimpleMqttModule MPLA3115A2MqttMod;
 
 void setup()
 {
-  serialPort.begin(HUB, Serial);
+  serialPort1.begin(HUB, Serial);
+  serialPort2.begin(HUB, Serial1);
   
   //Initialize the on off control to connect it to
   // the LED that is on the board
   LEDCtrl.begin(HUB, 13, "EFMZG108/BOARD/LED", HIGH);
 
   //Initialize the Humidity sensor
-  mpla3115a.begin(HUB, "EFMZG108/BOARD/MPLA3115A", &Wire0, 3, 5000);
-  
+  MPLA3115A2.begin(Wire0, 3);
+  MPLA3115A2MqttMod.begin(HUB, MPLA3115A2, "EFMZG108/BOARD/MPLA3115A2", 5000);
 }
 
 //Part of light on off example

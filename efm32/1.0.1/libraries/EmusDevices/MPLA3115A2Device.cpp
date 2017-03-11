@@ -16,30 +16,9 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-//Example for using the MPL3115A2 Altitude Sensor on the Engimusing RS232 board
-//For more info goto http://emus.us/m3115a2-1
-//Modified by Tim George
-//Engimusing 2014
-//This shows how to read and interpret the data from the 
-// MPL3115A2 Altitude Sensor
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <Arduino.h>
 
-/*
- MPL3115A2 Altitude Sensor Example
- By: A.Weiss, 7/17/2012, changes Nathan Seidle Sept 23rd, 2013
- License: This code is public domain but you buy me a beer if you use this and we meet someday (Beerware license).
- 
- Usage:
- -Serial terminal at 9600bps
- -Prints altitude in meters, temperature in degrees C, with 1/16 resolution.
- -software enabled interrupt on new data, ~1Hz with full resolution
- 
- During testing, GPS with 9 sattelites reported 5393ft, sensor reported 5360ft (delta of 33ft). Very close!
- 
- */
-
-#include "Mpla3115a2Module.h"
-
+#include <MPLA3115A2Device.h>
 #include <Wire.h>
 
 #define STATUS     0x00
@@ -90,34 +69,28 @@
 #define OFF_H      0x2D
 
 #define MPL3115A2_ADDRESS 0x60 // 7-bit I2C address
-
-long startTime;
-
-// ------------------------------- Mpla3115a2Module -------------------------
-void Mpla3115a2Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint32_t updateDelay)
-{
+void MPLA3115A2Device::begin(TwoWire &wire, int32_t enablePin)
+{    
    if(enablePin > 0)
   {
 	pinMode(enablePin, OUTPUT);
 	digitalWrite(enablePin, HIGH);
   }
   
-  myWire = wire;
-  
+  myWire = &wire;
    // Initialize the 'Wire' class for the I2C-bus.
-  wire->begin();
-  myUpdateDelay = updateDelay;
-  
-  MqttModule::begin(hub, mod, true);
-  
+  myWire->begin();
+
   //give the slave a slight delay so it can turn on.
   delay(50);
   
   int value = i2cRead(WHO_AM_I);
-  while(value != 196)
+  int count = 0; //timeout after 10 seconds
+  while(value != 196 && count < 10)
   {
 	delay(1000);
 	value = i2cRead(WHO_AM_I);
+    count++;
   }
   
   // Configure the sensor
@@ -128,52 +101,8 @@ void Mpla3115a2Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32
   
 }
 
-void Mpla3115a2Module::update(void)
-{
-  if(millis() > myTick + myUpdateDelay) {
-    myTick = millis();
-	
-    sendMQTTTempData();
-	 sendMQTTAltitudeData();
-	 //sendMQTTPressureData();
-	
-	
-  }
-}
-
-uint8_t Mpla3115a2Module::decode(const char* topic, const char* payload)
-{
-  int8_t j = isTopicThisModule(topic);
-  if(j == 0)
-  {
-	  return 0;
-  }
-  
-  if(compare_token(&topic[j],"STATUS")) {
-    sendMQTTTempData();
-	 sendMQTTAltitudeData();
-	 //sendMQTTPressureData();
-    return 1;
-  }
-}
-
-void Mpla3115a2Module::sendMQTTTempData()
-{
-	myHub->sendMessage((const char*)myModule, "DEG_C", readTemp());	
-}
-
-void Mpla3115a2Module::sendMQTTAltitudeData()
-{
-	myHub->sendMessage((const char*)myModule, "ALT_M", readAltitude());	
-}
-
-void Mpla3115a2Module::sendMQTTPressureData()
-{
-	myHub->sendMessage((const char*)myModule, "PRESSURE", readPressure());	
-}
-
 //Returns the number of meters above sea level
-float Mpla3115a2Module::readAltitude()
+float MPLA3115A2Device::readAltitude()
 {
   toggleOneShot(); //Toggle the OST bit causing the sensor to immediately take another reading
 
@@ -218,14 +147,14 @@ float Mpla3115a2Module::readAltitude()
 }
 
 //Returns the number of feet above sea level
-float Mpla3115a2Module::readAltitudeFt()
+float MPLA3115A2Device::readAltitudeFt()
 {
   return(readAltitude() * 3.28084);
 }
 
 //Reads the current pressure in Pa
 //Unit must be set in barometric pressure mode
-float Mpla3115a2Module::readPressure()
+float MPLA3115A2Device::readPressure()
 {
   toggleOneShot(); //Toggle the OST bit causing the sensor to immediately take another reading
 
@@ -271,7 +200,7 @@ float Mpla3115a2Module::readPressure()
   return(pressure);
 }
 
-float Mpla3115a2Module::readTemp()
+float MPLA3115A2Device::readTemp()
 {
   toggleOneShot(); //Toggle the OST bit causing the sensor to immediately take another reading
 
@@ -313,14 +242,14 @@ float Mpla3115a2Module::readTemp()
 }
 
 //Give me temperature in fahrenheit!
-float Mpla3115a2Module::readTempF()
+float MPLA3115A2Device::readTempF()
 {
   return((readTemp() * 9.0)/ 5.0 + 32.0); // Convert celsius to fahrenheit
 }
 
 //Sets the mode to Barometer
 //CTRL_REG1, ALT bit
-void Mpla3115a2Module::setModeBarometer()
+void MPLA3115A2Device::setModeBarometer()
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting &= ~(1<<7); //Clear ALT bit
@@ -329,7 +258,7 @@ void Mpla3115a2Module::setModeBarometer()
 
 //Sets the mode to Altimeter
 //CTRL_REG1, ALT bit
-void Mpla3115a2Module::setModeAltimeter()
+void MPLA3115A2Device::setModeAltimeter()
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting |= (1<<7); //Set ALT bit
@@ -338,7 +267,7 @@ void Mpla3115a2Module::setModeAltimeter()
 
 //Puts the sensor in standby mode
 //This is needed so that we can modify the major control registers
-void Mpla3115a2Module::setModeStandby()
+void MPLA3115A2Device::setModeStandby()
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting &= ~(1<<0); //Clear SBYB bit for Standby mode
@@ -347,7 +276,7 @@ void Mpla3115a2Module::setModeStandby()
 
 //Puts the sensor in active mode
 //This is needed so that we can modify the major control registers
-void Mpla3115a2Module::setModeActive()
+void MPLA3115A2Device::setModeActive()
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting |= (1<<0); //Set SBYB bit for Active mode
@@ -356,7 +285,7 @@ void Mpla3115a2Module::setModeActive()
 
 //Setup FIFO mode to one of three modes. See page 26, table 31
 //From user jr4284
-void Mpla3115a2Module::setFIFOMode(byte f_Mode)
+void MPLA3115A2Device::setFIFOMode(byte f_Mode)
 {
   if (f_Mode > 3) f_Mode = 3; // FIFO value cannot exceed 3.
   f_Mode <<= 6; // Shift FIFO byte left 6 to put it in bits 6, 7.
@@ -371,7 +300,7 @@ void Mpla3115a2Module::setFIFOMode(byte f_Mode)
 //Sets the over sample rate. Datasheet calls for 128 but you can set it 
 //from 1 to 128 samples. The higher the oversample rate the greater
 //the time between data samples.
-void Mpla3115a2Module::setOversampleRate(byte sampleRate)
+void MPLA3115A2Device::setOversampleRate(byte sampleRate)
 {
   if(sampleRate > 7) sampleRate = 7; //OS cannot be larger than 0b.0111
   sampleRate <<= 3; //Align it for the CTRL_REG1 register
@@ -384,7 +313,7 @@ void Mpla3115a2Module::setOversampleRate(byte sampleRate)
 
 //Clears then sets the OST bit which causes the sensor to immediately take another reading
 //Needed to sample faster than 1Hz
-void Mpla3115a2Module::toggleOneShot(void)
+void MPLA3115A2Device::toggleOneShot(void)
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting &= ~(1<<1); //Clear OST bit
@@ -397,13 +326,13 @@ void Mpla3115a2Module::toggleOneShot(void)
 
 //Enables the pressure and temp measurement event flags so that we can
 //test against them. This is recommended in datasheet during setup.
-void Mpla3115a2Module::enableEventFlags()
+void MPLA3115A2Device::enableEventFlags()
 {
   i2cWrite(PT_DATA_CFG, 0x07); // Enable all three pressure and temp event flags 
 }
 
 // These are the two I2C functions in this sketch.
-byte Mpla3115a2Module::i2cRead(byte regAddr)
+byte MPLA3115A2Device::i2cRead(byte regAddr)
 {
   // This function reads one byte over IIC
   myWire->beginTransmission(MPL3115A2_ADDRESS);
@@ -413,7 +342,7 @@ byte Mpla3115a2Module::i2cRead(byte regAddr)
   return myWire->read();
 }
 
-void Mpla3115a2Module::i2cWrite(byte regAddr, byte value)
+void MPLA3115A2Device::i2cWrite(byte regAddr, byte value)
 {
   // This function writes one byto over IIC
   myWire->beginTransmission(MPL3115A2_ADDRESS);
@@ -421,3 +350,39 @@ void Mpla3115a2Module::i2cWrite(byte regAddr, byte value)
   myWire->write(value);
   myWire->endTransmission(true);
 }
+
+Device::ValueStruct MPLA3115A2Device::readValue(int index)
+{
+    Device::ValueStruct output;
+    
+    if(index == 0)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readTemp();
+        output.name = "DEG_C";
+    }
+    else if(index == 1)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readAltitude();
+        output.name = "ALT_M";
+    }
+    else if(index == 2)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readPressure();
+        output.name = "PRESSURE";
+    }
+    else
+    {
+        output.type = Device::TypeInvaild;
+        output.name = "";
+    } 
+    return output;
+}
+
+float MPLA3115A2Device::numValues()
+{
+    return 3; 
+}
+
