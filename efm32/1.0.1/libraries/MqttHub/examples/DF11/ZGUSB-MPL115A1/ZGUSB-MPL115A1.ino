@@ -64,6 +64,7 @@ void setup()
   //Initialize the tmp control class which will send the 
   // temperature over MQTT every 10 seconds
   MPL115A1.begin(10, 6, 4, SPI);
+  MPL115A1MqttMod.begin(HUB, MPL115A1, "EFMZGUSB/BOARD/MPL115A1", 1000);
 }
 
 //Part of light on off example
