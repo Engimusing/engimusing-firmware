@@ -32,7 +32,8 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
-#include <Mpu9150Module.h>
+#include <MPU9150Device.h>
+
 /*
   EFMZG108 Commands:
   {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"ON"}
@@ -61,7 +62,8 @@ MqttSerialPort serialPort2;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Mpu9150Module mpu9150;
+MPU9150Device MPU9150;
+SimpleMqttModule MPU9150MqttMod;
 
 void setup()
 {
@@ -73,8 +75,8 @@ void setup()
   LEDCtrl.begin(HUB, 13, "EFMZG108/BOARD/LED", HIGH);
 
   //Initialize the Humidity sensor
-  mpu9150.begin(HUB, "EFMZG108/BOARD/MPU9150", &Wire0, 3, 6, 5000);
-  
+  MPU9150.begin(Wire0, 3, 6);
+  MPU9150MqttMod.begin(HUB, MPU9150, "EFMZG108/BOARD/MPU9150", 5000);
 }
 
 //Part of light on off example

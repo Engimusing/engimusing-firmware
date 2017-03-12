@@ -16,49 +16,11 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-//Example for using the MPU5190 9-axis sensor with MQTT
-//For more info goto http://emus.us/mpu5190-1
-//Modified by Tim George
-//Engimusing 2016
-//This shows how to read and interpret the data from the 
-// MPU5190 9-axis sensor
-////////////////////////////////////////////////////////////////////////////////////////////////////////
+#include <Arduino.h>
 
-// MPU-9150 Accelerometer + Gyro + Compass + Temperature
-// -----------------------------
-//
-// By arduino.cc user "frtrobotik" (Tobias Hübner)
-//
-//
-// July 2013
-//      first version
-//
-// Open Source / Public Domain
-//
-// Using Arduino 1.0.1
-// It will not work with an older version,
-// since myWire->endTransmission() uses a parameter
-// to hold or release the I2C bus.
-//
-// Documentation:
-// - The InvenSense documents:
-//   - "MPU-9150 Product Specification Revision 4.0",
-//     PS-MPU-9150A.pdf
-//   - "MPU-9150 Register Map and Descriptions Revision 4.0",
-//     RM-MPU-9150A-00.pdf
-//   - "MPU-9150 9-Axis Evaluation Board User Guide"
-//     AN-MPU-9150EVB-00.pdf
-//
-// The accuracy is 16-bits.
-//
-// Some parts are copied by the MPU-6050 Playground page.
-// playground.arduino.cc/Main/MPU-6050
-// There are more Registervalues. Here are only the most
-// nessecary ones to get started with this sensor.
-
-#include "Mpu9150Module.h"
-
+#include <MPU9150Device.h>
 #include <Wire.h>
+
 
 // Register names according to the datasheet.
 // According to the InvenSense document
@@ -162,23 +124,16 @@
 #define MPU9150_CMPS_YOUT_H        0x4D   // R
 #define MPU9150_CMPS_ZOUT_L        0x4E   // R
 #define MPU9150_CMPS_ZOUT_H        0x4F   // R
+#define MPU9150_CMPS_CNTL       0x0A   // R
 
 
 // I2C address 0x69 could be 0x68 depends on your wiring. 
 #define MPU9150_I2C_ADDRESS 0x68;
-int currentI2CAddress = MPU9150_I2C_ADDRESS;
 
-
-//Variables where our values can be stored
-int cmps[3];
-int accl[3];
-int gyro[3];
-int temp;
-
-// ------------------------------- Mpu9150Module -------------------------
-void Mpu9150Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t standbyPin, int32_t frameSyncPin, uint32_t updateDelay)
-{
-   if(standbyPin > 0)
+void MPU9150Device::begin(TwoWire &wire, int32_t standbyPin, int32_t frameSyncPin)
+{    
+    myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
+    if(standbyPin > 0)
   {
 	pinMode(standbyPin, OUTPUT);
 	digitalWrite(standbyPin, LOW);
@@ -190,129 +145,116 @@ void Mpu9150Module::begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t 
    digitalWrite(frameSyncPin, LOW);
   }
   
-  myWire = wire;
+  myWire = &wire;
   
    // Initialize the 'Wire' class for the I2C-bus.
-  wire->begin();
-  myUpdateDelay = updateDelay;
+  myWire->begin();
   
-  MqttModule::begin(hub, mod, true);
-    
   // Clear the 'sleep' bit to start the sensor.
   writeSensor(MPU9150_PWR_MGMT_1, 0);
 
   setupCompass();
 }
 
-void Mpu9150Module::update(void)
+
+void MPU9150Device::getTemp(float& temp)
 {
-  if(millis() > myTick + myUpdateDelay) {
-    myTick = millis();
-	
-    sendMQTTTempData();
-	sendMQTTCompassData();
-	sendMQTTGyroData();
-	sendMQTTAccelData();
-	
-  }
+	temp = (( (float) MPU9150Device::readSensor(MPU9150_TEMP_OUT_L,MPU9150_TEMP_OUT_H)) / 340.0f) + 35.0;
 }
 
-uint8_t Mpu9150Module::decode(const char* topic, const char* payload)
+int MPU9150Device::readCompassX()
 {
-  int8_t j = isTopicThisModule(topic);
-  if(j == 0)
-  {
-	  return 0;
-  }
-  
-  if(compare_token(&topic[j],"STATUS")) {
-    sendMQTTTempData();
-	sendMQTTCompassData();
-	sendMQTTGyroData();
-	sendMQTTAccelData();
-    return 1;
-  }
+    //myCurrentI2CAddress = 0x0C;      //change Adress to Compass
+    int ret = readSensor(MPU9150_CMPS_XOUT_L,MPU9150_CMPS_XOUT_H);
+    //myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
+    return ret;
 }
 
-void Mpu9150Module::getTemp(float& temp)
+int MPU9150Device::readCompassY()
 {
-	temp = (( (float) Mpu9150Module::readSensor(MPU9150_TEMP_OUT_L,MPU9150_TEMP_OUT_H)) / 340.0f) + 35.0;
+    //myCurrentI2CAddress = 0x0C;      //change Adress to Compass
+    int ret = readSensor(MPU9150_CMPS_YOUT_L,MPU9150_CMPS_YOUT_H);
+   // myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
+    return ret;
 }
 
-void Mpu9150Module::sendMQTTTempData()
+int MPU9150Device::readCompassZ()
 {
-	float temp;
-	getTemp(temp);
-	myHub->sendMessage((const char*)myModule, "DEG_C", temp);	
+   // myCurrentI2CAddress = 0x0C;      //change Adress to Compass
+    int ret = readSensor(MPU9150_CMPS_ZOUT_L,MPU9150_CMPS_ZOUT_H);
+    //myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
+    return ret;
 }
 
-void Mpu9150Module::getCompassData(int& x, int& y, int& z)
+void MPU9150Device::getCompassData(int& x, int& y, int& z)
 {
-	x = readSensor(MPU9150_CMPS_XOUT_L,MPU9150_CMPS_XOUT_H);
-	y = readSensor(MPU9150_CMPS_YOUT_L,MPU9150_CMPS_YOUT_H);
-	z = readSensor(MPU9150_CMPS_ZOUT_L,MPU9150_CMPS_ZOUT_H);
+    
+    myCurrentI2CAddress = 0x0C;      //change Adress to Compass
+    writeSensor(MPU9150_CMPS_CNTL, 0x01); // toggle enable data read from magnetometer, no continuous read mode!
+	myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
+    delay(10);
+    
+    x = readCompassX();
+	y = readCompassY();
+	z = readCompassZ();
 }
 
-void Mpu9150Module::sendMQTTCompassData()
+int MPU9150Device::readGyroX()
 {
-	int x;
-	int y;
-	int z;
-	getCompassData(x,y,x);
-	
-	myHub->sendMessage((const char*)myModule, "COMPASS_X", x);	
-	myHub->sendMessage((const char*)myModule, "COMPASS_Y", y);	
-	myHub->sendMessage((const char*)myModule, "COMPASS_Z", z);	
+    return readSensor(MPU9150_GYRO_XOUT_L,MPU9150_GYRO_XOUT_H);
 }
 
-void Mpu9150Module::getGyroData(int& x, int& y, int& z)
+int MPU9150Device::readGyroY()
 {
-	x = readSensor(MPU9150_GYRO_XOUT_L,MPU9150_GYRO_XOUT_H);
-	y = readSensor(MPU9150_GYRO_YOUT_L,MPU9150_GYRO_YOUT_H);
-	z = readSensor(MPU9150_GYRO_ZOUT_L,MPU9150_GYRO_ZOUT_H);
+    return readSensor(MPU9150_GYRO_YOUT_L,MPU9150_GYRO_YOUT_H);
 }
 
-void Mpu9150Module::sendMQTTGyroData()
+int MPU9150Device::readGyroZ()
 {
-	int x;
-	int y;
-	int z;
-	getGyroData(x,y,x);
-	
-	myHub->sendMessage((const char*)myModule, "GYRO_X", x);	
-	myHub->sendMessage((const char*)myModule, "GYRO_Y", y);	
-	myHub->sendMessage((const char*)myModule, "GYRO_Z", z);	
+    return readSensor(MPU9150_GYRO_ZOUT_L,MPU9150_GYRO_ZOUT_H);
 }
 
-void Mpu9150Module::getAccelData(int& x, int& y, int& z)
+void MPU9150Device::getGyroData(int& x, int& y, int& z)
 {
-	x = readSensor(MPU9150_ACCEL_XOUT_L,MPU9150_ACCEL_XOUT_H);
-	y = readSensor(MPU9150_ACCEL_YOUT_L,MPU9150_ACCEL_YOUT_H);
-	z = readSensor(MPU9150_ACCEL_ZOUT_L,MPU9150_ACCEL_ZOUT_H);
+	x = readGyroX();
+	y = readGyroY();
+	z = readGyroZ();
 }
 
-void Mpu9150Module::sendMQTTAccelData()
+int MPU9150Device::readAccelX()
 {
-	int x;
-	int y;
-	int z;
-	getAccelData(x,y,x);
-	
-	myHub->sendMessage((const char*)myModule, "ACCEL_X", x);	
-	myHub->sendMessage((const char*)myModule, "ACCEL_Y", y);	
-	myHub->sendMessage((const char*)myModule, "ACCEL_Z", z);	
+    return readSensor(MPU9150_ACCEL_XOUT_L,MPU9150_ACCEL_XOUT_H);
+}
+
+int MPU9150Device::readAccelY()
+{
+    return readSensor(MPU9150_ACCEL_YOUT_L,MPU9150_ACCEL_YOUT_H);
+}
+
+int MPU9150Device::readAccelZ()
+{
+    return readSensor(MPU9150_ACCEL_ZOUT_L,MPU9150_ACCEL_ZOUT_H);
+}
+
+void MPU9150Device::getAccelData(int& x, int& y, int& z)
+{
+	x = readAccelX();
+	y = readAccelY();
+	z = readAccelZ();
 }
 
 //http://pansenti.wordpress.com/2013/03/26/pansentis-invensense-mpu-9150-software-for-arduino-is-now-on-github/
 //Thank you to pansenti for setup code.
-void Mpu9150Module::setupCompass(){
-  currentI2CAddress = 0x0C;      //change Adress to Compass
+void MPU9150Device::setupCompass(){
+  myCurrentI2CAddress = 0x0C;      //change Adress to Compass
 
   writeSensor(0x0A, 0x00); //PowerDownMode
+  delay(10);
   writeSensor(0x0A, 0x0F); //SelfTest
-  writeSensor(0x0A, 0x00); //PowerDownMode
+  delay(10);
+  //writeSensor(0x0A, 0x00); //PowerDownMode
 
-  currentI2CAddress = MPU9150_I2C_ADDRESS;      //change Adress to MPU
+  myCurrentI2CAddress = MPU9150_I2C_ADDRESS;      //change Adress to MPU
 
   writeSensor(0x24, 0x40); //Wait for Data at Slave0
   writeSensor(0x25, 0x8C); //Set i2c address at slave0 at 0x0C
@@ -337,38 +279,125 @@ void Mpu9150Module::setupCompass(){
 ///////// I2C functions to get easier all values ///////////
 ////////////////////////////////////////////////////////////
 
-int Mpu9150Module::readSensor(int addrL, int addrH){
-  myWire->beginTransmission(currentI2CAddress);
+int MPU9150Device::readSensor(int addrL, int addrH){
+  myWire->beginTransmission(myCurrentI2CAddress);
   myWire->write(addrL);
   myWire->endTransmission(false);
 
-  myWire->requestFrom(currentI2CAddress, 1, true);
+  myWire->requestFrom(myCurrentI2CAddress, 1, true);
   byte L = myWire->read();
 
-  myWire->beginTransmission(currentI2CAddress);
+  myWire->beginTransmission(myCurrentI2CAddress);
   myWire->write(addrH);
   myWire->endTransmission(false);
 
-  myWire->requestFrom(currentI2CAddress, 1, true);
+  myWire->requestFrom(myCurrentI2CAddress, 1, true);
   byte H = myWire->read();
   
   return (int16_t)(H<<8)+L;
 }
 
-int Mpu9150Module::readSensor(int addr){
-  myWire->beginTransmission(currentI2CAddress);
+int MPU9150Device::readSensor(int addr){
+  myWire->beginTransmission(myCurrentI2CAddress);
   myWire->write(addr);
   myWire->endTransmission(false);
 
-  myWire->requestFrom(currentI2CAddress, 1, true);
+  myWire->requestFrom(myCurrentI2CAddress, 1, true);
   return myWire->read();
 }
 
-int Mpu9150Module::writeSensor(int addr,int data){
-  myWire->beginTransmission(currentI2CAddress);
+int MPU9150Device::writeSensor(int addr,int data){
+  myWire->beginTransmission(myCurrentI2CAddress);
   myWire->write(addr);
   myWire->write(data);
   myWire->endTransmission(true);
  
   return 1;
 }
+
+Device::ValueStruct MPU9150Device::readValue(int index)
+{
+    Device::ValueStruct output;
+    
+    if(index == 0)
+    {
+        float temp;
+        getTemp(temp);
+        output.type = Device::TypeFloat;
+        output.value.decimal = temp;
+        output.name = "DEG_C";
+    }
+    else if(index == 1)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readGyroX();
+        output.name = "GYRO_X";
+    }
+    else if(index == 2)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readGyroY();
+        output.name = "GYRO_Y";
+    }
+    else if(index == 3)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readGyroZ();
+        output.name = "GYRO_Z";
+    }
+    else if(index == 4)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readAccelX();
+        output.name = "ACCEL_X";
+    }
+    else if(index == 5)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readAccelY();
+        output.name = "ACCEL_Y";
+    }
+    else if(index == 6)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readAccelZ();
+        output.name = "ACCEL_Z";
+    }
+    /* Compass doesn't quite work yet
+    else if(index == 7)
+    {
+        myCurrentI2CAddress = 0x0C;      //change Adress to Compass
+        writeSensor(MPU9150_CMPS_CNTL, 0x01); // toggle enable data read from magnetometer, no continuous read mode!
+        myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
+        delay(10);
+        
+        output.type = Device::TypeFloat;
+        output.value.decimal = readCompassX();
+        output.name = "COMPASS_X";
+    }
+    else if(index == 8)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readCompassY();
+        output.name = "COMPASS_Y";
+    }
+    else if(index == 9)
+    {
+        output.type = Device::TypeFloat;
+        output.value.decimal = readCompassZ();
+        output.name = "COMPASS_Z";
+    }
+    */
+    else
+    {
+        output.type = Device::TypeInvaild;
+        output.name = "";
+    } 
+    return output;
+}
+
+float MPU9150Device::numValues()
+{
+    return 10; 
+}
+
