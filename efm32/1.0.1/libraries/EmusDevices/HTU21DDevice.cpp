@@ -159,7 +159,7 @@ Device::ValueStruct HTU21DDevice::readValue(int index)
     {
         if(myWire)
         {
-            float humidity = calcTemp(readHumidity());
+            float humidity = calcHumidity(readHumidity());
             output.type = Device::TypeFloat;
             output.value.decimal = humidity;
         }
