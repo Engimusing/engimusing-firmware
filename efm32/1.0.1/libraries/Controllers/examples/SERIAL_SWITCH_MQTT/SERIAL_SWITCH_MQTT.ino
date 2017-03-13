@@ -24,8 +24,6 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32G232 from the Tools->Board: menu.
 #endif
 
-#include <Wire.h>
-
 #include "Arduino.h"
 
 #include <MqttHub.h>
@@ -49,6 +47,12 @@ void setup()
   Serial2Port.begin(HUB, Serial2);
   Serial3Port.begin(HUB, Serial3);
   Serial4Port.begin(HUB, Serial4);
+
+  Serial.println("MQTT Serial Switch Port 0");
+  Serial1.println("MQTT Serial Switch Port 1");
+  Serial2.println("MQTT Serial Switch Port 2");
+  Serial3.println("MQTT Serial Switch Port 3");
+  Serial4.println("MQTT Serial Switch Port 4");
 }
 
 void loop()
