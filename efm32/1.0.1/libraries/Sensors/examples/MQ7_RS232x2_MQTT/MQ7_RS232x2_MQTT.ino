@@ -30,7 +30,7 @@
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
-#include <Mq7Module.h>
+#include <MQ7Device.h>
 
 /*
   EFMTG110 Commands:
@@ -51,7 +51,8 @@ MqttSerialPort serialPort2;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Mq7Module Mq7;
+MQ7Device Mq7;
+SimpleMqttModule Mq7MqttMod;
 
 void setup()
 {
@@ -66,8 +67,8 @@ void setup()
   int SENSOR = A0;
 
   //Initialize the MQ7 CO Sensor
-  Mq7.begin(HUB, "EFMTG110/BOARD/MQ7", PWM_CTL, SENSOR, 1000);
-  
+  Mq7.begin(PWM_CTL, SENSOR);
+  Mq7MqttMod.begin(HUB, Mq7, "EFMTG110/BOARD/MQ7", 1000);
  
 }
 

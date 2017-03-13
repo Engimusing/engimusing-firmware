@@ -33,7 +33,7 @@
 #include <MqttCC3000Port.h>
 #include <MqttModule.h>
 
-#include <Mq7Module.h>
+#include <MQ7Device.h>
 #include <Noa1212Module.h>
 
 #include <TMP102Device.h>
@@ -116,7 +116,8 @@ DigitalQre1113SwitchModule ReflectiveSensorSwitch0;
 DigitalQre1113SwitchModule ReflectiveSensorSwitch1;
 DigitalQre1113SwitchModule ReflectiveSensorSwitch2;
 
-Mq7Module Mq7;
+MQ7Device Mq7;
+SimpleMqttModule Mq7MqttMod;
 
 Noa1212Module Noa1212;
 
@@ -158,7 +159,8 @@ void setup()
 
   //The large round orange object on the side of the garage door board with more on it
   // is the MQ7 CO detector.
-  Mq7.begin(HUB, "GDOOR/BOARD/MQ7", 48, 33, 10000);
+  Mq7.begin(48, 33);
+  Mq7MqttMod.begin(HUB, Mq7, "GDOOR/BOARD/MQ7", 10000);
   
   //Light sensor that is on the front of the board.
   Noa1212.begin(HUB, "GDOOR/BOARD/NOA1212", 16, 25, 24, 32, Noa1212Module::MEDIUM_GAIN, 10000);
