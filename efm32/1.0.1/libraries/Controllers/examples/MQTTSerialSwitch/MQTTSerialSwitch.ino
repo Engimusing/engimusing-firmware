@@ -20,8 +20,8 @@
  *  on all the other 4 serial ports.
  */
 
-#if !defined(EFM32WG840)
-#error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
+#if !defined(EFM32G232)
+#error Incorrect Board Selected! Please select Engimusing EFM32G232 from the Tools->Board: menu.
 #endif
 
 #include <Wire.h>
