@@ -29,7 +29,8 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
-#include <Tmd26721Module.h>
+#include <TMD26721Device.h>
+#include <Wire.h>
 /*
   EFMZGUSB Commands:
   {"TOP":"EFMZGUSB/BOARD/LED/CTL","PLD":"ON"}
@@ -48,7 +49,8 @@ MqttSerialPort serialPort;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-Tmd26721Module TMD26721;
+TMD26721Device TMD26721;
+SimpleMqttModule TMD26721MqttModule;
 
 void setup()
 {
@@ -61,7 +63,8 @@ void setup()
   //Initialize the TMD26721 which will report the proximity every 10 seconds
   // The 4 parameter is the number of pulses. It can be anything between 0 and 255.
   // If it is 0 then it will act more like a light detector than a proximity detector.
-  TMD26721.begin(HUB, "EFMZGUSB/BOARD/TMD26721", &Wire, 5, 4, 10000);
+  TMD26721.begin(Wire, 5, 4);
+  TMD26721MqttModule.begin(HUB, TMD26721, "EFMZGUSB/BOARD/TMD26721", 1000);
 }
 
 //Part of light on off example

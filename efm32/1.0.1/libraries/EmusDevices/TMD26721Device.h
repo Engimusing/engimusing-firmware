@@ -19,24 +19,23 @@
 #pragma once
 
 #include "Arduino.h"
-#include "MqttModule.h"
 
-#include <Wire.h>
+#include "Device.h"
 
 class TwoWire;
 
-class Tmd26721Module : public MqttModule
+class TMD26721Device : public Device
 {
- public:
-  virtual void begin(MqttHub &hub, const char* mod, TwoWire *wire, int32_t enablePin, uint8_t pulseCount, uint32_t updateDelay);
-  virtual void update(void); // publish changes in switch state
-  virtual uint8_t decode(const char* topic, const char* payload);
-  
- protected:
-  virtual void sendMQTTProximityData();
-
-  TwoWire *myWire; 
-  uint32_t myUpdateDelay;
-  uint8_t myPulseCount;
+ 
+   public:
+        virtual void begin(TwoWire &wire, int32_t enablePin, uint8_t pulseCount);
+        virtual int proximityData();
+        
+        virtual Device::ValueStruct readValue(int index);
+        virtual float numValues(); 
+        
+   protected:   
+        TwoWire *myWire; 
+        uint8_t myPulseCount;
+          
 };
-
