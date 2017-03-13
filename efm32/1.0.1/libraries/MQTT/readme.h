@@ -1,0 +1,3 @@
+/*
+  This directory contains example sketches and configuration files for using Engimusing modules with MQTT.
+*/
