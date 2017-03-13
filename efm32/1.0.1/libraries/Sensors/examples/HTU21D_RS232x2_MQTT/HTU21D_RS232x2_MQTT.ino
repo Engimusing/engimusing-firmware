@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -14,11 +14,19 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+  Example for how to setup the MQTT client for the HTU21D RS232x2 Engimusing board
+   There are 3 devices on this board. An LED and an HTU21D temperature and humidity sensor. 
+   See http://www.engimusing.com/products/reedsw-1 for more information about the board.
+
+  EFMZG108 Commands:
+    {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"ON"}
+    {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"OFF"}
+    {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"STATUS"}
+
+    {"TOP":"EFMZG108/BOARD/HTU21D/DEC_C","PLD":"STATUS"}
+    {"TOP":"EFMZG108/BOARD/HTU21D/HUM","PLD":"STATUS"}
 */
-/* Example for how to setup the MQTT client for the HTU21D RS232x2 Engimusing board
- *  There are 3 devices on this board. An LED and an HTU21D temperature and humidity sensor. 
- *  See http://www.engimusing.com/products/reedsw-1 for more information about the board.
- */
 
 #if !defined(EFM32ZG108)
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
@@ -33,15 +41,6 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 #include <HTU21DDevice.h>
-/*
-  EFMZG108 Commands:
-  {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"STATUS"}
-
-  {"TOP":"EFMZG108/BOARD/HTU21D/DEC_C","PLD":"STATUS"}
-  {"TOP":"EFMZG108/BOARD/HTU21D/HUM","PLD":"STATUS"}
-*/
 
 MqttHub HUB;
 MqttSerialPort serialPort1;
@@ -52,9 +51,9 @@ MqttSerialPort serialPort2;
 // object when begin() is called so they can be updated 
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
-
 HTU21DDevice HTU21D;
 SimpleMqttModule HTU21DMqttMod;
+
 void setup()
 {
   serialPort1.begin(HUB, Serial);  
@@ -67,45 +66,11 @@ void setup()
   //Initialize the Humidity sensor
   HTU21D.begin(Wire0, 2);
   HTU21DMqttMod.begin(HUB, HTU21D, "EFMZG108/BOARD/HTU21D", 5000);
-  
 }
-
-//Part of light on off example
-//int lastMillisOn = 0;
-//int lastMillisOff = 1000;
 
 void loop()
 {
   //Update the MQTT communication so it
   // can send statuses and recieve requests
   HUB.update();
-
-  /*
-  //example of how to turn on and off a light using the OnOffCtlModule
-  //status of the pin will be sent to the MQTT broker.
-  if(millis() > lastMillisOff + 2000)
-  {
-    LEDCtrl.setPinState(LOW);
-    lastMillisOff = millis();
-  }
-  if(millis() > lastMillisOn + 2000)
-  {
-    LEDCtrl.setPinState(HIGH);
-    lastMillisOn = millis();
-  }
-  */
-
-  /*
-   * example of how to control the LED using one of the Tilt sensors switches
-   */
-   /*
-   //If the led is not in the same state as the swich then 
-   // set it to the same as the swich. This check avoids
-   // setting the led state every time through the loop
-   if(LEDCtrl.pinState() != TiltSwitch1.switchState())
-   {
-      LEDCtrl.setPinState(TiltSwitch1.switchState());
-   }*/
-  
-  
 }
