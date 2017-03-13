@@ -34,7 +34,7 @@
 #include <MqttModule.h>
 
 #include <MQ7Device.h>
-#include <Noa1212Module.h>
+#include <NOA1212Device.h>
 
 #include <TMP102Device.h>
 
@@ -119,7 +119,8 @@ DigitalQre1113SwitchModule ReflectiveSensorSwitch2;
 MQ7Device Mq7;
 SimpleMqttModule Mq7MqttMod;
 
-Noa1212Module Noa1212;
+NOA1212Device Noa1212;
+SimpleMqttModule Noa1212MqttMod;
 
 OnOffCtlModule DcRelay1;
 OnOffCtlModule DcRelay2;
@@ -163,7 +164,8 @@ void setup()
   Mq7MqttMod.begin(HUB, Mq7, "GDOOR/BOARD/MQ7", 10000);
   
   //Light sensor that is on the front of the board.
-  Noa1212.begin(HUB, "GDOOR/BOARD/NOA1212", 16, 25, 24, 32, Noa1212Module::MEDIUM_GAIN, 10000);
+  Noa1212.begin(16, 25, 24, 32, NOA1212Device::MEDIUM_GAIN, 100);
+  Noa1212MqttMod.begin(HUB, Noa1212, "GDOOR/BOARD/NOA1212", 10000);
   
   //onoff controls for the dcrelays. These are auto turned off in the loop() after a set amount of time
   DcRelay1.begin(HUB, 5, "GDOOR/BOARD/DCRELAY1", LOW);
@@ -217,6 +219,5 @@ void loop()
         }
   }  
 }
-
 
 
