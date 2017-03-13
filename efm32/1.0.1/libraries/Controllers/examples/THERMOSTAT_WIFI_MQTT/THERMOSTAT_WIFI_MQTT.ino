@@ -33,8 +33,6 @@
 #include <MqttCC3000Port.h>
 #include <MqttModule.h>
 
-#include <Noa1212Module.h>
-
 #include <TMP102Device.h>
 
 #include <Wire.h>
