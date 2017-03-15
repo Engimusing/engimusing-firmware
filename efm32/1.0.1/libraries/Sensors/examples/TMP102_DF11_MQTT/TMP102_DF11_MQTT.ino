@@ -14,11 +14,18 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+  Example for how to setup the MQTT client for the TMP102 DF11 board using the ZB USB Engimusing board
+  There are 2 devices using these combinations of boards. An LED and a TMP102 temperature sensor. 
+  See http://www.engimusing.com/products/tmp-1 for more information about the board.
+
+  EFMZGUSB Commands:
+  {"TOP":"EFMZGUSB/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"EFMZGUSB/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"EFMZGUSB/BOARD/LED/CTL","PLD":"STATUS"}
+
+  {"TOP":"EFMZGUSB/BOARD/TMP102/DEC_C","PLD":"STATUS"}
 */
-/* Example for how to setup the MQTT client for the TMP102 DF11 board using the ZB USB Engimusing board
- *  There are 2 devices using these combinations of boards. An LED and a TMP102 temperature sensor. 
- *  See http://www.engimusing.com/products/tmp-1 for more information about the board.
- */
 
 #if !defined(EFM32ZGUSB)
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
@@ -28,18 +35,8 @@
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
-
 #include <TMP102Device.h>
-
 #include <Wire.h>
-/*
-  EFMZGUSB Commands:
-  {"TOP":"EFMZGUSB/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"EFMZGUSB/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"EFMZGUSB/BOARD/LED/CTL","PLD":"STATUS"}
-
-  {"TOP":"EFMZGUSB/BOARD/TMP102/DEC_C","PLD":"STATUS"}
-*/
 
 MqttHub HUB;
 MqttSerialPort serialPort;
@@ -49,7 +46,6 @@ MqttSerialPort serialPort;
 // object when begin() is called so they can be updated 
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
-
 TMP102Device TMP102;
 SimpleMqttModule TMP102MqttMod;
 
@@ -64,45 +60,12 @@ void setup()
   //Initialize the tmp control class which will send the 
   // temperature over MQTT every 10 seconds
   TMP102.begin(Wire0, 5, true);
-  TMP102MqttMod.begin(HUB, TMP102, "EFMZGUSB/BOARD/TMP102", 10000);
+  TMP102MqttMod.begin(HUB, TMP102, "EFMZGUSB/BOARD/TMP102", 5000);
 }
-
-//Part of light on off example
-//int lastMillisOn = 0;
-//int lastMillisOff = 1000;
 
 void loop()
 {
   //Update the MQTT communication so it
   // can send statuses and recieve requests
   HUB.update();
-
-  /*
-  //example of how to turn on and off a light using the OnOffCtlModule
-  //status of the pin will be sent to the MQTT broker.
-  if(millis() > lastMillisOff + 2000)
-  {
-    LEDCtrl.setPinState(LOW);
-    lastMillisOff = millis();
-  }
-  if(millis() > lastMillisOn + 2000)
-  {
-    LEDCtrl.setPinState(HIGH);
-    lastMillisOn = millis();
-  }
-  */
-
-  /*
-   * example of how to control the LED using one of the reed switches
-   */
-   /*
-   //If the led is not in the same state as the swich then 
-   // set it to the same as the swich. This check avoids
-   // setting the led state every time through the loop
-   if(LEDCtrl.pinState() != ReedSwitch0.switchState())
-   {
-      LEDCtrl.setPinState(ReedSwitch0.switchState());
-   }*/
-  
-  
 }
