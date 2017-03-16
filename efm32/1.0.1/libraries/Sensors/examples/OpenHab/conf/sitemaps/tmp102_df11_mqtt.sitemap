@@ -1,0 +1,7 @@
+sitemap tmp102_df11_mqtt label="My Home Automation"
+{
+    Frame label="OpenHAB TMP102_DF11_MQTT Tutorial" {
+        Group item=TMP102_DF11_MQTT_GROUP label="TMP102 MQTT Sensor" icon="temperature"
+    }
+}
+
