@@ -1,5 +1,6 @@
 /*
- * TwoWire.h - TWI/I2C library for Arduino Due
+ * TwoWire.h - TWI/I2C library for Engimusing Devices
+ * Copyright (c) 2016 Engimusing LLC.  All right reserved.
  * Copyright (c) 2011 Cristian Maglie <c.maglie@bug.st>.
  * All rights reserved.
  *
@@ -29,9 +30,11 @@
 
 #define BUFFER_LENGTH 32
 
+class I2CClass;
+
 class TwoWire : public Stream {
  public:
-    TwoWire(I2C_TypeDef *_i2c, uint8_t loc, CMU_Clock_TypeDef _i2cClock, void(*begin_cb)(void));
+    TwoWire(I2CClass &_i2c);
     void begin();
     void begin(uint8_t);
     void begin(int);
@@ -76,19 +79,10 @@ class TwoWire : public Stream {
     uint8_t srvBufferIndex;
     uint8_t srvBufferLength;
 
-    uint8_t myLocation;
-	
     // Callback user functions
     void (*onRequestCallback)(void);
     void (*onReceiveCallback)(int);
 
-    // Called before initialization
-    void (*onBeginCallback)(void);
-
-    // TWI instance
-    I2C_TypeDef *i2c;
-
-	CMU_Clock_TypeDef i2cClock;
     // TWI state
     enum TwoWireStatus {
 	UNINITIALIZED,
@@ -100,15 +94,8 @@ class TwoWire : public Stream {
 	SLAVE_SEND
     };
     TwoWireStatus status;
-
-    I2C_TransferSeq_TypeDef myCurTransmission;
 	
-    // TWI clock frequency
-    static const uint32_t TWI_CLOCK = 100000;
-
-    // Timeouts (
-    static const uint32_t RECV_TIMEOUT = 100000;
-    static const uint32_t XMIT_TIMEOUT = 100000;
+    I2CClass &myI2c;
 };
 
 #if WIRE_INTERFACES_COUNT > 0
