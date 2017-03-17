@@ -14,11 +14,18 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+  Example for how to setup the MQTT client for the MQ7 RS232x2 Engimusing board
+  There are 2 devices on this board. An LED and an MQ7 CO detector. 
+  See http://www.engimusing.com/products/gas-4 for more information about the board.
+
+  EFMTG110 Commands:
+  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"STATUS"}
+
+  {"TOP":"EFMTG110/BOARD/MQ7","PLD":"STATUS"}  
 */
-/* Example for how to setup the MQTT client for the MQ7 RS232x2 Engimusing board
- *  There are 2 devices on this board. An LED and an MQ7 CO detector. 
- *  See http://www.engimusing.com/products/gas-4 for more information about the board.
- */
 
 #if !defined(EFM32TG110)
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
@@ -32,15 +39,6 @@
 #include <MqttModule.h>
 #include <MQ7Device.h>
 
-/*
-  EFMTG110 Commands:
-  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"STATUS"}
-
-  {"TOP":"EFMTG110/BOARD/MQ7","PLD":"STATUS"}  
-*/
-
 MqttHub HUB;
 MqttSerialPort serialPort1;
 MqttSerialPort serialPort2;
@@ -50,7 +48,6 @@ MqttSerialPort serialPort2;
 // object when begin() is called so they can be updated 
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
-
 MQ7Device Mq7;
 SimpleMqttModule Mq7MqttMod;
 
@@ -69,34 +66,11 @@ void setup()
   //Initialize the MQ7 CO Sensor
   Mq7.begin(PWM_CTL, SENSOR);
   Mq7MqttMod.begin(HUB, Mq7, "EFMTG110/BOARD/MQ7", 1000);
- 
 }
-
-//Part of light on off example
-//int lastMillisOn = 0;
-//int lastMillisOff = 1000;
 
 void loop()
 {
   //Update the MQTT communication so it
   // can send statuses and recieve requests
   HUB.update();
-
-  /*
-  //example of how to turn on and off a light using the OnOffCtlModule
-  //status of the pin will be sent to the MQTT broker.
-  if(millis() > lastMillisOff + 2000)
-  {
-    LEDCtrl.setPinState(LOW);
-    lastMillisOff = millis();
-  }
-  if(millis() > lastMillisOn + 2000)
-  {
-    LEDCtrl.setPinState(HIGH);
-    lastMillisOn = millis();
-  }
-  */
-
-
-  
 }

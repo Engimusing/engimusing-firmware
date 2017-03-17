@@ -81,6 +81,69 @@ int8_t MqttModule::compare_token(const char* inTok, const char* cmpTok)
   return 1;
 }
 
+// ------------------------------- Simple Module Class ------------------------
+
+void SimpleMqttModule::begin(MqttHub &hub, Device &device, const char* mod, uint32_t updateDelay)
+{    
+    myDevice = &device;
+    myUpdateDelay = updateDelay;
+
+    MqttModule::begin(hub, mod, true);
+
+    sendMQTTData();
+}
+
+void SimpleMqttModule::update(void)
+{
+  myDevice->update();
+  if(millis() > myTick + myUpdateDelay) {
+    myTick = millis();
+    sendMQTTData();
+  }
+}
+
+uint8_t SimpleMqttModule::decode(const char* topic, const char* payload)
+{
+  int8_t j = isTopicThisModule(topic);
+  if(j == 0)
+  {
+	  return 0;
+  }
+  
+  if(compare_token(&topic[j],"STATUS")) {
+    sendMQTTData();
+    return 1;
+  }
+}
+
+void SimpleMqttModule::sendMQTTData()
+{
+    for(int i = 0; i < myDevice->numValues(); i++)
+    {
+        Device::ValueStruct valueStruct = myDevice->readValue(i);
+        switch(valueStruct.type)
+        {
+            case Device::TypeFloat:
+                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.decimal);
+                break;
+            case Device::TypeInt:
+                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.integer);
+                break;
+            case Device::TypeBool:
+                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.boolean);
+                break;
+            case Device::TypeCharArray:
+                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.charArray);
+                break;
+        }  
+    }
+}
+
+
+
+
+
+
 // ------------------------------- On/Off Control Class --------------------------
 void OnOffCtlModule::begin(MqttHub &hub, uint8_t pin, const char* mod, uint8_t act)
 {
@@ -331,63 +394,6 @@ void DigitalQre1113SwitchModule::update(void)
 	}
      
   }
-}
-
-
-void SimpleMqttModule::begin(MqttHub &hub, Device &device, const char* mod, uint32_t updateDelay)
-{    
-    myDevice = &device;
-    myUpdateDelay = updateDelay;
-
-    MqttModule::begin(hub, mod, true);
-
-    sendMQTTData();
-}
-
-void SimpleMqttModule::update(void)
-{
-  myDevice->update();
-  if(millis() > myTick + myUpdateDelay) {
-    myTick = millis();
-    sendMQTTData();
-  }
-}
-
-uint8_t SimpleMqttModule::decode(const char* topic, const char* payload)
-{
-  int8_t j = isTopicThisModule(topic);
-  if(j == 0)
-  {
-	  return 0;
-  }
-  
-  if(compare_token(&topic[j],"STATUS")) {
-    sendMQTTData();
-    return 1;
-  }
-}
-
-void SimpleMqttModule::sendMQTTData()
-{
-    for(int i = 0; i < myDevice->numValues(); i++)
-    {
-        Device::ValueStruct valueStruct = myDevice->readValue(i);
-        switch(valueStruct.type)
-        {
-            case Device::TypeFloat:
-                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.decimal);
-                break;
-            case Device::TypeInt:
-                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.integer);
-                break;
-            case Device::TypeBool:
-                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.boolean);
-                break;
-            case Device::TypeCharArray:
-                myHub->sendMessage((const char*)myModule, (const char*)valueStruct.name, valueStruct.value.charArray);
-                break;
-        }  
-    }
 }
 
 // ------------------------------- CPU VDD ADC Class -----------------------------
