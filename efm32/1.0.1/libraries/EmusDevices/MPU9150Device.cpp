@@ -118,18 +118,18 @@
 #define MPU9150_WHO_AM_I           0x75   // R
 
 //MPU9150 Compass
-#define MPU9150_CMPS_XOUT_L        0x4A   // R
-#define MPU9150_CMPS_XOUT_H        0x4B   // R
-#define MPU9150_CMPS_YOUT_L        0x4C   // R
-#define MPU9150_CMPS_YOUT_H        0x4D   // R
-#define MPU9150_CMPS_ZOUT_L        0x4E   // R
-#define MPU9150_CMPS_ZOUT_H        0x4F   // R
+#define MPU9150_CMPS_XOUT_L        0x03   // R
+#define MPU9150_CMPS_XOUT_H        0x04   // R
+#define MPU9150_CMPS_YOUT_L        0x05   // R
+#define MPU9150_CMPS_YOUT_H        0x06   // R
+#define MPU9150_CMPS_ZOUT_L        0x07   // R
+#define MPU9150_CMPS_ZOUT_H        0x08   // R
 #define MPU9150_CMPS_CNTL       0x0A   // R
 
 
 // I2C address 0x69 could be 0x68 depends on your wiring. 
-#define MPU9150_I2C_ADDRESS 0x68;
-
+#define MPU9150_I2C_ADDRESS 0x68
+#define MPU9150_CMPS_ADDRESS 0x0C
 void MPU9150Device::begin(TwoWire &wire, int32_t standbyPin, int32_t frameSyncPin)
 {    
     myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
@@ -162,41 +162,27 @@ void MPU9150Device::getTemp(float& temp)
 	temp = (( (float) MPU9150Device::readSensor(MPU9150_TEMP_OUT_L,MPU9150_TEMP_OUT_H)) / 340.0f) + 35.0;
 }
 
-int MPU9150Device::readCompassX()
+void MPU9150Device::readCompassData()
 {
-    //myCurrentI2CAddress = 0x0C;      //change Adress to Compass
-    int ret = readSensor(MPU9150_CMPS_XOUT_L,MPU9150_CMPS_XOUT_H);
-    //myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
-    return ret;
-}
+    myCurrentI2CAddress = MPU9150_CMPS_ADDRESS;      //change Adress to Compass
+  
+    writeSensor(MPU9150_CMPS_CNTL, 0x01); //trigger single read
+    delay(10);
 
-int MPU9150Device::readCompassY()
-{
-    //myCurrentI2CAddress = 0x0C;      //change Adress to Compass
-    int ret = readSensor(MPU9150_CMPS_YOUT_L,MPU9150_CMPS_YOUT_H);
-   // myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
-    return ret;
-}
-
-int MPU9150Device::readCompassZ()
-{
-   // myCurrentI2CAddress = 0x0C;      //change Adress to Compass
-    int ret = readSensor(MPU9150_CMPS_ZOUT_L,MPU9150_CMPS_ZOUT_H);
-    //myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
-    return ret;
+    myCompassX = readSensor(MPU9150_CMPS_XOUT_L,MPU9150_CMPS_XOUT_H);
+	myCompassY = readSensor(MPU9150_CMPS_YOUT_L,MPU9150_CMPS_YOUT_H);
+	myCompassZ = readSensor(MPU9150_CMPS_ZOUT_L,MPU9150_CMPS_ZOUT_H);
+    
+    myCurrentI2CAddress = MPU9150_I2C_ADDRESS;      //change Adress to MPU
 }
 
 void MPU9150Device::getCompassData(int& x, int& y, int& z)
 {
+    readCompassData();
     
-    myCurrentI2CAddress = 0x0C;      //change Adress to Compass
-    writeSensor(MPU9150_CMPS_CNTL, 0x01); // toggle enable data read from magnetometer, no continuous read mode!
-	myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
-    delay(10);
-    
-    x = readCompassX();
-	y = readCompassY();
-	z = readCompassZ();
+    x = myCompassX;
+    y = myCompassY;
+    z = myCompassZ;
 }
 
 int MPU9150Device::readGyroX()
@@ -245,34 +231,19 @@ void MPU9150Device::getAccelData(int& x, int& y, int& z)
 
 //http://pansenti.wordpress.com/2013/03/26/pansentis-invensense-mpu-9150-software-for-arduino-is-now-on-github/
 //Thank you to pansenti for setup code.
-void MPU9150Device::setupCompass(){
-  myCurrentI2CAddress = 0x0C;      //change Adress to Compass
+void MPU9150Device::setupCompass()
+{
+  
+  writeSensor(MPU9150_USER_CTRL, 0x00); //clear usr setting
+  writeSensor(MPU9150_INT_PIN_CFG, 0x02); //clear usr setting
+  
+  myCurrentI2CAddress = MPU9150_CMPS_ADDRESS;      //change Adress to Compass
 
-  writeSensor(0x0A, 0x00); //PowerDownMode
+  writeSensor(MPU9150_CMPS_CNTL, 0x01); //PowerDownMode
   delay(10);
-  writeSensor(0x0A, 0x0F); //SelfTest
-  delay(10);
-  //writeSensor(0x0A, 0x00); //PowerDownMode
-
+  
   myCurrentI2CAddress = MPU9150_I2C_ADDRESS;      //change Adress to MPU
 
-  writeSensor(0x24, 0x40); //Wait for Data at Slave0
-  writeSensor(0x25, 0x8C); //Set i2c address at slave0 at 0x0C
-  writeSensor(0x26, 0x02); //Set where reading at slave 0 starts
-  writeSensor(0x27, 0x88); //set offset at start reading and enable
-  writeSensor(0x28, 0x0C); //set i2c address at slv1 at 0x0C
-  writeSensor(0x29, 0x0A); //Set where reading at slave 1 starts
-  writeSensor(0x2A, 0x81); //Enable at set length to 1
-  writeSensor(0x64, 0x01); //overvride register
-  writeSensor(0x67, 0x03); //set delay rate
-  writeSensor(0x01, 0x80);
-
-  writeSensor(0x34, 0x04); //set i2c slv4 delay
-  writeSensor(0x64, 0x00); //override register
-  writeSensor(0x6A, 0x00); //clear usr setting
-  writeSensor(0x64, 0x01); //override register
-  writeSensor(0x6A, 0x20); //enable master i2c mode
-  writeSensor(0x34, 0x13); //disable slv4
 }
 
 ////////////////////////////////////////////////////////////
@@ -318,7 +289,6 @@ int MPU9150Device::writeSensor(int addr,int data){
 Device::ValueStruct MPU9150Device::readValue(int index)
 {
     Device::ValueStruct output;
-    
     if(index == 0)
     {
         float temp;
@@ -363,31 +333,25 @@ Device::ValueStruct MPU9150Device::readValue(int index)
         output.value.decimal = readAccelZ();
         output.name = "ACCEL_Z";
     }
-    /* Compass doesn't quite work yet
     else if(index == 7)
     {
-        myCurrentI2CAddress = 0x0C;      //change Adress to Compass
-        writeSensor(MPU9150_CMPS_CNTL, 0x01); // toggle enable data read from magnetometer, no continuous read mode!
-        myCurrentI2CAddress = MPU9150_I2C_ADDRESS;
-        delay(10);
-        
+        readCompassData();
         output.type = Device::TypeFloat;
-        output.value.decimal = readCompassX();
+        output.value.decimal = myCompassX;
         output.name = "COMPASS_X";
     }
     else if(index == 8)
     {
         output.type = Device::TypeFloat;
-        output.value.decimal = readCompassY();
+        output.value.decimal = myCompassY;
         output.name = "COMPASS_Y";
     }
     else if(index == 9)
     {
         output.type = Device::TypeFloat;
-        output.value.decimal = readCompassZ();
+        output.value.decimal = myCompassZ;
         output.name = "COMPASS_Z";
     }
-    */
     else
     {
         output.type = Device::TypeInvaild;

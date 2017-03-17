@@ -42,9 +42,7 @@ class MPU9150Device : public Device
 
         virtual void setupCompass();
         
-        virtual int readCompassX();
-        virtual int readCompassY();
-        virtual int readCompassZ();
+        virtual void readCompassData();
                 
         virtual int readGyroX();
         virtual int readGyroY();
@@ -62,5 +60,9 @@ class MPU9150Device : public Device
     
         TwoWire *myWire; 
         int myCurrentI2CAddress;
+        
+        int myCompassX;
+        int myCompassY;
+        int myCompassZ;
 
 };
