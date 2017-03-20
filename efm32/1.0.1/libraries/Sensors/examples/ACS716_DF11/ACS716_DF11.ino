@@ -23,11 +23,6 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
  
-//Include the MqttModule to get the MQTT client classes
-#include <MqttHub.h>
-#include <MqttPort.h>
-#include <MqttModule.h>
-
 #include <ACS716Device.h>
 
 ACS716Device ACS716;
