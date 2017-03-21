@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,6 @@
  
 #include "Arduino.h"
 
-//Include the MqttModule to get the MQTT client classes
 #include <ADXL362Device.h>
 
 #include <SPI.h>
