@@ -16,6 +16,19 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/* Original Attribution Comment
+MPL115A1 SPI Dig\ital Barometer Test Code
+Created on: September 30, 2010
+By: Jeremiah McConnell - miah at miah.com
+Portions: Jim Lindblom - jim at sparkfun.com
+
+This is a simple test program for the MPL115A1 Pressure Sensor (SPI version).
+
+License: CCAv3.0 Attribution-ShareAlike (http://creativecommons.org/licenses/by-sa/3.0/)
+You're free to use this code for any venture, but I'd love to hear about what you do with it,
+and any awesome changes you make to it. Attribution is greatly appreciated.
+*/
+
 #include <Arduino.h>
 
 
