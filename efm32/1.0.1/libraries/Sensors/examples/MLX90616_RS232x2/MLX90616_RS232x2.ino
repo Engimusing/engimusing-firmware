@@ -52,11 +52,11 @@ void loop()
   float temp = MLX90616.temperature();
   Serial.print("temperature = ");
   Serial.print(temp);
-  Serial.println(" °C");
+  Serial.println(" C");
   
   Serial1.print("temperature = ");
   Serial1.print(temp);
-  Serial1.println(" °C");
+  Serial1.println(" C");
 
   delay(1000);                       // wait for a second
   
