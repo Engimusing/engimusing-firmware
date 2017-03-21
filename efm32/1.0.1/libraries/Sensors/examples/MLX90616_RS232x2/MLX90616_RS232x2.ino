@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to setup the MQTT client for the MLX90616 RS232x2 Engimusing board
+/* Example for how to print out readings from the MLX90616 RS232x2 Engimusing board
     There are 2 devices on this board. An LED and a MLX90616 IR temperature sensor.
     See http://www.engimusing.com/products/tmp-3 for more information about the board.
 */
