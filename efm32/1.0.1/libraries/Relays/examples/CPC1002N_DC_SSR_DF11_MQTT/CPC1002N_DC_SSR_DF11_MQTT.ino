@@ -62,53 +62,20 @@ void setup()
   
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, 13, "EFMZG108/BOARD/LED", HIGH);
+  LEDCtrl.begin(HUB, LED_BUILTIN, "EFMZGUSB/BOARD/LED", LOW);
 
   //Initialize the on off controllers for the DC relays
-  DC0Ctrl.begin(HUB, 10, "EFMZG108/BOARD/DC0", LOW);
-  DC1Ctrl.begin(HUB, 6, "EFMZG108/BOARD/DC1", LOW);
+  DC0Ctrl.begin(HUB, 10, "EFMZGUSB/BOARD/DC0", LOW);
+  DC1Ctrl.begin(HUB, 6, "EFMZGUSB/BOARD/DC1", LOW);
 
   //set the default state for the DC relays to be off/open.
   DC0Ctrl.setPinState(LOW);
   DC1Ctrl.setPinState(LOW);
 }
 
-//Part of light on off example
-//int lastMillisOn = 0;
-//int lastMillisOff = 1000;
-
 void loop()
 {
   //Update the MQTT communication so it
   // can send statuses and recieve requests
   HUB.update();
-
-  /*
-  //example of how to turn on and off a light using the OnOffCtlModule
-  //status of the pin will be sent to the MQTT broker.
-  if(millis() > lastMillisOff + 2000)
-  {
-    LEDCtrl.setPinState(LOW);
-    lastMillisOff = millis();
-  }
-  if(millis() > lastMillisOn + 2000)
-  {
-    LEDCtrl.setPinState(HIGH);
-    lastMillisOn = millis();
-  }
-  */
-
-  /*
-   * example of how to control the LED using one of the reed switches
-   */
-   /*
-   //If the led is not in the same state as the swich then 
-   // set it to the same as the swich. This check avoids
-   // setting the led state every time through the loop
-   if(LEDCtrl.pinState() != ReedSwitch0.switchState())
-   {
-      LEDCtrl.setPinState(ReedSwitch0.switchState());
-   }*/
-  
-  
 }
