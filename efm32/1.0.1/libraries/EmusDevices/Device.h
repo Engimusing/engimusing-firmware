@@ -26,7 +26,7 @@ class Device
        
        union ValueUnion{
           float decimal;
-          uint32_t integer; // Assumes float is 32 bits wide
+          int32_t integer; // Assumes float is 32 bits wide
           bool boolean;
           const char * charArray;
        };

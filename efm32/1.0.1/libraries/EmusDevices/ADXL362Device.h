@@ -22,16 +22,28 @@
 
 #include "Device.h"
 
+//the following gave resonable values if you need really accurate absolute temperatures you need to calculate a new bias
+#define DEFAULT_TEMP_BAIS (350 + 290) 
+
 class SPIClass;
 class UARTClass;
 
 class ADXL362Device : public Device
 {
    public:
+   
+        enum Sensitivity
+        {
+            TWO_GEES,
+            FOUR_GEES,
+            EIGHT_GEES
+        }; 
+   
          //
         // Basic Device control and readback functions
         //
-        virtual void begin(int vddPin, int vsPin, int slaveSelectPin, SPIClass *ADXL_SPI, UARTClass *debugSerial = 0);
+        virtual void begin(int vddPin, int vsPin, int slaveSelectPin, SPIClass *ADXL_SPI, Sensitivity maxGeesSetting = TWO_GEES, uint16_t tempBias = DEFAULT_TEMP_BAIS, UARTClass *debugSerial = 0);
+        
         void beginMeasure(); 
         
         int readXData();
@@ -41,10 +53,16 @@ class ADXL362Device : public Device
         
         void readXYZTData(int &xData, int &yData, int &zData, int &temperature);
         
-        int getSampleX();
-        int getSampleY();
-        int getSampleZ();
-        int getSampleT();
+        int16_t getSampleX();
+        int16_t getSampleY();
+        int16_t getSampleZ();
+        int16_t getSampleT();
+        
+        float getXGees();
+        float getYGees();
+        float getZGees();
+        float getTCelsius();
+        
         void sampleXYZT();
      
         //
@@ -67,6 +85,8 @@ class ADXL362Device : public Device
         virtual Device::ValueStruct readValue(int index);
         virtual float numValues(); 
         
+        void setMaxGeesSetting(Sensitivity maxGeesSetting);
+        
    protected:
         //  Low-level SPI control, to simplify overall coding
         byte SPIreadOneRegister(byte regAddress);
@@ -78,10 +98,16 @@ class ADXL362Device : public Device
    protected:   
         int mySlaveSelectPin;
         
-        int mySampleX;
-        int mySampleY;
-        int mySampleZ;
-        int mySampleT;
+        int16_t mySampleX;
+        int16_t mySampleY;
+        int16_t mySampleZ;
+        int16_t mySampleT;
+        
+        int16_t myTempBias;
+        
+        Sensitivity myMaxGeesSetting;
+        float myAxisScalar;
+        
         
         SPIClass *mySpi;
         UARTClass *myDebugSerial;

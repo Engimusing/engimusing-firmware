@@ -57,29 +57,35 @@ void loop()
 
   digitalWrite(LED_BUILTIN, on);   // turn the LED on (HIGH is the voltage level)
 
-  int xData;
-  int yData;
-  int zData;
-  int temperature;
-  ADXL362.readXYZTData(xData, yData, zData, temperature);
+  float xData;
+  float yData;
+  float zData;
+  float temperature;
+  ADXL362.sampleXYZT();
+  xData = ADXL362.getXGees();
+  yData = ADXL362.getYGees();
+  zData = ADXL362.getZGees();
+  temperature = ADXL362.getTCelsius();
   
   Serial.print("X = ");
-  Serial.print((int16_t)xData,DEC);
-  Serial.print(" Y = ");
-  Serial.print((int16_t)yData,DEC);
-  Serial.print(" Z = ");
-  Serial.print((int16_t)zData,DEC);
-  Serial.print(" temperature = ");
-  Serial.println((int16_t)temperature,DEC);
+  Serial.print(xData);
+  Serial.print(" g Y = ");
+  Serial.print(yData);
+  Serial.print(" g Z = ");
+  Serial.print(zData);
+  Serial.print(" g temperature = ");
+  Serial.print(temperature);
+  Serial.println(" C");
   
   Serial1.print("X = ");
-  Serial1.print((int16_t)xData,DEC);
-  Serial1.print(" Y = ");
-  Serial1.print((int16_t)yData,DEC);
-  Serial1.print(" Z = ");
-  Serial1.print((int16_t)zData,DEC);
-  Serial1.print(" temperature = ");
-  Serial1.println((int16_t)temperature,DEC);
+  Serial1.print(xData);
+  Serial1.print(" g Y = ");
+  Serial1.print(yData);
+  Serial1.print(" g Z = ");
+  Serial1.print(zData);
+  Serial1.print(" g temperature = ");
+  Serial1.print(temperature);
+  Serial1.println(" C");
   
   delay(1000);
   

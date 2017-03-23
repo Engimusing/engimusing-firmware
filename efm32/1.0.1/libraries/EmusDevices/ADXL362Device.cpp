@@ -27,7 +27,7 @@
 
 #include <SPI.h>
 
-void ADXL362Device::begin(int vddPin, int vsPin, int ssPin, SPIClass *adxlSpi, UARTClass *debugSerial)
+void ADXL362Device::begin(int vddPin, int vsPin, int ssPin, SPIClass *adxlSpi, Sensitivity maxGeesSetting, uint16_t tempBias, UARTClass *debugSerial)
 {    
     myDebugSerial = debugSerial;
 
@@ -45,6 +45,8 @@ void ADXL362Device::begin(int vddPin, int vsPin, int ssPin, SPIClass *adxlSpi, U
 
     mySpi = adxlSpi;
 
+    myTempBias = tempBias;
+    
     pinMode(mySlaveSelectPin, OUTPUT);
     mySpi->begin();
     mySpi->setDataMode(SPI_MODE0);	//CPHA = CPOL = 0    MODE = 0
@@ -54,11 +56,45 @@ void ADXL362Device::begin(int vddPin, int vsPin, int ssPin, SPIClass *adxlSpi, U
     SPIwriteOneRegister(0x1F, 0x52);  // Write to SOFT RESET, "R"
     delay(10);
     
+    setMaxGeesSetting(maxGeesSetting);
+      
+    
     //give the slave a slight delay so it can turn on.
     delay(500);
     int x = SPIreadTwoRegisters(0);
     beginMeasure();                      // DO LAST! enable measurement mode   
     delay(100);
+}
+
+void ADXL362Device::setMaxGeesSetting(Sensitivity maxGeesSetting)
+{
+    myMaxGeesSetting = maxGeesSetting;
+    byte rangeSelection = 0x00;
+    switch(myMaxGeesSetting)
+    {
+        case(TWO_GEES):
+        myAxisScalar = 1000.0f;
+        rangeSelection = 0x00;
+        break;
+        case(FOUR_GEES):
+        myAxisScalar = 500.0f;
+        rangeSelection = 0x40;
+        break;
+        case(EIGHT_GEES):
+        myAxisScalar = 250.0f;
+        rangeSelection = 0x80;
+        break;
+        default:
+        myAxisScalar = 1000.0f;
+        rangeSelection = 0x00;
+        break;        
+    }
+    byte temp = SPIreadOneRegister(0x2C);	// read Reg 2C before modifying for Filter control register
+  
+    // set sensitivity
+    byte tempwrite = temp | rangeSelection;			// turn on measurement bit in Reg 2D
+    SPIwriteOneRegister(0x2C, tempwrite); // Write to POWER_CTL_REG, Measurement Mode
+    delay(10);	
 }
 
 //
@@ -123,21 +159,43 @@ void ADXL362Device::sampleXYZT(void) {
   digitalWrite(mySlaveSelectPin, HIGH);
 }
 
-int ADXL362Device::getSampleX(void) {
+int16_t ADXL362Device::getSampleX(void) {
   return mySampleX;
 }
 
-int ADXL362Device::getSampleY(void) {
+int16_t ADXL362Device::getSampleY(void) {
   return mySampleY;
 }
 
-int ADXL362Device::getSampleZ(void) {
+int16_t ADXL362Device::getSampleZ(void) {
   return mySampleZ;
 }
 
-int ADXL362Device::getSampleT(void) {
+int16_t ADXL362Device::getSampleT(void) {
   return mySampleT;
 }
+
+float ADXL362Device::getXGees(void) {
+  return (((float)mySampleX) / myAxisScalar);
+}
+
+float ADXL362Device::getYGees(void) {
+  return ((float)mySampleY / myAxisScalar);
+}
+
+float ADXL362Device::getZGees(void) {
+  return ((float)mySampleZ / myAxisScalar);
+}
+
+float ADXL362Device::getTCelsius(void) {
+  float celsius = mySampleT + myTempBias;
+  
+  celsius *= .065;    
+    
+  return celsius;
+}
+
+
 
 
 void ADXL362Device::readXYZTData(int &xData, int &yData, int &zData, int &temperature){
@@ -293,27 +351,27 @@ Device::ValueStruct ADXL362Device::readValue(int index)
     if(index == 0)
     {
         sampleXYZT(); //sample all the values at once when the first value is read.
-        output.type = Device::TypeInt;
-        output.value.integer = getSampleX();
-        output.name = "SAMPLE_X";
+        output.type = Device::TypeFloat;
+        output.value.decimal = getXGees();
+        output.name = "X_GEES";
     }
     else if(index == 1)
     {
-        output.type = Device::TypeInt;
-        output.value.integer = getSampleY();
-        output.name = "SAMPLE_Y";
+        output.type = Device::TypeFloat;
+        output.value.decimal = getYGees();
+        output.name = "Y_GEES";
     }
     else if(index == 2)
     {
-        output.type = Device::TypeInt;
-        output.value.integer = getSampleZ();
-        output.name = "SAMPLE_Z";
+        output.type = Device::TypeFloat;
+        output.value.decimal = getZGees();
+        output.name = "Z_GEES";
     }
     else if(index == 3)
     {
-        output.type = Device::TypeInt;
-        output.value.integer = getSampleT();
-        output.name = "TEMP";
+        output.type = Device::TypeFloat;
+        output.value.decimal = getTCelsius();
+        output.name = "DEG_C";
     }
     else
     {
