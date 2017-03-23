@@ -35,8 +35,8 @@ void setup()
   Serial1.begin(115200);
 
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple HTU21D example 0");
-  Serial1.println("Simple HTU21D example 1");
+  Serial.println("Simple MLX90616 example 0");
+  Serial1.println("Simple MLX90616 example 1");
 
   MLX90616.begin(Wire0, -1);
 }

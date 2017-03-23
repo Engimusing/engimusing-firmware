@@ -38,8 +38,8 @@ void setup()
   Serial1.begin(115200);
 
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple HTU21D example 0");
-  Serial1.println("Simple HTU21D example 1");
+  Serial.println("Simple MPLA3115A2 example 0");
+  Serial1.println("Simple MPLA3115A2 example 1");
 
   //Initialize the Humidity sensor
   MPLA3115A2.begin(Wire0, 3);

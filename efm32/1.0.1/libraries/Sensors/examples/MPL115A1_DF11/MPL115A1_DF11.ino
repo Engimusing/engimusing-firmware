@@ -35,7 +35,7 @@ void setup()
   Serial.begin(115200);
 
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple HTU21D example 0");
+  Serial.println("Simple MPL115A1 example 0");
 
   MPL115A1.begin(10, 6, 4, SPI);
 }
