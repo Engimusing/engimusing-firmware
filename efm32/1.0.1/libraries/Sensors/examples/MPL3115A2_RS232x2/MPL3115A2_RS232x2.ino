@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to setup the MQTT client for the MPLA3115A RS232x2 Engimusing board
+/* Example for how to print out readings from the MPLA3115A RS232x2 Engimusing board
  *  There are 3 devices on this board. An LED and an MPLA3115A temperature and altitude sensor. 
  *  See http://www.engimusing.com/products/reedsw-1 for more information about the board.
  */
