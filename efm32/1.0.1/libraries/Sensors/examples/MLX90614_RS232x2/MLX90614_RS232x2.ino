@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the MLX90616 RS232x2 Engimusing board
-    There are 2 devices on this board. An LED and a MLX90616 IR temperature sensor.
+/* Example for how to print out readings from the MLX90614 RS232x2 Engimusing board
+    There are 2 devices on this board. An LED and a MLX90614 IR temperature sensor.
     See http://www.engimusing.com/products/tmp-3 for more information about the board.
 */
 
@@ -24,10 +24,10 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <MLX90616Device.h>
+#include <MLX90614Device.h>
 #include <Wire.h>
 
-MLX90616Device MLX90616;
+MLX90614Device MLX90614;
 
 void setup()
 {
@@ -35,10 +35,10 @@ void setup()
   Serial1.begin(115200);
 
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple MLX90616 example 0");
-  Serial1.println("Simple MLX90616 example 1");
+  Serial.println("Simple MLX90614 example 0");
+  Serial1.println("Simple MLX90614 example 1");
 
-  MLX90616.begin(Wire0, -1);
+  MLX90614.begin(Wire0, -1);
 }
 
 void loop()
@@ -49,7 +49,7 @@ void loop()
   digitalWrite(LED_BUILTIN, on);   // turn the LED on (HIGH is the voltage level)
   
   
-  float temp = MLX90616.temperature();
+  float temp = MLX90614.temperature();
   Serial.print("temperature = ");
   Serial.print(temp);
   Serial.println(" C");

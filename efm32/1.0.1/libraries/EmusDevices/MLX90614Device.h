@@ -24,7 +24,7 @@
 
 class TwoWire;
 
-class MLX90616Device : public Device
+class MLX90614Device : public Device
 {
  
    public:

@@ -16,11 +16,11 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <MLX90616Device.h>
+#include <MLX90614Device.h>
 #include <Arduino.h>
 #include <Wire.h>
 
-void MLX90616Device::begin(TwoWire &wire, int32_t enablePin)
+void MLX90614Device::begin(TwoWire &wire, int32_t enablePin)
 {    
     if(enablePin > 0)
     {
@@ -41,7 +41,7 @@ void MLX90616Device::begin(TwoWire &wire, int32_t enablePin)
     delay(50);
 }
 
-float MLX90616Device::temperature()
+float MLX90614Device::temperature()
 {
     //read register 0 from the I2C slave
     if(myWire)
@@ -69,7 +69,7 @@ float MLX90616Device::temperature()
 }
 
 
-Device::ValueStruct MLX90616Device::readValue(int index)
+Device::ValueStruct MLX90614Device::readValue(int index)
 {
     Device::ValueStruct output;
     
@@ -95,7 +95,7 @@ Device::ValueStruct MLX90616Device::readValue(int index)
     return output;
 }
 
-float MLX90616Device::numValues()
+float MLX90614Device::numValues()
 {
     return 1; 
 }

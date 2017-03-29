@@ -15,8 +15,8 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to setup the MQTT client for the MLX90616 RS232x2 Engimusing board
-    There are 2 devices on this board. An LED and a MLX90616 IR temperature sensor.
+/* Example for how to setup the MQTT client for the MLX90614 RS232x2 Engimusing board
+    There are 2 devices on this board. An LED and a MLX90614 IR temperature sensor.
     See http://www.engimusing.com/products/tmp-3 for more information about the board.
 */
 
@@ -29,7 +29,7 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
-#include <MLX90616Device.h>
+#include <MLX90614Device.h>
 #include <Wire.h>
 /*
   EFMZG108 Commands:
@@ -37,7 +37,7 @@
   {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"OFF"}
   {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFMZG108/BOARD/MLX90616/DEC_C","PLD":"STATUS"}
+  {"TOP":"EFMZG108/BOARD/MLX90614/DEC_C","PLD":"STATUS"}
 */
 
 MqttHub HUB;
@@ -50,8 +50,8 @@ MqttSerialPort serialPort2;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-MLX90616Device MLX90616;
-SimpleMqttModule MLX90616MqttMod;
+MLX90614Device MLX90614;
+SimpleMqttModule MLX90614MqttMod;
 
 void setup()
 {
@@ -64,8 +64,8 @@ void setup()
 
   //Initialize the tmp control class which will send the
   // temperature over MQTT every 10 seconds
-  MLX90616.begin(Wire0, -1);
-  MLX90616MqttMod.begin(HUB, MLX90616, "EFMZGUSB/BOARD/MLX90616", 10000);
+  MLX90614.begin(Wire0, -1);
+  MLX90614MqttMod.begin(HUB, MLX90614, "EFMZGUSB/BOARD/MLX90614", 10000);
 }
 
 //Part of light on off example
