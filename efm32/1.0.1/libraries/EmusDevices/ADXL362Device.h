@@ -42,7 +42,7 @@ class ADXL362Device : public Device
          //
         // Basic Device control and readback functions
         //
-        virtual void begin(int vddPin, int vsPin, int slaveSelectPin, SPIClass *ADXL_SPI, Sensitivity maxGeesSetting = TWO_GEES, uint16_t tempBias = DEFAULT_TEMP_BAIS, UARTClass *debugSerial = 0);
+        virtual void begin(int vddPin, int vsPin, int slaveSelectPin, SPIClass *ADXL_SPI, Sensitivity maxGeesSetting = TWO_GEES, int16_t tempBias = DEFAULT_TEMP_BAIS, UARTClass *debugSerial = 0);
         
         void beginMeasure(); 
         

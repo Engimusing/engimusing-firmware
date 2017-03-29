@@ -27,7 +27,7 @@
 
 #include <SPI.h>
 
-void ADXL362Device::begin(int vddPin, int vsPin, int ssPin, SPIClass *adxlSpi, Sensitivity maxGeesSetting, uint16_t tempBias, UARTClass *debugSerial)
+void ADXL362Device::begin(int vddPin, int vsPin, int ssPin, SPIClass *adxlSpi, Sensitivity maxGeesSetting, int16_t tempBias, UARTClass *debugSerial)
 {    
     myDebugSerial = debugSerial;
 
