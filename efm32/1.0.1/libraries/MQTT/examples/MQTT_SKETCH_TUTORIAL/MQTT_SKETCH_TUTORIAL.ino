@@ -25,6 +25,8 @@
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
+#include <CPUInfoDevice.h>
+
 /*
   EFMUSB Commands:
   {"TOP":"EFM/BOARD/LED0/CTL","PLD":"ON"}
@@ -39,9 +41,7 @@
   {"TOP":"EFM/BOARD/LED2/CTL","PLD":"OFF"}
   {"TOP":"EFM/BOARD/LED2/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFMUSB/CPU/TMPC"}
-  {"TOP":"EFMUSB/CPU/TMPF"}
-  {"TOP":"EFMUSB/CPU/VDD"}
+  {"TOP":"EFM/CPU","PLD":"STATUS"}
 */
 
 MqttHub HUB;
@@ -57,11 +57,11 @@ OnOffCtlModule LEDCtrl1;
 OnOffCtlModule LEDCtrl2;
 
 // Instantiate classes for the CPU temperature and supply voltage
-// These classes can be used to read the values or can be set up
-// to periodically report the values
+// The device can be used to read the values and the SimpleMqttModule can be set up
+// to periodically report the values to an MQTT server
 
-CpuVddModule EFMCPUVDD;
-CpuTempModule EFMCPUTMP;
+CPUInfoDevice EFMCPU;
+SimpleMqttModule EFMCPUMqttMod;
 
 void setup()
 {
@@ -75,16 +75,10 @@ void setup()
   LEDCtrl1.begin(HUB, ledId[1], "EFM/BOARD/LED1", LOW);
   LEDCtrl2.begin(HUB, ledId[2], "EFM/BOARD/LED2", LOW);
 
-  // Start each of the CPU services
-  // The first parameter is the module name
-  // The other parameters are time values in tenths of seconds
-  // The CPUVDD will send a status every 10 seconds
-  EFMCPUVDD.begin(HUB, "EFM/CPU/VDD", 50);
-
-  // The CPUTEMP has two possible status options
-  // The first number is 5 seconds for a Farenheit reading
-  // The second number is 5 seconds for a Celcius reading
-  EFMCPUTMP.begin(HUB, "EFM/CPU/TEMP", 50, 50);
+  // Start the CPU services
+  EFMCPU.begin();
+  EFMCPUMqttMod.begin(HUB, EFMCPU, "EFM/CPU", 5000);
+  
 }
 //int lastMillisOn = 0;
 //int lastMillisOff = 1000;

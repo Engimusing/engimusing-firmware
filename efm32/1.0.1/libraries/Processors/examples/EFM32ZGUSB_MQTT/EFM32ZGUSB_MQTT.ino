@@ -25,6 +25,7 @@
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
+#include <CPUInfoDevice.h>
 
 /*
   EFMUSB Commands:
@@ -40,9 +41,8 @@
   {"TOP":"EFMUSB/BLUE/LED/CTL","PLD":"OFF"}
   {"TOP":"EFMUSB/BLUE/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFMUSB/CPU/TMPC"}
-  {"TOP":"EFMUSB/CPU/TMPF"}
-  {"TOP":"EFMUSB/CPU/VDD"}
+  {"TOP":"EFMUSB/CPU","PLD":"STATUS"}
+  
 */
 
 MqttHub HUB;
@@ -65,8 +65,8 @@ OnOffCtlModule EFMGREENLED;
 // These classes can be used to read the values or can be set up
 // to periodically report the values
 
-CpuVddModule EFMCPUVDD;
-CpuTempModule EFMCPUTMP;
+CPUInfoDevice EFMCPU;
+SimpleMqttModule EFMCPUMqttMod;
 
 void setup()
 {
@@ -80,15 +80,8 @@ void setup()
   EFMBLUELED.begin(HUB, BLUE_LED, "EFMUSB/BLUE/LED", LOW);
   EFMGREENLED.begin(HUB, GREEN_LED, "EFMUSB/GREEN/LED", LOW);
 
-  // Start each of the CPU services
-  // The first parameter is the module name
-  // The other parameters are time values in tenths of seconds
-  // The CPUVDD will send a status every 10 seconds
-  EFMCPUVDD.begin(HUB, "EFMUSB/CPU", 100);
-  // The CPUTEMP has two possible status options
-  // The first number is 5 seconds for a Farenheit reading
-  // The second number is 5 seconds for a Celcius reading
-  EFMCPUTMP.begin(HUB, "EFMUSB/CPU", 50, 50);
+  EFMCPU.begin();
+  EFMCPUMqttMod.begin(HUB, EFMCPU, "EFMUSB/CPU", 5000);
 }
 
 void loop()

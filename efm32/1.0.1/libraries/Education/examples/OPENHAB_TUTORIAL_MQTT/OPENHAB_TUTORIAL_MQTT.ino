@@ -25,6 +25,7 @@
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
+#include <CPUInfoDevice.h>
 
 /*
   EFMUSB Commands:
@@ -40,9 +41,8 @@
   {"TOP":"EFMUSB/BLUE/LED/CTL","PLD":"OFF"}
   {"TOP":"EFMUSB/BLUE/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFMUSB/CPU/TMPC"}
-  {"TOP":"EFMUSB/CPU/TMPF"}
-  {"TOP":"EFMUSB/CPU/VDD"}
+  {"TOP":"EFMUSB/CPU","PLD":"STATUS"}
+ 
 
   HAB Commands:
   {"TOP":"HAB/LED/CTL","PLD":"ON"}
@@ -91,8 +91,10 @@ AdcCtlModule HABPOT;
 OnOffCtlModule EFMREDLED;
 OnOffCtlModule EFMBLUELED;
 OnOffCtlModule EFMGREENLED;
-CpuVddModule EFMCPUVDD;
-CpuTempModule EFMCPUTMP;
+
+CPUInfoDevice EFMCPU;
+SimpleMqttModule EFMCPUMqttMod;
+
 
 
 void setup()
@@ -105,8 +107,9 @@ void setup()
   EFMREDLED.begin(HUB, RED_LED, "EFMUSB/RED/LED", LOW);
   EFMBLUELED.begin(HUB, BLUE_LED, "EFMUSB/BLUE/LED", LOW);
   EFMGREENLED.begin(HUB, GREEN_LED, "EFMUSB/GREEN/LED", LOW);
-  EFMCPUVDD.begin(HUB, "EFMUSB/CPU/VDD", 50);
-  EFMCPUTMP.begin(HUB, "EFMUSB/CPU/TEMP", 50, 50);
+
+  EFMCPU.begin();
+  EFMCPUMqttMod.begin(HUB, EFMCPU, "EFMUSB/CPU", 5000);
 
   HABLTS.begin(HUB, LTSENS_PIN, "HAB/LTSENSOR", 5, 400);
   HABS1.begin(HUB, SW1_PIN, "HAB/SW1", 20);

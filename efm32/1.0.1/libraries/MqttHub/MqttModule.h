@@ -141,45 +141,6 @@ class SimpleMqttModule : public MqttModule
       
 };
 
-// ------------------------------- CPU VDD ADC Class -------------------------
-
-class CpuVddModule : public MqttModule
-{
- public:
-  virtual void begin(MqttHub &hub, const char* module, uint32_t interval);
-  virtual void update(void);
-  virtual uint8_t decode(const char* topic, const char* payload);
- 
- private:
-  void publishCPUvoltage(void);
- 
- private: 
-  uint32_t myCurrent;
-  uint32_t myInterval;
-  
-};
-
-// ------------------------------- CPU Temperature Class -------------------------
-
-class CpuTempModule : public MqttModule
-{
- public:
-  virtual void begin(MqttHub &hub, const char* module, uint32_t Finterval, uint32_t Cinterval);
-  virtual void update(void);
-  virtual uint8_t decode(const char* topic, const char* payload);
- 
- private:
-  void publishCPUtempC(void);
-  void publishCPUtempF(void);
- 
- private:
-  uint32_t myCurrentF;
-  uint32_t myCurrentC;
-  uint32_t myIntervalF;
-  uint32_t myIntervalC;
-
-};
-
 // ------------------------------- ADC Pin Class -------------------------
 
 class AdcCtlModule : public MqttModule
