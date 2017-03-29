@@ -45,6 +45,10 @@ class MQ7Device : public Device
         
         virtual Device::ValueStruct readValue(int index);
         virtual float numValues(); 
+        
+        virtual uint32_t currentAlertValue();
+        virtual const char *currentAlertText();
+        
     protected:   
 
         int32_t myPwmCtlPin;

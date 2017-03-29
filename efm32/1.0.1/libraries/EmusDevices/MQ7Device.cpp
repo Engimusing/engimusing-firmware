@@ -104,6 +104,23 @@ void MQ7Device::update(void)
 
 }
 
+uint32_t MQ7Device::currentAlertValue()
+{
+    return myAlertValue;
+}
+
+const char *MQ7Device::currentAlertText()
+{
+    if(myAlertState == NO_PROBLEM || myAlertState == POTENTIAL_PROBLEM)
+    {
+        return "LOW";	
+    }else if(myAlertState == PROBLEM || myAlertState == POTENTIAL_RECOVERY)
+    {
+        return "HIGH";	
+    }    
+    return "LOW";
+}
+
 Device::ValueStruct MQ7Device::readValue(int index)
 {
     Device::ValueStruct output;
@@ -118,13 +135,7 @@ Device::ValueStruct MQ7Device::readValue(int index)
     else if(index == 1)
     {
         output.type = Device::TypeCharArray;
-        if(myAlertState == NO_PROBLEM || myAlertState == POTENTIAL_PROBLEM)
-        {
-            output.value.charArray = "LOW";	
-        }else if(myAlertState == PROBLEM || myAlertState == POTENTIAL_RECOVERY)
-        {
-            output.value.charArray = "HIGH";	
-        }    
+        output.value.charArray = currentAlertText();	
         output.name = "COALERT";
     }
     else
