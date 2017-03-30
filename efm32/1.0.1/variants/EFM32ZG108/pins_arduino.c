@@ -24,11 +24,11 @@
 
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
 
-//                                       2     3     4     5     6     7     8      9    10    11    12    13
-//                                      X1    X2    X3    X4    X5    X6    X7    SWO   LED   SDA   SCL   LED
-//                                       5     6    17    18    23    24     1     21    8     13    14     8
+//                                       2     3     4     5     6     7     8      9    10    11    12    13    14
+//                                      X1    X2    X3    X4    X5    X6    X7    SWO   LED   SDA   SCL   LED    
+//                                       5     6    17    18    23    24     1     21    8     13    14     8     1
 const uint8_t dPorts[]         = {0, 0,PORTB,PORTB,PORTC,PORTC,PORTE,PORTE,PORTA,PORTF,PORTB,PORTD,PORTD,PORTB, PORTA};
-const uint8_t dPins[]          = {0, 0,  7,    8,   14,   15,   12,   13,    0,    2,   11,    6,    7,   11, 0  };
+const uint8_t dPins[]          = {0, 0,  7,    8,   14,   15,   12,   13,    0,    2,   11,    6,    7,   11,     0  };
 
 // GPIO Interrupt Pins                  X1    X2    X3    X4    X5    X6    X7    SWO   LED   SDA   SCL
 const uint8_t iPorts[]         = {0,0,PORTB,PORTB,PORTC,PORTC,PORTE,PORTE,PORTA,PORTF,PORTE,PORTD,PORTD,0,PORTA};
