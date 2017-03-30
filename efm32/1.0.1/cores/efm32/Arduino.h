@@ -79,6 +79,10 @@ typedef uint16_t word;
 extern "C"{
 #endif // __cplusplus
 
+#define clockCyclesPerMicrosecond() ( SystemCoreClock / 1000000L )
+#define clockCyclesToMicroseconds(a) ( ((a) * 1000L) / (SystemCoreClock / 1000L) )
+#define microsecondsToClockCycles(a) ( (a) * (SystemCoreClock / 1000000L) )
+
   void yield( void ) ;
 
   void init(void);
