@@ -356,7 +356,7 @@ Device::ValueStruct TCS34725Device::readValue(int index)
 
     else if(index == 4)
     {
-        output.type = Device::TypeInt;
+        output.type = Device::TypeFloat;
         output.value.decimal = calculateColorTemperature(mySampleR,mySampleG,mySampleB);
         output.name = "COLOR_K";
     }
