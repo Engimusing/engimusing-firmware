@@ -16,6 +16,10 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#if !defined(EFM32ZGUSB)
+#error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
+#endif
+
 #include "Arduino.h"
 #include <Wire.h>
 #include <TMP102Device.h>

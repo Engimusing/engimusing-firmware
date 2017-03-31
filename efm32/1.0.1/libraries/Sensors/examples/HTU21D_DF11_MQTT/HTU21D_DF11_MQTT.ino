@@ -28,6 +28,10 @@
   {"TOP":"EFMZG108/BOARD/HTU21D/HUM","PLD":"STATUS"}
 */
 
+#if !defined(EFM32ZGUSB)
+#error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
+#endif
+
 #include "Arduino.h"
 #include <Wire.h>
 #include <HTU21DDevice.h>

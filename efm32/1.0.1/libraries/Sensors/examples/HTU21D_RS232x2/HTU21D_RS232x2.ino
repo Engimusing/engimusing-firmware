@@ -16,6 +16,10 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#if !defined(EFM32ZG108)
+#error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
+#endif
+
 #include "Arduino.h"
 #include <Wire.h>
 #include <HTU21DDevice.h>
