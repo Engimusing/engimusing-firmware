@@ -17,7 +17,7 @@
 */
 /* Example for how to setup the MQTT client for the TCS34725 RS232x2 Engimusing board
     There are 2 devices on this board. An LED and a TCS34725 color sensor.
-    See https://www.engimusing.com/products/tcs3472-1 for more information about the board.
+    See https://www.engimusing.com/products/tcs3472-3 for more information about the board.
 */
 
 #if !defined(EFM32ZG108)

@@ -16,8 +16,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 /* Example for how to print out readings from a TCS34725  DF11 board using the ZB USB Engimusing board
-   There are 2 devices on this board. An LED and a TCS34725 color sensor.
-   See https://www.engimusing.com/products/tcs3472-1 for more information about the board.
+    There are 2 devices on this board. An LED and a TCS34725 color sensor.
+    See https://www.engimusing.com/products/tcs3472-1 for more information about the board.
 */
 
 #if !defined(EFM32ZGUSB)

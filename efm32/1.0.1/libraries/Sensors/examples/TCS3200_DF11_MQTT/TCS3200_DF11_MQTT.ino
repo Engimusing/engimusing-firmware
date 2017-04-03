@@ -17,7 +17,7 @@
 */
 /* Example for how to setup the MQTT client for the TCS3200 DF11 board using the EFM32ZGUSB Engimusing board
     There are 2 devices on this board. An LED and a TCS3200 color sensor.
-    See https://www.engimusing.com/collections/sensors/products/tcs3200-3 for more information about the board.
+    See https://www.engimusing.com/collections/sensors/products/tcs3200-1 for more information about the board.
 */
 
 #if !defined(EFM32ZGUSB)
