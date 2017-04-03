@@ -1,23 +1,23 @@
 /*
-  Copyright (c) 2017 Engimusing LLC.  All right reserved.
+Copyright (c) 2016-2017 Engimusing LLC. All right reserved.
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-  See the GNU Lesser General Public License for more details.
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU Lesser General Public License for more details.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
-/* Example for how to print out readings from the TCS34725 RS232x2 Engimusing board
-    There are 2 devices on this board. An LED and a TCS34725 color sensor.
-    See http://www.engimusing.com/products/tmp-3 for more information about the board.
+/* Example for how to print out readings from a TCS34725 RS232x2 Engimusing board
+There are 2 devices on this board. An LED and a TCS34725 color sensor.
+See https://www.engimusing.com/products/tcs3472-1 for more information about the board.
 */
 
 #if !defined(EFM32ZG108)
@@ -25,27 +25,39 @@
 #endif
 
 #include <TCS34725Device.h>
-#include <Wire.h>
+#include  <Wire.h>
 
 TCS34725Device TCS34725;
 
-void setup() 
+void setup()
 {
-  Serial.begin(115200);
-  Serial1.begin(115200);
+Serial.begin(115200);
+Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple TCS34725 example 0");
-  Serial1.println("Simple TCS34725 example 1");
+pinMode(LED_BUILTIN, OUTPUT);
+Serial.println("Simple TCS34725 example 0");
+Serial.println("Simple TCS34725 example 1");
 
-  TCS34725.begin(Wire0, 7, TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+
+TCS34725.begin(Wire0, 7, TCS34725_INTEGRATIONTIME_700MS);
 }
 
-void loop() {
-  static int on = HIGH;
+int lastMillis = 0; // store the last time the current was printed.
+int printDelay = 1000; //print every second.
 
-  digitalWrite(LED_BUILTIN, on);   // turn the LED on (HIGH is the voltage level)
- 
+void loop()
+{
+
+static int on = HIGH;
+
+TCS34725.update();
+
+if(millis() - lastMillis > printDelay)
+{
+lastMillis = millis();
+
+digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+
   uint16_t r = 0;
   uint16_t g = 0;
   uint16_t b = 0;
@@ -67,7 +79,7 @@ void loop() {
   Serial.print(colorTemp);
   Serial.print(" luminance = ");
   Serial.println(lux);
-  
+
   Serial1.print("red = ");
   Serial1.print(r);
   Serial1.print(" green = ");
@@ -80,8 +92,7 @@ void loop() {
   Serial1.print(colorTemp);
   Serial1.print(" luminance = ");
   Serial1.println(lux);
-  
-  delay(1000);                       // wait for a second
-  
-  on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
+
+on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
+}
 }

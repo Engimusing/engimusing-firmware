@@ -84,5 +84,3 @@ digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
 on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
 }
 }
-
-

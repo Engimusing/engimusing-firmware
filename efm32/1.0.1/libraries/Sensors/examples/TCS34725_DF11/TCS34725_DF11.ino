@@ -15,30 +15,29 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from a TCS3200  DF11 board using the ZB USB Engimusing board
-   There are 2 devices on this board. An LED and a TCS3200 color sensor.
-   See https://www.engimusing.com/collections/sensors/products/tcs3200-3 for more information about the board.
+/* Example for how to print out readings from a TCS34725  DF11 board using the ZB USB Engimusing board
+   There are 2 devices on this board. An LED and a TCS34725 color sensor.
+   See https://www.engimusing.com/products/tcs3472-1 for more information about the board.
 */
 
 #if !defined(EFM32ZGUSB)
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <TCS3200Device.h>
+#include <TCS34725Device.h>
+#include  <Wire.h>
 
-
-TCS3200Device TCS3200;
+TCS34725Device TCS34725;
 
 void setup()
 {
   Serial.begin(115200);
 
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple TCS3200 example 0");
+  Serial.println("Simple TCS34725 example 0");
 
   
-  //sets up the 5 pins needed to setup and communicate with the TCS3200
-  TCS3200.begin(2,4,6,8,7);
+  TCS34725.begin(Wire0, 5, TCS34725_INTEGRATIONTIME_700MS);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -49,7 +48,7 @@ void loop()
 
   static int on = HIGH;
   
-  TCS3200.update();
+  TCS34725.update();
   
   if(millis() - lastMillis > printDelay)
   {
@@ -57,18 +56,27 @@ void loop()
     
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
-      float red = TCS3200.readColorHertz(TCS3200Device::RED);
-      float green = TCS3200.readColorHertz(TCS3200Device::GREEN);
-      float blue = TCS3200.readColorHertz(TCS3200Device::BLUE);
-      float white = TCS3200.readColorHertz(TCS3200Device::WHITE);
-      Serial.print("red = ");
-      Serial.print(red);
-      Serial.print(" green = ");
-      Serial.print(green);
-      Serial.print(" blue = ");
-      Serial.print(blue);
-      Serial.print(" white = ");
-      Serial.println(white);
+  uint16_t r = 0;
+  uint16_t g = 0;
+  uint16_t b = 0;
+  uint16_t c = 0;
+  TCS34725.sampleData();
+  TCS34725.getRawData(r,g,b,c);
+  float colorTemp = TCS34725.calculateColorTemperature(r,g,b);
+  float lux = TCS34725.calculateLux(r,g,b);
+    
+  Serial.print("red = ");
+  Serial.print(r);
+  Serial.print(" green = ");
+  Serial.print(g);
+  Serial.print(" blue = ");
+  Serial.print(b);
+  Serial.print(" clear = ");
+  Serial.println(c);
+  Serial.print(" color temperature = ");
+  Serial.print(colorTemp);
+  Serial.print(" luminance = ");
+  Serial.println(lux);
     
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }

@@ -1,6 +1,6 @@
 /*
-  Copyright (c) 2017 Engimusing LLC.  All right reserved.
-
+  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -17,7 +17,7 @@
 */
 /* Example for how to setup the MQTT client for the TCS34725 RS232x2 Engimusing board
     There are 2 devices on this board. An LED and a TCS34725 color sensor.
-    See http://www.engimusing.com/products/tmp-3 for more information about the board.
+    See https://www.engimusing.com/products/tcs3472-1 for more information about the board.
 */
 
 #if !defined(EFM32ZG108)
@@ -30,15 +30,15 @@
 #include <MqttModule.h>
 
 #include <TCS34725Device.h>
-#include <Wire.h>
+#include  <Wire.h>
 
 /*
-  EFMZG108 Commands:
-  {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"EFMZG108/BOARD/LED/CTL","PLD":"STATUS"}
+  EFM32ZG108 Commands:
+  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFMZG108/BOARD/TCS34725/","PLD":"STATUS"}
+  {"TOP":"EFM32ZG108/BOARD/TCS34725/","PLD":"STATUS"}
 */
 
 MqttHub HUB;
@@ -62,13 +62,12 @@ void setup()
 
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, 13, "EFMZG108/BOARD/LED", HIGH);
+  LEDCtrl.begin(HUB, 13, "EFM32ZG108/BOARD/LED", HIGH);
 
-  //Initialize the tmp control class which will send the
-  // temperature over MQTT every 10 seconds
 
-  TCS34725.begin(Wire0, 7, TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
-  TCS34725MqttMod.begin(HUB, TCS34725, "EFMZGUSB/BOARD/TCS34725", 10000);
+  
+  TCS34725.begin(Wire0, 7, TCS34725_INTEGRATIONTIME_700MS);
+  TCS34725MqttMod.begin(HUB, TCS34725, "EFM32ZG108/BOARD/TCS34725", 10000);
 }
 
 void loop() {

@@ -15,13 +15,13 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to setup the MQTT client for the TCS3200 RS232x2 Engimusing board
-    There are 2 devices on this board. An LED and a TCS3200 color sensor.
-    See https://www.engimusing.com/collections/sensors/products/tcs3200-3 for more information about the board.
+/* Example for how to setup the MQTT client for the TCS34725 DF11 board using the EFM32ZGUSB Engimusing board
+    There are 2 devices on this board. An LED and a TCS34725 color sensor.
+    See https://www.engimusing.com/products/tcs3472-1 for more information about the board.
 */
 
-#if !defined(EFM32ZG108)
-#error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
+#if !defined(EFM32ZGUSB)
+#error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
 //Include the MqttModule to get the MQTT client classes
@@ -29,21 +29,20 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
-#include <TCS3200Device.h>
-
+#include <TCS34725Device.h>
+#include  <Wire.h>
 
 /*
-  EFM32ZG108 Commands:
-  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"STATUS"}
+  EFM32ZGUSB Commands:
+  {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFM32ZG108/BOARD/TCS3200/","PLD":"STATUS"}
+  {"TOP":"EFM32ZGUSB/BOARD/TCS34725/","PLD":"STATUS"}
 */
 
 MqttHub HUB;
-MqttSerialPort serialPort1;
-MqttSerialPort serialPort2;
+MqttSerialPort serialPort;
 
 //MQTT class defintions
 // The MqttModule classes are automatically registered with the COMM
@@ -51,24 +50,19 @@ MqttSerialPort serialPort2;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-TCS3200Device TCS3200;
-SimpleMqttModule TCS3200MqttMod;
-
+TCS34725Device TCS34725;
+SimpleMqttModule TCS34725MqttMod;
 
 void setup() 
 {
-  serialPort1.begin(HUB, Serial);
-  serialPort2.begin(HUB, Serial1);
+  serialPort.begin(HUB, Serial);
 
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, 13, "EFM32ZG108/BOARD/LED", HIGH);
-
+  LEDCtrl.begin(HUB, 13, "EFM32ZGUSB/BOARD/LED", HIGH);
 
   
-  //sets up the 5 pins needed to setup and communicate with the TCS3200
-  TCS3200.begin(3,2,6,7,8);
-  TCS3200MqttMod.begin(HUB, TCS3200, "EFM32ZG108/BOARD/TCS3200", 10000);
+  TCS34725MqttMod.begin(HUB, TCS34725, "EFM32ZGUSB/BOARD/TCS34725", 10000);
 }
 
 void loop() {
