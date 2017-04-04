@@ -74,7 +74,8 @@ void setup()
   ADXL362MqttMod.begin(HUB, ADXL362, "EFM32TG110/BOARD/ADXL362", 10000);
 }
 
-void loop() {
+void loop()
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

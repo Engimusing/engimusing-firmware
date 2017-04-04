@@ -47,13 +47,13 @@ void loop()
 {
 
   static int on = HIGH;
-  
+
   MLX90614.update();
-  
+
   if(millis() - lastMillis > printDelay)
   {
     lastMillis = millis();
-    
+
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
   float temp = MLX90614.temperature();
@@ -61,7 +61,7 @@ void loop()
   Serial.print(temp);
   Serial.println(" C");
   
-    
+
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }
 }

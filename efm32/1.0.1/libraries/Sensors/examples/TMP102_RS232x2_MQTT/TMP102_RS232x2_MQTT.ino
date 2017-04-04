@@ -70,7 +70,8 @@ void setup()
   TMP102MqttMod.begin(HUB, TMP102, "EFM32ZG108/BOARD/TMP102", 10000);
 }
 
-void loop() {
+void loop()
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

@@ -66,7 +66,8 @@ void setup()
   MPL115A1MqttMod.begin(HUB, MPL115A1, "EFM32ZGUSB/BOARD/MPL115A1", 10000);
 }
 
-void loop() {
+void loop() 
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

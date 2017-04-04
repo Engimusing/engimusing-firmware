@@ -70,7 +70,8 @@ void setup()
   TCS34725MqttMod.begin(HUB, TCS34725, "EFM32ZG108/BOARD/TCS34725", 10000);
 }
 
-void loop() {
+void loop()
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

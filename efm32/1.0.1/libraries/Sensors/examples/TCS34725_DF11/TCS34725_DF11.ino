@@ -47,13 +47,13 @@ void loop()
 {
 
   static int on = HIGH;
-  
+
   TCS34725.update();
-  
+
   if(millis() - lastMillis > printDelay)
   {
     lastMillis = millis();
-    
+
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
   uint16_t r = 0;
@@ -77,7 +77,7 @@ void loop()
   Serial.print(colorTemp);
   Serial.print(" luminance = ");
   Serial.println(lux);
-    
+
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }
 }

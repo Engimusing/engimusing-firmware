@@ -51,19 +51,19 @@ void loop()
 {
 
   static int on = HIGH;
-  
+
   TMD26721.update();
-  
+
   if(millis() - lastMillis > printDelay)
   {
     lastMillis = millis();
-    
+
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
   uint32_t proximity = TMD26721.proximityData();
   Serial.print("proximity = ");
   Serial.println(proximity);
-    
+
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }
 }

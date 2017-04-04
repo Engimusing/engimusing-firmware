@@ -48,13 +48,13 @@ void loop()
 {
 
   static int on = HIGH;
-  
+
   TCS3200.update();
-  
+
   if(millis() - lastMillis > printDelay)
   {
     lastMillis = millis();
-    
+
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
       float red = TCS3200.readColorHertz(TCS3200Device::RED);
@@ -69,7 +69,7 @@ void loop()
       Serial.print(blue);
       Serial.print(" white = ");
       Serial.println(white);
-    
+
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }
 }

@@ -47,20 +47,20 @@ void loop()
 {
 
   static int on = HIGH;
-  
+
   TMP102.update();
-  
+
   if(millis() - lastMillis > printDelay)
   {
     lastMillis = millis();
-    
+
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
   float temp = TMP102.temperature();
   Serial.print("temperature = ");
   Serial.println(temp);
 
-    
+
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }
 }

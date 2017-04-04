@@ -67,7 +67,8 @@ void setup()
   TCS3200MqttMod.begin(HUB, TCS3200, "EFM32ZGUSB/BOARD/TCS3200", 10000);
 }
 
-void loop() {
+void loop() 
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

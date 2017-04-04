@@ -31,15 +31,15 @@ MLX90614Device MLX90614;
 
 void setup()
 {
-Serial.begin(115200);
-Serial1.begin(115200);
+  Serial.begin(115200);
+  Serial1.begin(115200);
 
-pinMode(LED_BUILTIN, OUTPUT);
-Serial.println("Simple MLX90614 example 0");
-Serial.println("Simple MLX90614 example 1");
+  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.println("Simple MLX90614 example 0");
+  Serial.println("Simple MLX90614 example 1");
 
-
-MLX90614.begin(Wire0, -1);
+  
+  MLX90614.begin(Wire0, -1);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -48,26 +48,26 @@ int printDelay = 1000; //print every second.
 void loop()
 {
 
-static int on = HIGH;
+  static int on = HIGH;
 
-MLX90614.update();
+  MLX90614.update();
 
-if(millis() - lastMillis > printDelay)
-{
-lastMillis = millis();
+  if(millis() - lastMillis > printDelay)
+  {
+    lastMillis = millis();
 
-digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-
+    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+    
   float temp = MLX90614.temperature();
   Serial.print("temperature = ");
   Serial.print(temp);
   Serial.println(" C");
   
-
+    
   Serial1.print("temperature = ");
   Serial1.print(temp);
   Serial1.println(" C");
 
-on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-}
+    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
+  }
 }

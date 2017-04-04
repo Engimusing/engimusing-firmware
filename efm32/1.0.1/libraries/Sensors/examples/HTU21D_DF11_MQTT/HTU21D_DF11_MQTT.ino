@@ -66,7 +66,8 @@ void setup()
   HTU21DMqttMod.begin(HUB, HTU21D, "EFM32ZGUSB/BOARD/HTU21D", 10000);
 }
 
-void loop() {
+void loop() 
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

@@ -70,7 +70,8 @@ void setup()
   MPL3115A2MqttMod.begin(HUB, MPL3115A2, "EFM32ZG108/BOARD/MPL3115A2", 10000);
 }
 
-void loop() {
+void loop()
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

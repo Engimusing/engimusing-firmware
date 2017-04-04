@@ -75,7 +75,8 @@ void setup()
   MQ7MqttMod.begin(HUB, MQ7, "EFM32TG110/BOARD/MQ7", 10000);
 }
 
-void loop() {
+void loop()
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

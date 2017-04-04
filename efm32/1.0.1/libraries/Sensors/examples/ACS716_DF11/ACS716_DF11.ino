@@ -51,20 +51,20 @@ void loop()
 {
 
   static int on = HIGH;
-  
+
   ACS716.update();
-  
+
   if(millis() - lastMillis > printDelay)
   {
     lastMillis = millis();
-    
+
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
     float current = ACS716.instantCurrent();
     
     Serial.print("Current Amperage = ");
     Serial.println(current);
-    
+
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }
 }

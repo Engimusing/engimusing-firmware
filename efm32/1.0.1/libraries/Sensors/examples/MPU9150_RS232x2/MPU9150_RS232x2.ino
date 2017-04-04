@@ -31,15 +31,15 @@ MPU9150Device MPU9150;
 
 void setup()
 {
-Serial.begin(115200);
-Serial1.begin(115200);
+  Serial.begin(115200);
+  Serial1.begin(115200);
 
-pinMode(LED_BUILTIN, OUTPUT);
-Serial.println("Simple MPU9150 example 0");
-Serial.println("Simple MPU9150 example 1");
+  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.println("Simple MPU9150 example 0");
+  Serial.println("Simple MPU9150 example 1");
 
-
-MPU9150.begin(Wire0, 3, 6);
+  
+  MPU9150.begin(Wire0, 3, 6);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -48,16 +48,16 @@ int printDelay = 1000; //print every second.
 void loop()
 {
 
-static int on = HIGH;
+  static int on = HIGH;
 
-MPU9150.update();
+  MPU9150.update();
 
-if(millis() - lastMillis > printDelay)
-{
-lastMillis = millis();
+  if(millis() - lastMillis > printDelay)
+  {
+    lastMillis = millis();
 
-digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-
+    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+    
   float temp;
   MPU9150.getTemp(temp);
   Serial.print("temperature = ");
@@ -100,7 +100,7 @@ digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
   Serial.print(",");
   Serial.print(aZ);
   Serial.println(")");
-
+    
   Serial1.print("temperature = ");
   Serial1.print(temp);
   Serial1.println(" C");
@@ -129,6 +129,6 @@ digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
   Serial1.print(aZ);
   Serial1.println(")");
 
-on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-}
+    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
+  }
 }

@@ -70,7 +70,8 @@ void setup()
   TMD26721MqttMod.begin(HUB, TMD26721, "EFM32ZGUSB/BOARD/TMD26721", 10000);
 }
 
-void loop() {
+void loop() 
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

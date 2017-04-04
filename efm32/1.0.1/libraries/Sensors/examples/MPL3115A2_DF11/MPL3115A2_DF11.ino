@@ -47,13 +47,13 @@ void loop()
 {
 
   static int on = HIGH;
-  
+
   MPL3115A2.update();
-  
+
   if(millis() - lastMillis > printDelay)
   {
     lastMillis = millis();
-    
+
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
   float pressue = MPL3115A2.readPressure();
@@ -66,7 +66,7 @@ void loop()
   Serial.print(" M temperature = ");
   Serial.print(temp);
   Serial.println(" C");
-    
+
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }
 }

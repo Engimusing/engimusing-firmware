@@ -66,7 +66,8 @@ void setup()
   MLX90614MqttMod.begin(HUB, MLX90614, "EFM32ZGUSB/BOARD/MLX90614", 10000);
 }
 
-void loop() {
+void loop() 
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

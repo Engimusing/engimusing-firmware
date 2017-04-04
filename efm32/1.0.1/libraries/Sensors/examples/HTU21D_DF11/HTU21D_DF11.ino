@@ -47,13 +47,13 @@ void loop()
 {
 
   static int on = HIGH;
-  
+
   HTU21D.update();
-  
+
   if(millis() - lastMillis > printDelay)
   {
     lastMillis = millis();
-    
+
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
   float hum = HTU21D.calcHumidity(HTU21D.readHumidity());
@@ -63,7 +63,7 @@ void loop()
   Serial.print(temp);
   Serial.print("   humidity = ");
   Serial.println(hum);
-    
+
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }
 }

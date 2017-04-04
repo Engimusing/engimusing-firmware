@@ -70,7 +70,8 @@ void setup()
   MPU9150MqttMod.begin(HUB, MPU9150, "EFM32ZG108/BOARD/MPU9150", 10000);
 }
 
-void loop() {
+void loop()
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

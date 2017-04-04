@@ -47,13 +47,13 @@ void loop()
 {
 
   static int on = HIGH;
-  
+
   MPL115A1.update();
-  
+
   if(millis() - lastMillis > printDelay)
   {
     lastMillis = millis();
-    
+
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
   float temp = MPL115A1.calculateTemperatureC();
@@ -63,7 +63,7 @@ void loop()
   Serial.print(" C    Pressure = ");
   Serial.print(pressure);
   Serial.println(" kPa");
-    
+
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }
 }

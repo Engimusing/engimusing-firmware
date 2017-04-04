@@ -70,7 +70,8 @@ void setup()
   ACS716MqttMod.begin(HUB, ACS716, "EFM32ZGUSB/BOARD/ACS716", 10000);
 }
 
-void loop() {
+void loop() 
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests
