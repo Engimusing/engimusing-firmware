@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
-
+  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -16,46 +16,51 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 /* Example for how to print out readings from the ADXL362 RS232x2 Engimusing board
- *  There are 2 devices on this board. An LED and an ADXL362 Accelerometer. 
- *  See http://www.engimusing.com/products/adxl-4 for more information about the board.
- */
+    There are 2 devices on this board. An LED and a ADXL362 accelerometer.
+    See http://www.engimusing.com/products/adxl-4 for more information about the board.
+*/
 
 #if !defined(EFM32TG110)
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
- 
-#include "Arduino.h"
 
 #include <ADXL362Device.h>
-
 #include <SPI.h>
-
 
 ADXL362Device ADXL362;
 
-
 void setup()
 {
-  Serial.begin(115200);
-  Serial1.begin(115200);
-  
-  pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple ADXL362 example 0");
-  Serial1.println("Simple ADXL362 example 1");
+Serial.begin(115200);
+Serial1.begin(115200);
 
-  int accel_VIO = 2;
-  int accel_VS = 3;
-  int accel_CS = 4;
-  
-  //Initialize the Accelerometer sensor
-  ADXL362.begin(accel_VIO, accel_VS, accel_CS, &SPI);
+pinMode(LED_BUILTIN, OUTPUT);
+Serial.println("Simple ADXL362 example 0");
+Serial.println("Simple ADXL362 example 1");
+
+//Initialize the Accelerometer sensor
+  //pins are:
+  //  2 - VIO
+  //  3 - VS
+  //  4 - CS 
+ADXL362.begin(2, 3, 4, &SPI);
 }
+
+int lastMillis = 0; // store the last time the current was printed.
+int printDelay = 1000; //print every second.
 
 void loop()
 {
-  static int on = HIGH;
 
-  digitalWrite(LED_BUILTIN, on);   // turn the LED on (HIGH is the voltage level)
+static int on = HIGH;
+
+ADXL362.update();
+
+if(millis() - lastMillis > printDelay)
+{
+lastMillis = millis();
+
+digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
 
   float xData;
   float yData;
@@ -76,7 +81,7 @@ void loop()
   Serial.print(" g temperature = ");
   Serial.print(temperature);
   Serial.println(" C");
-  
+
   Serial1.print("X = ");
   Serial1.print(xData);
   Serial1.print(" g Y = ");
@@ -86,8 +91,7 @@ void loop()
   Serial1.print(" g temperature = ");
   Serial1.print(temperature);
   Serial1.println(" C");
-  
-  delay(1000);
-  
-  on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
+
+on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
+}
 }

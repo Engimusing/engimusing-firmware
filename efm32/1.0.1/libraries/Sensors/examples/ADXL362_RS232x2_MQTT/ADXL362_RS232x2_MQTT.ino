@@ -1,6 +1,6 @@
 /*
-  Copyright (c) 2016 Engimusing LLC.  All right reserved.
-
+  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -16,31 +16,29 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 /* Example for how to setup the MQTT client for the ADXL362 RS232x2 Engimusing board
- *  There are 2 devices on this board. An LED and an ADXL362 Accelerometer. 
- *  See http://www.engimusing.com/products/adxl-4 for more information about the board.
- */
+    There are 2 devices on this board. An LED and a ADXL362 accelerometer.
+    See http://www.engimusing.com/products/adxl-4 for more information about the board.
+*/
 
 #if !defined(EFM32TG110)
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
- 
-#include "Arduino.h"
 
 //Include the MqttModule to get the MQTT client classes
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
-#include <ADXL362Device.h>
 
+#include <ADXL362Device.h>
 #include <SPI.h>
 
 /*
-  EFMTG110 Commands:
-  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"STATUS"}
+  EFM32TG110 Commands:
+  {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFMTG110/BOARD/ADXL/CTL","PLD":"STATUS"}  
+  {"TOP":"EFM32TG110/BOARD/ADXL362/","PLD":"STATUS"}
 */
 
 MqttHub HUB;
@@ -48,57 +46,38 @@ MqttSerialPort serialPort1;
 MqttSerialPort serialPort2;
 
 //MQTT class defintions
-// The MqttModule classes are automatically registered with the COMM 
-// object when begin() is called so they can be updated 
+// The MqttModule classes are automatically registered with the COMM
+// object when begin() is called so they can be updated
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
 ADXL362Device ADXL362;
-SimpleMqttModule ADXLMqttMod;
+SimpleMqttModule ADXL362MqttMod;
 
-void setup()
+
+void setup() 
 {
   serialPort1.begin(HUB, Serial);
   serialPort2.begin(HUB, Serial1);
-  
+
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, ledId[0], "EFMTG110/BOARD/LED", HIGH);
+  LEDCtrl.begin(HUB, 13, "EFM32TG110/BOARD/LED", HIGH);
 
-  pinMode(ledId[0], OUTPUT);
-  digitalWrite(ledId[0], HIGH);
-  
-  int accel_VIO = 2;
-  int accel_VS = 3;
-  int accel_CS = 4;
-  
-  //Initialize the Humidity sensor
-  ADXL362.begin(accel_VIO, accel_VS, accel_CS, &SPI);
-  ADXLMqttMod.begin(HUB, ADXL362, "EFMTG110/BOARD/ADXL", 1000);
+
+  //Initialize the Accelerometer sensor
+  //pins are:
+  //  2 - VIO
+  //  3 - VS
+  //  4 - CS 
+  ADXL362.begin(2, 3, 4, &SPI);
+  ADXL362MqttMod.begin(HUB, ADXL362, "EFM32TG110/BOARD/ADXL362", 10000);
 }
 
-//Part of light on off example
-//int lastMillisOn = 0;
-//int lastMillisOff = 1000;
+void loop() {
 
-void loop()
-{
   //Update the MQTT communication so it
   // can send statuses and recieve requests
   HUB.update();
 
-  /*
-  //example of how to turn on and off a light using the OnOffCtlModule
-  //status of the pin will be sent to the MQTT broker.
-  if(millis() > lastMillisOff + 2000)
-  {
-    LEDCtrl.setPinState(LOW);
-    lastMillisOff = millis();
-  }
-  if(millis() > lastMillisOn + 2000)
-  {
-    LEDCtrl.setPinState(HIGH);
-    lastMillisOn = millis();
-  }
-  */
 }

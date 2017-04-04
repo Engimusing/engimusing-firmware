@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from a ACS716  DF11 board using the ZB USB Engimusing board
+/* Example for how to print out readings from the ACS716  DF11 board using the ZB USB Engimusing board
     There are 2 devices on this board. An LED and a ACS716 current sensor.
     See http://www.engimusing.com/products/ACS716-2 for more information about the board.
 */

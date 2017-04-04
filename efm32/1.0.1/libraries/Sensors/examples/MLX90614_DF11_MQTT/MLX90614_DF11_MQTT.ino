@@ -15,9 +15,9 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to setup the MQTT client for the HTU21D DF11 board using the EFM32ZGUSB Engimusing board
-    There are 2 devices on this board. An LED and a HTU21D humidity and temperature sensor.
-    See https://www.engimusing.com/products/htu21d-1 for more information about the board.
+/* Example for how to setup the MQTT client for the MLX90614 DF11 board using the EFM32ZGUSB Engimusing board
+    There are 2 devices on this board. An LED and a MLX90614 IR temperature sensor.
+    See https://www.engimusing.com/products/mlx9-1 for more information about the board.
 */
 
 #if !defined(EFM32ZGUSB)
@@ -29,7 +29,7 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
-#include <HTU21DDevice.h>
+#include <MLX90614Device.h>
 #include <Wire.h>
 
 /*
@@ -38,7 +38,7 @@
   {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"OFF"}
   {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFM32ZGUSB/BOARD/HTU21D/","PLD":"STATUS"}
+  {"TOP":"EFM32ZGUSB/BOARD/MLX90614/","PLD":"STATUS"}
 */
 
 MqttHub HUB;
@@ -50,8 +50,8 @@ MqttSerialPort serialPort;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-HTU21DDevice HTU21D;
-SimpleMqttModule HTU21DMqttMod;
+MLX90614Device MLX90614;
+SimpleMqttModule MLX90614MqttMod;
 
 void setup() 
 {
@@ -62,8 +62,8 @@ void setup()
   LEDCtrl.begin(HUB, 13, "EFM32ZGUSB/BOARD/LED", HIGH);
 
   
-  HTU21D.begin(Wire0, 10);
-  HTU21DMqttMod.begin(HUB, HTU21D, "EFM32ZGUSB/BOARD/HTU21D", 10000);
+  MLX90614.begin(Wire0, 10);
+  MLX90614MqttMod.begin(HUB, MLX90614, "EFM32ZGUSB/BOARD/MLX90614", 10000);
 }
 
 void loop() {

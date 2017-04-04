@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from a TCS3200 RS232x2 Engimusing board
+/* Example for how to print out readings from the TCS3200 RS232x2 Engimusing board
     There are 2 devices on this board. An LED and a TCS3200 color sensor.
     See https://www.engimusing.com/collections/sensors/products/tcs3200-3 for more information about the board.
 */

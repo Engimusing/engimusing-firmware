@@ -30,7 +30,7 @@
 #include <MqttModule.h>
 
 #include <TCS34725Device.h>
-#include  <Wire.h>
+#include <Wire.h>
 
 /*
   EFM32ZGUSB Commands:

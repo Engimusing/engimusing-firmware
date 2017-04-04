@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from a TCS34725  DF11 board using the ZB USB Engimusing board
+/* Example for how to print out readings from the TCS34725  DF11 board using the ZB USB Engimusing board
     There are 2 devices on this board. An LED and a TCS34725 color sensor.
     See https://www.engimusing.com/products/tcs3472-1 for more information about the board.
 */
@@ -25,7 +25,7 @@
 #endif
 
 #include <TCS34725Device.h>
-#include  <Wire.h>
+#include <Wire.h>
 
 TCS34725Device TCS34725;
 
