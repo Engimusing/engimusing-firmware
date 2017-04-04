@@ -56,16 +56,16 @@ void loop()
 
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
-  float pressue = MPL3115A2.readPressure();
-  float altitude = MPL3115A2.readAltitude();
-  float temp = MPL3115A2.readTemp();
-  Serial.print("Pressure = ");
-  Serial.print(pressue);
-  Serial.print(" Pa Altitude = ");
-  Serial.print(altitude);
-  Serial.print(" M temperature = ");
-  Serial.print(temp);
-  Serial.println(" C");
+    float pressue = MPL3115A2.readPressure();
+    float altitude = MPL3115A2.readAltitude();
+    float temp = MPL3115A2.readTemp();
+    Serial.print("Pressure = ");
+    Serial.print(pressue);
+    Serial.print(" Pa Altitude = ");
+    Serial.print(altitude);
+    Serial.print(" M temperature = ");
+    Serial.print(temp);
+    Serial.println(" C");
 
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }

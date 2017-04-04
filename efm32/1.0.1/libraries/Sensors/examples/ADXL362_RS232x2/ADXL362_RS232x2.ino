@@ -62,29 +62,29 @@ void loop()
 
     digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
     
-  float xData;
-  float yData;
-  float zData;
-  ADXL362.sampleXYZT();
-  xData = ADXL362.getXGees();
-  yData = ADXL362.getYGees();
-  zData = ADXL362.getZGees();
-  
-  Serial.print("X = ");
-  Serial.print(xData);
-  Serial.print(" g Y = ");
-  Serial.print(yData);
-  Serial.print(" g Z = ");
-  Serial.print(zData);
-  Serial.println(" g");
+    float xData;
+    float yData;
+    float zData;
+    ADXL362.sampleXYZT();
+    xData = ADXL362.getXGees();
+    yData = ADXL362.getYGees();
+    zData = ADXL362.getZGees();
+
+    Serial.print("X = ");
+    Serial.print(xData);
+    Serial.print(" g Y = ");
+    Serial.print(yData);
+    Serial.print(" g Z = ");
+    Serial.print(zData);
+    Serial.println(" g");
     
-  Serial1.print("X = ");
-  Serial1.print(xData);
-  Serial1.print(" g Y = ");
-  Serial1.print(yData);
-  Serial1.print(" g Z = ");
-  Serial1.print(zData);
-  Serial1.println(" g");
+    Serial1.print("X = ");
+    Serial1.print(xData);
+    Serial1.print(" g Y = ");
+    Serial1.print(yData);
+    Serial1.print(" g Z = ");
+    Serial1.print(zData);
+    Serial1.println(" g");
 
     on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
   }

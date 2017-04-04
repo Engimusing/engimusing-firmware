@@ -57,18 +57,18 @@ void loop()
 
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
-      float red = TCS3200.readColorHertz(TCS3200Device::RED);
-      float green = TCS3200.readColorHertz(TCS3200Device::GREEN);
-      float blue = TCS3200.readColorHertz(TCS3200Device::BLUE);
-      float white = TCS3200.readColorHertz(TCS3200Device::WHITE);
-      Serial.print("red = ");
-      Serial.print(red);
-      Serial.print(" green = ");
-      Serial.print(green);
-      Serial.print(" blue = ");
-      Serial.print(blue);
-      Serial.print(" white = ");
-      Serial.println(white);
+    float red = TCS3200.readColorHertz(TCS3200Device::RED);
+    float green = TCS3200.readColorHertz(TCS3200Device::GREEN);
+    float blue = TCS3200.readColorHertz(TCS3200Device::BLUE);
+    float white = TCS3200.readColorHertz(TCS3200Device::WHITE);
+    Serial.print("red = ");
+    Serial.print(red);
+    Serial.print(" green = ");
+    Serial.print(green);
+    Serial.print(" blue = ");
+    Serial.print(blue);
+    Serial.print(" white = ");
+    Serial.println(white);
 
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }

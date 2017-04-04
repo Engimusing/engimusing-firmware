@@ -63,17 +63,17 @@ void loop()
 
     digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
     
-  uint32_t alertValue = MQ7.currentAlertValue();
-  const char * state = MQ7.currentAlertText();
-  Serial.print("value = ");
-  Serial.print(alertValue);
-  Serial.print(" state = ");
-  Serial.println(state);
+    uint32_t alertValue = MQ7.currentAlertValue();
+    const char * state = MQ7.currentAlertText();
+    Serial.print("value = ");
+    Serial.print(alertValue);
+    Serial.print(" state = ");
+    Serial.println(state);
     
-  Serial1.print("value = ");
-  Serial1.print(alertValue);
-  Serial1.print(" state = ");
-  Serial1.println(state);
+    Serial1.print("value = ");
+    Serial1.print(alertValue);
+    Serial1.print(" state = ");
+    Serial1.println(state);
 
     on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
   }

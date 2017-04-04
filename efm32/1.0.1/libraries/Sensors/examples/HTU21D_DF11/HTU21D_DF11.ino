@@ -56,13 +56,13 @@ void loop()
 
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
-  float hum = HTU21D.calcHumidity(HTU21D.readHumidity());
-  float temp = HTU21D.calcTemp(HTU21D.readTemp());
-  delay(1000);                       // wait for a second
-  Serial.print("temperature = ");
-  Serial.print(temp);
-  Serial.print("   humidity = ");
-  Serial.println(hum);
+    float hum = HTU21D.calcHumidity(HTU21D.readHumidity());
+    float temp = HTU21D.calcTemp(HTU21D.readTemp());
+    delay(1000);                       // wait for a second
+    Serial.print("temperature = ");
+    Serial.print(temp);
+    Serial.print("   humidity = ");
+    Serial.println(hum);
 
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }

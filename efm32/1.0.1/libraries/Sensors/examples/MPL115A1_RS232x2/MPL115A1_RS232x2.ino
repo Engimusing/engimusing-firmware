@@ -58,19 +58,19 @@ void loop()
 
     digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
     
-  float temp = MPL115A1.calculateTemperatureC();
-  float pressure = MPL115A1.calculatePressurekPa();
-  Serial.print("temperature = ");
-  Serial.print(temp);
-  Serial.print(" C    Pressure = ");
-  Serial.print(pressure);
-  Serial.println(" kPa");
+    float temp = MPL115A1.calculateTemperatureC();
+    float pressure = MPL115A1.calculatePressurekPa();
+    Serial.print("temperature = ");
+    Serial.print(temp);
+    Serial.print(" C    Pressure = ");
+    Serial.print(pressure);
+    Serial.println(" kPa");
     
-  Serial1.print("temperature = ");
-  Serial1.print(temp);
-  Serial1.print(" C    Pressure = ");
-  Serial1.print(pressure);
-  Serial1.println(" kPa");
+    Serial1.print("temperature = ");
+    Serial1.print(temp);
+    Serial1.print(" C    Pressure = ");
+    Serial1.print(pressure);
+    Serial1.println(" kPa");
 
     on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
   }

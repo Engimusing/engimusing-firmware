@@ -58,13 +58,12 @@ void loop()
 
     digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
     
-  float temp = TMP102.temperature();
-  Serial.print("temperature = ");
-  Serial.println(temp);
-
+    float temp = TMP102.temperature();
+    Serial.print("temperature = ");
+    Serial.println(temp);
     
-  Serial1.print("temperature = ");
-  Serial1.println(temp);
+    Serial1.print("temperature = ");
+    Serial1.println(temp);
 
     on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
   }

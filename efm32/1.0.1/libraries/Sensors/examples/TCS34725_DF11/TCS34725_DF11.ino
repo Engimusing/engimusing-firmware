@@ -56,27 +56,27 @@ void loop()
 
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
-  uint16_t r = 0;
-  uint16_t g = 0;
-  uint16_t b = 0;
-  uint16_t c = 0;
-  TCS34725.sampleData();
-  TCS34725.getRawData(r,g,b,c);
-  float colorTemp = TCS34725.calculateColorTemperature(r,g,b);
-  float lux = TCS34725.calculateLux(r,g,b);
-    
-  Serial.print("red = ");
-  Serial.print(r);
-  Serial.print(" green = ");
-  Serial.print(g);
-  Serial.print(" blue = ");
-  Serial.print(b);
-  Serial.print(" clear = ");
-  Serial.println(c);
-  Serial.print(" color temperature = ");
-  Serial.print(colorTemp);
-  Serial.print(" luminance = ");
-  Serial.println(lux);
+    uint16_t r = 0;
+    uint16_t g = 0;
+    uint16_t b = 0;
+    uint16_t c = 0;
+    TCS34725.sampleData();
+    TCS34725.getRawData(r,g,b,c);
+    float colorTemp = TCS34725.calculateColorTemperature(r,g,b);
+    float lux = TCS34725.calculateLux(r,g,b);
+
+    Serial.print("red = ");
+    Serial.print(r);
+    Serial.print(" green = ");
+    Serial.print(g);
+    Serial.print(" blue = ");
+    Serial.print(b);
+    Serial.print(" clear = ");
+    Serial.println(c);
+    Serial.print(" color temperature = ");
+    Serial.print(colorTemp);
+    Serial.print(" luminance = ");
+    Serial.println(lux);
 
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }

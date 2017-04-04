@@ -58,76 +58,76 @@ void loop()
 
     digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
     
-  float temp;
-  MPU9150.getTemp(temp);
-  Serial.print("temperature = ");
-  Serial.print(temp);
-  Serial.println(" C");
-  
-  int cX;
-  int cY;
-  int cZ;
-  MPU9150.getCompassData(cX,cY,cZ);
-  Serial.print("Compass = (");
-  Serial.print(cX);
-  Serial.print(",");
-  Serial.print(cY);
-  Serial.print(",");
-  Serial.print(cZ);
-  Serial.println(")");
-  
-  int gX;
-  int gY;
-  int gZ;
-  MPU9150.getGyroData(gX,gY,gZ);
-  Serial.print("Gyro = (");
-  Serial.print(gX);
-  Serial.print(",");
-  Serial.print(gY);
-  Serial.print(",");
-  Serial.print(gZ);
-  Serial.println(")");
-  
-  int aX;
-  int aY;
-  int aZ;
-  
-  MPU9150.getAccelData(aX,aY,aZ);
-  Serial.print("Acceleration = (");
-  Serial.print(aX);
-  Serial.print(",");
-  Serial.print(aY);
-  Serial.print(",");
-  Serial.print(aZ);
-  Serial.println(")");
-    
-  Serial1.print("temperature = ");
-  Serial1.print(temp);
-  Serial1.println(" C");
-  
-  Serial1.print("Compass = (");
-  Serial1.print(cX);
-  Serial1.print(",");
-  Serial1.print(cY);
-  Serial1.print(",");
-  Serial1.print(cZ);
-  Serial1.println(")");
-  
-  Serial1.print("Gyro = (");
-  Serial1.print(gX);
-  Serial1.print(",");
-  Serial1.print(gY);
-  Serial1.print(",");
-  Serial1.print(gZ);
-  Serial1.println(")");
+    float temp;
+    MPU9150.getTemp(temp);
+    Serial.print("temperature = ");
+    Serial.print(temp);
+    Serial.println(" C");
 
-  Serial1.print("Acceleration = (");
-  Serial1.print(aX);
-  Serial1.print(",");
-  Serial1.print(aY);
-  Serial1.print(",");
-  Serial1.print(aZ);
-  Serial1.println(")");
+    int cX;
+    int cY;
+    int cZ;
+    MPU9150.getCompassData(cX,cY,cZ);
+    Serial.print("Compass = (");
+    Serial.print(cX);
+    Serial.print(",");
+    Serial.print(cY);
+    Serial.print(",");
+    Serial.print(cZ);
+    Serial.println(")");
+
+    int gX;
+    int gY;
+    int gZ;
+    MPU9150.getGyroData(gX,gY,gZ);
+    Serial.print("Gyro = (");
+    Serial.print(gX);
+    Serial.print(",");
+    Serial.print(gY);
+    Serial.print(",");
+    Serial.print(gZ);
+    Serial.println(")");
+
+    int aX;
+    int aY;
+    int aZ;
+
+    MPU9150.getAccelData(aX,aY,aZ);
+    Serial.print("Acceleration = (");
+    Serial.print(aX);
+    Serial.print(",");
+    Serial.print(aY);
+    Serial.print(",");
+    Serial.print(aZ);
+    Serial.println(")");
+    
+    Serial1.print("temperature = ");
+    Serial1.print(temp);
+    Serial1.println(" C");
+
+    Serial1.print("Compass = (");
+    Serial1.print(cX);
+    Serial1.print(",");
+    Serial1.print(cY);
+    Serial1.print(",");
+    Serial1.print(cZ);
+    Serial1.println(")");
+
+    Serial1.print("Gyro = (");
+    Serial1.print(gX);
+    Serial1.print(",");
+    Serial1.print(gY);
+    Serial1.print(",");
+    Serial1.print(gZ);
+    Serial1.println(")");
+
+    Serial1.print("Acceleration = (");
+    Serial1.print(aX);
+    Serial1.print(",");
+    Serial1.print(aY);
+    Serial1.print(",");
+    Serial1.print(aZ);
+    Serial1.println(")");
 
     on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
   }
