@@ -367,12 +367,6 @@ Device::ValueStruct ADXL362Device::readValue(int index)
         output.value.decimal = getZGees();
         output.name = "Z_GEES";
     }
-    else if(index == 3)
-    {
-        output.type = Device::TypeFloat;
-        output.value.decimal = getTCelsius();
-        output.name = "DEG_C";
-    }
     else
     {
         output.type = Device::TypeInvaild;
@@ -383,7 +377,7 @@ Device::ValueStruct ADXL362Device::readValue(int index)
 
 float ADXL362Device::numValues()
 {
-    return 4; 
+    return 3; 
 }
 #endif
 

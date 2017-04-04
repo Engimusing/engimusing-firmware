@@ -65,12 +65,10 @@ digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
   float xData;
   float yData;
   float zData;
-  float temperature;
   ADXL362.sampleXYZT();
   xData = ADXL362.getXGees();
   yData = ADXL362.getYGees();
   zData = ADXL362.getZGees();
-  temperature = ADXL362.getTCelsius();
   
   Serial.print("X = ");
   Serial.print(xData);
@@ -78,9 +76,7 @@ digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
   Serial.print(yData);
   Serial.print(" g Z = ");
   Serial.print(zData);
-  Serial.print(" g temperature = ");
-  Serial.print(temperature);
-  Serial.println(" C");
+  Serial.println(" g");
 
   Serial1.print("X = ");
   Serial1.print(xData);
@@ -88,9 +84,7 @@ digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
   Serial1.print(yData);
   Serial1.print(" g Z = ");
   Serial1.print(zData);
-  Serial1.print(" g temperature = ");
-  Serial1.print(temperature);
-  Serial1.println(" C");
+  Serial1.println(" g");
 
 on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
 }
