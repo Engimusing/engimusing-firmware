@@ -24,7 +24,7 @@
 
 class TwoWire;
 
-class MPLA3115A2Device : public Device
+class MPL3115A2Device : public Device
 {
  
     public:

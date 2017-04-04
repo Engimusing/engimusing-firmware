@@ -18,7 +18,7 @@
 
 #include <Arduino.h>
 
-#include <MPLA3115A2Device.h>
+#include <MPL3115A2Device.h>
 #include <Wire.h>
 
 #define STATUS     0x00
@@ -69,7 +69,7 @@
 #define OFF_H      0x2D
 
 #define MPL3115A2_ADDRESS 0x60 // 7-bit I2C address
-void MPLA3115A2Device::begin(TwoWire &wire, int32_t enablePin)
+void MPL3115A2Device::begin(TwoWire &wire, int32_t enablePin)
 {    
    if(enablePin > 0)
   {
@@ -102,7 +102,7 @@ void MPLA3115A2Device::begin(TwoWire &wire, int32_t enablePin)
 }
 
 //Returns the number of meters above sea level
-float MPLA3115A2Device::readAltitude()
+float MPL3115A2Device::readAltitude()
 {
   toggleOneShot(); //Toggle the OST bit causing the sensor to immediately take another reading
 
@@ -147,14 +147,14 @@ float MPLA3115A2Device::readAltitude()
 }
 
 //Returns the number of feet above sea level
-float MPLA3115A2Device::readAltitudeFt()
+float MPL3115A2Device::readAltitudeFt()
 {
   return(readAltitude() * 3.28084);
 }
 
 //Reads the current pressure in Pa
 //Unit must be set in barometric pressure mode
-float MPLA3115A2Device::readPressure()
+float MPL3115A2Device::readPressure()
 {
   toggleOneShot(); //Toggle the OST bit causing the sensor to immediately take another reading
 
@@ -200,7 +200,7 @@ float MPLA3115A2Device::readPressure()
   return(pressure);
 }
 
-float MPLA3115A2Device::readTemp()
+float MPL3115A2Device::readTemp()
 {
   toggleOneShot(); //Toggle the OST bit causing the sensor to immediately take another reading
 
@@ -242,14 +242,14 @@ float MPLA3115A2Device::readTemp()
 }
 
 //Give me temperature in fahrenheit!
-float MPLA3115A2Device::readTempF()
+float MPL3115A2Device::readTempF()
 {
   return((readTemp() * 9.0)/ 5.0 + 32.0); // Convert celsius to fahrenheit
 }
 
 //Sets the mode to Barometer
 //CTRL_REG1, ALT bit
-void MPLA3115A2Device::setModeBarometer()
+void MPL3115A2Device::setModeBarometer()
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting &= ~(1<<7); //Clear ALT bit
@@ -258,7 +258,7 @@ void MPLA3115A2Device::setModeBarometer()
 
 //Sets the mode to Altimeter
 //CTRL_REG1, ALT bit
-void MPLA3115A2Device::setModeAltimeter()
+void MPL3115A2Device::setModeAltimeter()
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting |= (1<<7); //Set ALT bit
@@ -267,7 +267,7 @@ void MPLA3115A2Device::setModeAltimeter()
 
 //Puts the sensor in standby mode
 //This is needed so that we can modify the major control registers
-void MPLA3115A2Device::setModeStandby()
+void MPL3115A2Device::setModeStandby()
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting &= ~(1<<0); //Clear SBYB bit for Standby mode
@@ -276,7 +276,7 @@ void MPLA3115A2Device::setModeStandby()
 
 //Puts the sensor in active mode
 //This is needed so that we can modify the major control registers
-void MPLA3115A2Device::setModeActive()
+void MPL3115A2Device::setModeActive()
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting |= (1<<0); //Set SBYB bit for Active mode
@@ -285,7 +285,7 @@ void MPLA3115A2Device::setModeActive()
 
 //Setup FIFO mode to one of three modes. See page 26, table 31
 //From user jr4284
-void MPLA3115A2Device::setFIFOMode(byte f_Mode)
+void MPL3115A2Device::setFIFOMode(byte f_Mode)
 {
   if (f_Mode > 3) f_Mode = 3; // FIFO value cannot exceed 3.
   f_Mode <<= 6; // Shift FIFO byte left 6 to put it in bits 6, 7.
@@ -300,7 +300,7 @@ void MPLA3115A2Device::setFIFOMode(byte f_Mode)
 //Sets the over sample rate. Datasheet calls for 128 but you can set it 
 //from 1 to 128 samples. The higher the oversample rate the greater
 //the time between data samples.
-void MPLA3115A2Device::setOversampleRate(byte sampleRate)
+void MPL3115A2Device::setOversampleRate(byte sampleRate)
 {
   if(sampleRate > 7) sampleRate = 7; //OS cannot be larger than 0b.0111
   sampleRate <<= 3; //Align it for the CTRL_REG1 register
@@ -313,7 +313,7 @@ void MPLA3115A2Device::setOversampleRate(byte sampleRate)
 
 //Clears then sets the OST bit which causes the sensor to immediately take another reading
 //Needed to sample faster than 1Hz
-void MPLA3115A2Device::toggleOneShot(void)
+void MPL3115A2Device::toggleOneShot(void)
 {
   byte tempSetting = i2cRead(CTRL_REG1); //Read current settings
   tempSetting &= ~(1<<1); //Clear OST bit
@@ -326,13 +326,13 @@ void MPLA3115A2Device::toggleOneShot(void)
 
 //Enables the pressure and temp measurement event flags so that we can
 //test against them. This is recommended in datasheet during setup.
-void MPLA3115A2Device::enableEventFlags()
+void MPL3115A2Device::enableEventFlags()
 {
   i2cWrite(PT_DATA_CFG, 0x07); // Enable all three pressure and temp event flags 
 }
 
 // These are the two I2C functions in this sketch.
-byte MPLA3115A2Device::i2cRead(byte regAddr)
+byte MPL3115A2Device::i2cRead(byte regAddr)
 {
   // This function reads one byte over IIC
   myWire->beginTransmission(MPL3115A2_ADDRESS);
@@ -342,7 +342,7 @@ byte MPLA3115A2Device::i2cRead(byte regAddr)
   return myWire->read();
 }
 
-void MPLA3115A2Device::i2cWrite(byte regAddr, byte value)
+void MPL3115A2Device::i2cWrite(byte regAddr, byte value)
 {
   // This function writes one byto over IIC
   myWire->beginTransmission(MPL3115A2_ADDRESS);
@@ -351,7 +351,7 @@ void MPLA3115A2Device::i2cWrite(byte regAddr, byte value)
   myWire->endTransmission(true);
 }
 
-Device::ValueStruct MPLA3115A2Device::readValue(int index)
+Device::ValueStruct MPL3115A2Device::readValue(int index)
 {
     Device::ValueStruct output;
     
@@ -381,7 +381,7 @@ Device::ValueStruct MPLA3115A2Device::readValue(int index)
     return output;
 }
 
-float MPLA3115A2Device::numValues()
+float MPL3115A2Device::numValues()
 {
     return 3; 
 }

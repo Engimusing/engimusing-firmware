@@ -15,13 +15,13 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to setup the MQTT client for the MPL3115A2 RS232x2 Engimusing board
+/* Example for how to setup the MQTT client for the MPL3115A2 DF11 board using the EFM32ZGUSB Engimusing board
     There are 2 devices on this board. An LED and a MPL3115A2 temperature and altitude sensor.
-    See https://www.engimusing.com/products/mql3-3 for more information about the board.
+    See https://www.engimusing.com/products/mpl3115a2-1 for more information about the board.
 */
 
-#if !defined(EFM32ZG108)
-#error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
+#if !defined(EFM32ZGUSB)
+#error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
 //Include the MqttModule to get the MQTT client classes
@@ -33,17 +33,16 @@
 #include <Wire.h>
 
 /*
-  EFM32ZG108 Commands:
-  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"STATUS"}
+  EFM32ZGUSB Commands:
+  {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFM32ZG108/BOARD/MPL3115A2/","PLD":"STATUS"}
+  {"TOP":"EFM32ZGUSB/BOARD/MPL3115A2/","PLD":"STATUS"}
 */
 
 MqttHub HUB;
-MqttSerialPort serialPort1;
-MqttSerialPort serialPort2;
+MqttSerialPort serialPort;
 
 //MQTT class defintions
 // The MqttModule classes are automatically registered with the COMM
@@ -54,20 +53,17 @@ OnOffCtlModule LEDCtrl;
 MPL3115A2Device MPL3115A2;
 SimpleMqttModule MPL3115A2MqttMod;
 
-
 void setup() 
 {
-  serialPort1.begin(HUB, Serial);
-  serialPort2.begin(HUB, Serial1);
+  serialPort.begin(HUB, Serial);
 
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, 13, "EFM32ZG108/BOARD/LED", HIGH);
-
+  LEDCtrl.begin(HUB, 13, "EFM32ZGUSB/BOARD/LED", HIGH);
 
   
-  MPL3115A2.begin(Wire0, 3);
-  MPL3115A2MqttMod.begin(HUB, MPL3115A2, "EFM32ZG108/BOARD/MPL3115A2", 10000);
+  MPL3115A2.begin(Wire0, 5);
+  MPL3115A2MqttMod.begin(HUB, MPL3115A2, "EFM32ZGUSB/BOARD/MPL3115A2", 10000);
 }
 
 void loop() {

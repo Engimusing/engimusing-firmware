@@ -15,13 +15,13 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to setup the MQTT client for the MPL3115A2 RS232x2 Engimusing board
-    There are 2 devices on this board. An LED and a MPL3115A2 temperature and altitude sensor.
-    See https://www.engimusing.com/products/mql3-3 for more information about the board.
+/* Example for how to setup the MQTT client for the MPL115A1 RS232x2 Engimusing board
+    There are 2 devices on this board. An LED and a MPL115A1 pressure/temperature sensor.
+    See https://www.engimusing.com/products/mpl115-3 for more information about the board.
 */
 
-#if !defined(EFM32ZG108)
-#error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
+#if !defined(EFM32TG110)
+#error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
 
 //Include the MqttModule to get the MQTT client classes
@@ -29,16 +29,16 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
-#include <MPL3115A2Device.h>
-#include <Wire.h>
+#include <MPL115A1Device.h>
+#include <SPI.h>
 
 /*
-  EFM32ZG108 Commands:
-  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"STATUS"}
+  EFM32TG110 Commands:
+  {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFM32ZG108/BOARD/MPL3115A2/","PLD":"STATUS"}
+  {"TOP":"EFM32TG110/BOARD/MPL115A1/","PLD":"STATUS"}
 */
 
 MqttHub HUB;
@@ -51,8 +51,8 @@ MqttSerialPort serialPort2;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-MPL3115A2Device MPL3115A2;
-SimpleMqttModule MPL3115A2MqttMod;
+MPL115A1Device MPL115A1;
+SimpleMqttModule MPL115A1MqttMod;
 
 
 void setup() 
@@ -62,12 +62,12 @@ void setup()
 
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, 13, "EFM32ZG108/BOARD/LED", HIGH);
+  LEDCtrl.begin(HUB, 13, "EFM32TG110/BOARD/LED", HIGH);
 
 
   
-  MPL3115A2.begin(Wire0, 3);
-  MPL3115A2MqttMod.begin(HUB, MPL3115A2, "EFM32ZG108/BOARD/MPL3115A2", 10000);
+  MPL115A1.begin(3, -1, 4, SPI);
+  MPL115A1MqttMod.begin(HUB, MPL115A1, "EFM32TG110/BOARD/MPL115A1", 10000);
 }
 
 void loop() {
