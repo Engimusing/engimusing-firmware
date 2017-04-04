@@ -1,6 +1,6 @@
 /*
-  Copyright (c) 2016 Engimusing LLC.  All right reserved.
-
+  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -14,63 +14,71 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-  Example for how to setup the MQTT client for the MQ7 RS232x2 Engimusing board
-  There are 2 devices on this board. An LED and an MQ7 CO detector. 
-  See http://www.engimusing.com/products/gas-4 for more information about the board.
-
-  EFMTG110 Commands:
-  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"ON"}
-  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"OFF"}
-  {"TOP":"EFMTG110/BOARD/LED/CTL","PLD":"STATUS"}
-
-  {"TOP":"EFMTG110/BOARD/MQ7","PLD":"STATUS"}  
+*/
+/* Example for how to setup the MQTT client for the MQ7 RS232x2 Engimusing board
+    There are 2 devices on this board. An LED and a MQ7 CO detector.
+    See https://www.engimusing.com/products/gas-4 for more information about the board.
 */
 
 #if !defined(EFM32TG110)
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
- 
-#include "Arduino.h"
 
 //Include the MqttModule to get the MQTT client classes
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
+
 #include <MQ7Device.h>
+
+
+/*
+  EFM32TG110 Commands:
+  {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"STATUS"}
+
+  {"TOP":"EFM32TG110/BOARD/MQ7/","PLD":"STATUS"}
+*/
 
 MqttHub HUB;
 MqttSerialPort serialPort1;
 MqttSerialPort serialPort2;
 
 //MQTT class defintions
-// The MqttModule classes are automatically registered with the COMM 
-// object when begin() is called so they can be updated 
+// The MqttModule classes are automatically registered with the COMM
+// object when begin() is called so they can be updated
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
-MQ7Device Mq7;
-SimpleMqttModule Mq7MqttMod;
 
-void setup()
+MQ7Device MQ7;
+SimpleMqttModule MQ7MqttMod;
+
+
+void setup() 
 {
   serialPort1.begin(HUB, Serial);
   serialPort2.begin(HUB, Serial1);
-  
+
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, ledId[0], "EFMTG110/BOARD/LED", HIGH);
+  LEDCtrl.begin(HUB, 13, "EFM32TG110/BOARD/LED", HIGH);
 
-  int PWM_CTL = 7;
-  int SENSOR = A0;
 
+  
   //Initialize the MQ7 CO Sensor
-  Mq7.begin(PWM_CTL, SENSOR);
-  Mq7MqttMod.begin(HUB, Mq7, "EFMTG110/BOARD/MQ7", 1000);
+  //Pins:
+  // PWM Controller - 7
+  // Analog Sensor Input - A0
+  
+  MQ7.begin(7, A0);
+  MQ7MqttMod.begin(HUB, MQ7, "EFM32TG110/BOARD/MQ7", 10000);
 }
 
-void loop()
-{
+void loop() {
+
   //Update the MQTT communication so it
   // can send statuses and recieve requests
   HUB.update();
+
 }

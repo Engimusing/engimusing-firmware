@@ -15,29 +15,33 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the TMP102  DF11 board using the ZB USB Engimusing board
-    There are 2 devices on this board. An LED and a TMP102 temperature sensor.
-    See https://www.engimusing.com/products/tmp102-1 for more information about the board.
+/* Example for how to print out readings from the TMD26721  DF11 board using the ZB USB Engimusing board
+    There are 2 devices on this board. An LED and a TMD26721 proximity sensor.
+    See https://www.engimusing.com/products/tmd2771-1 for more information about the board.
 */
 
 #if !defined(EFM32ZGUSB)
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <TMP102Device.h>
+#include <TMD26721Device.h>
 #include <Wire.h>
 
-TMP102Device TMP102;
+TMD26721Device TMD26721;
 
 void setup()
 {
   Serial.begin(115200);
 
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple TMP102 example 0");
+  Serial.println("Simple TMD26721 example 0");
 
   
-  TMP102.begin(Wire0, 5, true);
+  //Initialize the TMD26721 which will report the proximity every 10 seconds
+  // The 4 parameter is the number of pulses. It can be anything between 0 and 255.
+  // If it is 0 then it will act more like a light detector than a proximity detector.
+  
+  TMD26721.begin(Wire, 5, 4);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -48,7 +52,7 @@ void loop()
 
   static int on = HIGH;
   
-  TMP102.update();
+  TMD26721.update();
   
   if(millis() - lastMillis > printDelay)
   {
@@ -56,10 +60,9 @@ void loop()
     
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
-  float temp = TMP102.temperature();
-  Serial.print("temperature = ");
-  Serial.println(temp);
-
+  uint32_t proximity = TMD26721.proximityData();
+  Serial.print("proximity = ");
+  Serial.println(proximity);
     
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }

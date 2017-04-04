@@ -1,6 +1,6 @@
 /*
   Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
-
+  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -16,109 +16,119 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 /* Example for how to print out readings from the MPU9150 RS232x2 Engimusing board
- *  See http://www.engimusing.com/products/mpu9150-3 for more information about the board.
- */
+    There are 2 devices on this board. An LED and a MPU9150 9-axis Motion Tracker.
+    See https://www.engimusing.com for more information about the board.
+*/
 
 #if !defined(EFM32ZG108)
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <Wire.h>
-
-#include "Arduino.h"
-
 #include <MPU9150Device.h>
+#include <Wire.h>
 
 MPU9150Device MPU9150;
 
 void setup()
 {
-  Serial.begin(115200);
-  Serial1.begin(115200);
+Serial.begin(115200);
+Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple MPU9150 example 0");
-  Serial1.println("Simple MPU9150 example 1");
+pinMode(LED_BUILTIN, OUTPUT);
+Serial.println("Simple MPU9150 example 0");
+Serial.println("Simple MPU9150 example 1");
 
-  //Initialize the Humidity sensor
-  MPU9150.begin(Wire0, 3, 6);
+
+MPU9150.begin(Wire0, 3, 6);
 }
+
+int lastMillis = 0; // store the last time the current was printed.
+int printDelay = 1000; //print every second.
 
 void loop()
 {
 
-  static int on = HIGH;
+static int on = HIGH;
 
-  digitalWrite(LED_BUILTIN, on);   // turn the LED on (HIGH is the voltage level)
-  
-  
+MPU9150.update();
+
+if(millis() - lastMillis > printDelay)
+{
+lastMillis = millis();
+
+digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+
   float temp;
   MPU9150.getTemp(temp);
   Serial.print("temperature = ");
   Serial.print(temp);
   Serial.println(" C");
   
+  int cX;
+  int cY;
+  int cZ;
+  MPU9150.getCompassData(cX,cY,cZ);
+  Serial.print("Compass = (");
+  Serial.print(cX);
+  Serial.print(",");
+  Serial.print(cY);
+  Serial.print(",");
+  Serial.print(cZ);
+  Serial.println(")");
+  
+  int gX;
+  int gY;
+  int gZ;
+  MPU9150.getGyroData(gX,gY,gZ);
+  Serial.print("Gyro = (");
+  Serial.print(gX);
+  Serial.print(",");
+  Serial.print(gY);
+  Serial.print(",");
+  Serial.print(gZ);
+  Serial.println(")");
+  
+  int aX;
+  int aY;
+  int aZ;
+  
+  MPU9150.getAccelData(aX,aY,aZ);
+  Serial.print("Acceleration = (");
+  Serial.print(aX);
+  Serial.print(",");
+  Serial.print(aY);
+  Serial.print(",");
+  Serial.print(aZ);
+  Serial.println(")");
+
   Serial1.print("temperature = ");
   Serial1.print(temp);
   Serial1.println(" C");
   
-  int x;
-  int y;
-  int z;
-  MPU9150.getCompassData(x,y,z);
-  Serial.print("Compass = (");
-  Serial.print(x);
-  Serial.print(",");
-  Serial.print(y);
-  Serial.print(",");
-  Serial.print(z);
-  Serial.println(")");
-  
   Serial1.print("Compass = (");
-  Serial1.print(x);
+  Serial1.print(cX);
   Serial1.print(",");
-  Serial1.print(y);
+  Serial1.print(cY);
   Serial1.print(",");
-  Serial1.print(z);
+  Serial1.print(cZ);
   Serial1.println(")");
-  
-  
-  MPU9150.getGyroData(x,y,z);
-  Serial.print("Gyro = (");
-  Serial.print(x);
-  Serial.print(",");
-  Serial.print(y);
-  Serial.print(",");
-  Serial.print(z);
-  Serial.println(")");
   
   Serial1.print("Gyro = (");
-  Serial1.print(x);
+  Serial1.print(gX);
   Serial1.print(",");
-  Serial1.print(y);
+  Serial1.print(gY);
   Serial1.print(",");
-  Serial1.print(z);
+  Serial1.print(gZ);
   Serial1.println(")");
-  
-  MPU9150.getAccelData(x,y,z);
-  Serial.print("Acceleration = (");
-  Serial.print(x);
-  Serial.print(",");
-  Serial.print(y);
-  Serial.print(",");
-  Serial.print(z);
-  Serial.println(")");
-  
+
   Serial1.print("Acceleration = (");
-  Serial1.print(x);
+  Serial1.print(aX);
   Serial1.print(",");
-  Serial1.print(y);
+  Serial1.print(aY);
   Serial1.print(",");
-  Serial1.print(z);
+  Serial1.print(aZ);
   Serial1.println(")");
-  
-  delay(1000);                       // wait for a second
-  
-  on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  
+
+on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
+}
 }
