@@ -15,19 +15,19 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the MQ7 RS232x2 Engimusing board
-    There are 2 devices on this board. An LED and a MQ7 CO detector.
-    See https://www.engimusing.com/products/gas-4 for more information about the board.
+/* Example for how to print out readings from the ACS716 RS232x2 Engimusing board
+    There are 2 devices on this board. An LED and a ACS716 current sensor.
+    See http://www.engimusing.com/products/ACS716-1 for more information about the board.
 */
 
 #if !defined(EFM32TG110)
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
 
-#include <MQ7Device.h>
+#include <ACS716Device.h>
 
 
-MQ7Device MQ7;
+ACS716Device ACS716;
 
 void setup()
 {
@@ -35,16 +35,15 @@ Serial.begin(115200);
 Serial1.begin(115200);
 
 pinMode(LED_BUILTIN, OUTPUT);
-Serial.println("Simple MQ7 example 0");
-Serial1.println("Simple MQ7 example 1");
+Serial.println("Simple ACS716 example 0");
+Serial1.println("Simple ACS716 example 1");
 
 
-  //Initialize the MQ7 CO Sensor
-  //Pins:
-  // PWM Controller - 7
-  // Analog Sensor Input - A0
-  
-MQ7.begin(7, A0);
+    //Initialize the ACS716 which will report the current every 10 seconds
+    // The two parameters A1 are the power pin and power feedback pin which in this case are the same
+    // other implementations they may not be the same and can both be -1 which means neither is connected
+  // The A0 parameter is the ADC pin that is connected to the ACS716 output pin.
+ACS716.begin(ACS716Device::ACS716_6BB, 8, 0, 11, 100);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -55,7 +54,7 @@ void loop()
 
 static int on = HIGH;
 
-MQ7.update();
+ACS716.update();
 
 if(millis() - lastMillis > printDelay)
 {
@@ -63,17 +62,14 @@ lastMillis = millis();
 
 digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
 
-  uint32_t alertValue = MQ7.currentAlertValue();
-  const char * state = MQ7.currentAlertText();
-  Serial.print("value = ");
-  Serial.print(alertValue);
-  Serial.print(" state = ");
-  Serial.println(state);
+    float current = ACS716.instantCurrent();
+    Serial.print("Current Amperage = ");
+    Serial.println(current);
+  
 
-  Serial1.print("value = ");
-  Serial1.print(alertValue);
-  Serial1.print(" state = ");
-  Serial1.println(state);
+    Serial1.print("Current Amperage = ");
+    Serial1.println(current);
+  
 
 on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
 }

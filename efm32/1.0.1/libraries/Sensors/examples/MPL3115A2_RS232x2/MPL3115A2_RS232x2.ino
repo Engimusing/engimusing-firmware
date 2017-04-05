@@ -31,15 +31,15 @@ MPL3115A2Device MPL3115A2;
 
 void setup()
 {
-  Serial.begin(115200);
-  Serial1.begin(115200);
+Serial.begin(115200);
+Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple MPL3115A2 example 0");
-  Serial.println("Simple MPL3115A2 example 1");
+pinMode(LED_BUILTIN, OUTPUT);
+Serial.println("Simple MPL3115A2 example 0");
+Serial1.println("Simple MPL3115A2 example 1");
 
-  
-  MPL3115A2.begin(Wire0, 3);
+
+MPL3115A2.begin(Wire0, 3);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -48,35 +48,35 @@ int printDelay = 1000; //print every second.
 void loop()
 {
 
-  static int on = HIGH;
+static int on = HIGH;
 
-  MPL3115A2.update();
+MPL3115A2.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
+if(millis() - lastMillis > printDelay)
+{
+lastMillis = millis();
 
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-    
-    float pressue = MPL3115A2.readPressure();
-    float altitude = MPL3115A2.readAltitude();
-    float temp = MPL3115A2.readTemp();
-    Serial.print("Pressure = ");
-    Serial.print(pressue);
-    Serial.print(" Pa Altitude = ");
-    Serial.print(altitude);
-    Serial.print(" M temperature = ");
-    Serial.print(temp);
-    Serial.println(" C");
-    
-    Serial1.print("Pressure = ");
-    Serial1.print(pressue);
-    Serial1.print(" Pa Altitude = ");
-    Serial1.print(altitude);
-    Serial1.print(" M temperature = ");
-    Serial1.print(temp);
-    Serial1.println(" C");
+digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
 
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+  float pressue = MPL3115A2.readPressure();
+  float altitude = MPL3115A2.readAltitude();
+  float temp = MPL3115A2.readTemp();
+  Serial.print("Pressure = ");
+  Serial.print(pressue);
+  Serial.print(" Pa Altitude = ");
+  Serial.print(altitude);
+  Serial.print(" M temperature = ");
+  Serial.print(temp);
+  Serial.println(" C");
+
+  Serial1.print("Pressure = ");
+  Serial1.print(pressue);
+  Serial1.print(" Pa Altitude = ");
+  Serial1.print(altitude);
+  Serial1.print(" M temperature = ");
+  Serial1.print(temp);
+  Serial1.println(" C");
+
+on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
+}
 }

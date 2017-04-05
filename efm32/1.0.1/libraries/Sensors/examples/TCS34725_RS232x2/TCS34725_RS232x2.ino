@@ -31,15 +31,15 @@ TCS34725Device TCS34725;
 
 void setup()
 {
-  Serial.begin(115200);
-  Serial1.begin(115200);
+Serial.begin(115200);
+Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple TCS34725 example 0");
-  Serial.println("Simple TCS34725 example 1");
+pinMode(LED_BUILTIN, OUTPUT);
+Serial.println("Simple TCS34725 example 0");
+Serial1.println("Simple TCS34725 example 1");
 
-  
-  TCS34725.begin(Wire0, 7, TCS34725_INTEGRATIONTIME_700MS);
+
+TCS34725.begin(Wire0, 7, TCS34725_INTEGRATIONTIME_700MS);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -48,51 +48,51 @@ int printDelay = 1000; //print every second.
 void loop()
 {
 
-  static int on = HIGH;
+static int on = HIGH;
 
-  TCS34725.update();
+TCS34725.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
+if(millis() - lastMillis > printDelay)
+{
+lastMillis = millis();
 
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+
+  uint16_t r = 0;
+  uint16_t g = 0;
+  uint16_t b = 0;
+  uint16_t c = 0;
+  TCS34725.sampleData();
+  TCS34725.getRawData(r,g,b,c);
+  float colorTemp = TCS34725.calculateColorTemperature(r,g,b);
+  float lux = TCS34725.calculateLux(r,g,b);
     
-    uint16_t r = 0;
-    uint16_t g = 0;
-    uint16_t b = 0;
-    uint16_t c = 0;
-    TCS34725.sampleData();
-    TCS34725.getRawData(r,g,b,c);
-    float colorTemp = TCS34725.calculateColorTemperature(r,g,b);
-    float lux = TCS34725.calculateLux(r,g,b);
+  Serial.print("red = ");
+  Serial.print(r);
+  Serial.print(" green = ");
+  Serial.print(g);
+  Serial.print(" blue = ");
+  Serial.print(b);
+  Serial.print(" clear = ");
+  Serial.println(c);
+  Serial.print(" color temperature = ");
+  Serial.print(colorTemp);
+  Serial.print(" luminance = ");
+  Serial.println(lux);
 
-    Serial.print("red = ");
-    Serial.print(r);
-    Serial.print(" green = ");
-    Serial.print(g);
-    Serial.print(" blue = ");
-    Serial.print(b);
-    Serial.print(" clear = ");
-    Serial.println(c);
-    Serial.print(" color temperature = ");
-    Serial.print(colorTemp);
-    Serial.print(" luminance = ");
-    Serial.println(lux);
-    
-    Serial1.print("red = ");
-    Serial1.print(r);
-    Serial1.print(" green = ");
-    Serial1.print(g);
-    Serial1.print(" blue = ");
-    Serial1.print(b);
-    Serial1.print(" clear = ");
-    Serial1.println(c);
-    Serial1.print(" color temperature = ");
-    Serial1.print(colorTemp);
-    Serial1.print(" luminance = ");
-    Serial1.println(lux);
+  Serial1.print("red = ");
+  Serial1.print(r);
+  Serial1.print(" green = ");
+  Serial1.print(g);
+  Serial1.print(" blue = ");
+  Serial1.print(b);
+  Serial1.print(" clear = ");
+  Serial1.println(c);
+  Serial1.print(" color temperature = ");
+  Serial1.print(colorTemp);
+  Serial1.print(" luminance = ");
+  Serial1.println(lux);
 
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
+}
 }
