@@ -375,7 +375,7 @@ Device::ValueStruct ADXL362Device::readValue(int index)
     return output;
 }
 
-float ADXL362Device::numValues()
+uint32_t ADXL362Device::numValues()
 {
     return 3; 
 }

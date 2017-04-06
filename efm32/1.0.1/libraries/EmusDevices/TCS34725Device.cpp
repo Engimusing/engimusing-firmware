@@ -374,7 +374,7 @@ Device::ValueStruct TCS34725Device::readValue(int index)
     return output;
 }
 
-float TCS34725Device::numValues()
+uint32_t TCS34725Device::numValues()
 {
     return 6; 
 }

@@ -141,7 +141,7 @@ Device::ValueStruct NOA1212Device::readValue(int index)
     return output;
 }
 
-float NOA1212Device::numValues()
+uint32_t NOA1212Device::numValues()
 {
     return 1; 
 }

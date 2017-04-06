@@ -32,7 +32,7 @@ class TMP102Device : public Device
         virtual float temperature();
         
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
    protected:   
         bool myExtendedMode;
         TwoWire *myWire;

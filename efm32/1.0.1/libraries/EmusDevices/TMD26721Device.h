@@ -32,7 +32,7 @@ class TMD26721Device : public Device
         virtual int proximityData();
         
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
    protected:   
         TwoWire *myWire; 

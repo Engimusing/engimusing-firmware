@@ -178,7 +178,7 @@ Device::ValueStruct HTU21DDevice::readValue(int index)
     return output;
 }
 
-float HTU21DDevice::numValues()
+uint32_t HTU21DDevice::numValues()
 {
     return 2; 
 }

@@ -39,7 +39,7 @@ class TCS3200Device : public Device
         
 
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
    protected:   
    
         // Operation modes area, controlled by hi/lo settings on S0 and S1 pins.

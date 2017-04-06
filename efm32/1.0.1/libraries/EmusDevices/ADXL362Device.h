@@ -83,7 +83,7 @@ class ADXL362Device : public Device
         //		- Free Fall, Linked Mode, Loop Mode
              
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
         void setMaxGeesSetting(Sensitivity maxGeesSetting);
         

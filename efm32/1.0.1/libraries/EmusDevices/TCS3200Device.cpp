@@ -184,7 +184,7 @@ Device::ValueStruct TCS3200Device::readValue(int index)
     return output;
 }
 
-float TCS3200Device::numValues()
+uint32_t TCS3200Device::numValues()
 {
     return 4; 
 }

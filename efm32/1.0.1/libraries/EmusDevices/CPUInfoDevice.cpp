@@ -73,7 +73,7 @@ Device::ValueStruct CPUInfoDevice::readValue(int index)
     return output;
 }
 
-float CPUInfoDevice::numValues()
+uint32_t CPUInfoDevice::numValues()
 {
     return 2; 
 }

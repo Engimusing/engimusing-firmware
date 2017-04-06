@@ -146,7 +146,7 @@ Device::ValueStruct MQ7Device::readValue(int index)
     return output;
 }
 
-float MQ7Device::numValues()
+uint32_t MQ7Device::numValues()
 {
     return 2; 
 }

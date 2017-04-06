@@ -148,7 +148,7 @@ class TCS34725Device : public Device
     void     enable(void);
 
     virtual Device::ValueStruct readValue(int index);
-    virtual float numValues(); 
+    virtual uint32_t numValues(); 
  protected:
     void disable(void);
  private:

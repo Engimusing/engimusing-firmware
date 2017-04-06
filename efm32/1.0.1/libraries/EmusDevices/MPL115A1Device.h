@@ -34,7 +34,7 @@ class MPL115A1Device : public Device
         virtual float calculatePressurekPa();
          
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
     protected:   
     

@@ -50,7 +50,7 @@ class Device
         
         virtual ValueStruct readValue(int index) = 0;
         
-        virtual float numValues()
+        virtual uint32_t numValues()
         {
             return 0;
         }

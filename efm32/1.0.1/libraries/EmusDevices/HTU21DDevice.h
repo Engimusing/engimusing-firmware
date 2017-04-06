@@ -31,7 +31,7 @@ class HTU21DDevice : public Device
         virtual void begin(TwoWire &wire, int32_t enablePin);
         
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
         virtual unsigned int readTemp();
         virtual unsigned int readHumidity();

@@ -44,7 +44,7 @@ class MQ7Device : public Device
         virtual void update(void);
         
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
         virtual uint32_t currentAlertValue();
         virtual const char *currentAlertText();

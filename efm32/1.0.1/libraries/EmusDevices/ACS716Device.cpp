@@ -125,7 +125,7 @@ Device::ValueStruct ACS716Device::readValue(int index)
     return output;
 }
 
-float ACS716Device::numValues()
+uint32_t ACS716Device::numValues()
 {
     return 1; 
 }

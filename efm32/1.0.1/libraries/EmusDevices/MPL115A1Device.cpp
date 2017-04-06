@@ -325,7 +325,7 @@ Device::ValueStruct MPL115A1Device::readValue(int index)
     return output;
 }
 
-float MPL115A1Device::numValues()
+uint32_t MPL115A1Device::numValues()
 {
     return 2; 
 }

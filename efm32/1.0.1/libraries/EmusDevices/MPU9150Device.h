@@ -36,7 +36,7 @@ class MPU9150Device : public Device
         virtual void getAccelData(int& x, int& y, int& z);
 
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
     protected:   
 

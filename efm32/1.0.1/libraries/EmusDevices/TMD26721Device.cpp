@@ -141,7 +141,7 @@ Device::ValueStruct TMD26721Device::readValue(int index)
     return output;
 }
 
-float TMD26721Device::numValues()
+uint32_t TMD26721Device::numValues()
 {
     return 1; 
 }

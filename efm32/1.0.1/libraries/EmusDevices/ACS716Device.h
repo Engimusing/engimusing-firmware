@@ -38,7 +38,7 @@ class ACS716Device : public Device
         virtual float instantCurrent();
          
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
    protected:   
         int32_t myPowerPin;

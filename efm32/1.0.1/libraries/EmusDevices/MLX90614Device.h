@@ -32,7 +32,7 @@ class MLX90614Device : public Device
         virtual float temperature();
          
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
    protected:   
         TwoWire *myWire;

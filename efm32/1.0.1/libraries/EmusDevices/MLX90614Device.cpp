@@ -95,7 +95,7 @@ Device::ValueStruct MLX90614Device::readValue(int index)
     return output;
 }
 
-float MLX90614Device::numValues()
+uint32_t MLX90614Device::numValues()
 {
     return 1; 
 }

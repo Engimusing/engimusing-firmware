@@ -121,7 +121,7 @@ Device::ValueStruct TMP102Device::readValue(int index)
     return output;
 }
 
-float TMP102Device::numValues()
+uint32_t TMP102Device::numValues()
 {
     return 1; 
 }

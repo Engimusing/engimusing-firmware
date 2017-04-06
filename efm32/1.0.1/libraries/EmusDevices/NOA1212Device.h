@@ -39,7 +39,7 @@ class NOA1212Device : public Device
         virtual float instantReflection();
          
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
    protected:   
         int32_t myPowerPin;

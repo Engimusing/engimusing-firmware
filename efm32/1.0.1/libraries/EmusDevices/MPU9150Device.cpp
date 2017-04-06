@@ -360,7 +360,7 @@ Device::ValueStruct MPU9150Device::readValue(int index)
     return output;
 }
 
-float MPU9150Device::numValues()
+uint32_t MPU9150Device::numValues()
 {
     return 10; 
 }

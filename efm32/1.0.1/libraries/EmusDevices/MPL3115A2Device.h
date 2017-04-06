@@ -38,7 +38,7 @@ class MPL3115A2Device : public Device
 
          
         virtual Device::ValueStruct readValue(int index);
-        virtual float numValues(); 
+        virtual uint32_t numValues(); 
         
     protected:   
     
