@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the MLX92212  DF11 board using the ZB USB Engimusing board
+/* Example for how to setup the MQTT client for the MLX92212 DF11 board using the EFM32ZGUSB Engimusing board
     There are 2 devices on this board. An LED and a MLX92212 3-Wire Hall Effect Latch / Switch.
     See https://www.engimusing.com/products/m92212-1 for more information about the board.
 */
@@ -24,61 +24,53 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+//Include the MqttModule to get the MQTT client classes
+#include <MqttHub.h>
+#include <MqttPort.h>
+#include <MqttModule.h>
+
 #include <MLX92212Device.h>
 
 
+/*
+  EFM32ZGUSB Commands:
+  {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"STATUS"}
+
+  {"TOP":"EFM32ZGUSB/BOARD/MLX92212/","PLD":"STATUS"}
+*/
+
+MqttHub HUB;
+MqttSerialPort serialPort;
+
+//MQTT class defintions
+// The MqttModule classes are automatically registered with the COMM
+// object when begin() is called so they can be updated
+// whenever HUB.update() is called.
+OnOffCtlModule LEDCtrl;
+
 MLX92212Device MLX92212;
+SimpleMqttModule MLX92212MqttMod;
 
-void setup()
+void setup() 
 {
-  Serial.begin(115200);
+  serialPort.begin(HUB, Serial);
 
-  pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("Simple MLX92212 example 0");
+  //Initialize the on off control to connect it to
+  // the LED that is on the board
+  LEDCtrl.begin(HUB, 13, "EFM32ZGUSB/BOARD/LED", HIGH);
 
   
   MLX92212.begin(7, 10, 20);
+  MLX92212MqttMod.begin(HUB, MLX92212, "EFM32ZGUSB/BOARD/MLX92212", 10000);
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
-void loop()
+void loop() 
 {
 
-  static int on = HIGH;
+  //Update the MQTT communication so it
+  // can send statuses and recieve requests
+  HUB.update();
 
-  MLX92212.update();
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    bool switchState = MLX92212.switchState();
-    bool risingEdge = MLX92212.risingEdge();
-    bool fallingEdge = MLX92212.fallingEdge();
-    
-    if(switchState)
-    {
-        Serial.println("state = on");
-    }
-    else
-    {
-        Serial.println("state = off");
-    }
-    
-    if(risingEdge)
-    {
-        Serial.println("Rising Edge");
-    }
-    
-    if(fallingEdge)
-    {
-        Serial.println("Falling Edge");
-    }
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
 }
