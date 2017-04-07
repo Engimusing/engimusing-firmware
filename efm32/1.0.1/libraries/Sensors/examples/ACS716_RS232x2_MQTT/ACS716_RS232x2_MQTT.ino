@@ -66,15 +66,16 @@ void setup()
 
 
   
-    //Initialize the ACS716 which will report the current every 10 seconds
-    // The two parameters A1 are the power pin and power feedback pin which in this case are the same
-    // other implementations they may not be the same and can both be -1 which means neither is connected
+  //Initialize the ACS716 which will report the current every 10 seconds
+  // The two parameters A1 are the power pin and power feedback pin which in this case are the same
+  // other implementations they may not be the same and can both be -1 which means neither is connected
   // The A0 parameter is the ADC pin that is connected to the ACS716 output pin.
   ACS716.begin(ACS716Device::ACS716_6BB, 8, 0, 11, 100);
   ACS716MqttMod.begin(HUB, ACS716, "EFM32TG110/BOARD/ACS716", 10000);
 }
 
-void loop() {
+void loop()
+{
 
   //Update the MQTT communication so it
   // can send statuses and recieve requests

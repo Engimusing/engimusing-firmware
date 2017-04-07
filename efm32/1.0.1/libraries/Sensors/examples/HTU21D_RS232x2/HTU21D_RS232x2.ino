@@ -31,15 +31,15 @@ HTU21DDevice HTU21D;
 
 void setup()
 {
-Serial.begin(115200);
-Serial1.begin(115200);
+  Serial.begin(115200);
+  Serial1.begin(115200);
 
-pinMode(LED_BUILTIN, OUTPUT);
-Serial.println("Simple HTU21D example 0");
-Serial1.println("Simple HTU21D example 1");
+  pinMode(LED_BUILTIN, OUTPUT); 
+  Serial.println("Simple HTU21D example 0");
+  Serial1.println("Simple HTU21D example 1");
 
-
-HTU21D.begin(Wire0, 2);
+  
+  HTU21D.begin(Wire0, 2);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -48,29 +48,29 @@ int printDelay = 1000; //print every second.
 void loop()
 {
 
-static int on = HIGH;
+  static int on = HIGH;
 
-HTU21D.update();
+  HTU21D.update();
 
-if(millis() - lastMillis > printDelay)
-{
-lastMillis = millis();
+  if(millis() - lastMillis > printDelay)
+  {
+    lastMillis = millis();
 
-digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+    
+    float hum = HTU21D.calcHumidity(HTU21D.readHumidity());
+    float temp = HTU21D.calcTemp(HTU21D.readTemp());
+    delay(1000);                       // wait for a second
+    Serial.print("temperature = ");
+    Serial.print(temp);
+    Serial.print("   humidity = ");
+    Serial.println(hum);
+    
+    Serial1.print("temperature = ");
+    Serial1.print(temp);
+    Serial1.print("   humidity = ");
+    Serial1.println(hum);
 
-  float hum = HTU21D.calcHumidity(HTU21D.readHumidity());
-  float temp = HTU21D.calcTemp(HTU21D.readTemp());
-  delay(1000);                       // wait for a second
-  Serial.print("temperature = ");
-  Serial.print(temp);
-  Serial.print("   humidity = ");
-  Serial.println(hum);
-
-  Serial1.print("temperature = ");
-  Serial1.print(temp);
-  Serial1.print("   humidity = ");
-  Serial1.println(hum);
-
-on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-}
+    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
+  }
 }

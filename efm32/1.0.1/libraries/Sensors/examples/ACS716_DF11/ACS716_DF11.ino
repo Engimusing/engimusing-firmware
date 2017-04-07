@@ -61,9 +61,9 @@ void loop()
     digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
     
     float current = ACS716.instantCurrent();
-    
     Serial.print("Current Amperage = ");
     Serial.println(current);
+  
 
     on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
   }

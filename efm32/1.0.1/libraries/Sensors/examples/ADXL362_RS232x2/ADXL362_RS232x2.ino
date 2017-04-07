@@ -31,19 +31,19 @@ ADXL362Device ADXL362;
 
 void setup()
 {
-Serial.begin(115200);
-Serial1.begin(115200);
+  Serial.begin(115200);
+  Serial1.begin(115200);
 
-pinMode(LED_BUILTIN, OUTPUT);
-Serial.println("Simple ADXL362 example 0");
-Serial1.println("Simple ADXL362 example 1");
+  pinMode(LED_BUILTIN, OUTPUT); 
+  Serial.println("Simple ADXL362 example 0");
+  Serial1.println("Simple ADXL362 example 1");
 
-//Initialize the Accelerometer sensor
+  //Initialize the Accelerometer sensor
   //pins are:
   //  2 - VIO
   //  3 - VS
   //  4 - CS 
-ADXL362.begin(2, 3, 4, &SPI);
+  ADXL362.begin(2, 3, 4, &SPI);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -52,40 +52,40 @@ int printDelay = 1000; //print every second.
 void loop()
 {
 
-static int on = HIGH;
+  static int on = HIGH;
 
-ADXL362.update();
+  ADXL362.update();
 
-if(millis() - lastMillis > printDelay)
-{
-lastMillis = millis();
+  if(millis() - lastMillis > printDelay)
+  {
+    lastMillis = millis();
 
-digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
+    
+    float xData;
+    float yData;
+    float zData;
+    ADXL362.sampleXYZT();
+    xData = ADXL362.getXGees();
+    yData = ADXL362.getYGees();
+    zData = ADXL362.getZGees();
 
-  float xData;
-  float yData;
-  float zData;
-  ADXL362.sampleXYZT();
-  xData = ADXL362.getXGees();
-  yData = ADXL362.getYGees();
-  zData = ADXL362.getZGees();
-  
-  Serial.print("X = ");
-  Serial.print(xData);
-  Serial.print(" g Y = ");
-  Serial.print(yData);
-  Serial.print(" g Z = ");
-  Serial.print(zData);
-  Serial.println(" g");
+    Serial.print("X = ");
+    Serial.print(xData);
+    Serial.print(" g Y = ");
+    Serial.print(yData);
+    Serial.print(" g Z = ");
+    Serial.print(zData);
+    Serial.println(" g");
+    
+    Serial1.print("X = ");
+    Serial1.print(xData);
+    Serial1.print(" g Y = ");
+    Serial1.print(yData);
+    Serial1.print(" g Z = ");
+    Serial1.print(zData);
+    Serial1.println(" g");
 
-  Serial1.print("X = ");
-  Serial1.print(xData);
-  Serial1.print(" g Y = ");
-  Serial1.print(yData);
-  Serial1.print(" g Z = ");
-  Serial1.print(zData);
-  Serial1.println(" g");
-
-on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-}
+    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
+  }
 }
