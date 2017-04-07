@@ -109,22 +109,6 @@ class MomentarySwitchModule : public MqttModule
 
 };
 
-class DigitalQre1113SwitchModule : public MqttModule
-{
-
- public:
-  virtual void begin(MqttHub &hub, uint8_t pin, const char* module, uint8_t bounceCount, uint32_t enablePin = 0, uint32_t onThreshold = 400);
-  virtual uint8_t readPin();
-  virtual void update(void); // publish changes in switch state
- 
- private:
-  uint32_t myOnThreshold;
-  uint32_t myPin;  // connector pin connected to switch
-  uint8_t myEventInProgress; // switch event in progress
-  uint8_t myBounceCnt; // bounce filter value, 0 = no filter, 0xff = momentary
-
-};
-
 // ------------------------------- SimpleMqttModule -------------------------
 class SimpleMqttModule : public MqttModule
 {

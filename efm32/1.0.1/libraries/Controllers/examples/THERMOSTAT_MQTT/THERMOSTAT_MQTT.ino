@@ -33,6 +33,8 @@
 
 #include <TMP102Device.h>
 
+#include <QRE1113Device.h>
+
 #include <Wire.h>
 /*
   THERM Commands:
@@ -99,9 +101,13 @@ OnOffCtlModule AQH3213_FAN;
 TMP102Device TMP102;
 SimpleMqttModule TMP102MqttMod;
 
-DigitalQre1113SwitchModule ReflectiveSensorSwitch0;
-DigitalQre1113SwitchModule ReflectiveSensorSwitch1;
-DigitalQre1113SwitchModule ReflectiveSensorSwitch2;
+QRE1113Device ReflectiveSensorSwitch0;
+SimpleMqttModule ReflectiveSensorSwitch0_MqttMod;
+QRE1113Device ReflectiveSensorSwitch1;
+SimpleMqttModule ReflectiveSensorSwitch1_MqttMod;
+QRE1113Device ReflectiveSensorSwitch2;
+SimpleMqttModule ReflectiveSensorSwitch2_MqttMod;
+
 
 
 void setup()
@@ -136,11 +142,13 @@ void setup()
   //On the side of the garage door board with less on it there are
   // three QRE1113 reflectivity sensors. These work well as proximity sensor
   // buttons.
-  // WIFI loops slower so we need to have a lower bounce value
-  ReflectiveSensorSwitch0.begin(HUB, 30, "THERM/BOARD/QRE0", 3, 1); 
-  ReflectiveSensorSwitch1.begin(HUB, 31, "THERM/BOARD/QRE1", 3, 3);
-  ReflectiveSensorSwitch2.begin(HUB, 15, "THERM/BOARD/QRE2", 3, 45);
-    
+  ReflectiveSensorSwitch0.begin(1, 30, 10);
+  ReflectiveSensorSwitch0_MqttMod.begin(HUB, ReflectiveSensorSwitch0, "GDOOR/BOARD/QRE0", 10000);
+  ReflectiveSensorSwitch1.begin(3, 31, 10);
+  ReflectiveSensorSwitch1_MqttMod.begin(HUB, ReflectiveSensorSwitch1, "GDOOR/BOARD/QRE1", 10000);
+  ReflectiveSensorSwitch2.begin(45, 15, 10);
+  ReflectiveSensorSwitch2_MqttMod.begin(HUB, ReflectiveSensorSwitch2, "GDOOR/BOARD/QRE2", 10000);
+  
 }
 
 void loop()

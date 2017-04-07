@@ -26,6 +26,7 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 #include <CPUInfoDevice.h>
+#include <QRE1113Device.h>
 
 /*
   EFMUSB Commands:
@@ -81,7 +82,9 @@ MqttSerialPort serialPort;
 #define BLUE_LED     14
 #define RED_LED      15
 
-DigitalQre1113SwitchModule HABLTS;
+
+QRE1113Device HABLTS;
+SimpleMqttModule HABLTSMqttMod;
 MomentarySwitchModule HABS1;
 MomentarySwitchModule HABS2;
 DetectorSwitchModule HABREED;
@@ -111,7 +114,8 @@ void setup()
   EFMCPU.begin();
   EFMCPUMqttMod.begin(HUB, EFMCPU, "EFMUSB/CPU", 5000);
 
-  HABLTS.begin(HUB, LTSENS_PIN, "HAB/LTSENSOR", 5, 400);
+  HABLTS.begin(-1, LTSENS_PIN, 5);
+  HABLTSMqttMod.begin(HUB, HABLTS, "GDOOR/BOARD/QRE0", 1000);
   HABS1.begin(HUB, SW1_PIN, "HAB/SW1", 20);
   HABS2.begin(HUB, SW2_PIN, "HAB/SW2", 20);
   HABREED.begin(HUB, REEDSW_PIN, "HAB/REED", 20);

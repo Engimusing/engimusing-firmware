@@ -19,7 +19,7 @@ Group THERM_MQTT (Thermostat_Tutorial)
     //TMP102 temperature reading
     String TMP102CState "Temperature[%s °C]" <temperature> (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/TMP102?/DEG_C:state:default]"}
     
-    String QRE1113State0 "Button 0 State[%s]" (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/QRE0?/SWITCH:state:default]"}
-    String QRE1113State1 "Button 1 State[%s]" (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/QRE1?/SWITCH:state:default]"}
-    String QRE1113State2 "Button 2 State[%s]" (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/QRE2?/SWITCH:state:default]"}
+    String QRE1113State0 "Button 0 State[%s]" (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/QRE0?/CURRENT_STATE:state:default]"}
+    String QRE1113State1 "Button 1 State[%s]" (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/QRE1?/CURRENT_STATE:state:default]"}
+    String QRE1113State2 "Button 2 State[%s]" (THERM_MQTT) {mqtt="<[localbroker:THERM/BOARD/QRE2?/CURRENT_STATE:state:default]"}
     

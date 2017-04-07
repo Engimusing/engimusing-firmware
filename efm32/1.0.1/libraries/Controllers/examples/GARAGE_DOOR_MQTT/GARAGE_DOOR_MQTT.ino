@@ -37,6 +37,8 @@
 
 #include <TMP102Device.h>
 
+#include <QRE1113Device.h>
+
 #include <Wire.h>
 /*
   GDOOR Commands:
@@ -89,9 +91,12 @@ OnOffCtlModule LEDCtrl_BLUE;
 TMP102Device TMP102;
 SimpleMqttModule TMP102MqttMod;
 
-DigitalQre1113SwitchModule ReflectiveSensorSwitch0;
-DigitalQre1113SwitchModule ReflectiveSensorSwitch1;
-DigitalQre1113SwitchModule ReflectiveSensorSwitch2;
+QRE1113Device ReflectiveSensorSwitch0;
+SimpleMqttModule ReflectiveSensorSwitch0_MqttMod;
+QRE1113Device ReflectiveSensorSwitch1;
+SimpleMqttModule ReflectiveSensorSwitch1_MqttMod;
+QRE1113Device ReflectiveSensorSwitch2;
+SimpleMqttModule ReflectiveSensorSwitch2_MqttMod;
 
 MQ7Device Mq7;
 SimpleMqttModule Mq7MqttMod;
@@ -129,10 +134,13 @@ void setup()
   //On the side of the garage door board with less on it there are
   // three QRE1113 reflectivity sensors. These work well as proximity sensor
   // buttons.
-  ReflectiveSensorSwitch0.begin(HUB, 30, "GDOOR/BOARD/QRE0", 10, 1);
-  ReflectiveSensorSwitch1.begin(HUB, 31, "GDOOR/BOARD/QRE1", 10, 3);
-  ReflectiveSensorSwitch2.begin(HUB, 15, "GDOOR/BOARD/QRE2", 10, 45);
-
+  ReflectiveSensorSwitch0.begin(1, 30, 10);
+  ReflectiveSensorSwitch0_MqttMod.begin(HUB, ReflectiveSensorSwitch0, "GDOOR/BOARD/QRE0", 10000);
+  ReflectiveSensorSwitch1.begin(3, 31, 10);
+  ReflectiveSensorSwitch1_MqttMod.begin(HUB, ReflectiveSensorSwitch1, "GDOOR/BOARD/QRE1", 10000);
+  ReflectiveSensorSwitch2.begin(45, 15, 10);
+  ReflectiveSensorSwitch2_MqttMod.begin(HUB, ReflectiveSensorSwitch2, "GDOOR/BOARD/QRE2", 10000);
+  
   //The large round orange object on the side of the garage door board with more on it
   // is the MQ7 CO detector.
   Mq7.begin(48, 33);
