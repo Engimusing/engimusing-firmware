@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the MPL115A1  DF11 board using the ZB USB Engimusing board
+/* Example for how to print out readings from the MPL115A1  DF11 board using the EFM32ZGUSB Engimusing board
     There are 2 devices on this board. An LED and a MPL115A1 pressure/temperature sensor.
     See https://www.engimusing.com/products/m115a1-1 for more information about the board.
 */
@@ -26,7 +26,6 @@
 
 #include <MPL115A1Device.h>
 #include <SPI.h>
-
 MPL115A1Device MPL115A1;
 
 void setup()
@@ -38,6 +37,7 @@ void setup()
 
   
   MPL115A1.begin(10, 6, 4, SPI);
+
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -49,6 +49,7 @@ void loop()
   static int on = HIGH;
 
   MPL115A1.update();
+  
 
   if(millis() - lastMillis > printDelay)
   {

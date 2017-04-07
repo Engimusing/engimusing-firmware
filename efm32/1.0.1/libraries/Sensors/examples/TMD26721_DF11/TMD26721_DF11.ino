@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the TMD26721  DF11 board using the ZB USB Engimusing board
+/* Example for how to print out readings from the TMD26721  DF11 board using the EFM32ZGUSB Engimusing board
     There are 2 devices on this board. An LED and a TMD26721 proximity sensor.
     See https://www.engimusing.com/products/tmd2771-1 for more information about the board.
 */
@@ -26,7 +26,6 @@
 
 #include <TMD26721Device.h>
 #include <Wire.h>
-
 TMD26721Device TMD26721;
 
 void setup()
@@ -42,6 +41,7 @@ void setup()
   // If it is 0 then it will act more like a light detector than a proximity detector.
   
   TMD26721.begin(Wire, 5, 4);
+
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -53,6 +53,7 @@ void loop()
   static int on = HIGH;
 
   TMD26721.update();
+  
 
   if(millis() - lastMillis > printDelay)
   {

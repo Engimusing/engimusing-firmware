@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the MLX90614  DF11 board using the ZB USB Engimusing board
+/* Example for how to print out readings from the MLX90614  DF11 board using the EFM32ZGUSB Engimusing board
     There are 2 devices on this board. An LED and a MLX90614 IR temperature sensor.
     See https://www.engimusing.com/products/mlx9-1 for more information about the board.
 */
@@ -26,7 +26,6 @@
 
 #include <MLX90614Device.h>
 #include <Wire.h>
-
 MLX90614Device MLX90614;
 
 void setup()
@@ -38,6 +37,7 @@ void setup()
 
   
   MLX90614.begin(Wire0, 10);
+
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -49,6 +49,7 @@ void loop()
   static int on = HIGH;
 
   MLX90614.update();
+  
 
   if(millis() - lastMillis > printDelay)
   {

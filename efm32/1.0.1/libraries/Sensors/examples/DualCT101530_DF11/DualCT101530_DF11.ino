@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the DualCT101530  DF11 board using the ZB USB Engimusing board
+/* Example for how to print out readings from the DualCT101530  DF11 board using the EFM32ZGUSB Engimusing board
     There are 2 devices on this board. An LED and a DualCT101530 Dual Reed Switches.
     See https://www.engimusing.com/products/reedsw-2 for more information about the board.
 */
@@ -25,7 +25,6 @@
 #endif
 
 #include <DualCT101530Device.h>
-
 
 DualCT101530Device DualCT101530;
 
@@ -38,6 +37,7 @@ void setup()
 
   
   DualCT101530.begin(4, 6, 3, 5, 50);
+
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -49,6 +49,7 @@ void loop()
   static int on = HIGH;
 
   DualCT101530.update();
+  
 
   if(millis() - lastMillis > printDelay)
   {

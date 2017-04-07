@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the TCS3200  DF11 board using the ZB USB Engimusing board
+/* Example for how to print out readings from the TCS3200  DF11 board using the EFM32ZGUSB Engimusing board
     There are 2 devices on this board. An LED and a TCS3200 color sensor.
     See https://www.engimusing.com/collections/sensors/products/tcs3200-1 for more information about the board.
 */
@@ -25,7 +25,6 @@
 #endif
 
 #include <TCS3200Device.h>
-
 
 TCS3200Device TCS3200;
 
@@ -39,6 +38,7 @@ void setup()
   
   //sets up the 5 pins needed to setup and communicate with the TCS3200
   TCS3200.begin(2,4,6,8,7);
+
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -50,6 +50,7 @@ void loop()
   static int on = HIGH;
 
   TCS3200.update();
+  
 
   if(millis() - lastMillis > printDelay)
   {

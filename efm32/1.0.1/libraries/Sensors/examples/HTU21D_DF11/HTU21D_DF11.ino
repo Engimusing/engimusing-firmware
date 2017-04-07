@@ -15,7 +15,7 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/* Example for how to print out readings from the HTU21D  DF11 board using the ZB USB Engimusing board
+/* Example for how to print out readings from the HTU21D  DF11 board using the EFM32ZGUSB Engimusing board
     There are 2 devices on this board. An LED and a HTU21D humidity and temperature sensor.
     See https://www.engimusing.com/products/htu21d-1 for more information about the board.
 */
@@ -26,7 +26,6 @@
 
 #include <HTU21DDevice.h>
 #include <Wire.h>
-
 HTU21DDevice HTU21D;
 
 void setup()
@@ -38,6 +37,7 @@ void setup()
 
   
   HTU21D.begin(Wire0, 10);
+
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -49,6 +49,7 @@ void loop()
   static int on = HIGH;
 
   HTU21D.update();
+  
 
   if(millis() - lastMillis > printDelay)
   {
