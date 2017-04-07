@@ -70,7 +70,7 @@ void MLX92212Device::update()
         myCurStateCount++;
         if(myCurStateCount > myDebounceCount)
         {
-            if(myLastState = HIGH)
+            if(myLastState == HIGH)
             {
                 myFallingEdge = true;
             }
@@ -85,6 +85,7 @@ void MLX92212Device::update()
     {
         myCurStateCount = 0;
     }
+    delay(1);
 }
 
 Device::ValueStruct MLX92212Device::readValue(int index)
