@@ -22,15 +22,15 @@
 
 #include "Device.h"
 
-class DualCT101530Device : public Device
+class CT101530Device : public Device
 {
  
    public:
-        virtual void begin(int32_t switchPin1, int32_t switchPin2, int32_t gndPin1, int32_t gndPin2, uint32_t debounceCount);
-        virtual bool switchState(uint8_t id);
+        virtual void begin(int32_t switchPin, int32_t gndPin, uint32_t debounceCount);
+        virtual bool switchState();
          
-        virtual bool risingEdge(uint8_t id);
-        virtual bool fallingEdge(uint8_t id);
+        virtual bool risingEdge();
+        virtual bool fallingEdge();
          
         virtual Device::ValueStruct readValue(int index);
         virtual uint32_t numValues(); 
@@ -39,11 +39,11 @@ class DualCT101530Device : public Device
         
    protected:   
         
-        bool myFallingEdge[2];
-        bool myRisingEdge[2];
-        uint32_t mySwitchPin[2];
+        bool myFallingEdge;
+        bool myRisingEdge;
+        uint32_t mySwitchPin;
         uint32_t myDebounceCount;
-        bool myLastState[2];
-        uint32_t myCurStateCount[2];
+        bool myLastState;
+        uint32_t myCurStateCount;
       
 };

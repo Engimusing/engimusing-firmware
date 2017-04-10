@@ -24,10 +24,11 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <DualCT101530Device.h>
+#include <CT101530Device.h>
 
 
-DualCT101530Device DualCT101530;
+CT101530Device ReedSwitch0;
+CT101530Device ReedSwitch1;
 
 void setup()
 {
@@ -39,7 +40,8 @@ void setup()
   Serial1.println("Simple DualCT101530 example 1");
 
   
-  DualCT101530.begin(6, 7, -1, -1, 50);
+  ReedSwitch0.begin(6,-1,50);
+  ReedSwitch1.begin(7,-1,50);
 }
 
 int lastMillis = 0; // store the last time the current was printed.
@@ -50,7 +52,8 @@ void loop()
 
   static int on = HIGH;
 
-  DualCT101530.update();
+  ReedSwitch0.update();
+  ReedSwitch1.update();
 
   if(millis() - lastMillis > printDelay)
   {
@@ -61,13 +64,17 @@ void loop()
     bool switchState[2];
     bool risingEdge[2];
     bool fallingEdge[2];
+    
+    switchState[0] = ReedSwitch0.switchState();
+    risingEdge[0] = ReedSwitch0.risingEdge();
+    fallingEdge[0] = ReedSwitch0.fallingEdge();
       
+    switchState[1] = ReedSwitch1.switchState();
+    risingEdge[1] = ReedSwitch1.risingEdge();
+    fallingEdge[1] = ReedSwitch1.fallingEdge();
+        
     for(int i = 0; i < 2; i++)
     {
-      switchState[i] = DualCT101530.switchState(i);
-      risingEdge[i] = DualCT101530.risingEdge(i);
-      fallingEdge[i] = DualCT101530.fallingEdge(i);
-      
       Serial.print("Switch ");
       Serial.print(i + 1);
         

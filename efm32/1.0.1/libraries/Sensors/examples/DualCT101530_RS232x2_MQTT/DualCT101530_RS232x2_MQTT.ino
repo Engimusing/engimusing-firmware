@@ -29,7 +29,7 @@
 #include <MqttPort.h>
 #include <MqttModule.h>
 
-#include <DualCT101530Device.h>
+#include <CT101530Device.h>
 
 
 /*
@@ -38,7 +38,8 @@
   {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"OFF"}
   {"TOP":"EFM32ZG108/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFM32ZG108/BOARD/DualCT101530/","PLD":"STATUS"}
+  {"TOP":"EFM32ZG108/BOARD/ReedSwitch0/","PLD":"STATUS"}
+  {"TOP":"EFM32ZG108/BOARD/ReedSwitch1/","PLD":"STATUS"}
 */
 
 MqttHub HUB;
@@ -51,8 +52,10 @@ MqttSerialPort serialPort2;
 // whenever HUB.update() is called.
 OnOffCtlModule LEDCtrl;
 
-DualCT101530Device DualCT101530;
-SimpleMqttModule DualCT101530MqttMod;
+CT101530Device ReedSwitch0;
+SimpleMqttModule ReedSwitch0MqttMod;
+CT101530Device ReedSwitch1;
+SimpleMqttModule ReedSwitch1MqttMod;
 
 
 void setup() 
@@ -66,8 +69,10 @@ void setup()
 
 
   
-  DualCT101530.begin(6, 7, -1, -1, 50);
-  DualCT101530MqttMod.begin(HUB, DualCT101530, "EFM32ZG108/BOARD/DualCT101530", 10000);
+  ReedSwitch0.begin(6,-1,50);
+  ReedSwitch0MqttMod.begin(HUB, ReedSwitch0, "EFM32ZG108/BOARD/ReedSwitch0", 10000);
+  ReedSwitch1.begin(7,-1,50);
+  ReedSwitch1MqttMod.begin(HUB, ReedSwitch1, "EFM32ZG108/BOARD/ReedSwitch1", 10000);
 }
 
 void loop()
