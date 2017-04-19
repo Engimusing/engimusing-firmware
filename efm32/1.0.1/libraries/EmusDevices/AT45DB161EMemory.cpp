@@ -137,24 +137,20 @@ void AT45DB161EMemory::processData(bool write, uint32_t address, uint16_t len, u
         uint8_t bufferToUse = 0;
         if(pageAddress == myBufferPage[0])
         {
-            Serial.println("Buffer1");
             bufferToUse = 1;
         }
         else if(pageAddress == myBufferPage[1])
         {
-            Serial.println("Buffer2");
             bufferToUse = 2;
         }else
         {
             if(myLastUsedBuffer == 1)
             {
                 bufferToUse = 2;
-                Serial.println("UseBuffer2");
             }
             else
             {
                 bufferToUse = 1;
-                Serial.println("UseBuffer1");
             }
             
             saveBuffer(bufferToUse);   
