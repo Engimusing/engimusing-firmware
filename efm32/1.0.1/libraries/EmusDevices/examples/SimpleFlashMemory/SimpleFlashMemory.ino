@@ -16,6 +16,14 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+/* Example for how to read/write to the AT45BD161E flash memory DF11 board using the EFM32ZGUSB Engimusing board
+    There are 2 devices on this board. An LED and an AT45BD161E flash memory.
+*/
+
+#if !defined(EFM32ZGUSB)
+#error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
+#endif
+
 #include "AT45DB161EMemory.h"
 #include "SPI.h"
 
