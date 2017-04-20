@@ -68,6 +68,8 @@
 #define WIRE3_ISR_HANDLER     I2C0_Handler
 #define WIRE3_CLOCK				cmuClock_I2C0
 
+#define SPI_CHANNELS_NUM 0
+
 static const uint8_t A0  = -1;//No ADC on Zero Gecko
 
 #define ADC_RESOLUTION		0
