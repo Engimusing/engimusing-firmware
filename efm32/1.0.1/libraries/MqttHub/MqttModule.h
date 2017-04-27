@@ -48,6 +48,24 @@ class MqttModule
 };
 
    
+// ------------------------------- Notification Class -------------------------
+
+class NotificationModule : public MqttModule
+{
+ public:
+  
+  virtual void begin(MqttHub &hub, const char* module, const char* control, const char* payload);
+  virtual uint8_t decode(const char* topic, const char* payload);
+  virtual uint8_t getState(void);
+
+ private:
+
+  uint8_t myState;
+  const char* myControl;
+  const char* myPayload;
+  
+};
+
 // ------------------------------- On/Off Control Class -------------------------
 
 class OnOffCtlModule : public MqttModule
