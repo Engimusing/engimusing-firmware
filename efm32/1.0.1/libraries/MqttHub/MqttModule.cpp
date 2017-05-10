@@ -140,6 +140,43 @@ void SimpleMqttModule::sendMQTTData()
 }
 
 
+// ------------------------------- Message Input Class --------------------------
+
+void MessageInputModule::begin(MqttHub &hub, const char* mod, const char* control, const char* payload)
+{
+  MqttModule::begin(hub, mod, true);
+
+  myControl = control;
+  myPayload = payload;
+  myState = 0;
+}
+
+uint8_t MessageInputModule::decode(const char* topic, const char* payload)
+{
+  int8_t j = isTopicThisModule(topic);
+  if(j == 0)
+  {
+    return 0;
+  }  
+
+  if(compare_token(&topic[j],myControl)) {
+    if(compare_token(payload,myPayload)) {
+      myState = 1;
+    } else {return 0;}
+    return 1;
+  }
+}
+
+uint8_t MessageInputModule::getState(void)
+{
+  if(myState) {
+    myState = 0;
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
 // ------------------------------- Notification Class --------------------------
 
 void NotificationModule::begin(MqttHub &hub, const char* mod, const char* control, const char* payload)
