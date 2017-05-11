@@ -82,7 +82,6 @@ int8_t MqttModule::compare_token(const char* inTok, const char* cmpTok)
 }
 
 // ------------------------------- Simple Module Class ------------------------
-
 void SimpleMqttModule::begin(MqttHub &hub, Device &device, const char* mod, uint32_t updateDelay)
 {    
     myDevice = &device;
@@ -139,46 +138,41 @@ void SimpleMqttModule::sendMQTTData()
     }
 }
 
-
-// ------------------------------- Message Input Class --------------------------
-
-void MessageInputModule::begin(MqttHub &hub, const char* mod, const char* control, const char* payload)
+void MessageInputStringModule::begin(MqttHub &hub, const char* module, const char* control)
 {
-  MqttModule::begin(hub, mod, true);
+    MqttModule::begin(hub, module, true);
 
-  myControl = control;
-  myPayload = payload;
-  myState = 0;
+    myControl = control;
+    myInputString[0] = '\0';
 }
 
-uint8_t MessageInputModule::decode(const char* topic, const char* payload)
+uint8_t MessageInputStringModule::decode(const char* topic, const char* payload)
 {
-  int8_t j = isTopicThisModule(topic);
-  if(j == 0)
-  {
-    return 0;
-  }  
-
-  if(compare_token(&topic[j],myControl)) {
-    if(compare_token(payload,myPayload)) {
-      myState = 1;
-    } else {return 0;}
-    return 1;
-  }
+      int8_t j = isTopicThisModule(topic);
+      if(j == 0)
+      {
+        return 0;
+      }  
+      
+      if(compare_token(&topic[j],myControl)) {
+          int i = 0;
+          for(i = 0; i < maxStringSize - 1 && payload[i] != '\0'; i++)
+          {
+              myInputString[i] = payload[i];
+          }
+          myInputString[i] = '\0';
+          return 1;
+      }
 }
 
-uint8_t MessageInputModule::getState(void)
+const char *MessageInputStringModule::getInputString(void)
 {
-  if(myState) {
-    myState = 0;
-    return 1;
-  } else {
-    return 0;
-  }
+    return myInputString;
 }
+
+
 
 // ------------------------------- Notification Class --------------------------
-
 void NotificationModule::begin(MqttHub &hub, const char* mod, const char* control, const char* payload)
 {
   MqttModule::begin(hub, mod, true);

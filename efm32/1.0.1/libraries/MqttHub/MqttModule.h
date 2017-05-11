@@ -47,24 +47,81 @@ class MqttModule
   MqttModule* myNextModule;
 };
 
-   
 // ------------------------------- Message Input Class -------------------------
-
+template <typename T>
 class MessageInputModule : public MqttModule
 {
  public:
   
-  virtual void begin(MqttHub &hub, const char* module, const char* control, const char* payload);
-  virtual uint8_t decode(const char* topic, const char* payload);
-  virtual uint8_t getState(void);
+  virtual void begin(MqttHub &hub, const char* module, const char* control)
+  {
+      MqttModule::begin(hub, module, true);
 
- private:
+      myControl = control;
+      myInputValue = 0;
+   }
+  
+  virtual uint8_t decode(const char* topic, const char* payload)
+  {
+      int8_t j = isTopicThisModule(topic);
+      if(j == 0)
+      {
+        return 0;
+      }  
+      
+      if(compare_token(&topic[j],myControl)) {
+          parsePayload(payload, myInputValue);
+          return 1;
+      }
+  }
 
-  uint8_t myState;
+  
+  virtual T getInput(void)
+  {
+    return myInputValue;
+  }
+
+ protected:
+ 
+  virtual void parsePayload(const char* payload, float &output)
+  {
+      output = atofLocal(payload);
+  }
+  
+  virtual void parsePayload(const char* payload, int32_t &output)
+  {
+      output = atoi(payload);
+  }
+  
+  virtual void parsePayload(const char* payload, bool &output)
+  {
+      if(payload[0] == '0')
+      {
+        output = false;
+      }
+      output = true;
+  }
+
+  T myInputValue;
   const char* myControl;
-  const char* myPayload;
 
 };
+
+// ------------------------------- Message Input Class -------------------------
+class MessageInputStringModule : public MqttModule
+{
+ public:
+  virtual void begin(MqttHub &hub, const char* module, const char* control);
+  virtual uint8_t decode(const char* topic, const char* payload);
+  virtual const char *getInputString(void);
+
+ private:
+  static const int maxStringSize = 64;
+  char myInputString[maxStringSize];
+  const char* myControl;
+
+};
+
 
 // ------------------------------- Notification Class -------------------------
 
