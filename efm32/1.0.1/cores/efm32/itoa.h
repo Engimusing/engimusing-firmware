@@ -28,7 +28,7 @@ extern char* itoa( int value, char *string, int radix ) ;
 extern char* ltoa( long value, char *string, int radix ) ;
 extern char* utoa( unsigned long value, char *string, int radix ) ;
 extern char* ultoa( unsigned long value, char *string, int radix ) ;
-
+extern float atofLocal(const char* payload);
 #ifdef __cplusplus
 } // extern "C"
 #endif

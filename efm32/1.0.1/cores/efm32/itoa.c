@@ -165,6 +165,140 @@ extern char* ultoa( unsigned long value, char *string, int radix )
   return string;
 }
 
+
+//atof is much too large of a function to use on the Energy Micros
+// This is a simpler version that only handles floats with a '.' (so no alternalte locals that use ',')
+// It also does not handle scientific notation but it should handle the full range of floats
+extern float atofLocal(const char* payload)
+{
+      int i = 0;
+      
+      //handle the integer portion of the float
+      char integerString[40];
+      integerString[0] = '\0';
+      int intLen = 0;
+      int maxIntegerDigits = 9;
+      int largeFloat = 0;
+      for(i = 0; i < 40 && payload[i] != '\0'; i++)
+      {
+          if((payload[i] <= '9' && payload[i] >= '0') || (i == 0 && payload[i] == '-'))
+          {
+                intLen++;
+                if(intLen >= maxIntegerDigits)
+                {
+                    largeFloat = 1;
+                }else
+                {
+                    integerString[intLen - 1] = payload[i];
+                    integerString[intLen] = '\0';
+                }
+          }
+          else if(payload[i] == '.') 
+          {
+            break;
+          }    
+          else if(payload[i] == ' ')
+          {
+             break;
+          }
+          else
+          {
+             return 0.0f;
+          }
+      }
+      
+      
+      //handle the decimal portion of the float
+      char decimalString[40];
+      decimalString[0] = '\0';
+      int decLen = 0;
+      int foundNonZero = 0;
+      int maxDecimalDigits = 9;
+      int curDecIdx = 0;
+      if(payload[i] == '.' && largeFloat == 0)
+      {
+           for(i++; i < 40 && payload[i] != '\0'; i++)
+          {
+              if(payload[i] <= '9' && payload[i] >= '0')
+              {
+                  if(payload[i] > '0')
+                  {
+                      foundNonZero = 1;
+                  }else if(foundNonZero == 0)
+                  {
+                      maxDecimalDigits++;
+                  }
+                    decLen++;
+                    if(decLen < maxDecimalDigits)
+                    {
+                        if(foundNonZero == 1)
+                        {
+                            curDecIdx++;
+                            decimalString[curDecIdx - 1] = payload[i];
+                            decimalString[curDecIdx] = '\0';
+                        }
+                    }
+                    else
+                    {
+                        decLen = maxDecimalDigits - 1;
+                        break;
+                    }
+              }  
+              else if(payload[i] == ' ')
+              {
+                 break;
+              }
+              else
+              {
+                 return 0.0f;
+              }
+          }
+      }
+      
+      
+      float integer = 0;
+      float decimal = 0.0f;
+      
+      if(foundNonZero == 0)
+      {
+          integer = (float)atoi(integerString);
+          decimal = 0.0f;
+          if(largeFloat)
+          {
+              float multiplier = 1;
+              while(intLen - maxIntegerDigits >= 0)
+              {
+                  multiplier *= 10;
+                  intLen--;
+              }
+
+              integer *= multiplier;
+          }
+
+      }
+      else
+      {
+          integer = atoi(integerString);
+          decimal = (float)atoi(decimalString);
+          
+          float divider = 1;
+          while(decLen > 0)
+          {
+              divider *= 10;
+              decLen--;
+          }
+
+          decimal /= divider;
+          
+          if(payload[0] == '-')
+          {
+              decimal *= -1;
+          }
+      }
+      
+      return ((float)integer) + decimal;
+}    
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
