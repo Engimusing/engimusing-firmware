@@ -88,6 +88,25 @@ engimusing_efm32tg110.compiler.mcu=-DCORTEX_M3
 engimusing_efm32tg110.compiler.efm=-DEFM32TG
 engimusing_efm32tg110.build.family=EFM32TG
 
+engimusing_efm32tg222.name=Engimusing EFM32TG222
+engimusing_efm32tg222.upload.tool=efm_upload
+engimusing_efm32tg222.upload.protocol=xmodem
+engimusing_efm32tg222.upload.maximum_size=27648
+engimusing_efm32tg222.upload.device=EFM32TG222
+engimusing_efm32tg222.bootloader.tool=
+engimusing_efm32tg222.bootloader.file=
+engimusing_efm32tg222.build.mcu=cortex-m3
+engimusing_efm32tg222.build.board=EFM32TG222
+engimusing_efm32tg222.build.core=efm32
+engimusing_efm32tg222.build.ldscript=efm32tg.ld
+engimusing_efm32tg222.build.variant=EFM32TG222
+engimusing_efm32tg222.build.variant_system_lib=
+engimusing_efm32tg222.compiler.device=-DEFM32TG222F32 -DEFM32TG222
+engimusing_efm32tg222.compiler.mcu=-DCORTEX_M3
+engimusing_efm32tg222.compiler.efm=-DEFM32TG
+engimusing_efm32tg222.build.family=EFM32TG
+
+
 engimusing_efm32g232.name=Engimusing EFM32G232
 engimusing_efm32g232.upload.tool=efm_upload
 engimusing_efm32g232.upload.protocol=xmodem

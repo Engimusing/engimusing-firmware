@@ -50,6 +50,9 @@
 #elif defined(EFM32TG110F32)
 #include "../Device/EFM32TG/Include/efm32tg110f32.h"
 
+#elif defined(EFM32TG222F32)
+#include "../Device/EFM32TG/Include/efm32tg222f32.h"
+
 #elif defined(EFM32G232F64)
 #include "../Device/EFM32G/Include/efm32g232f64.h"
 
