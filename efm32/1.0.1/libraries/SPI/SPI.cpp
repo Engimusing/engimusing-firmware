@@ -10,6 +10,8 @@
 
 #include "SPI.h"
 
+#if SPI_INTERFACES_COUNT > 0
+
 #define DEBUGPRINTLN(x)
 //#define DEBUGPRINTLN(x) Serial.println(x)
 
@@ -258,4 +260,6 @@ const SPIPinSettings SPI3Pins = {
 };
 
 SPIClass SPI3(SPI3_INTERFACE, SPI3_INTERFACE_ID, SPI3_CLK,&SPI3Pins);
+#endif
+
 #endif

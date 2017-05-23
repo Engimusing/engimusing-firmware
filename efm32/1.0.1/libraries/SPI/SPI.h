@@ -20,6 +20,8 @@
 #define SPI_MODE2 usartClockMode2
 #define SPI_MODE3 usartClockMode3
 
+#if SPI_INTERFACES_COUNT > 0
+
 enum SPITransferMode {
 	SPI_CONTINUE,
 	SPI_LAST
@@ -88,6 +90,8 @@ extern SPIClass SPI2;
 
 #if SPI_INTERFACES_COUNT > 3
 extern SPIClass SPI3;
+#endif
+
 #endif
 
 #endif

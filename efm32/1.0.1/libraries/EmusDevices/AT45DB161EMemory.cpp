@@ -17,6 +17,9 @@
 */
 
 #include "AT45DB161EMemory.h"
+
+#if SPI_INTERFACES_COUNT > 0
+
 #include "SPI.h"
 
 
@@ -281,3 +284,5 @@ void AT45DB161EMemory::deselectDevice()
 {
     digitalWrite(myChipSelectPin, HIGH);
 }  
+
+#endif

@@ -20,6 +20,8 @@
 
 #include "Arduino.h"
 
+#if SPI_INTERFACES_COUNT > 0
+
 //opcodes for AT45DB161E
 #define FlashPageRead			       0x52	// Main memory page read
 #define FlashToBuf1Transfer 		   0x53	// Main memory page to buffer 1 transfer
@@ -97,3 +99,5 @@ class AT45DB161EMemory
         
         
 };
+
+#endif

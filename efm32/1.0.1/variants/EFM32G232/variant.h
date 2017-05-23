@@ -51,8 +51,10 @@ static const uint8_t A6  = 34;
 #define PWM_MIN_DUTY_CYCLE   0
 #define PWM_RESOLUTION	     16
 
+/* LESENSE number of channels possible to use*/
+#define NUM_LESENSE_CHANNELS    0
 
-
+#define SPI_INTERFACES_COUNT 0
 
 void print_gpio_regs(void);
 
