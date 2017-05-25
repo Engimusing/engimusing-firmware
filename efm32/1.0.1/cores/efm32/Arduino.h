@@ -109,6 +109,8 @@ extern "C"{
 
 #include "delay.h"
 
+
+
 #ifdef __cplusplus
 //#include "efm_lib/LEUARTClass.h"
 #include "efm_lib/UARTClass.h"
@@ -118,7 +120,13 @@ extern "C"{
 #include "efm_lib/gpio_intrs.h"
 #endif
 
+
 #include "variant.h"
+
+#ifdef __cplusplus
+#include "efm_lib/CapSenseClass.h"
+#endif
+
 
 #include "wiring_digital.h"
 

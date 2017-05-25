@@ -88,7 +88,9 @@ CapSenseClass::CapSenseClass()
  *****************************************************************************/
 void CapSenseClass::begin()
 {
-      
+  if(myInitialized)
+      return;
+  
   /* Disable interrupts while initializing */
   INT_Disable();
 
@@ -106,6 +108,8 @@ void CapSenseClass::begin()
   
   /* Initialization done, enable interrupts globally. */
   INT_Enable();
+  
+  myInitialized = true;
 
 }
 
