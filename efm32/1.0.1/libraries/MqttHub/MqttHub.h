@@ -23,7 +23,7 @@
 // --------------------------------- Basic JSON Communication Class -------------------------
 
 #define MODULE_TABLE_ENTRIES    8
-#define MODULE_STRING_LENGTH   40
+#define MODULE_STRING_LENGTH   64
 #define COMM_STRING_LENGTH    253
 #define ITEM_TOKEN_LENGTH      24
 #define ITEM_PAYLOAD_LENGTH    32
