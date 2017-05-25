@@ -67,6 +67,14 @@ static const uint8_t A1  = 0;
 #define PIN_SPI0_SCK 5
 */
 
+
+/* LESENSE number of channels possible to use, should be 16 */
+// only 12 are exposed by the TG222 pins all except (5,6,7,12)
+#define NUM_LESENSE_CHANNELS    16
+/* GPIO Port for analog comparators */
+#define LESENSE_CH_PORT         gpioPortC
+
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);

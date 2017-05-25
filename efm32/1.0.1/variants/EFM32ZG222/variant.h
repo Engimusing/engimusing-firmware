@@ -39,6 +39,8 @@ static const uint8_t A2 = 11;
 
 #define ADC_RESOLUTION		12
 
+/* LESENSE number of channels possible to use*/
+#define NUM_LESENSE_CHANNELS    0
 
 
 void print_gpio_regs(void);

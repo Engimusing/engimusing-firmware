@@ -72,6 +72,13 @@ static const uint8_t A1  = 12;
 #define PIN_SPI0_MISO 6
 #define PIN_SPI0_SCK 5
 
+/* LESENSE number of channels possible to use, should be 16 */
+// On the TG110 only 4 channels are exposed by pins (0,1,14,15)
+#define NUM_LESENSE_CHANNELS    16
+/* GPIO Port for analog comparators */
+#define LESENSE_CH_PORT         gpioPortC
+
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
