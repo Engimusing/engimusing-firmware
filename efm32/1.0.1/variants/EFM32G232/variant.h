@@ -56,6 +56,8 @@ static const uint8_t A6  = 34;
 
 #define SPI_INTERFACES_COUNT 0
 
+#define CC3000_INTERFACES_COUNT 0 
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);

@@ -74,6 +74,7 @@ static const uint8_t A1  = 0;
 /* GPIO Port for analog comparators */
 #define LESENSE_CH_PORT         gpioPortC
 
+#define CC3000_INTERFACES_COUNT 0 
 
 void print_gpio_regs(void);
 

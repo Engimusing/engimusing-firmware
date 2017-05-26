@@ -11,6 +11,11 @@
   Written by Limor Fried/Ladyada for Adafruit Industries.
   MIT license, all text above must be included in any redistribution
  ****************************************************/
+
+#if !defined(CC3000_INTERFACES_COUNT) || (CC3000_INTERFACES_COUNT <= 0)
+#error Incorrect Board Selected! Please select a board which supports the CC3000 from the Tools->Board: menu.
+#endif
+  
 //#include <Adafruit_SleepyDog.h>
 #include <Adafruit_CC3000.h>
 #include <SPI.h>
