@@ -325,8 +325,8 @@ const uint32_t timerRoutes[] = {0, // 0
 
 
 // LED Pins                    Red,  Blue,  Green
-const uint8_t ledPorts[3]  = {PORTA, PORTA, PORTA};
-const uint8_t ledPins[3]   = {  8,     9,    10  };
+const uint8_t ledPorts[3]  = {PORTD, PORTD, PORTD};
+const uint8_t ledPins[3]   = {  5,     6,     7  };
 const uint8_t ledId[3] = { 17, 18, 19 };
 // ------------------------------------------------------------------------------------------------------------
 
