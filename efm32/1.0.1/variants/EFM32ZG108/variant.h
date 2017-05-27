@@ -74,6 +74,11 @@ static const uint8_t A0  = -1;//No ADC on Zero Gecko
 
 #define ADC_RESOLUTION		0
 
+/* LESENSE number of channels possible to use*/
+#define NUM_LESENSE_CHANNELS    0
+
+#define CC3000_INTERFACES_COUNT 0 
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);

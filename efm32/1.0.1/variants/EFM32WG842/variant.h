@@ -92,6 +92,13 @@ static const uint8_t A7  = 35;
 #define CC3000_0_SPI SPI
 
 
+/* LESENSE number of channels possible to use, should be 16 */
+// On the WG840 only 8 channels are exposed by pins (4,5,6,7,12,13,14,15)
+#define NUM_LESENSE_CHANNELS    16
+/* GPIO Port for analog comparators */
+#define LESENSE_CH_PORT         gpioPortC
+
+
 void print_gpio_regs(void);
 
 void attachInterrupt(uint8_t pin, void (*gpioIntFunc)(void), uint8_t mode);
