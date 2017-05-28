@@ -105,6 +105,7 @@ extern "C"{
 #include "WMath.h"
 #include "HardwareSerial.h"
 #include "RingBuffer.h"
+#include "efm_lib/toggle.h"
 #endif
 
 #include "delay.h"
