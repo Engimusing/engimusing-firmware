@@ -22,23 +22,32 @@
 #pragma once
 
 /*
-  This class 
+  This class is used for setting up a digital output to toggle between high and low at a set interval. 
  */
 
 class TOGGLEClass
 {
  public:
   TOGGLEClass();
-  void begin(int toggle_time);
-  void begin(int low_time, int high_time);
-  void begin(uint32_t dwPin, int low_time, int high_time);
-  void begin(uint32_t dwPin, WiringModeTypeDef dwMode, int low_time, int high_time);
+  void begin(int toggleTime, uint8_t activeLevel = HIGH);
+  void begin(uint32_t dwPin, int lowTime, int highTime, uint8_t activeLevel = HIGH);
+  void begin(uint32_t dwPin, WiringModeTypeDef dwMode, int lowTime, int highTime, uint8_t activeLevel = HIGH);
   void update(void);
+  
+  void setToggleTime(int time) ;
+  
+  void setLowHiTimes(int loTime, int hiTime);
+  
+  int lowTime();
+  
+  int highTime();
+  
  private:
-  int lastMillis;
-  int hi_time;
-  int lo_time;
-  int on;
-  uint32_t pin;
+  int myLastMillis;
+  int myHiTime;
+  int myLoTime;
+  int myOn;
+  uint32_t myPin;
+  uint8_t myActiveLevel;
 };
 

@@ -19,50 +19,79 @@
 #include <Arduino.h>
 #include "toggle.h"
 
-TOGGLEClass::TOGGLEClass()
+TOGGLEClass::TOGGLEClass() 
+    : myPin(-1)
 {
 }
 
-void TOGGLEClass::begin(int toggle_time)
+void TOGGLEClass::begin(int toggleTime, uint8_t activeLevel)
 {
-  TOGGLEClass::begin(LED_BUILTIN, OUTPUT, toggle_time, toggle_time);
+  TOGGLEClass::begin(LED_BUILTIN, OUTPUT, toggleTime, toggleTime, activeLevel);
 }
 
-void TOGGLEClass::begin(int low_time, int high_time)
+void TOGGLEClass::begin(uint32_t dwPin, int lowTime, int highTime, uint8_t activeLevel)
 {
-  TOGGLEClass::begin(LED_BUILTIN, OUTPUT, low_time, high_time);
+  TOGGLEClass::begin(dwPin, OUTPUT, lowTime, highTime, activeLevel);
 }
 
-void TOGGLEClass::begin(uint32_t dwPin, int low_time, int high_time)
+void TOGGLEClass::begin(uint32_t dwPin, WiringModeTypeDef dwMode, int lowTime, int highTime, uint8_t activeLevel)
 {
-  TOGGLEClass::begin(dwPin, OUTPUT, low_time, high_time);
-}
-
-void TOGGLEClass::begin(uint32_t dwPin, WiringModeTypeDef dwMode, int low_time, int high_time)
-{
-  pin = dwPin;
-  GPIO_config(dPorts[pin], dPins[pin], dwMode);
-  hi_time = high_time;
-  lo_time = low_time;
-  lastMillis = 0;
-  on = HIGH;
+  myPin = dwPin;
+  pinMode(myPin, dwMode);
+  myHiTime = highTime;
+  myLoTime = lowTime;
+  myLastMillis = 0;
+  myOn = HIGH;
+  myActiveLevel = activeLevel;
 }
 
 void TOGGLEClass::update(void)
 {
-  if(on == HIGH) {
-    if(millis() - lastMillis > hi_time) {
-      lastMillis = millis();
-      GPIO->P[dPorts[pin]].DOUTSET = (1 << dPins[pin]);
-      on = LOW;
+    if(myPin >= 0) // make sure begin has been called with a resonable pin
+    {
+        if(myOn == HIGH) {
+            if(millis() - myLastMillis > myHiTime) {
+                myLastMillis = millis();
+                if(myActiveLevel == HIGH)
+                {
+                    digitalWrite(myPin, LOW);
+                }
+                else
+                {
+                    digitalWrite(myPin, HIGH);
+                }
+                myOn = LOW;
+            }
+        }
+        if(myOn == LOW) {
+            if (millis() - myLastMillis > myLoTime) {
+                myLastMillis = millis();
+                digitalWrite(myPin, myActiveLevel);
+                myOn = HIGH;
+            }
+        }
     }
-  }
-  if(on == LOW) {
-    if (millis() - lastMillis > lo_time) {
-      lastMillis = millis();
-      GPIO->P[dPorts[pin]].DOUTCLR = (1 << dPins[pin]);
-      on = HIGH;
-    }
-  }
 }
+
+void TOGGLEClass::setToggleTime(int time) 
+{ 
+    setLowHiTimes(time, time);
+}
+
+void TOGGLEClass::setLowHiTimes(int loTime, int hiTime)
+{
+    myLoTime = loTime;
+    myHiTime = hiTime;
+}
+
+int TOGGLEClass::lowTime()
+{
+    return myLoTime;
+}
+
+int TOGGLEClass::highTime()
+{
+    return myHiTime;
+}
+  
 
