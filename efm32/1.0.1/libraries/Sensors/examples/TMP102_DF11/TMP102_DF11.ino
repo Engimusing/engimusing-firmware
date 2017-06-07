@@ -24,43 +24,30 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <TMP102Device.h>
 #include <Wire.h>
 TMP102Device TMP102;
+DevicePrinter TMP102Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  TMP102Printer.begin(Serial, TMP102, 5000, "TMP102");
   Serial.println("Simple TMP102 example 0");
-
   
   TMP102.begin(Wire0, 5, true);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   TMP102.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    float temp = TMP102.temperature();
-    Serial.print("temperature = ");
-    Serial.println(temp);
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  TMP102Printer.update();
+  led.update();
 }

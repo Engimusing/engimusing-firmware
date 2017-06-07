@@ -24,82 +24,38 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <MLX92212Device.h>
 
 
 MLX92212Device MLX92212;
+DevicePrinter MLX92212Printer0;
+DevicePrinter MLX92212Printer1;
+TogglePin led;
 
 void setup()
 {
   Serial.begin(115200);
   Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT); 
   Serial.println("Simple MLX92212 example 0");
   Serial1.println("Simple MLX92212 example 1");
-
+  led.begin(1000);
+ 
+  MLX92212Printer0.begin(Serial, MLX92212, 5000, "MLX92212");
+  MLX92212Printer1.begin(Serial1, MLX92212, 5000, "MLX92212");
   
   MLX92212.begin(8, 7, 20);
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
 
-  static int on = HIGH;
 
   MLX92212.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-    
-    bool switchState = MLX92212.switchState();
-    bool risingEdge = MLX92212.risingEdge();
-    bool fallingEdge = MLX92212.fallingEdge();
-    
-    if(switchState)
-    {
-        Serial.println("state = on");
-    }
-    else
-    {
-        Serial.println("state = off");
-    }
-    
-    if(risingEdge)
-    {
-        Serial.println("Rising Edge");
-    }
-    
-    if(fallingEdge)
-    {
-        Serial.println("Falling Edge");
-    }
-    
-    if(switchState)
-    {
-        Serial1.println("state = on");
-    }
-    else
-    {
-        Serial1.println("state = off");
-    }
-    
-    if(risingEdge)
-    {
-        Serial1.println("Rising Edge");
-    }
-    
-    if(fallingEdge)
-    {
-        Serial1.println("Falling Edge");
-    }
-
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+  MLX92212Printer0.update();
+  MLX92212Printer1.update();
+  led.update();
 }

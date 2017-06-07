@@ -17,41 +17,39 @@
 */
 
 #include <Arduino.h>
-#include "toggle.h"
+#include "togglePin.h"
 
-TOGGLEClass::TOGGLEClass() 
+TogglePin::TogglePin() 
     : myPin(-1)
 {
 }
 
-void TOGGLEClass::begin(int toggleTime, uint8_t activeLevel)
+void TogglePin::begin(int toggleTime, uint8_t activeLevel)
 {
-  TOGGLEClass::begin(LED_BUILTIN, OUTPUT, toggleTime, toggleTime, activeLevel);
+  TogglePin::begin(LED_BUILTIN, OUTPUT, toggleTime, toggleTime, activeLevel);
 }
 
-void TOGGLEClass::begin(uint32_t dwPin, int lowTime, int highTime, uint8_t activeLevel)
+void TogglePin::begin(uint32_t dwPin, int lowTime, int highTime, uint8_t activeLevel)
 {
-  TOGGLEClass::begin(dwPin, OUTPUT, lowTime, highTime, activeLevel);
+  TogglePin::begin(dwPin, OUTPUT, lowTime, highTime, activeLevel);
 }
 
-void TOGGLEClass::begin(uint32_t dwPin, WiringModeTypeDef dwMode, int lowTime, int highTime, uint8_t activeLevel)
+void TogglePin::begin(uint32_t dwPin, WiringModeTypeDef dwMode, int lowTime, int highTime, uint8_t activeLevel)
 {
   myPin = dwPin;
   pinMode(myPin, dwMode);
-  myHiTime = highTime;
-  myLoTime = lowTime;
-  myLastMillis = 0;
+  myHighTimeout.begin(highTime);
+  myLowTimeout.begin(lowTime);
   myOn = HIGH;
   myActiveLevel = activeLevel;
 }
 
-void TOGGLEClass::update(void)
+void TogglePin::update(void)
 {
     if(myPin >= 0) // make sure begin has been called with a resonable pin
     {
         if(myOn == HIGH) {
-            if(millis() - myLastMillis > myHiTime) {
-                myLastMillis = millis();
+            if(myHighTimeout.update()) {
                 if(myActiveLevel == HIGH)
                 {
                     digitalWrite(myPin, LOW);
@@ -61,37 +59,38 @@ void TOGGLEClass::update(void)
                     digitalWrite(myPin, HIGH);
                 }
                 myOn = LOW;
+                myLowTimeout.reset();
             }
         }
         if(myOn == LOW) {
-            if (millis() - myLastMillis > myLoTime) {
-                myLastMillis = millis();
+            if (myLowTimeout.update()) {
                 digitalWrite(myPin, myActiveLevel);
                 myOn = HIGH;
+                myHighTimeout.reset();
             }
         }
     }
 }
 
-void TOGGLEClass::setToggleTime(int time) 
+void TogglePin::setToggleTime(int time) 
 { 
     setLowHiTimes(time, time);
 }
 
-void TOGGLEClass::setLowHiTimes(int loTime, int hiTime)
+void TogglePin::setLowHiTimes(int loTime, int hiTime)
 {
-    myLoTime = loTime;
-    myHiTime = hiTime;
+    myLowTimeout.setTimeoutTime(loTime);
+    myHighTimeout.setTimeoutTime(hiTime);
 }
 
-int TOGGLEClass::lowTime()
+int TogglePin::lowTime()
 {
-    return myLoTime;
+    return myLowTimeout.timeoutTime();
 }
 
-int TOGGLEClass::highTime()
+int TogglePin::highTime()
 {
-    return myHiTime;
+    return myHighTimeout.timeoutTime();
 }
   
 

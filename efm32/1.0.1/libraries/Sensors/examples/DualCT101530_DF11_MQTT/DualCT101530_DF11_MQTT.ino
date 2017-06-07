@@ -62,7 +62,7 @@ void setup()
 
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, 13, "EFM32ZGUSB/BOARD/LED", HIGH);
+  LEDCtrl.begin(HUB, LED_BUILTIN, "EFM32ZGUSB/BOARD/LED", HIGH);
 
   
   ReedSwitch0.begin(4,3,50);
@@ -74,8 +74,7 @@ void setup()
 void loop() 
 {
 
-  //Update the MQTT communication so it
-  // can send statuses and recieve requests
+  //Update the MQTT communication so it can send status and receive requests
   HUB.update();
 
 }

@@ -24,31 +24,82 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32TG222 from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <CapSenseDevice.h>
 
 
 CapSenseDevice CapSense0;
+DevicePrinter CapSense0Printer0;
+DevicePrinter CapSense0Printer1;
 CapSenseDevice CapSense1;
+DevicePrinter CapSense1Printer0;
+DevicePrinter CapSense1Printer1;
 CapSenseDevice CapSense2;
+DevicePrinter CapSense2Printer0;
+DevicePrinter CapSense2Printer1;
 CapSenseDevice CapSense3;
+DevicePrinter CapSense3Printer0;
+DevicePrinter CapSense3Printer1;
 CapSenseDevice CapSense4;
+DevicePrinter CapSense4Printer0;
+DevicePrinter CapSense4Printer1;
 CapSenseDevice CapSense5;
+DevicePrinter CapSense5Printer0;
+DevicePrinter CapSense5Printer1;
 CapSenseDevice CapSense6;
+DevicePrinter CapSense6Printer0;
+DevicePrinter CapSense6Printer1;
 CapSenseDevice CapSense7;
+DevicePrinter CapSense7Printer0;
+DevicePrinter CapSense7Printer1;
 CapSenseDevice CapSense8;
+DevicePrinter CapSense8Printer0;
+DevicePrinter CapSense8Printer1;
 CapSenseDevice CapSense9;
+DevicePrinter CapSense9Printer0;
+DevicePrinter CapSense9Printer1;
 CapSenseDevice CapSense_Star;
+DevicePrinter CapSense_StarPrinter0;
+DevicePrinter CapSense_StarPrinter1;
 CapSenseDevice CapSense_Hash;
+DevicePrinter CapSense_HashPrinter0;
+DevicePrinter CapSense_HashPrinter1;
+TogglePin led;
 
 void setup()
 {
   Serial.begin(115200);
   Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT); 
   Serial.println("Simple CapSense example 0");
   Serial1.println("Simple CapSense example 1");
-
+  led.begin(1000);
+ 
+  CapSense0Printer0.begin(Serial, CapSense0, 5000, "CapSense0");
+  CapSense0Printer1.begin(Serial1, CapSense0, 5000, "CapSense0");
+  CapSense1Printer0.begin(Serial, CapSense1, 5000, "CapSense1");
+  CapSense1Printer1.begin(Serial1, CapSense1, 5000, "CapSense1");
+  CapSense2Printer0.begin(Serial, CapSense2, 5000, "CapSense2");
+  CapSense2Printer1.begin(Serial1, CapSense2, 5000, "CapSense2");
+  CapSense3Printer0.begin(Serial, CapSense3, 5000, "CapSense3");
+  CapSense3Printer1.begin(Serial1, CapSense3, 5000, "CapSense3");
+  CapSense4Printer0.begin(Serial, CapSense4, 5000, "CapSense4");
+  CapSense4Printer1.begin(Serial1, CapSense4, 5000, "CapSense4");
+  CapSense5Printer0.begin(Serial, CapSense5, 5000, "CapSense5");
+  CapSense5Printer1.begin(Serial1, CapSense5, 5000, "CapSense5");
+  CapSense6Printer0.begin(Serial, CapSense6, 5000, "CapSense6");
+  CapSense6Printer1.begin(Serial1, CapSense6, 5000, "CapSense6");
+  CapSense7Printer0.begin(Serial, CapSense7, 5000, "CapSense7");
+  CapSense7Printer1.begin(Serial1, CapSense7, 5000, "CapSense7");
+  CapSense8Printer0.begin(Serial, CapSense8, 5000, "CapSense8");
+  CapSense8Printer1.begin(Serial1, CapSense8, 5000, "CapSense8");
+  CapSense9Printer0.begin(Serial, CapSense9, 5000, "CapSense9");
+  CapSense9Printer1.begin(Serial1, CapSense9, 5000, "CapSense9");
+  CapSense_StarPrinter0.begin(Serial, CapSense_Star, 5000, "CapSense_Star");
+  CapSense_StarPrinter1.begin(Serial1, CapSense_Star, 5000, "CapSense_Star");
+  CapSense_HashPrinter0.begin(Serial, CapSense_Hash, 5000, "CapSense_Hash");
+  CapSense_HashPrinter1.begin(Serial1, CapSense_Hash, 5000, "CapSense_Hash");
   
   CapSense0.begin(15,50.0);
   CapSense1.begin(8,50.0);
@@ -64,13 +115,9 @@ void setup()
   CapSense_Hash.begin(0,50.0);
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
 
-  static int on = HIGH;
 
   CapSense0.update();
   CapSense1.update();
@@ -85,143 +132,29 @@ void loop()
   CapSense_Star.update();
   CapSense_Hash.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-    
-    bool state[12];
-    bool risingEdge[12];
-    bool fallingEdge[12];
-    
-    state[0] = CapSense0.state();
-    risingEdge[0] = CapSense0.risingEdge();
-    fallingEdge[0] = CapSense0.fallingEdge();
-
-    state[1] = CapSense1.state();
-    risingEdge[1] = CapSense1.risingEdge();
-    fallingEdge[1] = CapSense1.fallingEdge();
-
-    state[2] = CapSense2.state();
-    risingEdge[2] = CapSense2.risingEdge();
-    fallingEdge[2] = CapSense2.fallingEdge();
-
-    state[3] = CapSense3.state();
-    risingEdge[3] = CapSense3.risingEdge();
-    fallingEdge[3] = CapSense3.fallingEdge();
-
-    state[4] = CapSense4.state();
-    risingEdge[4] = CapSense4.risingEdge();
-    fallingEdge[4] = CapSense4.fallingEdge();
-
-    state[5] = CapSense5.state();
-    risingEdge[5] = CapSense5.risingEdge();
-    fallingEdge[5] = CapSense5.fallingEdge();
-
-    state[6] = CapSense6.state();
-    risingEdge[6] = CapSense6.risingEdge();
-    fallingEdge[6] = CapSense6.fallingEdge();
-
-    state[7] = CapSense7.state();
-    risingEdge[7] = CapSense7.risingEdge();
-    fallingEdge[7] = CapSense7.fallingEdge();
-
-    state[8] = CapSense8.state();
-    risingEdge[8] = CapSense8.risingEdge();
-    fallingEdge[8] = CapSense8.fallingEdge();
-
-    state[9] = CapSense9.state();
-    risingEdge[9] = CapSense9.risingEdge();
-    fallingEdge[9] = CapSense9.fallingEdge();
-
-    state[10] = CapSense_Star.state();
-    risingEdge[10] = CapSense_Star.risingEdge();
-    fallingEdge[10] = CapSense_Star.fallingEdge();
-
-    state[11] = CapSense_Hash.state();
-    risingEdge[11] = CapSense_Hash.risingEdge();
-    fallingEdge[11] = CapSense_Hash.fallingEdge();
-
-    
-    for(int i = 0; i < 12; i++)
-    {
-        Serial.print("Sensor ");
-      
-        if(i < 10)
-        {
-            Serial.print(i);
-        }
-        else if(i == 10)
-        {
-            Serial.print("Star");
-        }
-        else if(i == 11)
-        {
-            Serial.print("Hash");
-        }
-        Serial.println(":");
-        
-        if(state[i])
-        {
-        
-            Serial.println(" state = on");
-        }
-        else
-        {
-            Serial.println(" state = off");
-        }
-      
-        if(risingEdge[i])
-        {
-            Serial.println("Rising Edge");
-        }
-      
-        if(fallingEdge[i])
-        {
-            Serial.println("Falling Edge");
-        }
-    }
-    
-    for(int i = 0; i < 12; i++)
-    {
-        Serial1.print("Sensor ");
-
-        if(i < 10)
-        {
-            Serial1.print(i);
-        }
-        else if(i == 10)
-        {
-            Serial1.print("Star");
-        }
-        else if(i == 11)
-        {
-            Serial1.print("Hash");
-        }
-        
-        Serial1.println(":");
-
-        if(state[i])
-        {
-            Serial1.println(" state = on");
-        }
-        else      
-        {
-            Serial1.println(" state = off");
-        }
-
-        if(risingEdge[i])
-        {
-            Serial1.println("Rising Edge");
-        }
-
-        if(fallingEdge[i])
-        {
-            Serial1.println("Falling Edge");
-        }
-    }
-
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+  CapSense0Printer0.update();
+  CapSense0Printer1.update();
+  CapSense1Printer0.update();
+  CapSense1Printer1.update();
+  CapSense2Printer0.update();
+  CapSense2Printer1.update();
+  CapSense3Printer0.update();
+  CapSense3Printer1.update();
+  CapSense4Printer0.update();
+  CapSense4Printer1.update();
+  CapSense5Printer0.update();
+  CapSense5Printer1.update();
+  CapSense6Printer0.update();
+  CapSense6Printer1.update();
+  CapSense7Printer0.update();
+  CapSense7Printer1.update();
+  CapSense8Printer0.update();
+  CapSense8Printer1.update();
+  CapSense9Printer0.update();
+  CapSense9Printer1.update();
+  CapSense_StarPrinter0.update();
+  CapSense_StarPrinter1.update();
+  CapSense_HashPrinter0.update();
+  CapSense_HashPrinter1.update();
+  led.update();
 }

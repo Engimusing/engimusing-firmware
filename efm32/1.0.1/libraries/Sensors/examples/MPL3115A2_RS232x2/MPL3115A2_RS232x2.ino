@@ -24,59 +24,38 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <MPL3115A2Device.h>
 #include <Wire.h>
 
 MPL3115A2Device MPL3115A2;
+DevicePrinter MPL3115A2Printer0;
+DevicePrinter MPL3115A2Printer1;
+TogglePin led;
 
 void setup()
 {
   Serial.begin(115200);
   Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT); 
   Serial.println("Simple MPL3115A2 example 0");
   Serial1.println("Simple MPL3115A2 example 1");
-
+  led.begin(1000);
+ 
+  MPL3115A2Printer0.begin(Serial, MPL3115A2, 5000, "MPL3115A2");
+  MPL3115A2Printer1.begin(Serial1, MPL3115A2, 5000, "MPL3115A2");
   
   MPL3115A2.begin(Wire0, 3);
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
 
-  static int on = HIGH;
 
   MPL3115A2.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-    
-    float pressue = MPL3115A2.readPressure();
-    float altitude = MPL3115A2.readAltitude();
-    float temp = MPL3115A2.readTemp();
-    Serial.print("Pressure = ");
-    Serial.print(pressue);
-    Serial.print(" Pa Altitude = ");
-    Serial.print(altitude);
-    Serial.print(" M temperature = ");
-    Serial.print(temp);
-    Serial.println(" C");
-    
-    Serial1.print("Pressure = ");
-    Serial1.print(pressue);
-    Serial1.print(" Pa Altitude = ");
-    Serial1.print(altitude);
-    Serial1.print(" M temperature = ");
-    Serial1.print(temp);
-    Serial1.println(" C");
-
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+  MPL3115A2Printer0.update();
+  MPL3115A2Printer1.update();
+  led.update();
 }

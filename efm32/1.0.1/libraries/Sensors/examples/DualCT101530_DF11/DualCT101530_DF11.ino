@@ -24,80 +24,36 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <CT101530Device.h>
 
 CT101530Device ReedSwitch0;
+DevicePrinter ReedSwitch0Printer;
 CT101530Device ReedSwitch1;
+DevicePrinter ReedSwitch1Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  ReedSwitch0Printer.begin(Serial, ReedSwitch0, 5000, "ReedSwitch0");
+  ReedSwitch1Printer.begin(Serial, ReedSwitch1, 5000, "ReedSwitch1");
   Serial.println("Simple DualCT101530 example 0");
-
   
   ReedSwitch0.begin(4,3,50);
   ReedSwitch1.begin(6,5,50);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   ReedSwitch0.update();
   ReedSwitch1.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    bool switchState[2];
-    bool risingEdge[2];
-    bool fallingEdge[2];
-    
-    switchState[0] = ReedSwitch0.switchState();
-    risingEdge[0] = ReedSwitch0.risingEdge();
-    fallingEdge[0] = ReedSwitch0.fallingEdge();
-      
-    switchState[1] = ReedSwitch1.switchState();
-    risingEdge[1] = ReedSwitch1.risingEdge();
-    fallingEdge[1] = ReedSwitch1.fallingEdge();
-        
-    for(int i = 0; i < 2; i++)
-    {
-      Serial.print("Switch ");
-      Serial.print(i + 1);
-        
-      if(switchState[i])
-      {
-        
-        Serial.println(" state = on");
-      }
-      else
-      {
-        Serial.println(" state = off");
-      }
-      
-      if(risingEdge[i])
-      {
-        Serial.println("Rising Edge");
-      }
-      
-      if(fallingEdge[i])
-      {
-        Serial.println("Falling Edge");
-      }
-    }
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  ReedSwitch0Printer.update();
+  ReedSwitch1Printer.update();
+  led.update();
 }

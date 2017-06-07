@@ -24,79 +24,36 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <QRE1113Device.h>
 
 QRE1113Device ReflectiveSensor0;
+DevicePrinter ReflectiveSensor0Printer;
 QRE1113Device ReflectiveSensor1;
+DevicePrinter ReflectiveSensor1Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  ReflectiveSensor0Printer.begin(Serial, ReflectiveSensor0, 5000, "ReflectiveSensor0");
+  ReflectiveSensor1Printer.begin(Serial, ReflectiveSensor1, 5000, "ReflectiveSensor1");
   Serial.println("Simple DualQRE1113 example 0");
-
   
   ReflectiveSensor0.begin(7,2,10);
   ReflectiveSensor1.begin(4,3,10);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   ReflectiveSensor0.update();
   ReflectiveSensor1.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    bool switchState[2];
-    bool risingEdge[2];
-    bool fallingEdge[2];
-    switchState[0] = ReflectiveSensor0.switchState();
-    risingEdge[0] = ReflectiveSensor0.risingEdge();
-    fallingEdge[0] = ReflectiveSensor0.fallingEdge();
-    switchState[1] = ReflectiveSensor1.switchState();
-    risingEdge[1] = ReflectiveSensor1.risingEdge();
-    fallingEdge[1] = ReflectiveSensor1.fallingEdge();
-    
-    for(int i = 0; i < 2; i++)
-    {
-      
-      Serial.print("Switch ");
-      Serial.print(i + 1);
-        
-      if(switchState[i])
-      {
-        
-        Serial.println(" state = on");
-      }
-      else
-      {
-        Serial.println(" state = off");
-      }
-      
-      if(risingEdge[i])
-      {
-        Serial.println("Rising Edge");
-      }
-      
-      if(fallingEdge[i])
-      {
-        Serial.println("Falling Edge");
-      }
-    }
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  ReflectiveSensor0Printer.update();
+  ReflectiveSensor1Printer.update();
+  led.update();
 }

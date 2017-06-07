@@ -24,50 +24,30 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <MPL3115A2Device.h>
 #include <Wire.h>
 MPL3115A2Device MPL3115A2;
+DevicePrinter MPL3115A2Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  MPL3115A2Printer.begin(Serial, MPL3115A2, 5000, "MPL3115A2");
   Serial.println("Simple MPL3115A2 example 0");
-
   
   MPL3115A2.begin(Wire0, 5);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   MPL3115A2.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    float pressue = MPL3115A2.readPressure();
-    float altitude = MPL3115A2.readAltitude();
-    float temp = MPL3115A2.readTemp();
-    Serial.print("Pressure = ");
-    Serial.print(pressue);
-    Serial.print(" Pa Altitude = ");
-    Serial.print(altitude);
-    Serial.print(" M temperature = ");
-    Serial.print(temp);
-    Serial.println(" C");
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  MPL3115A2Printer.update();
+  led.update();
 }

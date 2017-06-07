@@ -24,47 +24,38 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <SSCDNNN150PG2A3Device.h>
 #include <Wire.h>
 
 SSCDNNN150PG2A3Device SSCDNNN150PG2A3;
+DevicePrinter SSCDNNN150PG2A3Printer0;
+DevicePrinter SSCDNNN150PG2A3Printer1;
+TogglePin led;
 
 void setup()
 {
   Serial.begin(115200);
   Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT); 
   Serial.println("Simple SSCDNNN150PG2A3 example 0");
   Serial1.println("Simple SSCDNNN150PG2A3 example 1");
-
+  led.begin(1000);
+ 
+  SSCDNNN150PG2A3Printer0.begin(Serial, SSCDNNN150PG2A3, 5000, "SSCDNNN150PG2A3");
+  SSCDNNN150PG2A3Printer1.begin(Serial1, SSCDNNN150PG2A3, 5000, "SSCDNNN150PG2A3");
   
   SSCDNNN150PG2A3.begin(Wire0, 0);
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
 
-  static int on = HIGH;
 
   SSCDNNN150PG2A3.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-    
-    float pressure = SSCDNNN150PG2A3.readPressure();
-    Serial.print("Pressure = ");
-    Serial.println(pressure);
-    
-    Serial1.print("Pressure = ");
-    Serial1.println(pressure);
-
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+  SSCDNNN150PG2A3Printer0.update();
+  SSCDNNN150PG2A3Printer1.update();
+  led.update();
 }

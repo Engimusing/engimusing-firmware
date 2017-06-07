@@ -24,17 +24,22 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <ADXL362Device.h>
 #include <SPI.h>
 ADXL362Device ADXL362;
+DevicePrinter ADXL362Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  ADXL362Printer.begin(Serial, ADXL362, 5000, "ADXL362");
   Serial.println("Simple ADXL362 example 0");
-
   //Initialize the Accelerometer sensor
   //pins are:
   //  2 - VIO
@@ -44,39 +49,9 @@ void setup()
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   ADXL362.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    float xData;
-    float yData;
-    float zData;
-    ADXL362.sampleXYZT();
-    xData = ADXL362.getXGees();
-    yData = ADXL362.getYGees();
-    zData = ADXL362.getZGees();
-
-    Serial.print("X = ");
-    Serial.print(xData);
-    Serial.print(" g Y = ");
-    Serial.print(yData);
-    Serial.print(" g Z = ");
-    Serial.print(zData);
-    Serial.println(" g");
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  ADXL362Printer.update();
+  led.update();
 }

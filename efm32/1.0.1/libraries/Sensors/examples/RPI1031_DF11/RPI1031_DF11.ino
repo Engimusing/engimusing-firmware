@@ -24,74 +24,31 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <RPI1031Device.h>
 
 RPI1031Device RPI1031;
+DevicePrinter RPI1031Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  RPI1031Printer.begin(Serial, RPI1031, 5000, "RPI1031");
   Serial.println("Simple RPI1031 example 0");
-
   
   //sets up the 5 pins needed to setup and communicate with the RPI1031
   RPI1031.begin(3,4,5,6,7,10);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   RPI1031.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    bool switchState[2];
-    bool risingEdge[2];
-    bool fallingEdge[2];
-      
-    for(int i = 0; i < 2; i++)
-    {
-      switchState[i] = RPI1031.switchState(i);
-      risingEdge[i] = RPI1031.risingEdge(i);
-      fallingEdge[i] = RPI1031.fallingEdge(i);
-      
-      Serial.print("Switch ");
-      Serial.print(i + 1);
-        
-      if(switchState[i])
-      {
-        
-        Serial.println(" state = on");
-      }
-      else
-      {
-        Serial.println(" state = off");
-      }
-      
-      if(risingEdge[i])
-      {
-        Serial.println("Rising Edge");
-      }
-      
-      if(fallingEdge[i])
-      {
-        Serial.println("Falling Edge");
-      }
-    }
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  RPI1031Printer.update();
+  led.update();
 }

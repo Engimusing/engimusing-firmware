@@ -31,17 +31,14 @@ void DevicePrinter::begin(Print &printer, Device &device, int delay, const char 
 {
     myPrinter = &printer;
     myDevice = &device;
-    myDelay = delay;
+    myTimeout.begin(delay);
     myDeviceName = deviceName;
-    myLastPrint = 0;
 }
 
 void DevicePrinter::update()
 {
-    if(millis() - myLastPrint > myDelay) 
+    if(myTimeout.update()) 
     {
-        myLastPrint = millis();
-        
         myPrinter->print(myDeviceName);
         myPrinter->println(" values:");
         

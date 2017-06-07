@@ -24,45 +24,30 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <MLX90614Device.h>
 #include <Wire.h>
 MLX90614Device MLX90614;
+DevicePrinter MLX90614Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  MLX90614Printer.begin(Serial, MLX90614, 5000, "MLX90614");
   Serial.println("Simple MLX90614 example 0");
-
   
   MLX90614.begin(Wire0, 10);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   MLX90614.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    float temp = MLX90614.temperature();
-    Serial.print("temperature = ");
-    Serial.print(temp);
-    Serial.println(" C");
-  
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  MLX90614Printer.update();
+  led.update();
 }

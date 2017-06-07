@@ -1,18 +1,25 @@
 /*
-  Blink
-  Turns on an LED on for one second, then off for one second, repeatedly.
+  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Lesser General Public
+  License as published by the Free Software Foundation; either
+  version 2.1 of the License, or (at your option) any later version.
 
-  Most Arduinos have an on-board LED you can control. On the Uno and
-  Leonardo, it is attached to digital pin 13. If you're unsure what
-  pin the on-board LED is connected to on your Arduino model, check
-  the documentation at http://www.arduino.cc
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU Lesser General Public License for more details.
 
-  This example code is in the public domain.
+  You should have received a copy of the GNU Lesser General Public
+  License along with this library; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 
-  modified 8 May 2014
-  by Scott Fitzgerald
- */
-
+#if !defined(SPI_INTERFACES_COUNT) || (SPI_INTERFACES_COUNT <= 1)
+#error Incorrect Board Selected! Please select a board which supports SPI1 from the Tools->Board: menu.
+#endif
+  
 #include "SPI.h"
 
 int extComm = 53;

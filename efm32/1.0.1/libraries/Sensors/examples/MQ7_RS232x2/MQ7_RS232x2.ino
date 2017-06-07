@@ -24,20 +24,27 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <MQ7Device.h>
 
 
 MQ7Device MQ7;
+DevicePrinter MQ7Printer0;
+DevicePrinter MQ7Printer1;
+TogglePin led;
 
 void setup()
 {
   Serial.begin(115200);
   Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT); 
   Serial.println("Simple MQ7 example 0");
   Serial1.println("Simple MQ7 example 1");
-
+  led.begin(1000);
+ 
+  MQ7Printer0.begin(Serial, MQ7, 5000, "MQ7");
+  MQ7Printer1.begin(Serial1, MQ7, 5000, "MQ7");
   
   //Initialize the MQ7 CO Sensor
   //Pins:
@@ -47,34 +54,13 @@ void setup()
   MQ7.begin(7, A0);
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
 
-  static int on = HIGH;
 
   MQ7.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-    
-    uint32_t alertValue = MQ7.currentAlertValue();
-    const char * state = MQ7.currentAlertText();
-    Serial.print("value = ");
-    Serial.print(alertValue);
-    Serial.print(" state = ");
-    Serial.println(state);
-    
-    Serial1.print("value = ");
-    Serial1.print(alertValue);
-    Serial1.print(" state = ");
-    Serial1.println(state);
-
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+  MQ7Printer0.update();
+  MQ7Printer1.update();
+  led.update();
 }

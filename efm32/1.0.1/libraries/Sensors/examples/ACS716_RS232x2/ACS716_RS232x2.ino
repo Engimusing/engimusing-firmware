@@ -24,20 +24,27 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <ACS716Device.h>
 
 
 ACS716Device ACS716;
+DevicePrinter ACS716Printer0;
+DevicePrinter ACS716Printer1;
+TogglePin led;
 
 void setup()
 {
   Serial.begin(115200);
   Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT); 
   Serial.println("Simple ACS716 example 0");
   Serial1.println("Simple ACS716 example 1");
-
+  led.begin(1000);
+ 
+  ACS716Printer0.begin(Serial, ACS716, 5000, "ACS716");
+  ACS716Printer1.begin(Serial1, ACS716, 5000, "ACS716");
   
   //Initialize the ACS716 which will report the current every 10 seconds
   // The two parameters A1 are the power pin and power feedback pin which in this case are the same
@@ -46,31 +53,13 @@ void setup()
   ACS716.begin(ACS716Device::ACS716_6BB, 8, 0, 11, 100);
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
 
-  static int on = HIGH;
 
   ACS716.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-    
-    float current = ACS716.instantCurrent();
-    Serial.print("Current Amperage = ");
-    Serial.println(current);
-  
-    
-    Serial1.print("Current Amperage = ");
-    Serial1.println(current);
-  
-
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+  ACS716Printer0.update();
+  ACS716Printer1.update();
+  led.update();
 }

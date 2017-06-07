@@ -16,19 +16,19 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#pragma once
+
 #include <Arduino.h>
 #include "wiring_constants.h"
-
-#pragma once
 
 /*
   This class is used for setting up a digital output to toggle between high and low at a set interval. 
  */
 
-class TOGGLEClass
+class TogglePin
 {
  public:
-  TOGGLEClass();
+  TogglePin();
   void begin(int toggleTime, uint8_t activeLevel = HIGH);
   void begin(uint32_t dwPin, int lowTime, int highTime, uint8_t activeLevel = HIGH);
   void begin(uint32_t dwPin, WiringModeTypeDef dwMode, int lowTime, int highTime, uint8_t activeLevel = HIGH);
@@ -43,9 +43,8 @@ class TOGGLEClass
   int highTime();
   
  private:
-  int myLastMillis;
-  int myHiTime;
-  int myLoTime;
+  Timeout myHighTimeout;
+  Timeout myLowTimeout;
   int myOn;
   uint32_t myPin;
   uint8_t myActiveLevel;

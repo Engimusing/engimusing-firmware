@@ -24,62 +24,30 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <MLX92212Device.h>
 
 MLX92212Device MLX92212;
+DevicePrinter MLX92212Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  MLX92212Printer.begin(Serial, MLX92212, 5000, "MLX92212");
   Serial.println("Simple MLX92212 example 0");
-
   
   MLX92212.begin(7, 10, 20);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   MLX92212.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    bool switchState = MLX92212.switchState();
-    bool risingEdge = MLX92212.risingEdge();
-    bool fallingEdge = MLX92212.fallingEdge();
-    
-    if(switchState)
-    {
-        Serial.println("state = on");
-    }
-    else
-    {
-        Serial.println("state = off");
-    }
-    
-    if(risingEdge)
-    {
-        Serial.println("Rising Edge");
-    }
-    
-    if(fallingEdge)
-    {
-        Serial.println("Falling Edge");
-    }
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  MLX92212Printer.update();
+  led.update();
 }

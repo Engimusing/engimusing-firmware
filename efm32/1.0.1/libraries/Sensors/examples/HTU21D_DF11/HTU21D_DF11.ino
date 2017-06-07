@@ -24,47 +24,30 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <HTU21DDevice.h>
 #include <Wire.h>
 HTU21DDevice HTU21D;
+DevicePrinter HTU21DPrinter;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  HTU21DPrinter.begin(Serial, HTU21D, 5000, "HTU21D");
   Serial.println("Simple HTU21D example 0");
-
   
   HTU21D.begin(Wire0, 10);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   HTU21D.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    float hum = HTU21D.calcHumidity(HTU21D.readHumidity());
-    float temp = HTU21D.calcTemp(HTU21D.readTemp());
-    delay(1000);                       // wait for a second
-    Serial.print("temperature = ");
-    Serial.print(temp);
-    Serial.print("   humidity = ");
-    Serial.println(hum);
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  HTU21DPrinter.update();
+  led.update();
 }

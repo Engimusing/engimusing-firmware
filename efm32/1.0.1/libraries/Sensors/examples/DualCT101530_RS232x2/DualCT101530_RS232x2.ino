@@ -24,107 +24,47 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <CT101530Device.h>
 
 
 CT101530Device ReedSwitch0;
+DevicePrinter ReedSwitch0Printer0;
+DevicePrinter ReedSwitch0Printer1;
 CT101530Device ReedSwitch1;
+DevicePrinter ReedSwitch1Printer0;
+DevicePrinter ReedSwitch1Printer1;
+TogglePin led;
 
 void setup()
 {
   Serial.begin(115200);
   Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT); 
   Serial.println("Simple DualCT101530 example 0");
   Serial1.println("Simple DualCT101530 example 1");
-
+  led.begin(1000);
+ 
+  ReedSwitch0Printer0.begin(Serial, ReedSwitch0, 5000, "ReedSwitch0");
+  ReedSwitch0Printer1.begin(Serial1, ReedSwitch0, 5000, "ReedSwitch0");
+  ReedSwitch1Printer0.begin(Serial, ReedSwitch1, 5000, "ReedSwitch1");
+  ReedSwitch1Printer1.begin(Serial1, ReedSwitch1, 5000, "ReedSwitch1");
   
   ReedSwitch0.begin(6,-1,50);
   ReedSwitch1.begin(7,-1,50);
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
 
-  static int on = HIGH;
 
   ReedSwitch0.update();
   ReedSwitch1.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-    
-    bool switchState[2];
-    bool risingEdge[2];
-    bool fallingEdge[2];
-    
-    switchState[0] = ReedSwitch0.switchState();
-    risingEdge[0] = ReedSwitch0.risingEdge();
-    fallingEdge[0] = ReedSwitch0.fallingEdge();
-      
-    switchState[1] = ReedSwitch1.switchState();
-    risingEdge[1] = ReedSwitch1.risingEdge();
-    fallingEdge[1] = ReedSwitch1.fallingEdge();
-        
-    for(int i = 0; i < 2; i++)
-    {
-      Serial.print("Switch ");
-      Serial.print(i + 1);
-        
-      if(switchState[i])
-      {
-        
-        Serial.println(" state = on");
-      }
-      else
-      {
-        Serial.println(" state = off");
-      }
-      
-      if(risingEdge[i])
-      {
-        Serial.println("Rising Edge");
-      }
-      
-      if(fallingEdge[i])
-      {
-        Serial.println("Falling Edge");
-      }
-    }
-    
-    for(int i = 0; i < 2; i++)
-    {
-      Serial1.print("Switch ");
-      Serial1.print(i + 1);
-        
-      if(switchState[i])
-      {
-        
-        Serial1.println(" state = on");
-      }
-      else
-      {
-        Serial1.println(" state = off");
-      }
-      
-      if(risingEdge[i])
-      {
-        Serial1.println("Rising Edge");
-      }
-      
-      if(fallingEdge[i])
-      {
-        Serial1.println("Falling Edge");
-      }
-    }
-
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+  ReedSwitch0Printer0.update();
+  ReedSwitch0Printer1.update();
+  ReedSwitch1Printer0.update();
+  ReedSwitch1Printer1.update();
+  led.update();
 }

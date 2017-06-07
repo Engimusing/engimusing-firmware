@@ -24,20 +24,27 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <ADXL362Device.h>
 #include <SPI.h>
 
 ADXL362Device ADXL362;
+DevicePrinter ADXL362Printer0;
+DevicePrinter ADXL362Printer1;
+TogglePin led;
 
 void setup()
 {
   Serial.begin(115200);
   Serial1.begin(115200);
 
-  pinMode(LED_BUILTIN, OUTPUT); 
   Serial.println("Simple ADXL362 example 0");
   Serial1.println("Simple ADXL362 example 1");
-
+  led.begin(1000);
+ 
+  ADXL362Printer0.begin(Serial, ADXL362, 5000, "ADXL362");
+  ADXL362Printer1.begin(Serial1, ADXL362, 5000, "ADXL362");
   //Initialize the Accelerometer sensor
   //pins are:
   //  2 - VIO
@@ -46,46 +53,13 @@ void setup()
   ADXL362.begin(2, 3, 4, &SPI);
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
 
-  static int on = HIGH;
 
   ADXL362.update();
 
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on); // toggle the LED (HIGH is the voltage level)
-    
-    float xData;
-    float yData;
-    float zData;
-    ADXL362.sampleXYZT();
-    xData = ADXL362.getXGees();
-    yData = ADXL362.getYGees();
-    zData = ADXL362.getZGees();
-
-    Serial.print("X = ");
-    Serial.print(xData);
-    Serial.print(" g Y = ");
-    Serial.print(yData);
-    Serial.print(" g Z = ");
-    Serial.print(zData);
-    Serial.println(" g");
-    
-    Serial1.print("X = ");
-    Serial1.print(xData);
-    Serial1.print(" g Y = ");
-    Serial1.print(yData);
-    Serial1.print(" g Z = ");
-    Serial1.print(zData);
-    Serial1.println(" g");
-
-    on = (on) ? LOW : HIGH; // on alternates between LOW and HIGH
-  }
+  ADXL362Printer0.update();
+  ADXL362Printer1.update();
+  led.update();
 }

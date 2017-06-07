@@ -62,8 +62,7 @@ void setup()
 
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, 13, "EFM32TG110/BOARD/LED", HIGH);
-
+  LEDCtrl.begin(HUB, LED_BUILTIN, "EFM32TG110/BOARD/LED", HIGH);
 
   
   MPL115A1.begin(3, -1, 4, SPI);
@@ -73,8 +72,7 @@ void setup()
 void loop()
 {
 
-  //Update the MQTT communication so it
-  // can send statuses and recieve requests
+  //Update the MQTT communication so it can send status and receive requests
   HUB.update();
 
 }

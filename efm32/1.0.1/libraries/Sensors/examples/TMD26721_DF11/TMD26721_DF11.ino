@@ -24,17 +24,22 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <TMD26721Device.h>
 #include <Wire.h>
 TMD26721Device TMD26721;
+DevicePrinter TMD26721Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  TMD26721Printer.begin(Serial, TMD26721, 5000, "TMD26721");
   Serial.println("Simple TMD26721 example 0");
-
   
   //Initialize the TMD26721 which will report the proximity every 10 seconds
   // The 4 parameter is the number of pulses. It can be anything between 0 and 255.
@@ -44,27 +49,9 @@ void setup()
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   TMD26721.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    uint32_t proximity = TMD26721.proximityData();
-    Serial.print("proximity = ");
-    Serial.println(proximity);
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  TMD26721Printer.update();
+  led.update();
 }

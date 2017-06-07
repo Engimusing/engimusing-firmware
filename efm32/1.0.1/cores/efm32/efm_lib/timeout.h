@@ -1,6 +1,6 @@
 /*
-  Copyright (c) 2016 Engimusing LLC.  All right reserved.
-
+  Copyright (c) 2017 Engimusing LLC.  All right reserved.
+  
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -18,24 +18,25 @@
 
 #pragma once
 
-#include "efm_lib/timeout.h"
+/*
+  This class is used for timing and will return true from it's update() when the timeout expires
+ */
 
-class Device;
-class Print;
-//Class for periodically printing information about the current state of a device
-class DevicePrinter
+class Timeout
 {
-    public:
-       DevicePrinter();
-       
-    public:
-        virtual void begin(Print &printer, Device &device, int delay, const char *deviceName);
-        virtual void update();
-        
-    private:
-        Print *myPrinter;
-        Device *myDevice;
-        Timeout myTimeout;
-        const char *myDeviceName;
-        int myLastPrint;
+ public:
+  Timeout();
+  void begin(int timeoutRateMs = 1000, bool loop = true);
+  void reset(); 
+  void setTimeoutTime(int timeoutRateMs);
+  int timeoutTime();
+  void setShouldLoop(bool loop);
+  bool update(void);
+  
+  
+ private:
+  bool myLoop;
+  int myTimeoutTime;
+  int myLastUpdateTime;
 };
+

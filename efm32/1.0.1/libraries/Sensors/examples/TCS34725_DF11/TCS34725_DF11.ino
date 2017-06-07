@@ -24,61 +24,30 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <TCS34725Device.h>
 #include <Wire.h>
 TCS34725Device TCS34725;
+DevicePrinter TCS34725Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  TCS34725Printer.begin(Serial, TCS34725, 5000, "TCS34725");
   Serial.println("Simple TCS34725 example 0");
-
   
   TCS34725.begin(Wire0, 5, TCS34725_INTEGRATIONTIME_700MS);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   TCS34725.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    uint16_t r = 0;
-    uint16_t g = 0;
-    uint16_t b = 0;
-    uint16_t c = 0;
-    TCS34725.sampleData();
-    TCS34725.getRawData(r,g,b,c);
-    float colorTemp = TCS34725.calculateColorTemperature(r,g,b);
-    float lux = TCS34725.calculateLux(r,g,b);
-
-    Serial.print("red = ");
-    Serial.print(r);
-    Serial.print(" green = ");
-    Serial.print(g);
-    Serial.print(" blue = ");
-    Serial.print(b);
-    Serial.print(" clear = ");
-    Serial.println(c);
-    Serial.print(" color temperature = ");
-    Serial.print(colorTemp);
-    Serial.print(" luminance = ");
-    Serial.println(lux);
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  TCS34725Printer.update();
+  led.update();
 }

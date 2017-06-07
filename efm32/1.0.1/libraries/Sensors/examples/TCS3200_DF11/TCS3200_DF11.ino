@@ -24,53 +24,31 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
+#include <DevicePrinter.h>
+
 #include <TCS3200Device.h>
 
 TCS3200Device TCS3200;
+DevicePrinter TCS3200Printer;
+TogglePin led;
+
 
 void setup()
 {
   Serial.begin(115200);
+  led.begin(1000);
 
-  pinMode(LED_BUILTIN, OUTPUT);
+  TCS3200Printer.begin(Serial, TCS3200, 5000, "TCS3200");
   Serial.println("Simple TCS3200 example 0");
-
   
   //sets up the 5 pins needed to setup and communicate with the TCS3200
   TCS3200.begin(2,4,6,8,7);
 
 }
 
-int lastMillis = 0; // store the last time the current was printed.
-int printDelay = 1000; //print every second.
-
 void loop()
 {
-
-  static int on = HIGH;
-
   TCS3200.update();
-  
-
-  if(millis() - lastMillis > printDelay)
-  {
-    lastMillis = millis();
-
-    digitalWrite(LED_BUILTIN, on);   // toggle the LED (HIGH is the voltage level)
-    
-    float red = TCS3200.readColorHertz(TCS3200Device::RED);
-    float green = TCS3200.readColorHertz(TCS3200Device::GREEN);
-    float blue = TCS3200.readColorHertz(TCS3200Device::BLUE);
-    float white = TCS3200.readColorHertz(TCS3200Device::WHITE);
-    Serial.print("red = ");
-    Serial.print(red);
-    Serial.print(" green = ");
-    Serial.print(green);
-    Serial.print(" blue = ");
-    Serial.print(blue);
-    Serial.print(" white = ");
-    Serial.println(white);
-
-    on = (on) ? LOW : HIGH;  // on alternates between LOW and HIGH
-  }
+  TCS3200Printer.update();
+  led.update();
 }

@@ -95,8 +95,7 @@ void setup()
 
   //Initialize the on off control to connect it to
   // the LED that is on the board
-  LEDCtrl.begin(HUB, 13, "EFM32TG222/BOARD/LED", HIGH);
-
+  LEDCtrl.begin(HUB, LED_BUILTIN, "EFM32TG222/BOARD/LED", HIGH);
 
   
   CapSense0.begin(15,50.0);
@@ -128,8 +127,7 @@ void setup()
 void loop()
 {
 
-  //Update the MQTT communication so it
-  // can send statuses and recieve requests
+  //Update the MQTT communication so it can send status and receive requests
   HUB.update();
 
 }
