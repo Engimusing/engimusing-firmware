@@ -41,3 +41,22 @@ void RingBuffer::store_char( uint8_t c )
     _iHead = i ;
   }
 }
+
+bool RingBuffer::empty()
+{
+    return (_iHead == _iTail);
+}
+
+void RingBuffer::flush()
+{
+    _iHead = _iTail;
+}
+
+char RingBuffer::read()
+{ 
+    if ( _iHead == _iTail )
+        return 0;
+    uint8_t uc = _aucBuffer[_iTail] ;
+  _iTail = (unsigned int)(_iTail + 1) & SERIAL_BUFFER_MASK;
+  return uc;
+}
