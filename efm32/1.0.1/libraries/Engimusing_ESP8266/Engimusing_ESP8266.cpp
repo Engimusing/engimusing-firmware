@@ -64,8 +64,14 @@ bool Engimusing_ESP8266::waitForStr(const char *strToFind, int timeout, bool ret
                 myIpdFoundChar++;
                 if(myIpdFoundChar == ipdFindStringLen)
                 {
-                    processPacket();
+                    int processPacketTimeout = timeout - (millis() - starttime);
+                    if(processPacketTimeout < 10)
+                    {
+                        processPacketTimeout = 10;
+                    }
+                    processPacket(processPacketTimeout);
                     foundChar = 0;
+                    myIpdFoundChar = 0;
                     if(retIfPacketFound)
                     {
                         return false;
@@ -286,37 +292,46 @@ int16_t Engimusing_ESP8266::write(const void *buf, uint16_t len, uint32_t flags)
     return (charBuf - (char*)buf);
 }
 
-void Engimusing_ESP8266::processPacket()
+void Engimusing_ESP8266::processPacket(int timeout)
 {
     int receivedLen = 0;
     char nextChar = 0;
-    while(mySerial->available() && nextChar != ':' && receivedLen < 64000)
+    int starttime = millis();
+    
+    while((starttime + timeout > millis()) && nextChar != ':' && receivedLen < 64000)
     {
-        nextChar = mySerial->read();
-        if(myDebugPrinter)
+        if(mySerial->available())
         {
-            myDebugPrinter->print(nextChar);
-        }
-        if(nextChar <= '9' && nextChar >= '0')
-        {
-            receivedLen *= 10;
-            receivedLen += nextChar - '0';
-        }
-        else if(nextChar != ':')
-        {
-            return;
+            nextChar = mySerial->read();
+            if(myDebugPrinter)
+            {
+                myDebugPrinter->print(nextChar);
+            }
+            if(nextChar <= '9' && nextChar >= '0')
+            {
+                receivedLen *= 10;
+                receivedLen += nextChar - '0';
+            }
+            else if(nextChar != ':')
+            {
+                return;
+            }
         }
     }
-    while(mySerial->available() && receivedLen > 0)            
+    while((starttime + timeout > millis()) && receivedLen > 0)            
     {
-        myPacketBuffer.store_char(mySerial->read());
-        receivedLen--;
+        if(mySerial->available())
+        {
+            myPacketBuffer.store_char(mySerial->read());
+            receivedLen--;
+        }
     }   
     
 }
 
 int16_t Engimusing_ESP8266::read(void *buf, uint16_t len, uint16_t timeout)
 {
+    
     if(myPacketBuffer.empty())
     {
         if(waitForStr("ERROR,", timeout, true))

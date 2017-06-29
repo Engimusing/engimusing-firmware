@@ -59,7 +59,7 @@ class Engimusing_ESP8266 {
     int16_t write(const void *buf, uint16_t len, uint32_t flags = 0);
     int16_t read(void *buf, uint16_t len, uint16_t timeout);
   
-    void processPacket();
+    void processPacket(int timeout);
   private:
 
     Esp8266Config &myConfig;
