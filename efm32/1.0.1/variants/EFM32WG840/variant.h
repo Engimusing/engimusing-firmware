@@ -161,22 +161,22 @@ static const uint8_t A7  = 35;
 
 //clockwise starting on the top left of the board with the rs232 on the left and the efm on the top side of the board.
 #define PIN_ESP8266_0_POWER 32
-#define PIN_ESP8266_0_RESET 33
+#define PIN_ESP8266_0_RESET 31
 #define PIN_ESP8266_0_GPIO0 12
 #define SERIAL_ESP8266_0 SerialDF11_0
 
 #define PIN_ESP8266_1_POWER 18
-#define PIN_ESP8266_1_RESET 19
+#define PIN_ESP8266_1_RESET 17
 #define PIN_ESP8266_1_GPIO0 25
 #define SERIAL_ESP8266_1 SerialDF11_1
 
 #define PIN_ESP8266_2_POWER 29
-#define PIN_ESP8266_2_RESET 30
+#define PIN_ESP8266_2_RESET 28
 #define PIN_ESP8266_2_GPIO0 41
 #define SERIAL_ESP8266_2 SerialDF11_2
 
 #define PIN_ESP8266_3_POWER 5
-#define PIN_ESP8266_3_RESET 6
+#define PIN_ESP8266_3_RESET 4
 #define PIN_ESP8266_3_GPIO0 61
 #define SERIAL_ESP8266_3 SerialDF11_3
 

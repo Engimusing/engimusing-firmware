@@ -79,10 +79,13 @@ RingBuffer rx_buffer2;
 UARTClass Serial(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC1, cmuClock_LEUART0);
 //UARTClass Serial1(USART1, USART1_RX_IRQn, &rx_buffer1, USART_ROUTE_LOCATION_LOC0, cmuClock_USART1);
 
+UARTClass SerialDF11_0(USART1, USART1_RX_IRQn, &rx_buffer1, USART_ROUTE_LOCATION_LOC0, cmuClock_USART1, PIN_SPI0_MOSI, PIN_SPI0_MISO);
+
 // IT handlers
 void USART1_RX_IRQHandler(void)
 {
  // Serial1.IrqHandler();
+ SerialDF11_0.IrqHandler();
 }
 
 void LEUART0_IRQHandler(void)
@@ -135,6 +138,7 @@ extern void serialEvent() __attribute__((weak));
 void serialEventRun(void)
 {
 if (Serial.available() && serialEvent) serialEvent();
+if (SerialDF11_0.available() && serialEvent) serialEvent();
 //if (Serial1.available() && serialEvent) serialEvent();
 
 }

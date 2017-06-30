@@ -69,6 +69,13 @@ static const uint8_t A2 = 10;
 #define CC3000_0_SPI SPI
 */
 
+#define ESP8266_INTERFACES_COUNT 1
+
+//clockwise starting on the top left of the board with the rs232 on the left and the efm on the top side of the board.
+#define PIN_ESP8266_0_POWER 3
+#define PIN_ESP8266_0_RESET 2
+#define PIN_ESP8266_0_GPIO0 4
+#define SERIAL_ESP8266_0 SerialDF11_0
 
 /* LESENSE number of channels possible to use*/
 #define NUM_LESENSE_CHANNELS    0
