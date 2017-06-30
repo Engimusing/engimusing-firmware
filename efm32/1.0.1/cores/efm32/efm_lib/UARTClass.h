@@ -52,11 +52,13 @@ class UARTClass : public HardwareSerial
     CMU_Clock_TypeDef _UartClk;
     bool _loopback;
 	int _breakCommandState;
+    unsigned int _txPin;
+    unsigned int _rxPin;
+    bool _begun;
 	//const char *_id;
  public:
-    UARTClass( Uart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk, bool loopback );
-    UARTClass( Uart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk );
-    UARTClass( Leuart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk );
+    UARTClass( Uart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk, unsigned int txPin = 0, unsigned int rxPin = 0 );
+    UARTClass( Leuart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk, unsigned int txPin = 0, unsigned int rxPin = 0 );
 	
     void begin( const uint32_t dwBaudRate ) ;
     void end( void ) ;
@@ -68,6 +70,9 @@ class UARTClass : public HardwareSerial
 
     void IrqHandler( void ) ;
 	bool isResetReceived( void );
+    
+    bool hasBegun();
+    
 #if defined __GNUC__ /* GCC CS3 */
     using Print::write ; // pull in write(str) and write(buf, size) from Print
 #elif defined __ICCARM__ /* IAR Ewarm 5.41+ */
@@ -83,6 +88,10 @@ extern UARTClass Serial1;
 extern UARTClass Serial2;
 extern UARTClass Serial3;
 extern UARTClass Serial4;
+extern UARTClass SerialDF11_0;
+extern UARTClass SerialDF11_1;
+extern UARTClass SerialDF11_2;
+extern UARTClass SerialDF11_3;
 
 extern void serialEventRun(void) __attribute__((weak));
 extern void serialEvent() __attribute__((weak));

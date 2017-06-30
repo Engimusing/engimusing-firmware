@@ -97,7 +97,7 @@ static const uint8_t A7  = 35;
 
 
 //for the 4 DF11 board each of these is one of the DF11 connections.
-// SPI 0 is the top right connection when the board has the RS232 on the left and the 
+// SPI 0 is the top left connection when the board has the RS232 on the left and the 
 // Energy Micro on top. Then the rest of the SPI go counter clockwise from there.
 // On this particular board SPI 1,2, and 3 cannot be used at the same time since they us the same USART
 #define SPI_INTERFACES_COUNT 4
@@ -157,6 +157,28 @@ static const uint8_t A7  = 35;
 #define PIN_CC3000_3_VBAT 47
 #define CC3000_3_SPI SPI3
 
+#define ESP8266_INTERFACES_COUNT 4
+
+//clockwise starting on the top left of the board with the rs232 on the left and the efm on the top side of the board.
+#define PIN_ESP8266_0_POWER 32
+#define PIN_ESP8266_0_RESET 33
+#define PIN_ESP8266_0_GPIO0 12
+#define SERIAL_ESP8266_0 SerialDF11_0
+
+#define PIN_ESP8266_1_POWER 18
+#define PIN_ESP8266_1_RESET 19
+#define PIN_ESP8266_1_GPIO0 25
+#define SERIAL_ESP8266_1 SerialDF11_1
+
+#define PIN_ESP8266_2_POWER 29
+#define PIN_ESP8266_2_RESET 30
+#define PIN_ESP8266_2_GPIO0 41
+#define SERIAL_ESP8266_2 SerialDF11_2
+
+#define PIN_ESP8266_3_POWER 5
+#define PIN_ESP8266_3_RESET 6
+#define PIN_ESP8266_3_GPIO0 61
+#define SERIAL_ESP8266_3 SerialDF11_3
 
 /* LESENSE number of channels possible to use, should be 16 */
 // On the WG840 only 8 channels are exposed by pins (4,5,6,7,12,13,14,15)

@@ -35,7 +35,7 @@ extern void check_for_reset ( void ) __attribute__((weak));
 
 // Constructors ////////////////////////////////////////////////////////////////
 
-UARTClass::UARTClass( Uart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk)
+UARTClass::UARTClass( Uart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk, unsigned int txPin, unsigned int rxPin)
 {
   _rx_buffer = pRx_buffer ;
 
@@ -45,24 +45,13 @@ UARTClass::UARTClass( Uart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint
   _UartClk = UartClk;
   _loopback = false;
   _breakCommandState = Idle;
+  _txPin = txPin;
+  _rxPin = rxPin;
+  _begun = false;
   //_id =  (char*)"{EMUS;ADXL_0;ADXL_1;ADXL_2;TMP_0;ASDF_0}";
 }
 
-UARTClass::UARTClass( Uart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk, bool loopback)
-{
-  _rx_buffer = pRx_buffer ;
-
-  _pUart=pUart ;
-  _dwIrq=dwIrq ;
-  _UartLoc = UartLoc;
-  _UartClk = UartClk;
-  _loopback = loopback;
-  _breakCommandState = Idle;
-  //_id = (char*)"{EMUS;ADXL_0;ADXL_1;ADXL_2;TMP_0;ASDF_0}";
-}
-
-
-UARTClass::UARTClass( Leuart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk)
+UARTClass::UARTClass( Leuart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, uint32_t UartLoc, CMU_Clock_TypeDef UartClk, unsigned int txPin, unsigned int rxPin)
 {
   _rx_buffer = pRx_buffer ;
 
@@ -72,6 +61,9 @@ UARTClass::UARTClass( Leuart* pUart, IRQn_Type dwIrq, RingBuffer* pRx_buffer, ui
   _UartLoc = UartLoc;
   _UartClk = UartClk;
   _breakCommandState = Idle;
+  _txPin = txPin;
+  _rxPin = rxPin;
+  _begun = false;
   //_id = (char*)"{EMUS;ADXL_0;ADXL_1;ADXL_2;TMP_0;ASDF_0}";
 }
 
@@ -82,13 +74,29 @@ void UARTClass::begin( const uint32_t dwBaudRate )
 	
 	//for now lets not allow any other baudrates!!!!! 
 	// Remove before distributing to customers!!!!!
-	if(dwBaudRate != 115200)
-		return;
+	//if(dwBaudRate != 115200)
+	//	return;
 	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	
 	
   // Configure PMC
-	
+	if(_txPin > 0)
+    {
+        GPIO_PinModeSet(
+        (GPIO_Port_TypeDef)dPorts[ _txPin],
+        dPins[ _txPin],
+        gpioModePushPull,
+       1);
+    }
+    if(_rxPin > 0)
+    {
+        GPIO_PinModeSet(
+        (GPIO_Port_TypeDef)dPorts[ _rxPin],
+        dPins[ _rxPin],
+        gpioModeInput,
+       0);
+    }
+    
   if(_pUart)
     {
 	//NOTE TO SELF Make sure there are rs232 recievers on both ends or niether end when attempting to use UART/LEUART
@@ -166,6 +174,8 @@ void UARTClass::begin( const uint32_t dwBaudRate )
 		LEUART_Enable(_pLeuart, leuartEnable);
 
     }
+    
+    _begun = true;
 }
 
 
@@ -242,6 +252,10 @@ void UARTClass::IrqHandler( void )
 {
   int readData = 0;
   bool breakReceived = false;
+  if(!_begun)
+  {
+      return;
+  }
   // Did we receive data ?
   if(_pUart)
     {
@@ -297,3 +311,7 @@ bool UARTClass::isResetReceived()
 	return _breakCommandState == ResetReceived;
 }
 
+bool UARTClass::hasBegun()
+{
+    return _begun;
+}
