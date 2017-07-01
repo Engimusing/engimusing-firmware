@@ -25,43 +25,6 @@
 #include "Adafruit_MQTT.h"
 #include "Adafruit_MQTT_ESP8266.h"
 
-//define up to 4 default cc3000 pin configurations
-#if ESP8266_INTERFACES_COUNT > 0
-Esp8266Config esp8266_0_pinConfig = {
-   PIN_ESP8266_0_POWER,
-   PIN_ESP8266_0_RESET,
-   PIN_ESP8266_0_GPIO0,
-   SERIAL_ESP8266_0
-};
-#endif
-
-#if ESP8266_INTERFACES_COUNT > 1
-Esp8266Config esp8266_1_pinConfig = {
-   PIN_ESP8266_1_POWER,
-   PIN_ESP8266_1_RESET,
-   PIN_ESP8266_1_GPIO0,
-   SERIAL_ESP8266_1
-};
-#endif
-
-#if ESP8266_INTERFACES_COUNT > 2
-Esp8266Config esp8266_2_pinConfig = {
-   PIN_ESP8266_2_POWER,
-   PIN_ESP8266_2_RESET,
-   PIN_ESP8266_2_GPIO0,
-   SERIAL_ESP8266_2
-};
-#endif
-
-#if ESP8266_INTERFACES_COUNT > 3
-Esp8266Config esp8266_3_pinConfig = {
-   PIN_ESP8266_3_POWER,
-   PIN_ESP8266_3_RESET,
-   PIN_ESP8266_3_GPIO0,
-   SERIAL_ESP8266_3
-};
-#endif
-
 // Function to connect and reconnect as necessary to the MQTT server.
 // Should be called in the loop function and it will take care if connecting.
 void MqttESP8266Port::MQTT_connect() {

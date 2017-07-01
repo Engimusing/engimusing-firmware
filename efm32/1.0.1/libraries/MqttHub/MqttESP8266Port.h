@@ -27,19 +27,6 @@
 #include <Engimusing_ESP8266.h>
 #include "Adafruit_MQTT.h"
 
-#if ESP8266_INTERFACES_COUNT > 0
-extern Esp8266Config esp8266_0_pinConfig;
-#endif
-#if ESP8266_INTERFACES_COUNT > 1
-extern Esp8266Config esp8266_1_pinConfig;
-#endif
-#if ESP8266_INTERFACES_COUNT > 2
-extern Esp8266Config esp8266_2_pinConfig;
-#endif
-#if ESP8266_INTERFACES_COUNT > 3
-extern Esp8266Config esp8266_3_pinConfig;
-#endif
-
 struct WlanConfig
 {
    const char* ssid;

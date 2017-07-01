@@ -18,22 +18,53 @@
 
 #include "Engimusing_ESP8266.h"
 
-
 Engimusing_ESP8266::Engimusing_ESP8266(Esp8266Config &config, UARTClass *debugPrinter) 
-    :   myConfig(config)
-    ,   mySerial(&config.serial)
-    ,   myDebugPrinter(debugPrinter)
-    ,   myConnectionCheckTimeout(600000) //check every 10 minutes if we are still connected to the AP
-    ,   myLastConnectionCheck(0)
-    ,   myConnectedToAp(false)
-    ,   myTcpConnectionCheckTimeout(600000)
-    ,   myLastTcpConnectionCheck(0)
-    ,   myTcpConnected(false)
-    ,   myPacketBuffer()
-    ,   myIpdFoundChar(0)
+    : myConfig(config)
+    , mySerial(&config.serial)
+    , myDebugPrinter(debugPrinter)
+    , myConnectionCheckTimeout(600000) //check every 10 minutes if we are still connected to the AP
+    , myLastConnectionCheck(0)
+    , myConnectedToAp(false)
+    , myTcpConnectionCheckTimeout(600000)
+    , myLastTcpConnectionCheck(0)
+    , myTcpConnected(false)
+    , myPacketBuffer()
+    , myIpdFoundChar(0)
     , myTcpServer(0)
     , myTcpPort(0)
 {
+}
+
+bool Engimusing_ESP8266::begin()
+{
+    mySerial->begin(115200);
+    
+    pinMode(myConfig.resetPin, OUTPUT);
+    digitalWrite(myConfig.resetPin, HIGH);   // get the rest pin ready for the board to turn on
+
+    pinMode(myConfig.powerPin, OUTPUT);
+    digitalWrite(myConfig.powerPin, LOW);   // start with the board turned off
+    
+    pinMode(myConfig.gpio0Pin, OUTPUT);
+    digitalWrite(myConfig.gpio0Pin, HIGH);   // set the gpio0 pin so that the ESP8266 boots
+    
+    delay(100);
+    pinMode(myConfig.powerPin, OUTPUT);
+    digitalWrite(myConfig.powerPin, HIGH);   // turn on the ESP8266
+    
+    bool found = waitForStr("ready");
+    if(myDebugPrinter)
+    {
+        if(found)
+        {
+            myDebugPrinter->println("Engimusing_ESP8266 Ready!");
+        }
+        else
+        {
+            myDebugPrinter->println("Engimusing_ESP8266 Ready String Timeout!!");
+        }
+    }
+    return found;
 }
 
 bool Engimusing_ESP8266::waitForStr(const char *strToFind, int timeout, bool retIfPacketFound)
@@ -95,39 +126,6 @@ bool Engimusing_ESP8266::waitForStr(const char *strToFind, int timeout, bool ret
         }
     }
     return false;
-}
-
-
-bool Engimusing_ESP8266::begin()
-{
-    mySerial->begin(115200);
-    
-    pinMode(myConfig.resetPin, OUTPUT);
-    digitalWrite(myConfig.resetPin, HIGH);   // get the rest pin ready for the board to turn on
-
-    pinMode(myConfig.powerPin, OUTPUT);
-    digitalWrite(myConfig.powerPin, LOW);   // start with the board turned off
-    
-    pinMode(myConfig.gpio0Pin, OUTPUT);
-    digitalWrite(myConfig.gpio0Pin, HIGH);   // set the gpio0 pin so that the ESP8266 boots
-    
-    delay(100);
-    pinMode(myConfig.powerPin, OUTPUT);
-    digitalWrite(myConfig.powerPin, HIGH);   // turn on the ESP8266
-    
-    bool found = waitForStr("ready");
-    if(myDebugPrinter)
-    {
-        if(found)
-        {
-            myDebugPrinter->println("Engimusing_ESP8266 Ready!");
-        }
-        else
-        {
-            myDebugPrinter->println("Engimusing_ESP8266 Ready String Timeout!!");
-        }
-    }
-    return found;
 }
 
 bool Engimusing_ESP8266::connectToAp(const char *ssid, const char *key)
@@ -357,4 +355,41 @@ int16_t Engimusing_ESP8266::read(void *buf, uint16_t len, uint16_t timeout)
     }
     return 0;
 }
+
+//define up to 4 default cc3000 pin configurations
+#if ESP8266_INTERFACES_COUNT > 0
+Esp8266Config esp8266_0_pinConfig = {
+   PIN_ESP8266_0_POWER,
+   PIN_ESP8266_0_RESET,
+   PIN_ESP8266_0_GPIO0,
+   SERIAL_ESP8266_0
+};
+#endif
+
+#if ESP8266_INTERFACES_COUNT > 1
+Esp8266Config esp8266_1_pinConfig = {
+   PIN_ESP8266_1_POWER,
+   PIN_ESP8266_1_RESET,
+   PIN_ESP8266_1_GPIO0,
+   SERIAL_ESP8266_1
+};
+#endif
+
+#if ESP8266_INTERFACES_COUNT > 2
+Esp8266Config esp8266_2_pinConfig = {
+   PIN_ESP8266_2_POWER,
+   PIN_ESP8266_2_RESET,
+   PIN_ESP8266_2_GPIO0,
+   SERIAL_ESP8266_2
+};
+#endif
+
+#if ESP8266_INTERFACES_COUNT > 3
+Esp8266Config esp8266_3_pinConfig = {
+   PIN_ESP8266_3_POWER,
+   PIN_ESP8266_3_RESET,
+   PIN_ESP8266_3_GPIO0,
+   SERIAL_ESP8266_3
+};
+#endif
   
