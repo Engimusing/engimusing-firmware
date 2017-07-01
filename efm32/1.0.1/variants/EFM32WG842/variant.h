@@ -91,6 +91,14 @@ static const uint8_t A7  = 35;
 #define PIN_CC3000_0_VBAT 52
 #define CC3000_0_SPI SPI
 
+#define ESP8266_INTERFACES_COUNT 1
+
+//clockwise starting on the top left of the board with the rs232 on the left and the efm on the top side of the board.
+#define PIN_ESP8266_0_POWER 58
+#define PIN_ESP8266_0_RESET 21
+#define PIN_ESP8266_0_GPIO0 12
+#define SERIAL_ESP8266_0 SerialDF11_0
+
 
 /* LESENSE number of channels possible to use, should be 16 */
 // On the WG840 only 8 channels are exposed by pins (4,5,6,7,12,13,14,15)
