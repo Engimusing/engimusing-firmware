@@ -33,7 +33,7 @@ const uint8_t dPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,  0  ,P
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
 			 PORTC,  0  ,  0  ,PORTF,PORTF,PORTF,PORTF,  0  ,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,
 //                         64
-                         PORTA};
+                         PORTE};
 
 // Digital Pins             0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
 const uint8_t dPins[]    = {0,   0,    1,    2,    3,    4,    5,    6,    0,    3,    4,    5,    6,    4,    5,    7,
@@ -42,9 +42,9 @@ const uint8_t dPins[]    = {0,   0,    1,    2,    3,    4,    5,    6,    0,   
 //                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
 			    4,   5,    6,    7,    8,    6,    7,    0,    0,    4,    5,    6,    7,   12,   13,   14,
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
-			   15,   0,    0,    2,    3,    4,    5,    0,    8,    9,   10,   11,   12,   13,   14,   15,
+			   15,   0,    0,    2,    3,    4,    5,    0,   0,  8,    9,   10,   11,   12,   13,   14,  
 //                         64
-			   15};
+			    15};
 
 // GPIO Interrupt Ports     0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
 const uint8_t iPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,  0  ,PORTB,PORTB,PORTB,PORTB,PORTC,PORTC,PORTB,
@@ -55,7 +55,7 @@ const uint8_t iPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,  0  ,P
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
 			 PORTC,  0  ,  0  ,PORTF,PORTF,PORTF,PORTF,  0  ,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,
 //                         64
-                         PORTA};
+                         PORTE};
 
 // GPIO Interrupt Pins      0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
 const uint8_t iPins[]    = {0,   0,    1,    2,    3,    4,    5,    6,    0,    3,    4,    5,    6,    4,    5,    7,
@@ -64,7 +64,7 @@ const uint8_t iPins[]    = {0,   0,    1,    2,    3,    4,    5,    6,    0,   
 //                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
 			    4,   5,    6,    7,    8,    6,    7,    0,    0,    4,    5,    6,    7,   12,   13,   14,
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
-			   14,   0,    0,    2,    3,    4,    5,    0,    8,    9,   10,   11,   12,   13,   14,   15,
+			   14,   0,    0,    2,    3,    4,    5,    0,   0,  8,    9,   10,   11,   12,   13,   14, 
 //                         64
 			   15};
 
