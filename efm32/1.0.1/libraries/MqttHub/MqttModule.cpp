@@ -80,6 +80,71 @@ int8_t MqttModule::compare_token(const char* inTok, const char* cmpTok)
   }
   return 1;
 }
+uint8_t MqttModule::isTopicThisModuleWildcard(const char* topic)
+{
+    uint8_t i = 0;
+    uint8_t j = 0;
+    uint8_t mlen = strlen((char*)myModule);
+    uint8_t tlen = strlen((char*)topic);
+        
+    bool wildCardActive = false;
+    bool lastCharWasDelim = false;
+    
+    if(myModule[i] == '+')
+    {
+        wildCardActive = true;
+        i++;
+    }
+    
+    // compare module
+    for(j = 0; i < mlen && j < tlen; j++) {
+      if(!wildCardActive)
+      {
+          if(myModule[i] == '+' && lastCharWasDelim)
+          {
+              wildCardActive = true;
+          }
+          else if(topic[j] != myModule[i]) 
+          {
+            return 0;
+          }
+          
+          if(topic[j] == '/')
+          {
+              lastCharWasDelim = true;
+          }
+          else
+          {
+              lastCharWasDelim = false;
+          }
+          
+          i++;
+      }
+      else
+      {
+          if(myModule[i] != '/') 
+          {
+              //Invaild use of '+' character in module name
+              return 0;
+          }
+          else
+          {
+            if(topic[j] == '/' && myModule[i] == '/')
+            {
+              wildCardActive = false;
+              lastCharWasDelim = true;
+               i++;
+            }
+          }
+      }
+    }
+    if(wildCardActive)
+    {
+        return 0;
+    }
+
+    return j+1;
+}
 
 // ------------------------------- Simple Module Class ------------------------
 void SimpleMqttModule::begin(MqttHub &hub, Device &device, const char* mod, uint32_t updateDelay)
@@ -176,6 +241,11 @@ const char *MessageInputStringModule::getInputString(void)
 bool MessageInputStringModule::hasNewData()
 {
     return myNewData;
+}
+
+uint8_t MessageInputStringModule::isTopicThisModule(const char* topic)
+{
+    return isTopicThisModuleWildcard(topic);
 }
 
 // ------------------------------- Notification Class --------------------------

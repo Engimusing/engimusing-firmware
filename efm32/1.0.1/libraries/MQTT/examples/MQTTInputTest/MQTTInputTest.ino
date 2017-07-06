@@ -60,6 +60,11 @@
   EFMFloatModule.begin(HUB, "EFM32ZG108/BOARD/TMP102?", "DEG_C");
   would get the temperature from the RS232 TMP102 example.
   
+  MessageInputModules also support the '+' wildcard subscriptions so their module type can use + in place of one
+  level of the hierarchy. For example:
+  EFMFloatModule.begin(HUB, "EFM32ZG108/+/TMP102?", "DEG_C");
+  would still catch the messages for the EFM32ZG108/BOARD/TMP102?
+  
 */
 
 MqttHub HUB;

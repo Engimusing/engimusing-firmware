@@ -36,7 +36,9 @@ class MqttModule
   virtual uint8_t decode(const char* topic, const char* payload);
  
  protected:
-  uint8_t isTopicThisModule(const char* topic);
+  virtual uint8_t isTopicThisModule(const char* topic);
+  virtual uint8_t isTopicThisModuleWildcard(const char* topic);
+  
   int8_t compare_token(const char* inTok, const char* cmpTok);
 
  protected:
@@ -89,6 +91,11 @@ class MessageInputModule : public MqttModule
       return myNewData;
   }
   
+  virtual uint8_t isTopicThisModule(const char* topic)
+  {
+      return isTopicThisModuleWildcard(topic);
+  }
+
 
  protected:
  
@@ -128,6 +135,7 @@ class MessageInputStringModule : public MqttModule
   virtual uint8_t decode(const char* topic, const char* payload);
   virtual const char *getInputString(void);
   virtual bool hasNewData();
+  virtual uint8_t isTopicThisModule(const char* topic);
   
  private:
   static const int maxStringSize = 64;
