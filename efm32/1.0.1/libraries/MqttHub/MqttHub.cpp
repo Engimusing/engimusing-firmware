@@ -23,7 +23,7 @@
 #include "MqttPort.h"
 #include "MqttModule.h"
 
-MqttHub::MqttHub(bool sendAll)
+MqttHub::MqttHub()
 {
   mySubscribeHeartbeat = 30000; //30 second heartbeat
   
@@ -31,7 +31,6 @@ MqttHub::MqttHub(bool sendAll)
   myRootModule = 0;
   myRootPort = 0;
   myNextSubscribeModule = 0;
-  mySendAll = sendAll;
 }
 
 void MqttHub::subscribe(const char* mod)
@@ -89,9 +88,7 @@ void MqttHub::update()
 				}
 			}
          
-         //check to see if this hub handled the message. If not send it to all the other ports.
-         if(!processed || mySendAll)
-         {
+            //Send the message to all the other ports.
             MqttPort *curSendPort = myRootPort;
             while(curSendPort)
             {
@@ -101,7 +98,6 @@ void MqttHub::update()
                }
                curSendPort = curSendPort->myNextPort;
             }
-          }         
 		}
 		curPort = curPort->myNextPort;
 	}
