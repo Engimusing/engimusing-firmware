@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,24 @@
   {"TOP":"EFM/BOARD/LED2/CTL","PLD":"STATUS"}
 
   {"TOP":"EFM/CPU","PLD":"STATUS"}
+  
+  EFMBoolModule commands, 0 is false and 1 is true
+  {"TOP":"INPUT/TEST/BOOL","PLD":"0"}
+  {"TOP":"INPUT/TEST/BOOL","PLD":"1"} 
+  
+  EFMIntModule command
+  {"TOP":"INPUT/TEST/INT","PLD":"0"}
+  
+  EFMFloatModule command
+  {"TOP":"INPUT/TEST/FLOAT","PLD":"0.0"}
+  
+  EFMStringModule command
+  {"TOP":"INPUT/TEST/STRING","PLD":"CHARACTERS"}
+  
+  MessageInputModule can also be used to listen to other devices. For example:
+  EFMFloatModule.begin(HUB, "EFM32ZG108/BOARD/TMP102?", "DEG_C");
+  would get the temperature from the RS232 TMP102 example.
+  
 */
 
 MqttHub HUB;
@@ -90,21 +108,31 @@ void setup()
   EFMCPUMqttMod.begin(HUB, EFMCPU, "EFM/CPU", 5000);
   
 }
-//int lastMillisOn = 0;
-//int lastMillisOff = 1000;
-int last = 0;
+
 void loop()
 {
   HUB.update();
 
-  if(millis() > last + 1000)
+  //hasNewData() returns true once the input module has recieved new data
+  // it will return false again after getInput() is called.
+  if(EFMBoolModule.hasNewData())
   {
-    last = millis();
-    Serial.println(EFMBoolModule.getInput());
+    Serial.println(EFMBoolModule.getInput() ? "true" : "false");
+  }
+  
+  if(EFMIntModule.hasNewData())
+  {
     Serial.println(EFMIntModule.getInput());
+  }
+  
+  if(EFMFloatModule.hasNewData())
+  {
     Serial.println(EFMFloatModule.getInput());
+  }
+  
+  if(EFMStringModule.hasNewData())
+  {
     Serial.println(EFMStringModule.getInputString());
   }
-
   
 }

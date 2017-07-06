@@ -39,7 +39,7 @@ class MqttHub
 {
  public:
 
-	MqttHub();
+	MqttHub(bool sendAll = false);
 
 	virtual void sendMessage(const char* mod, const char* subTop, int payload) { sendMessage(mod, subTop, (long) payload); } 
 	virtual void sendMessage(const char* mod, const char* subTop, unsigned int payload) { sendMessage(mod, subTop, (unsigned long) payload); } 
@@ -64,6 +64,6 @@ class MqttHub
 	MqttModule *myRootModule;
 	MqttPort *myRootPort;
 	MqttModule *myNextSubscribeModule;
-	
+	bool mySendAll;
 };
 

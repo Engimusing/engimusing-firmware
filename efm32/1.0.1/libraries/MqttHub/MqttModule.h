@@ -59,6 +59,7 @@ class MessageInputModule : public MqttModule
 
       myControl = control;
       myInputValue = 0;
+      myNewData = false;
    }
   
   virtual uint8_t decode(const char* topic, const char* payload)
@@ -71,6 +72,7 @@ class MessageInputModule : public MqttModule
       
       if(compare_token(&topic[j],myControl)) {
           parsePayload(payload, myInputValue);
+          myNewData = true;
           return 1;
       }
   }
@@ -78,14 +80,21 @@ class MessageInputModule : public MqttModule
   
   virtual T getInput(void)
   {
+    myNewData = false;
     return myInputValue;
   }
+  
+  virtual bool hasNewData()
+  {
+      return myNewData;
+  }
+  
 
  protected:
  
   virtual void parsePayload(const char* payload, float &output)
   {
-      output = atofLocal(payload);
+      output = atofLocal(payload);   
   }
   
   virtual void parsePayload(const char* payload, int32_t &output)
@@ -99,11 +108,15 @@ class MessageInputModule : public MqttModule
       {
         output = false;
       }
-      output = true;
+      else
+      {
+        output = true;
+      }
   }
 
   T myInputValue;
   const char* myControl;
+  bool myNewData;
 
 };
 
@@ -114,12 +127,13 @@ class MessageInputStringModule : public MqttModule
   virtual void begin(MqttHub &hub, const char* module, const char* control);
   virtual uint8_t decode(const char* topic, const char* payload);
   virtual const char *getInputString(void);
-
+  virtual bool hasNewData();
+  
  private:
   static const int maxStringSize = 64;
   char myInputString[maxStringSize];
   const char* myControl;
-
+  bool myNewData;
 };
 
 

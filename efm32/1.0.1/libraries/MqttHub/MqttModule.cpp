@@ -144,6 +144,7 @@ void MessageInputStringModule::begin(MqttHub &hub, const char* module, const cha
 
     myControl = control;
     myInputString[0] = '\0';
+    myNewData = false;
 }
 
 uint8_t MessageInputStringModule::decode(const char* topic, const char* payload)
@@ -161,16 +162,21 @@ uint8_t MessageInputStringModule::decode(const char* topic, const char* payload)
               myInputString[i] = payload[i];
           }
           myInputString[i] = '\0';
+          myNewData = true;
           return 1;
       }
 }
 
 const char *MessageInputStringModule::getInputString(void)
 {
+    myNewData = false;
     return myInputString;
 }
 
-
+bool MessageInputStringModule::hasNewData()
+{
+    return myNewData;
+}
 
 // ------------------------------- Notification Class --------------------------
 void NotificationModule::begin(MqttHub &hub, const char* mod, const char* control, const char* payload)
