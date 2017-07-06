@@ -56,7 +56,7 @@
 /** These are settings that need to be tuned for different PCB's, overlays and applications. */
 
 /** Scan frequency for LESENSE, how often all the pads are scanned. */
-#define LESENSE_SCAN_FREQUENCY          5
+#define LESENSE_SCAN_FREQUENCY          50
 
 /** Sample delay, how long the rc-oscillations are sampled. */
 #define SAMPLE_DELAY                   30 
