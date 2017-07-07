@@ -138,7 +138,7 @@ class MessageInputStringModule : public MqttModule
   virtual uint8_t isTopicThisModule(const char* topic);
   
  private:
-  static const int maxStringSize = 64;
+  static const int maxStringSize = ITEM_PAYLOAD_LENGTH;
   char myInputString[maxStringSize];
   const char* myControl;
   bool myNewData;
