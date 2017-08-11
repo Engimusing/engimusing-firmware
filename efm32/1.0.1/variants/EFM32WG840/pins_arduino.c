@@ -31,7 +31,7 @@ const uint8_t dPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,  0  ,P
 //                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
 			 PORTD,PORTD,PORTD,PORTD,PORTD,PORTC,PORTC,  0  ,  0  ,PORTE,PORTE,PORTE,PORTE,PORTC,PORTC,PORTC,
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
-			 PORTC,  0  ,  0  ,PORTF,PORTF,PORTF,PORTF,  0  ,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,
+			 PORTC,  PORTF  ,  PORTF  ,PORTF,PORTF,PORTF,PORTF,  0  ,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,PORTE,
 //                         64
                          PORTA};
 
@@ -42,7 +42,7 @@ const uint8_t dPins[]    = {0,   0,    1,    2,    3,    4,    5,    6,    0,   
 //                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
 			    4,   5,    6,    7,    8,    6,    7,    0,    0,    4,    5,    6,    7,   12,   13,   14,
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
-			   15,   0,    0,    2,    3,    4,    5,    0,   8,  9,    10,   11,   12,   13,   14,   15,  
+			   15,   0,    1,    2,    3,    4,    5,    0,   8,  9,    10,   11,   12,   13,   14,   15,  
 //                         64
 			    15};
 
@@ -340,6 +340,9 @@ const uint8_t ledPorts[3]  = {PORTD, PORTA, PORTA};
 const uint8_t ledPins[3]   = {  8,     6,    15  };
 const uint8_t ledId[3] = { 36, 7, 64 };
 // ------------------------------------------------------------------------------------------------------------
+
+//Debug Pins
+const uint8_t debugPinId[3] = {49,50,51}; //SWCLK, SWDIO, SWO
 
 // This function verifies the pin is valid for this variant
 uint8_t valid_pin(uint8_t pin) {

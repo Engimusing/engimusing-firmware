@@ -27,6 +27,10 @@
 const uint8_t ledPorts[3]  = {PORTA, PORTA, PORTA};
 const uint8_t ledPins[3]   = { 14,    13,    12  };
 const uint8_t ledId[3] = { 19, 18, 17};
+
+//Debug Pins
+const uint8_t debugPinId[3] = {49,50,51}; //SWCLK, SWDIO, SWO
+
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
 // Digital Ports            0    1     2     3     4     5     6   7 8   9    10    11    12    13    14    15
 const uint8_t dPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,0,0,PORTB,PORTB,PORTB,PORTB,PORTC,PORTC,PORTB,

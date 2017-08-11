@@ -26,8 +26,14 @@
 //                                       2     3     4     5     6     7     8      9    10    11    12    13
 //                                      X1    X2    X3    X4    X5    X6    X7    SWO   LED   SDA   SCL   LED
 //                                       5     6    17    18    23    24     1     21    8     13    14    8
-const uint8_t dPorts[]         =    {0, PORTA, PORTA, PORTA, 0, 0, PORTC, PORTC, PORTC, PORTC, PORTC, PORTB, PORTB, PORTA, PORTA, PORTA, 0, PORTB, 0, 0, PORTB, PORTB, 0, 0, PORTD, PORTD, PORTD, PORTD, 0, 0, PORTC, PORTC, PORTC, PORTC, PORTC, PORTC, PORTC, PORTF, PORTF, PORTF, PORTF, PORTF, PORTF, 0, 0, PORTE, PORTE, PORTE, PORTE};
-const uint8_t dPins[]          =    {0, 0,  1, 2, 0, 0, 0, 1, 2, 3, 4, 7, 8, 8, 9, 10, 0, 11, 0, 0, 13, 14, 0, 0, 4, 5, 6, 7, 0, 0, 8, 9, 10, 11, 13, 14, 15, 0, 1, 2, 3, 4, 5, 0, 0, 10, 11, 12, 13};
+const uint8_t dPorts[]         =    {0, PORTA, PORTA, PORTA, 0, 0, PORTC, PORTC, PORTC, PORTC, PORTC, PORTB, PORTB, PORTA, PORTA, PORTA, //0-15
+                                              0, PORTB, 0, 0, PORTB, PORTB, 0, 0, PORTD, PORTD, PORTD, PORTD, 0, 0, PORTC, PORTC, //16-31
+                                              PORTC, PORTC, PORTC, PORTC, PORTC, PORTF, PORTF, PORTF, PORTF, PORTF, PORTF, 0, 0, PORTE, PORTE, PORTE, //32-47
+                                              PORTE}; //48
+const uint8_t dPins[]          =    {0, 0,  1, 2, 0, 0, 0, 1, 2, 3, 4, 7, 8, 8, 9, 10, 
+                                             0, 11, 0, 0, 13, 14, 0, 0, 4, 5, 6, 7, 0, 0, 8, 9, 
+                                             10, 11, 13, 14, 15, 0, 1, 2, 3, 4, 5, 0, 0, 10, 11, 12,
+                                             13};
 
 // GPIO Interrupt Pins                  X1    X2    X3    X4    X5    X6    X7    SWO   LED   SDA   SCL
 const uint8_t iPorts[]         = {0, PORTA, PORTA, PORTA, 0, 0, PORTC, PORTC, PORTC, PORTC, PORTC, PORTB, PORTB, PORTA, PORTA, PORTA, 0, PORTB, 0, 0, PORTB, PORTB, 0, 0, PORTD, PORTD, PORTD, PORTD, 0, 0, PORTC, PORTC, PORTC, PORTC, PORTC, PORTC, PORTC, PORTF, PORTF, PORTF, PORTF, PORTF, PORTF, 0, 0, PORTE, PORTE, PORTE, PORTE};
@@ -82,6 +88,11 @@ const uint8_t ledPins[16]   = {    5,     4,     4,     8,    11,     3,     7, 
 const uint8_t ledId[16]     = {   25,    24,    41,     12,   17,    40,    11,    15,    42,     3,    45,    46,    47,    48,     2,    14};
 														   
 // ------------------------------------------------------------------------------------------------------------
+
+//Debug Pins
+const uint8_t debugPinId[3] = {37,38,39}; //SWCLK, SWDIO, SWO
+
+
 
 // This function verifies the pin is valid for this variant
 // 2-13
