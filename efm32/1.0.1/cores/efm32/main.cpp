@@ -41,6 +41,8 @@ int main( void )
   initVariant();
 
   delay(1);
+   
+  enableDebugPins();
     
   setup();
 

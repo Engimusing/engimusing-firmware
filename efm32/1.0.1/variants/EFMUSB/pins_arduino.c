@@ -24,8 +24,8 @@
 
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
 // Digital Pins             0  1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
-const uint8_t dPorts[]   = {0, 0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTC,  PORTA,PORTA, PORTA,PORTA,PORTA};
-const uint8_t dPins[]    = { 0, 0,      15,      12,        8,        7,      11,        1,        0,        2,      13,          0,        1,         8,        9,      10};
+const uint8_t dPorts[]   = {0, 0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTC,  PORTA,PORTA, PORTA,PORTA,PORTA, PORTF, PORTF};
+const uint8_t dPins[]    = { 0, 0,      15,      12,        8,        7,      11,        1,        0,        2,      13,          0,        1,         8,        9,      10, 0, 1};
 
 // GPIO Interrupt Pins      0 1   2     3     4     5     6     7     8     9    10
 const uint8_t iPorts[11] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA,  0,  PORTC};
@@ -72,6 +72,9 @@ const uint8_t ledPorts[3]  = {PORTA, PORTA, PORTA};
 const uint8_t ledPins[3]   = { 10, 8, 9};
 const uint8_t ledId[3] = { 15, 13, 14};
 // ------------------------------------------------------------------------------------------------------------
+
+//Debug Pins
+const uint8_t debugPinId[3] = {16,17,9}; //SWCLK, SWDIO, SWO
 
 // This function verifies the pin is valid for this variant
 uint8_t valid_pin(uint8_t pin) {

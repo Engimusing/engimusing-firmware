@@ -69,6 +69,7 @@ extern "C" {
 
   void detachInterrupt(uint8_t pin);
 
+  void enableDebugPins();
 #ifdef __cplusplus
 }
 #endif

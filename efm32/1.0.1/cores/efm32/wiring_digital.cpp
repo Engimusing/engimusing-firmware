@@ -202,6 +202,10 @@ void GPIO_config(uint32_t port, uint32_t pin, WiringModeTypeDef ulMode)
   GPIO_pinMode((GPIO_Port_TypeDef)port, pin, mode);
 }
 
+void enableDebugPins()
+{
+    GPIO->ROUTE = 0;
+}
 
 void pinDrive(GPIO_Port_TypeDef port, GPIO_DriveMode_TypeDef ulDrive)
 {

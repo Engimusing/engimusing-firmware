@@ -37,7 +37,7 @@ void init_efm32(void);
 #define TIMER_ROUTE_LOCATION_LOC4           (0x4 << 16)          // Shifted mode LOC4 for TIMER_ROUTE
 #define TIMER_ROUTE_LOCATION_LOC5           (0x5 << 16)          // Shifted mode LOC5 for TIMER_ROUTE
 
-#define PINS_COUNT 16
+#define PINS_COUNT 18
 
 extern const uint8_t dPins[];
 extern const uint8_t dPorts[];
@@ -57,6 +57,7 @@ extern const uint32_t timerRoutes[];
 extern const uint8_t ledPorts[];
 extern const uint8_t ledPins[];
 extern const uint8_t ledId[];
+extern const uint8_t debugPinId[];
 extern const uint32_t adcChannel[];
 extern const ADC_SingleInput_TypeDef adcChannelNum[];
 
