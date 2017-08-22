@@ -53,6 +53,8 @@
 
 #if NUM_LESENSE_CHANNELS > 0
 
+#include "efm_lesense.h"
+
 /** These are settings that need to be tuned for different PCB's, overlays and applications. */
 
 /** Scan frequency for LESENSE, how often all the pads are scanned. */
@@ -60,6 +62,7 @@
 
 /** Sample delay, how long the rc-oscillations are sampled. */
 #define SAMPLE_DELAY                   30 
+
 
 /** Validate count is the number of consecutive scan-cycles a button needs to */
 /** be in the changed state before an actual button press or release is acknowledged. */
@@ -71,21 +74,24 @@
 /** Interval between calibration, in seconds. */
 #define CALIBRATION_INTERVAL            5
 
-
 class CapSenseClass 
 {
 public:
     CapSenseClass();
     
-    void begin();
+    void begin(LESENSE_ClkPresc_TypeDef lesenseClkDiv = lesenseClkDiv_1, uint16_t sampleDelay = SAMPLE_DELAY, uint16_t validateCnt = VALIDATE_CNT);
     
     void initChannel(uint8_t channel, float sensitivity);
     bool isChannelTouched(uint8_t channel);
     uint16_t channelsState();
     void updateChannelsState(uint16_t state); //should only be called by the LESENSE_IRQHandler
     void update();
-
+    uint16_t scanSingleChannel(uint16_t channelToScan);
     
+    uint16_t getChannelMaxValue(uint8_t channel);
+    uint16_t getChannelMinValue(uint8_t channel);
+    
+    void calibrate(void);
     
 protected:
  
@@ -94,10 +100,9 @@ protected:
     void setupLESENSE(void);
     void setupGPIO(void);
     void setupCMU(void);
-    void calibrate(void);
     
-    uint16_t getChannelMaxValue(uint8_t channel);
-    uint16_t getChannelMinValue(uint8_t channel);
+    
+
     uint16_t getMaxValue(volatile uint16_t* A, uint16_t N);
     uint16_t getMinValue(volatile uint16_t* A, uint16_t N);
     
@@ -112,7 +117,11 @@ protected:
     bool myInitialized;
     bool myChannelInitDirty;
     
-    uint16_t myLastCalibration;
+    uint32_t myLastCalibration;
+    
+    uint16_t mySampleDelay;
+    LESENSE_ClkPresc_TypeDef myLesenseClkDiv;
+    
 };
 
 extern CapSenseClass CapSense;

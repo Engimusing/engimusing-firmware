@@ -52,7 +52,6 @@
 #include "efm_cmu_config.h"
 #include "efm_acmp.h"
 #include "efm_gpio.h"
-#include "efm_lesense.h"
 #include "efm_int.h"
 #include "CapSenseClass.h"
 
@@ -60,6 +59,8 @@
 
 #if NUM_LESENSE_CHANNELS > 0
 
+
+static uint16_t sValidateCnt = VALIDATE_CNT;
 
 CapSenseClass::CapSenseClass()
     : myInitialized(false)
@@ -86,11 +87,14 @@ CapSenseClass::CapSenseClass()
  *   of nominal count value.
  *
  *****************************************************************************/
-void CapSenseClass::begin()
+void CapSenseClass::begin(LESENSE_ClkPresc_TypeDef lesenseClkDiv, uint16_t sampleDelay, uint16_t validateCnt)
 {
   if(myInitialized)
       return;
   
+  myLesenseClkDiv = lesenseClkDiv;
+  mySampleDelay= sampleDelay;
+  sValidateCnt = validateCnt;
   /* Disable interrupts while initializing */
   INT_Disable();
 
@@ -141,7 +145,7 @@ void CapSenseClass::initChannel(uint8_t channel, float sensitivity)
             .exClk         = lesenseClkLF,
             .sampleClk     = lesenseClkLF,
             .exTime        = 0x0,
-            .sampleDelay   = SAMPLE_DELAY,
+            .sampleDelay   = mySampleDelay,
             .measDelay     = 0x0,
             .acmpThres     = 0x0,                   // don't care, configured by ACMPInit
             .sampleMode    = lesenseSampleModeCounter,
@@ -359,7 +363,8 @@ void CapSenseClass::setupLESENSE( void )
   LESENSE_ScanFreqSet(0, LESENSE_SCAN_FREQUENCY);
 
   /* Set clock divisor for LF clock. */
-  LESENSE_ClkDivSet(lesenseClkLF, lesenseClkDiv_1);
+  LESENSE_ClkDivSet(lesenseClkLF, myLesenseClkDiv);
+  //LESENSE_ClkDivSet(lesenseClkLF, lesenseClkDiv_8);
 
   /* Enable interrupt in NVIC. */
   NVIC_EnableIRQ(LESENSE_IRQn);
@@ -381,6 +386,43 @@ void CapSenseClass::setupGPIO( void )
   }
 }
 
+uint16_t CapSenseClass::scanSingleChannel(uint16_t channelToScan)
+{
+   int i,k;
+   
+   /* Wait for current scan to finish */
+  while(LESENSE->STATUS & LESENSE_STATUS_SCANACTIVE); 
+  
+  /* Get position for first channel data in count buffer from lesense write pointer */
+  k = ((LESENSE->PTR & _LESENSE_PTR_WR_MASK) >> _LESENSE_PTR_WR_SHIFT);
+  
+  /* Handle circular buffer wraparound */
+  if(k >= myNumChannelsUsed){
+    k = k - myNumChannelsUsed;
+  }
+  else{
+    k = k - myNumChannelsUsed + NUM_LESENSE_CHANNELS;
+  }
+  
+  /* Fill calibration values array with buffer values */
+  for(i = 0; i < NUM_LESENSE_CHANNELS; i++){
+    if((myChannelsUsedMask >> i) & 0x1){
+      if(i == channelToScan)
+      {
+          uint16_t value = LESENSE_ScanResultDataBufferGet(k++);
+          return value;
+      }
+      else
+      {
+          k++;
+      }
+    }
+  }
+  
+  return 0;
+}
+
+
 /**************************************************************************//**
  * Calibration function 
 *****************************************************************************/
@@ -389,6 +431,8 @@ void CapSenseClass::calibrate( void )
   int i,k;
   uint16_t nominal_count;
   static uint8_t calibrationValueIndex = 0;
+  
+  
   
   /* Wait for current scan to finish */
   while(LESENSE->STATUS & LESENSE_STATUS_SCANACTIVE); 
@@ -407,7 +451,9 @@ void CapSenseClass::calibrate( void )
   /* Fill calibration values array with buffer values */
   for(i = 0; i < NUM_LESENSE_CHANNELS; i++){
     if((myChannelsUsedMask >> i) & 0x1){
+      
       myCalibrationValue[i][calibrationValueIndex] = LESENSE_ScanResultDataBufferGet(k++);
+      
     }
   }
  
@@ -499,7 +545,7 @@ void LESENSE_IRQHandler( void )
   
    /* Evaluate VALIDATE_CNT results for touched channel. */
   valid_touch = 1;
-  for(i = 0;i<VALIDATE_CNT;i++){
+  for(i = 0;i<sValidateCnt;i++){
     /* Start new scan and wait while active. */
     LESENSE_ScanStart();
     while(LESENSE->STATUS & LESENSE_STATUS_SCANACTIVE);

@@ -122,8 +122,9 @@ extern "C"{
 #include "efm_lib/gpio_intrs.h"
 #endif
 
-
 #include "variant.h"
+
+#include "efm_lib/flash.h"
 
 #ifdef __cplusplus
 #include "efm_lib/CapSenseClass.h"
