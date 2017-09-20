@@ -66,7 +66,7 @@ void DevicePrinter::update()
                     }
                     break;
                 case Device::TypeCharArray:
-                    myPrinter->print(valueStruct.value.charArray);
+                    myPrinter->println(valueStruct.value.charArray);
                     break;
             }
         }
