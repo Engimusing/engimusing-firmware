@@ -48,11 +48,28 @@ class Device
    public:
         virtual void update() {};
         
+        virtual bool writeValue(const char *valueName, const char *value) {return false;}
+        
         virtual ValueStruct readValue(int index) = 0;
         
         virtual uint32_t numValues()
         {
             return 0;
+        }
+        
+        bool compare_string(const char* inStr, const char* cmpStr)
+        {
+          int8_t iLen = strlen((char*) inStr);
+          int8_t cLen = strlen((char*) cmpStr);
+          if(iLen < cLen) {
+            return false;
+          }
+          for(int i = 0; i < cLen; i++) {
+            if(inStr[i] != cmpStr[i]) {
+              return false;
+            }
+          }
+          return true;
         }
         
 };

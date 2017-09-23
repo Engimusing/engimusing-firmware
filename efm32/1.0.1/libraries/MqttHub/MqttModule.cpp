@@ -174,6 +174,11 @@ uint8_t SimpleMqttModule::decode(const char* topic, const char* payload)
 	  return 0;
   }
   
+  if(myDevice->writeValue(&topic[j], payload))
+  {
+     return 1; 
+  }
+  
   if(compare_token(&topic[j],"STATUS")) {
     sendMQTTData();
     return 1;
