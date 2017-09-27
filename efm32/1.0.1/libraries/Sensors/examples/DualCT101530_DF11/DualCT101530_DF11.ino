@@ -55,5 +55,6 @@ void loop()
   ReedSwitch1.update();
   ReedSwitch0Printer.update();
   ReedSwitch1Printer.update();
+  
   led.update();
 }

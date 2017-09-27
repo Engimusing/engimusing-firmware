@@ -57,5 +57,7 @@ void loop()
 
   MLX90614Printer0.update();
   MLX90614Printer1.update();
+  
+  
   led.update();
 }

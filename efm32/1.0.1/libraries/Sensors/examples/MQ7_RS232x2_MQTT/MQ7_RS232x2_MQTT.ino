@@ -38,7 +38,7 @@
   {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"OFF"}
   {"TOP":"EFM32TG110/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFM32TG110/BOARD/MQ7/","PLD":"STATUS"}
+  {"TOP":"EFM32TG110/BOARD/MQ7/CTL","PLD":"STATUS"}
 */
 
 MqttHub HUB;
@@ -67,8 +67,8 @@ void setup()
   
   //Initialize the MQ7 CO Sensor
   //Pins:
-  // PWM Controller - 7
-  // Analog Sensor Input - A0
+  // PWM Controller
+  // Analog Sensor Input
   
   MQ7.begin(7, A0);
   MQ7MqttMod.begin(HUB, MQ7, "EFM32TG110/BOARD/MQ7", 10000);

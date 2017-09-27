@@ -179,7 +179,7 @@ uint8_t SimpleMqttModule::decode(const char* topic, const char* payload)
      return 1; 
   }
   
-  if(compare_token(&topic[j],"STATUS")) {
+  if(compare_token(&topic[j],"CTL") && compare_token(payload,"STATUS")) {
     sendMQTTData();
     return 1;
   }

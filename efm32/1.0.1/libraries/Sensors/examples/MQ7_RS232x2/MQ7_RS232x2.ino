@@ -48,8 +48,8 @@ void setup()
   
   //Initialize the MQ7 CO Sensor
   //Pins:
-  // PWM Controller - 7
-  // Analog Sensor Input - A0
+  // PWM Controller
+  // Analog Sensor Input
   
   MQ7.begin(7, A0);
 }
@@ -62,5 +62,7 @@ void loop()
 
   MQ7Printer0.update();
   MQ7Printer1.update();
+  
+  
   led.update();
 }

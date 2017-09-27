@@ -156,5 +156,7 @@ void loop()
   CapSense_StarPrinter1.update();
   CapSense_HashPrinter0.update();
   CapSense_HashPrinter1.update();
+  
+  
   led.update();
 }

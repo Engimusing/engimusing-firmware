@@ -57,5 +57,7 @@ void loop()
 
   TCS34725Printer0.update();
   TCS34725Printer1.update();
+  
+  
   led.update();
 }

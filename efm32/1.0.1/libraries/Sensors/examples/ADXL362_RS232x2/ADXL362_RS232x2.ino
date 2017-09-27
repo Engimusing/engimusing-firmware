@@ -61,5 +61,7 @@ void loop()
 
   ADXL362Printer0.update();
   ADXL362Printer1.update();
+  
+  
   led.update();
 }

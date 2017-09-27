@@ -58,5 +58,7 @@ void loop()
 
   RPI1031Printer0.update();
   RPI1031Printer1.update();
+  
+  
   led.update();
 }

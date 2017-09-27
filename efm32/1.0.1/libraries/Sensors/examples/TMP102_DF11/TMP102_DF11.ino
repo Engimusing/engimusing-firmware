@@ -49,5 +49,6 @@ void loop()
 {
   TMP102.update();
   TMP102Printer.update();
+  
   led.update();
 }

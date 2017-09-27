@@ -52,7 +52,7 @@ void setup()
   CPC1002N_1Printer1.begin(Serial1, CPC1002N_1, 5000, "CPC1002N_1");
   
   CPC1002N_0.begin(7, false, HIGH);
-  CPC1002N_1.begin(8, false, HIGH);
+  CPC1002N_1.begin(8, false, LOW);
 }
 
 void loop()
@@ -67,9 +67,8 @@ void loop()
   CPC1002N_1Printer0.update();
   CPC1002N_1Printer1.update();
   
-  
   static char buffer[4];
-  
+  //Parse Serial port and if 0:ON, 0:OF, 1:ON, or 1:OF are sent  then turn on or of the DC relays
   if(Serial.available())
   {
       for(int i = 0; i < 3; i++)
@@ -105,6 +104,7 @@ void loop()
   
   static char buffer1[4];
   
+  //Parse Serial1 port and if 0:ON, 0:OF, 1:ON, or 1:OF are sent  then turn on or of the DC relays
   if(Serial1.available())
   {
       for(int i = 0; i < 3; i++)
@@ -137,6 +137,5 @@ void loop()
         CPC1002N_1.setState(false);
     }
   }
-  
   led.update();
 }

@@ -58,5 +58,7 @@ void loop()
 
   TCS3200Printer0.update();
   TCS3200Printer1.update();
+  
+  
   led.update();
 }

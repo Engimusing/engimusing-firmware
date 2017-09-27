@@ -57,5 +57,7 @@ void loop()
 
   SSCDNNN150PG2A3Printer0.update();
   SSCDNNN150PG2A3Printer1.update();
+  
+  
   led.update();
 }

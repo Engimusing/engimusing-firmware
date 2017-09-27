@@ -38,8 +38,9 @@
   {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"OFF"}
   {"TOP":"EFM32ZGUSB/BOARD/LED/CTL","PLD":"STATUS"}
 
-  {"TOP":"EFM32ZGUSB/BOARD/ReflectiveSensor0/","PLD":"STATUS"}
-  {"TOP":"EFM32ZGUSB/BOARD/ReflectiveSensor1/","PLD":"STATUS"}
+  {"TOP":"EFM32ZGUSB/BOARD/ReflectiveSensor0/CTL","PLD":"STATUS"}
+
+  {"TOP":"EFM32ZGUSB/BOARD/ReflectiveSensor1/CTL","PLD":"STATUS"}
 */
 
 MqttHub HUB;
