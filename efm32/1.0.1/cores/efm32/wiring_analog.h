@@ -1,4 +1,8 @@
-/*
+/***************************************************************************//**
+  @file wiring_analog.h
+  @brief Functions for accessing the analog pins of the energy micro processor
+ ******************************************************************************
+  @section License
   Copyright (c) 2016 Engimusing LLC.  All right reserved.
   Copyright (c) 2011 Arduino.  All right reserved.
 
@@ -15,8 +19,9 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 
+ *****************************************************************************/
+ 
 #ifndef _WIRING_ANALOG_
 #define _WIRING_ANALOG_
 
@@ -24,7 +29,7 @@
 extern "C" {
 #endif
 
-/*
+/**
  * \brief SAM3 products have only one reference for ADC
  */
 typedef enum _eAnalogReference
@@ -32,7 +37,7 @@ typedef enum _eAnalogReference
   AR_DEFAULT,
 } eAnalogReference ;
 
-/*
+/**
  * \brief Configures the reference voltage used for analog input (i.e. the value used as the top of the input range).
  * This function is kept only for compatibility with existing AVR based API.
  *
@@ -40,7 +45,7 @@ typedef enum _eAnalogReference
  */
 extern void analogReference( eAnalogReference ulMode ) ;
 
-/*
+/**
  * \brief Writes an analog value (PWM wave) to a pin.
  *
  * \param ulPin
@@ -48,7 +53,7 @@ extern void analogReference( eAnalogReference ulMode ) ;
  */
 extern void analogWrite( uint32_t ulPin, uint32_t ulValue ) ;
 
-/*
+/**
  * \brief Reads the value from the specified analog pin.
  *
  * \param ulPin
@@ -57,14 +62,14 @@ extern void analogWrite( uint32_t ulPin, uint32_t ulValue ) ;
  */
 extern uint32_t analogRead( uint32_t ulPin ) ;
 
-/*
+/**
  * \brief Set the resolution of analogRead return values. Default is 10 bits (range from 0 to 1023).
  *
  * \param res
  */
 extern void analogReadResolution(int res);
 
-/*
+/**
  * \brief Set the resolution of analogWrite parameters. Default is 8 bits (range from 0 to 255).
  *
  * \param res
@@ -77,4 +82,4 @@ extern void analogOutputInit( void ) ;
 }
 #endif
 
-#endif /* _WIRING_ANALOG_ */
+#endif /** _WIRING_ANALOG_ */

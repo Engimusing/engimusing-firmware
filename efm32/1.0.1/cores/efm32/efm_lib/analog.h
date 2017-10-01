@@ -1,4 +1,8 @@
-/*
+/***************************************************************************//**
+  @file analog.h
+  @brief handles analog reading and conversions between different common Analog read values
+  
+  @section License
   Copyright (c) 2015 Engimusing LLC.  All right reserved.
 
   This library is free software; you can redistribute it and/or
@@ -14,7 +18,8 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+  
+ *****************************************************************************/
 
 #pragma once
 
@@ -24,9 +29,21 @@
 #define ADC_SINGLECTRL_INPUTSEL_VDD_DIV3             (0x9)
 #define ADC_SINGLECTRL_INPUTSEL_VREFDIV2             (0xC)
 
+
+#define INTERNAL1V25 ADC_SINGLECTRL_REF_1V25
+#define INTERNAL2V5  ADC_SINGLECTRL_REF_2V5
+#define INTERNALVDD  ADC_SINGLECTRL_REF_VDD
+#define DEFAULT      ADC_SINGLECTRL_REF_VDD
+#define EXTERNAL     ADC_SINGLECTRL_REF_EXTSINGLE
+
+#define RES_6BITS    ADC_SINGLECTRL_RES_6BIT
+#define RES_8BITS    ADC_SINGLECTRL_RES_8BIT
+#define RES_12BITS   ADC_SINGLECTRL_RES_12BIT
+
 //#include "Arduino.h"
 //#include "io_types.h"
 
+///@brief structure for holding temperature values in both Celsius and Farenheit
 struct temperature {
   int16_t tenthsC ;
   int16_t tenthsF ;
@@ -36,40 +53,83 @@ struct temperature {
   uint8_t fracF;
 };
 
+///@brief structure for holding voltage value in both milivolts and Volts
 struct uPvdd {
   uint16_t mVolts;
   uint8_t wholeVDD;
   uint8_t fracVDD;
 };
 
-
+/// @brief Class used for reading and converting between common Analog values
 class AnalogLP
 {
  public:
+  ///@brief Constructor for AnalogLP class. This class should usually be used as a static global
   AnalogLP();
+  
+  ///@brief Read an analog value from the specified ADC channel. 
+  ///@param [in] sel Analog pin channel to read from 
+  ///@return Return Unscaled analog read data from the ADC
   uint32_t analogRead(uint32_t sel);
+    
+  ///@brief Read an analog value from the specified pin. Pins are defined in pins_ardunio.h in the variants/DEVICE folder
+  ///@param [in] pin pin to read the ADC value for, check the adcPins for mapping to energy micro pins.
+  ///@return Return unscaled analog read data from the ADC
   uint32_t analogReadPin(uint8_t pin);
+  
+  ///@brief Read the current VDD for the energy micro board
+  ///@return Return unscaled analog read value for the current VDD reading
   uint32_t analogReadVDDsample(void);
+  
+  ///@brief Read the current VDD value and convert it to a Voltage value
+  ///@return uPvdd which is a structure that can provide voltage in mili volts or volts
   uPvdd    analogReadVDD(void);
+  
+  ///@brief Read the current temperature of the energy micro board
+  ///@return temperature structure which can provide the temperature in both Fahrenheit and Celsius  
   temperature analogReadTemp(void);
+  
+  ///@brief Set the current adc reference to use. By default it is set to DEFAULT which is defined in this file
+  ///@param [in] ref adc reference to use for adc readings
   void analogReference(uint32_t ref);
+  ///@brief Set the current adc resolution to use. By default it is set to ADC_SINGLECTRL_RES_12BIT
+  ///@param [in] bits adc resolution to use. Set using the ADC_SINGLECTRL_RES macros
   void analogReadResolution(uint8_t bits);
+  
+  ///@brief printout the current VDD to the Serial object.
   void commVDD(void);
-  void commTemperature(void);
+    
+  ///@brief printout the current temperature and VDD to the Serial object.
   void commTempVDD(void);
+  
+  ///@brief printout the current energy micro chip temperature to the Serial object in Celcius
   void commTemperatureCelcius(void);
+  
+  ///@brief printout the current energy micro chip temperature to the Serial object in Farenheit
   void commTemperatureFarenheit(void);
+  
  private:
+  
+  ///@brief member variable for storing the current adc reference value to use when reading from the adc
   uint32_t adc_reference;
+  
+  ///@brief member variable for storing the current adc resolution value to use when reading from the adc
   uint32_t adc_resolution;
+  
+  ///@brief member variable for storing the current adc oversampling value to use when reading from the adc
   uint32_t adc_oversampling;
+  
+  ///@brief member variable for storing the last read temperature value
   temperature tempval;
+  
+  ///@brief member variable for storing the last read vdd value
   uPvdd vddval;
 };
 
 #ifdef __cplusplus
 extern "C"{
-  void print_adc_regs(void);
+///@brief Debug function for printing out the current state of all the ADC0 registers.
+void print_adc_regs(void);
 
 } // extern "C"
 
@@ -329,14 +389,6 @@ extern "C"{
 #define _ADC_BIASPROG_COMPBIAS_SHIFT                      8           // Shift value for ADC_COMPBIAS
 #define _ADC_BIASPROG_COMPBIAS_MASK                   0xF00           // Bit mask for ADC_COMPBIAS
 */
-#define INTERNAL1V25 ADC_SINGLECTRL_REF_1V25
-#define INTERNAL2V5  ADC_SINGLECTRL_REF_2V5
-#define INTERNALVDD  ADC_SINGLECTRL_REF_VDD
-#define DEFAULT      ADC_SINGLECTRL_REF_VDD
-#define EXTERNAL     ADC_SINGLECTRL_REF_EXTSINGLE
 
-#define RES_6BITS    ADC_SINGLECTRL_RES_6BIT
-#define RES_8BITS    ADC_SINGLECTRL_RES_8BIT
-#define RES_12BITS   ADC_SINGLECTRL_RES_12BIT
 
 //#endif
