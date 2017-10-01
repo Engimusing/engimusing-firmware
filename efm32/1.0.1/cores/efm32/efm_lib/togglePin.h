@@ -30,21 +30,21 @@ class TogglePin
  public:
   TogglePin();
   void begin(int toggleTime, uint8_t activeLevel = HIGH);
-  void begin(uint32_t dwPin, int lowTime, int highTime, uint8_t activeLevel = HIGH);
-  void begin(uint32_t dwPin, WiringModeTypeDef dwMode, int lowTime, int highTime, uint8_t activeLevel = HIGH);
+  void begin(uint32_t dwPin, int offTime, int onTime, uint8_t activeLevel = HIGH);
+  void begin(uint32_t dwPin, WiringModeTypeDef dwMode, int offTime, int onTime, uint8_t activeLevel = HIGH);
   void update(void);
   
   void setToggleTime(int time) ;
   
-  void setLowHiTimes(int loTime, int hiTime);
+  void setOffOnTimes(int offTime, int onTime);
   
-  int lowTime();
+  int offTime();
   
-  int highTime();
+  int onTime();
   
  private:
-  Timeout myHighTimeout;
-  Timeout myLowTimeout;
+  Timeout myOnTimeout;
+  Timeout myOffTimeout;
   int myOn;
   uint32_t myPin;
   uint8_t myActiveLevel;

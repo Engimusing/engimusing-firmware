@@ -29,17 +29,17 @@ void TogglePin::begin(int toggleTime, uint8_t activeLevel)
   TogglePin::begin(LED_BUILTIN, OUTPUT, toggleTime, toggleTime, activeLevel);
 }
 
-void TogglePin::begin(uint32_t dwPin, int lowTime, int highTime, uint8_t activeLevel)
+void TogglePin::begin(uint32_t dwPin, int offTime, int onTime, uint8_t activeLevel)
 {
-  TogglePin::begin(dwPin, OUTPUT, lowTime, highTime, activeLevel);
+  TogglePin::begin(dwPin, OUTPUT, offTime, onTime, activeLevel);
 }
 
-void TogglePin::begin(uint32_t dwPin, WiringModeTypeDef dwMode, int lowTime, int highTime, uint8_t activeLevel)
+void TogglePin::begin(uint32_t dwPin, WiringModeTypeDef dwMode, int offTime, int onTime, uint8_t activeLevel)
 {
   myPin = dwPin;
   pinMode(myPin, dwMode);
-  myHighTimeout.begin(highTime);
-  myLowTimeout.begin(lowTime);
+  myOnTimeout.begin(onTime);
+  myOffTimeout.begin(offTime);
   myOn = HIGH;
   myActiveLevel = activeLevel;
 }
@@ -49,7 +49,7 @@ void TogglePin::update(void)
     if(myPin >= 0) // make sure begin has been called with a resonable pin
     {
         if(myOn == HIGH) {
-            if(myHighTimeout.update()) {
+            if(myOnTimeout.update()) {
                 if(myActiveLevel == HIGH)
                 {
                     digitalWrite(myPin, LOW);
@@ -59,14 +59,14 @@ void TogglePin::update(void)
                     digitalWrite(myPin, HIGH);
                 }
                 myOn = LOW;
-                myLowTimeout.reset();
+                myOffTimeout.reset();
             }
         }
         if(myOn == LOW) {
-            if (myLowTimeout.update()) {
+            if (myOffTimeout.update()) {
                 digitalWrite(myPin, myActiveLevel);
                 myOn = HIGH;
-                myHighTimeout.reset();
+                myOnTimeout.reset();
             }
         }
     }
@@ -74,23 +74,23 @@ void TogglePin::update(void)
 
 void TogglePin::setToggleTime(int time) 
 { 
-    setLowHiTimes(time, time);
+    setOffOnTimes(time, time);
 }
 
-void TogglePin::setLowHiTimes(int loTime, int hiTime)
+void TogglePin::setOffOnTimes(int offTime, int onTime)
 {
-    myLowTimeout.setTimeoutTime(loTime);
-    myHighTimeout.setTimeoutTime(hiTime);
+    myOffTimeout.setTimeoutTime(offTime);
+    myOnTimeout.setTimeoutTime(onTime);
 }
 
-int TogglePin::lowTime()
+int TogglePin::offTime()
 {
-    return myLowTimeout.timeoutTime();
+    return myOffTimeout.timeoutTime();
 }
 
-int TogglePin::highTime()
+int TogglePin::onTime()
 {
-    return myHighTimeout.timeoutTime();
+    return myOnTimeout.timeoutTime();
 }
   
 
