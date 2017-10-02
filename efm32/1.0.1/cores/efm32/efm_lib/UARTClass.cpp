@@ -252,30 +252,28 @@ void UARTClass::IrqHandler( void )
 {
   int readData = 0;
   bool breakReceived = false;
-  if(!_begun)
-  {
-      return;
-  }
   // Did we receive data ?
   if(_pUart)
     {
       USART_IntClear(_pUart,USART_IF_RXDATAV);
 	  
-      if ((_pUart->STATUS & USART_STATUS_RXDATAV) == USART_STATUS_RXDATAV) 
+      if ((_pUart->STATUS & USART_STATUS_RXDATAV) == USART_STATUS_RXDATAV)	  
+      {
+          readData = _pUart->RXDATAX;
+      }
 	  
-	  readData = _pUart->RXDATAX;
-	  
-	  breakReceived = (USART_RXDATAX_FERR & readData) != 0;
+	  breakReceived = ((USART_RXDATAX_FERR & readData) != 0) && _begun;
 	  
     }else
     {
       LEUART_IntClear(_pLeuart,LEUART_IF_RXDATAV);
 
       if ((_pLeuart->STATUS & LEUART_STATUS_RXDATAV) == LEUART_STATUS_RXDATAV) 
+      {
+          readData = _pLeuart->RXDATAX;
+      }
 	  
-	  readData = _pLeuart->RXDATAX;
-	  
-	  breakReceived = (LEUART_RXDATAX_FERR & readData) != 0;	  
+	  breakReceived = ((LEUART_RXDATAX_FERR & readData) != 0) && _begun;	  
 	  
     }
 
@@ -300,8 +298,10 @@ void UARTClass::IrqHandler( void )
 		_breakCommandState = Idle;
 	}
 	
-	
-	_rx_buffer->store_char(readData & 0xFF); 
+	if(_begun)
+    {
+        _rx_buffer->store_char(readData & 0xFF); 
+    }
 	
 	
 }
