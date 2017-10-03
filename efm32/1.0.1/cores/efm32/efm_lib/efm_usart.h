@@ -1,4 +1,4 @@
-////
+///
 ///@file efm_usart.h
 ///@brief Header redirect for em_usart.h
 ///

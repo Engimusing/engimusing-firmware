@@ -1,5 +1,5 @@
 ///
-///@file efm_wdog.c
+///@file efm_wdog.h
 ///@brief Defines for accessing the WDOG peripheral
 ///
 ///@section License
