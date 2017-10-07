@@ -46,7 +46,7 @@ void TogglePin::begin(uint32_t dwPin, WiringModeTypeDef dwMode, int offTime, int
 
 void TogglePin::update(void)
 {
-    if(myPin >= 0) // make sure begin has been called with a resonable pin
+    if(myPin >= 0) // make sure begin has been called with a reasonable pin
     {
         if(myOn == HIGH) {
             if(myOnTimeout.update()) {

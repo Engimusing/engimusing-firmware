@@ -23,7 +23,7 @@
 
 class Device;
 
-//Base class for modules, modules are updated periotically and can handle messages recieved from a port
+//Base class for modules, modules are updated periodically and can handle messages received from a port
 class MqttModule
 {
    

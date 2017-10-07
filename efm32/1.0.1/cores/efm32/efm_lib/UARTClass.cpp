@@ -192,6 +192,8 @@ void UARTClass::end( void )
   flush();
 
   CMU_ClockEnable(_UartClk, false);
+  
+  _begun = false;
 }
 
 int UARTClass::available( void )

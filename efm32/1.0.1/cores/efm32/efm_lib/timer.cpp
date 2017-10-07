@@ -163,6 +163,30 @@ uint32_t get_toggle_count1(void) {return toggleCount[1];}
 static volatile uint32_t int_cnt = 0;
 uint32_t get_isr_count(void) {return int_cnt;}
 
+/*
+  Generates a square wave of the specified frequency (and 50% duty cycle) on a pin.
+  A duration can be specified, otherwise the wave continues until a call to noTone().
+  The pin can be connected to a piezo buzzer or other speaker to play tones.
+
+  Only one tone can be generated at a time. If a tone is already playing on a different
+  pin, the call to tone() will have no effect. If the tone is playing on the same pin, 
+  the call will set its frequency.
+
+  NOTE: if you want to play different pitches on multiple pins, you need to call noTone()
+  on one pin before calling tone() on the next pin.
+
+  Syntax:
+  tone(pin, frequency) 
+  tone(pin, frequency, duration)
+
+  Parameters:
+
+  pin: the pin on which to generate the tone
+  frequency: the frequency of the tone in hertz - unsigned int
+  duration: the duration of the tone in milliseconds (optional) - unsigned long
+
+  Returns nothing
+*/
 void TimersLP::tone(uint32_t pin, uint32_t frequency, uint32_t duration)
 {
   timer_counter TONE;
@@ -356,6 +380,36 @@ void wake_only(void)
 {
 }
 
+/*
+  Description:
+  Reads a pulse (either HIGH or LOW) on a pin. For example, if value is HIGH, pulseIn() waits 
+  for the pin to go HIGH, starts timing, then waits for the pin to go LOW and stops timing. 
+  Returns the length of the pulse in microseconds or 0 if no complete pulse was received within the timeout.
+
+  The timing of this function has been determined empirically and will probably show errors in shorter pulses. 
+  Works on pulses from 10 microseconds to 3 minutes in length. Please also note that if the pin is already 
+  high when the function is called, it will wait for the pin to go LOW and then HIGH before it starts counting. 
+  This routine can be used only if interrupts are activated. Furthermore the highest resolution is obtained 
+  with short intervals.
+
+  Syntax:
+  pulseIn(pin, state) 
+  pulseIn(pin, state, timeout)
+
+  Parameters:
+  pin: the number of the pin on which you want to read the pulse. (int)
+
+  state: type of pulse to read: either HIGH or LOW. (int)
+
+  timeout (optional): the number of microseconds to wait for the pulse to be completed: the function returns 0
+  if no complete pulse was received within the timeout. Default is one second (unsigned long).
+  Returns:
+  the length of the pulse (in microseconds) or 0 if no pulse is completed before the timeout (unsigned long) 
+*/
+/* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
+ * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
+ * to 3 minutes in length, but must be called at least a few dozen microseconds
+ * before the start of the pulse. */
 uint32_t TimersLP::pulseIn(uint32_t pin, uint32_t state, uint32_t timeout = 1000000L)
 {
   timer_counter PULSE;
@@ -477,58 +531,9 @@ void noTone(uint32_t _pin)
 }
 
 
-/*
-  Generates a square wave of the specified frequency (and 50% duty cycle) on a pin.
-  A duration can be specified, otherwise the wave continues until a call to noTone().
-  The pin can be connected to a piezo buzzer or other speaker to play tones.
-
-  Only one tone can be generated at a time. If a tone is already playing on a different
-  pin, the call to tone() will have no effect. If the tone is playing on the same pin, 
-  the call will set its frequency.
-
-  NOTE: if you want to play different pitches on multiple pins, you need to call noTone()
-  on one pin before calling tone() on the next pin.
-
-  Syntax:
-  tone(pin, frequency) 
-  tone(pin, frequency, duration)
-
-  Parameters:
-
-  pin: the pin on which to generate the tone
-  frequency: the frequency of the tone in hertz - unsigned int
-  duration: the duration of the tone in milliseconds (optional) - unsigned long
-
-  Returns nothing
-*/
 
 
-/*
-  Description:
-  Reads a pulse (either HIGH or LOW) on a pin. For example, if value is HIGH, pulseIn() waits 
-  for the pin to go HIGH, starts timing, then waits for the pin to go LOW and stops timing. 
-  Returns the length of the pulse in microseconds or 0 if no complete pulse was received within the timeout.
 
-  The timing of this function has been determined empirically and will probably show errors in shorter pulses. 
-  Works on pulses from 10 microseconds to 3 minutes in length. Please also note that if the pin is already 
-  high when the function is called, it will wait for the pin to go LOW and then HIGH before it starts counting. 
-  This routine can be used only if interrupts are activated. Furthermore the highest resolution is obtained 
-  with short intervals.
-
-  Syntax:
-  pulseIn(pin, value) 
-  pulseIn(pin, value, timeout)
-
-  Parameters:
-  pin: the number of the pin on which you want to read the pulse. (int)
-
-  value: type of pulse to read: either HIGH or LOW. (int)
-
-  timeout (optional): the number of microseconds to wait for the pulse to be completed: the function returns 0
-  if no complete pulse was received within the timeout. Default is one second (unsigned long).
-  Returns:
-  the length of the pulse (in microseconds) or 0 if no pulse is completed before the timeout (unsigned long) 
-*/
 
 
 /*
@@ -542,10 +547,7 @@ void noTone(uint32_t _pin)
   long timer - RTC?
 */
 
-/* Measures the length (in microseconds) of a pulse on the pin; state is HIGH
- * or LOW, the type of pulse to measure.  Works on pulses from 2-3 microseconds
- * to 3 minutes in length, but must be called at least a few dozen microseconds
- * before the start of the pulse. */
+
 
 
 uint32_t get_counter_value(int timer)
