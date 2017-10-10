@@ -1,20 +1,24 @@
-/*
-  Copyright (c) 2011 Arduino.  All right reserved.
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-  See the GNU Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+///
+///@file HardwareSerial.h
+///@brief Contains HardwareSerial interface which is derived from Stream and should be used for any hardware serial classes
+///
+///@section License
+///Copyright (c) 2015 Engimusing LLC.  All right reserved.
+///Copyright (c) 2011 Arduino.  All right reserved.
+///This library is free software; you can redistribute it and/or
+///modify it under the terms of the GNU Lesser General Public
+///License as published by the Free Software Foundation; either
+///version 2.1 of the License, or (at your option) any later version.
+///
+///This library is distributed in the hope that it will be useful,
+///but WITHOUT ANY WARRANTY; without even the implied warranty of
+///MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+///See the GNU Lesser General Public License for more details.
+///
+///You should have received a copy of the GNU Lesser General Public
+///License along with this library; if not, write to the Free Software
+///Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+///
 
 #pragma once
 
@@ -63,6 +67,7 @@
 #define SERIAL_7O2	(HARDSER_STOP_BIT_2 | HARDSER_PARITY_ODD  | HARDSER_DATA_7)
 #define SERIAL_8O2	(HARDSER_STOP_BIT_2 | HARDSER_PARITY_ODD  | HARDSER_DATA_8)
 
+///@brief Interface derived from stream that should be used for any hardware serial class
 class HardwareSerial : public Stream
 {
   public:
@@ -77,5 +82,6 @@ class HardwareSerial : public Stream
     virtual operator bool() = 0;
 };
 
+///@brief Function defined in the variant.cpp for the device
 extern void serialEventRun(void) __attribute__((weak));
 

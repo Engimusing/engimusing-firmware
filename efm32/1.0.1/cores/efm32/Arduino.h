@@ -1,31 +1,33 @@
-/*
-  Arduino.h - Main include file for the Arduino SDK
-  Copyright (c) 2015 Engimusing LLC.  All right reserved.
-  Copyright (c) 2014 Arduino LLC.  All right reserved.
-  
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+///
+///@file Arduino.h
+///@brief Main header file for the Engimusing Energy Micro Arduino IDE libraries
+///@details This file is mostly just a collection of header files that are needed by 
+/// sketches. 
+///@section License
+///Copyright (c) 2015 Engimusing LLC.  All right reserved.
+///Copyright (c) 2014 Arduino LLC.  All right reserved.
+///This library is free software; you can redistribute it and/or
+///modify it under the terms of the GNU Lesser General Public
+///License as published by the Free Software Foundation; either
+///version 2.1 of the License, or (at your option) any later version.
+///
+///This library is distributed in the hope that it will be useful,
+///but WITHOUT ANY WARRANTY; without even the implied warranty of
+///MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+///See the GNU Lesser General Public License for more details.
+///
+///You should have received a copy of the GNU Lesser General Public
+///License along with this library; if not, write to the Free Software
+///Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+///
 
 #pragma once
 
 #include <em_device.h>
 
-
 #if !defined(ADC_COUNT) || (ADC_COUNT == 0)
 
-/** Dummy typedef for when no ADC on processor **/
+/// Dummy typedef for when no ADC on processor 
 typedef enum
 {
   /* Differential mode disabled */
@@ -111,8 +113,6 @@ extern "C"{
 
 #include "delay.h"
 
-
-
 #ifdef __cplusplus
 //#include "efm_lib/LEUARTClass.h"
 #include "efm_lib/UARTClass.h"
@@ -172,7 +172,7 @@ extern "C"{
 #define PIN_ATTR_TIMER         (1UL<<4)
 
 
-/* Definitions and types for pins */
+/// Definitions and types for pins 
 typedef enum _EAnalogChannel
 {
   NO_ADC=-1,
@@ -196,7 +196,7 @@ typedef enum _EAnalogChannel
   EM_DAC1
 } EAnalogChannel ;
 
-// Definitions for PWM channels
+/// Definitions for PWM channels
 typedef enum _EPWMChannel
 {
   NOT_ON_PWM=-1,
