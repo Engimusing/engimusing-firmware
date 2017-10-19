@@ -28,10 +28,19 @@ class Print;
 class DevicePrinter
 {
     public:
+       ///@brief Constructor that does nothing but create the DevicePrinter object
+       ///@return DevicePrinter object
        DevicePrinter();
        
     public:
+        ///@brief Initialize the DevicePrinter and specify what printer will print the state of what device how often
+        ///@param [in] printer Print object to use for printing. Serial objects are commonly used here.
+        ///@param [in] device Device to print the state of. 
+        ///@param [in] delay Minimum delay in milliseconds between printing of the state
+        ///@param [in] deviceName Name of the device to output before printing the values.
         virtual void begin(Print &printer, Device &device, int delay, const char *deviceName);
+        
+        ///@brief Call periodically so that the DevicePrinter will actually print
         virtual void update();
         
     private:

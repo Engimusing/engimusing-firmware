@@ -19,8 +19,8 @@
 ///Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #pragma once
-//Interface for a device that is used by commuication classes to get information from a device 
-// without knowing the specifics about the device
+///@brief Interface for a device that is used by communication classes to get information from a device 
+/// without knowing the specifics about the device
 class Device
 {
     public:
@@ -33,7 +33,9 @@ class Device
           const char * charArray;
        };
        
-       struct ValueStruct{
+       ///@brief Class for passing data from a Device. It can contain a float, integer, boolean, or string.
+       ///Check the type member variable to find out what type of data is stored in the object.
+        struct ValueStruct{
            
            ValueStruct()
             : type(TypeInvaild)
@@ -48,17 +50,32 @@ class Device
        };
        
    public:
+        ///@brief No op update function that is a placeholder for derived classes update() functions
         virtual void update() {};
         
+        ///@brief No op write value function which is used by derived classes that have state that can be modified externally.
+        ///@param [in] valueName Name of the state value to update.
+        ///@param [in] value Value to set the state value to.
+        ///@return True if the value was used, else false.
+        ///@details Can be used to handle commands. For example the OnOffCtrlDevice checks for a valueName of CTL and values of ON or OFF.
         virtual bool writeValue(const char *valueName, const char *value) {return false;}
         
-        virtual ValueStruct readValue(int index) = 0;
+        ///@brief Abstract function used by derived classes to provide read access to device state
+        ///@param [in] index Index of the value to read from the state
+        ///@return ValueStruct object which contains a value, name, and type for the requested value.
+         virtual ValueStruct readValue(int index) = 0;
         
+        ///@brief Over-ridable function for the derived class to use to provide the number of available values.
+        ///@return Number of values available to read using readValue.
         virtual uint32_t numValues()
         {
             return 0;
         }
         
+        ///@brief Utility function for comparing two strings.
+        ///@param [in] inStr Haystack string to look for the needle string in.
+        ///@param [in] cmpStr Needle string to look for in the haystack string.
+        ///@return True if the inStr contains the cmpStr.
         bool compare_string(const char* inStr, const char* cmpStr)
         {
           int8_t iLen = strlen((char*) inStr);

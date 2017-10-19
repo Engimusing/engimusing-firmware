@@ -1,6 +1,7 @@
 ///
 ///@file ADXL362Device.h
 ///@brief Contains ADXL362Device class which is the Device implementation for the ADXL362 accelerometer
+/// Datasheet link: http://www.analog.com/media/en/technical-documentation/data-sheets/ADXL362.pdf
 ///
 ///@section License
 ///Copyright (c) 2015 Engimusing LLC.  All right reserved.

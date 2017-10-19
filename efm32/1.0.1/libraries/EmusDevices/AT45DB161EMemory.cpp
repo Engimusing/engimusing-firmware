@@ -68,7 +68,17 @@ void AT45DB161EMemory::begin(SPIClass &spi, uint8_t chipSelectPin, uint8_t write
     myBufferPage[1] = -1;
     myLastUsedBuffer = 1;
 }
-        
+
+uint16_t AT45DB161EMemory::numPages()
+{
+    return NUM_PAGES;
+}
+
+uint16_t AT45DB161EMemory::pageSize()
+{
+    return myPageSize;
+}
+
 uint8_t  AT45DB161EMemory::status()
 {
     selectDevice();

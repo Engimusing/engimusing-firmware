@@ -1,6 +1,6 @@
 ///@file MLX90614Device.h
 ///@brief Contains MLX90614Device class which is a Device derived class for accessing an MLX90614 IR thermometer  
-///Datasheet link https://www.sparkfun.com/datasheets/Sensors/Temperature/MLX90614_rev001.pdf
+///Datasheet link http://engimusing.github.io/Product_Documentation/data_sheets/MLX90614.pdf
 ///
 ///@section License
 ///Copyright (c) 2015 Engimusing LLC.  All right reserved.
@@ -27,16 +27,31 @@
 
 class TwoWire;
 
+///@brief Class which provides access to an MLX90614 IR thermometer
+///Datasheet link http://engimusing.github.io/Product_Documentation/data_sheets/MLX90614.pdf
 class MLX90614Device : public Device
 {
  
    public:
+        ///@brief Initializer which sets up the TwoWire and enable pin which are connected to the MLX90614
+        ///@param [in] wire TwoWire object that is connected to the MLX90614
+        ///@param [in] enablePin Pin that is connected to the enable pin on the MLX90614
         virtual void begin(TwoWire &wire, int32_t enablePin);
+        
+        ///@brief Current temperature in Celsius read from the MLX90614
+        ///@return Current temperature in Celsius
         virtual float temperature();
          
+        ///@brief Device interface class for accessing the current state of the device. 
+        ///@param [in] index Index of the value to get.
+        ///@return Current value of the value type specified by index.
+        ///@details index 0 = DEG_C (float or string) - returns NOREADING if myWire is not initialized    
         virtual Device::ValueStruct readValue(int index);
+       
+        ///@brief Number of value types available to read.
+        ///@return Always returns 1 for this class.
         virtual uint32_t numValues(); 
-        
+
    protected:   
         TwoWire *myWire;
         uint8_t myAddress; 

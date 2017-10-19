@@ -27,16 +27,36 @@
 
 class SPIClass;
 
+///@brief Class for connecting to an MPL115A1 Digital Barometer
+///Datasheet link http://engimusing.github.io/Product_Documentation/data_sheets/MPL115A1.pdf
 class MPL115A1Device : public Device
 {
  
     public:
+        ///@brief Initialize the settings for which pins are connected to the MPL115A1  
+        ///@param [in] enablePin Pin that is connected to the enable pin on the MPL115A1    
+        ///@param [in] powerPin Pin that is connected to the power pin on the MPL115A1
+        ///@param [in] csPin Pin that is connected to the chip select pin on the MPL115A1
+        ///@param [in] spi SPI object that is connected to the MPL115A1
         virtual void begin(int32_t enablePin, int32_t powerPin, int32_t csPin, SPIClass &spi);
          
+        ///@brief Get the current temperature in Celsius from the MPL115A1
+        ///@return Current temperature in Celsius
         virtual float calculateTemperatureC();
+        
+        ///@brief Get the current atmospheric pressure in Kilo Pascals
+        ///@return Current atmospheric pressure in Kilo Pascals
         virtual float calculatePressurekPa();
          
+        ///@brief Device interface class for accessing the current state of the device. 
+        ///@param [in] index Index of the value to get.
+        ///@return Current value of the value type specified by index.
+        ///@details index 0 = DEG_C (float) 
+        ///index 1 = KPA (float)       
         virtual Device::ValueStruct readValue(int index);
+       
+        ///@brief Number of value types available to read.
+        ///@return Always returns 2 for this class.
         virtual uint32_t numValues(); 
         
     protected:   

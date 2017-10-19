@@ -1,6 +1,7 @@
 ///
 ///@file ACS716Device.h
 ///@brief Contains ACS716Device class which is a Device implementation for the ACS716
+/// Link to datasheet: http://www.allegromicro.com/~/media/Files/Datasheets/ACS716-Datasheet.pdf
 ///
 ///@section License
 ///Copyright (c) 2015 Engimusing LLC.  All right reserved.
