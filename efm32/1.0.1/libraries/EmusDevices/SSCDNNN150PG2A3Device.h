@@ -26,16 +26,30 @@
 
 class TwoWire;
 
+///@brief Class for connecting to an SSCDNNN150PG2A3 pressure sensor.
 class SSCDNNN150PG2A3Device : public Device
 {
 
     public:
+        
+        ///@brief Initialization function for setting up a connection to an SSCDNNN150PG2A3
+        ///@param [in] wire TwoWire object that is connected to an SSCDNNN150PG2A3
+        ///@param [in] enablePin Pin that is connected to the enable pin on the SSCDNNN150PG2A3
         virtual void begin(TwoWire &wire, int32_t enablePin);
 
+        ///@brief Get the current pressure reading in PSI from the SSCDNNN150PG2A3
+        ///@return Current pressure reading in PSI
         virtual float readPressure();
          
+        ///@brief Device interface class for accessing the current state of the device. 
+        ///@param [in] index Index of the value to get.
+        ///@return Current value of the value type specified by index.
+        ///@details index 0 = PRESSURE (float) - current pressure reading in PSI
         virtual Device::ValueStruct readValue(int index);
-        virtual uint32_t numValues(); 
+        
+        ///@brief Number of value types available to read.
+        ///@return Always returns 1 for this class.
+        virtual uint32_t numValues();         
         
     protected:
     

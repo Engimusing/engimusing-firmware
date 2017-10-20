@@ -130,38 +130,92 @@ tcs34725Gain_t;
 
 class TwoWire;
 
+///@brief Class for accessing a TCS34725 Color sensor
+///Datasheet link: http://engimusing.github.io/Product_Documentation/data_sheets/TCS3472_Color_Light_to_Digital_Converter.pdf
 class TCS34725Device : public Device
 {
- public:
-  TCS34725Device() {};
-  
-    virtual bool  begin(TwoWire &wire, uint8_t enablePin, tcs34725IntegrationTime_t = TCS34725_INTEGRATIONTIME_700MS, tcs34725Gain_t = TCS34725_GAIN_1X);
-    void     setIntegrationTime(tcs34725IntegrationTime_t it);
-    void     setGain(tcs34725Gain_t gain);
-    void sampleData();
-    void     getRawData(uint16_t &r, uint16_t &g, uint16_t &b, uint16_t &c);
-    float calculateColorTemperature(uint16_t r, uint16_t g, uint16_t b);
-    float calculateLux(uint16_t r, uint16_t g, uint16_t b);
-    void     write8 (uint8_t reg, uint32_t value);
-    uint8_t  read8 (uint8_t reg);
-    uint16_t read16 (uint8_t reg);
-    void setInterrupt(bool flag);
-    void clearInterrupt(void);
-    void setIntLimits(uint16_t l, uint16_t h);
-    void     enable(void);
+    public:
+   
+        ///@brief No-op constructor
+        ///@return Returns a TCS34725 object
+        TCS34725Device() {};
 
-    virtual Device::ValueStruct readValue(int index);
-    virtual uint32_t numValues(); 
- protected:
-    void disable(void);
- private:
-  bool myTcs34725Initialised;
-  tcs34725Gain_t myTcs34725Gain;
-  tcs34725IntegrationTime_t myTcs34725IntegrationTime; 
-  TwoWire *myWire; 
-  uint16_t mySampleR;
-  uint16_t mySampleG;
-  uint16_t mySampleB;
-  uint16_t mySampleC;
+        ///@brief Initializer function for setting up the connection to the TCS34725
+        ///@param [in] wire TwoWire object to use to connect to the TCS34725
+        ///@param [in] enablePin Pin connected to the enable pin of the TCS34725
+        ///@param [in] tcs34725IntegrationTime_t Enumeration that sets the integration time for the TCS34725
+        ///@param [in] tcs34725Gain_t Enumeration that sets the gain setting for the TCS34725
+        ///@return True is the device is connected correctly. Else returns false.
+        bool begin(TwoWire &wire, uint8_t enablePin, tcs34725IntegrationTime_t = TCS34725_INTEGRATIONTIME_700MS, tcs34725Gain_t = TCS34725_GAIN_1X);
+        
+        ///@brief Change the integration time being used by the TCS34725
+        ///@param [in] it enumeration to specify the integration time to use.
+        void setIntegrationTime(tcs34725IntegrationTime_t it);
+        
+        ///@brief Change the gain setting being used by the TCS34725
+        ///@param [in] gain Enumeration to specify the gain setting to use.
+        void setGain(tcs34725Gain_t gain);
+        
+        ///@brief Take a sample from the TCS34725 and store the raw values
+        void sampleData();
+        
+        ///@brief Get the raw values from a sampleData() call
+        ///@param [out] r Red channel raw value 
+        ///@param [out] g Green channel raw value
+        ///@param [out] b Blue channel raw value
+        ///@param [out] c Clear light raw value
+        void getRawData(uint16_t &r, uint16_t &g, uint16_t &b, uint16_t &c);
+        
+        ///@brief Pass in the red, green, and blue color values and get the color temperature in Kelvins
+        ///@param [in] r Red channel raw value from getRawData() call
+        ///@param [in] g Green channel raw value from getRawData() call
+        ///@param [in] b Blue channel raw value from getRawData() call
+        ///@return Color temperature in Kelvins
+        float calculateColorTemperature(uint16_t r, uint16_t g, uint16_t b);
+        
+        ///@brief Pass in the red, green, and blue color values and get the amount of light in LUX
+        ///@param [in] r Red channel raw value from getRawData() call
+        ///@param [in] g Green channel raw value from getRawData() call
+        ///@param [in] b Blue channel raw value from getRawData() call
+        ///@return Amount of light in LUX
+        float calculateLux(uint16_t r, uint16_t g, uint16_t b);
+                
+        ///@brief Device interface class for accessing the current state of the device. 
+        ///@param [in] index Index of the value to get.
+        ///@return Current value of the value type specified by index.
+        ///@details index 0 = RAW_R (int) - Raw value for the color red
+        ///index 1 = RAW_G (int) - Raw value for the color green
+        ///index 2 = RAW_B (int) - Raw value for the color blue
+        ///index 3 = RAW_C (int) - Raw value for the clear reading
+        ///index 4 = COLOR_K (float) - current color temperature in Kelvins
+        ///index 5 = LUM_LUX (float) - current luminance value in LUX
+        virtual Device::ValueStruct readValue(int index);
+        
+        ///@brief Number of value types available to read.
+        ///@return Always returns 6 for this class.
+        virtual uint32_t numValues();   
+    
+    protected:
+        
+        void enable(void);
+
+        void setInterrupt(bool flag);
+        void clearInterrupt(void);
+        void setIntLimits(uint16_t l, uint16_t h);
+        
+        void write8 (uint8_t reg, uint32_t value);
+        uint8_t read8 (uint8_t reg);
+        uint16_t read16 (uint8_t reg);
+        
+        void disable(void);
+    private:
+        bool myTcs34725Initialised;
+        tcs34725Gain_t myTcs34725Gain;
+        tcs34725IntegrationTime_t myTcs34725IntegrationTime; 
+        TwoWire *myWire; 
+        uint16_t mySampleR;
+        uint16_t mySampleG;
+        uint16_t mySampleB;
+        uint16_t mySampleC;
 };
 

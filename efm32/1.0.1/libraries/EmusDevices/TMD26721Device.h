@@ -27,15 +27,31 @@
 
 class TwoWire;
 
+///@brief Class for connecting to a TMD26721 digital proximity sensor
+///Datasheet link: http://engimusing.github.io/Product_Documentation/data_sheets/TMD2672_Datasheet.pdf
 class TMD26721Device : public Device
 {
  
    public:
+        ///@brief Initializer function for setting up a connection to TMD26721
+        ///@param [in] wire TwoWire object that is connected to the TMD26721
+        ///@param [in] enablePin Pin connected to the enable pin on the TMD26721
+        ///@param [in] pulseCount Number of pulses for the TMD26721 to send when sensing proximity
         virtual void begin(TwoWire &wire, int32_t enablePin, uint8_t pulseCount);
+        
+        ///@brief Read the current proximity data from the TMD26721
+        ///@return Current raw proximity data
         virtual int proximityData();
         
+         ///@brief Device interface class for accessing the current state of the device. 
+        ///@param [in] index Index of the value to get.
+        ///@return Current value of the value type specified by index.
+        ///@details index 0 = PROXIMITY (int) - Raw value for the proximity
         virtual Device::ValueStruct readValue(int index);
-        virtual uint32_t numValues(); 
+        
+        ///@brief Number of value types available to read.
+        ///@return Always returns 1 for this class.
+        virtual uint32_t numValues();   
         
    protected:   
         TwoWire *myWire; 

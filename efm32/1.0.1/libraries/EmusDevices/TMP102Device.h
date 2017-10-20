@@ -27,15 +27,33 @@
 
 class TwoWire;
 
+///@brief Class for accessing a TMP102 temperature sensor.
+///Datasheet link: http://engimusing.github.io/Product_Documentation/data_sheets/TMP102.pdf
 class TMP102Device : public Device
 {
  
    public:
+        
+        ///@brief Initializer function for setting up the connection to the TMP102
+        ///@param [in] wire TwoWire object to use when connecting to the TMP102
+        ///@param [in] enablePin Pin connected to the enable pin on the TMP 102
+        ///@param [in] extendedMode True to turn on 13-bit extended temperature reading
         virtual void begin(TwoWire &wire, int32_t enablePin, bool extendedMode);
+        
+        ///@brief Get the current temperature in Celsius
+        ///@return Temperature in Celsius
         virtual float temperature();
         
+        ///@brief Device interface class for accessing the current state of the device. 
+        ///@param [in] index Index of the value to get.
+        ///@return Current value of the value type specified by index.
+        ///@details index 0 = DEG_C (float or string) - Temperature in Celsius or string that is "NOREADING" if the device is not initialized
         virtual Device::ValueStruct readValue(int index);
-        virtual uint32_t numValues(); 
+        
+        ///@brief Number of value types available to read.
+        ///@return Always returns 1 for this class.
+        virtual uint32_t numValues();   
+        
    protected:   
         bool myExtendedMode;
         TwoWire *myWire;
