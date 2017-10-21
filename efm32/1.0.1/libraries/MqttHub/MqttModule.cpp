@@ -265,28 +265,35 @@ void NotificationModule::begin(MqttHub &hub, const char* mod, const char* contro
 
 uint8_t NotificationModule::decode(const char* topic, const char* payload)
 {
-  int8_t j = isTopicThisModule(topic);
-  if(j == 0)
-  {
-    return 0;
-  }  
-  
-  if(compare_token(&topic[j],myControl)) {
-    if(compare_token(payload,myPayload)) {
-      myState = 1;
-    } else {return 0;}
-    return 1;
-  }
+    int8_t j = isTopicThisModule(topic);
+    if(j == 0)
+    {
+        return 0;
+    }  
+
+    if(compare_token(&topic[j],myControl)) {
+        if(compare_token(payload,myPayload)) {
+            myState = 1;
+        } 
+        else 
+        {
+            //These aren't the Droids you're looking for.
+            return 0;
+        }
+        return 1;
+    }
 }
 
 uint8_t NotificationModule::getState(void)
 {
-  if(myState) {
-    myState = 0;
-    return 1;
-  } else {
-    return 0;
-  }
+    if(myState) {
+        myState = 0;
+        return 1;
+    } 
+    else 
+    {
+        return 0;
+    }
 }
 
 

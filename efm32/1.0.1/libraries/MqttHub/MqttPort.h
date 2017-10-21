@@ -24,24 +24,41 @@
 
 class MqttPort
 {
-   friend class MqttHub;
- public:
-  char* myTopic;
-  char* myPayload;
-  MqttPort();
-  
-  virtual int8_t decode(void);   
+    friend class MqttHub;
+    public:
 
-  virtual void  subscribe(const char* mod);
-  
-  virtual void publishMessage(const char* topic, const char* payload);
-  
-  //slightly different than publish since it needs to handle subscriptions correctly as well.
-  virtual void forwardMessage(const char* topic, const char* payload);
-  
- protected: 
-  
-  MqttPort* myNextPort;
+        char* myTopic;
+        char* myPayload;
+
+        ///@brief Constructor that initializes a few internal variables.
+        ///@return MqttPort object
+        MqttPort();
+
+        ///@brief No-op function that is implemented by the derived class. 
+        ///Derived class should handle receiving data from it's external communication method
+        ///@return Should return 1 if a message was received, else 0 
+        virtual int8_t decode(void);   
+
+        ///@brief No-op function that is implemented by the derived class.
+        ///Derived class should handle sending the subscription for the module to the other end of it's port.
+        ///@param [in] mod Name of the module to subscribe to messages for.
+        virtual void  subscribe(const char* mod);
+
+        ///@brief No-op function that is implemented by the derived class.
+        ///Derived class should send a normal MQTT message to the other end of it's port.
+        ///@param [in] topic Topic to include in the MQTT message.
+        ///@param [in] payload Payload to include in the MQTT message.
+        virtual void publishMessage(const char* topic, const char* payload);
+
+        ///@brief No-op function that is implemented by the derived class.
+        ///Slightly different than publish since it needs to handle subscriptions correctly as well.
+        ///@param [in] topic Topic to include in the MQTT message.
+        ///@param [in] payload Payload to include in the MQTT message.
+        virtual void forwardMessage(const char* topic, const char* payload);
+
+    protected: 
+
+        MqttPort* myNextPort;
   
 };
 
@@ -54,23 +71,53 @@ class MqttSerialPort : public MqttPort
   GettingLine,
 };
   
+  ///@brief Constructor that initializes some internal variables
+  ///@return MqttSerialPort object
   MqttSerialPort();
   
+  ///@brief Connect to the MqttHub and setup which Serial port to use with this object.
+  ///@param [in] hub MqttHub to connect to
+  ///@param [in] serial Serial port to use as the port
   virtual void begin(MqttHub &hub, UARTClass &serial);
   
+  ///@brief Process input from the serial port
+  ///@return Returns 2 if it found a valid packet, else return 0.
   virtual int8_t decode(void);
   
+  ///@brief Send a subscribe method over the serial port.
+  ///@param [in] mod Module to subscribe to updates from.
   virtual void  subscribe(const char* mod);
   
-  virtual void publishMessage(const char* topic, const char* payload);
+   ///@brief Send an Mqtt message that is formatted as {"TOP":"topic","PLD":"payload"}
+   ///@param [in] topic Topic to use for the message
+   ///@param [in] payload Payload to use for the message
+   virtual void publishMessage(const char* topic, const char* payload);
    
-  virtual void forwardMessage(const char* topic, const char* payload);
+   ///@brief Forward an Mqtt message. In the case of a Serial port this is the same as publishMessage()
+   ///@param [in] topic Topic to use for the message 
+   ///@param [in] payload Payload to use for the message
+   virtual void forwardMessage(const char* topic, const char* payload);
    
   protected:
   
-     int8_t getInputString(char);
+     ///@brief Adds a character to the line buffer and checks to see if it is a full packet yet.
+     ///@param [in] c Character to add.
+     ///@return 2 if it found a packet else 0
+     int8_t getInputString(char c);
+     
+     ///@brief Once a full packet has been found parse out the topic and payload into separate buffers.
+     ///@return 2 if it found a valid packet else 0
      int8_t parseLine(void);
-     void addCharToInputString(char c);
+     
+     ///@brief Adds the character to the line buffer.
+     ///@param [in] c character to add
+      void addCharToInputString(char c);
+     
+     ///@brief Parses a quote wrapped string out of a string. Only gets the first Quote wrapped string.
+     ///@param [in] str String to parse
+     ///@param [in] item Buffer to return the parsed out string into.
+     ///@param [in] tok_length length of the string that was parsed out
+     ///@return 1 if a valid Quoted string was found and 0 if not. 
      int8_t getToken(char* str, char* item, char tok_length);
      
   protected:

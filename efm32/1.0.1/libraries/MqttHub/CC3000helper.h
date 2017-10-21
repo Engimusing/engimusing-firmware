@@ -1,3 +1,24 @@
+///
+///@file CC3000helper.h
+///@brief CC3000 helper functions. Needed in order for the MqttCC3000 Port class to work correctly.
+///
+///@section License
+///Copyright (c) 2015 Engimusing LLC.  All right reserved.
+/// Original author of the file is Adafruit
+///This library is free software; you can redistribute it and/or
+///modify it under the terms of the GNU Lesser General Public
+///License as published by the Free Software Foundation; either
+///version 2.1 of the License, or (at your option) any later version.
+///
+///This library is distributed in the hope that it will be useful,
+///but WITHOUT ANY WARRANTY; without even the implied warranty of
+///MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+///See the GNU Lesser General Public License for more details.
+///
+///You should have received a copy of the GNU Lesser General Public
+///License along with this library; if not, write to the Free Software
+///Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+///
 //#include <Adafruit_SleepyDog.h>
 #include <Adafruit_CC3000.h>
 #include <ccspi.h>
@@ -13,7 +34,14 @@
 //uint16_t checkFirmwareVersion(void);
 bool displayConnectionDetails(Adafruit_CC3000 &cc3000, UARTClass &LocalSerial);
 
-boolean CC3000connect(Adafruit_CC3000 &cc3000, const char* wlan_ssid, const char* wlan_pass, uint8_t wlan_security, UARTClass &LocalSerial) {
+  ///@brief Connect an Adafruit_CC3000 to a specific access point.
+  ////@param [in] cc3000 CC3000 object to connect to the access point.
+  ///@param [in] wlan_ssid Name of the access point to connect to
+  ///@param [in] wlan_pass Password to use to connect to the access point.
+  ///@param [in] wlan_security Type of security the access point uses.
+  ///@param [in] LocalSerial Serial port to use for printouts
+  ///@return returns true if the connection succeeded else return false
+  boolean CC3000connect(Adafruit_CC3000 &cc3000, const char* wlan_ssid, const char* wlan_pass, uint8_t wlan_security, UARTClass &LocalSerial) {
   //Watchdog.reset();
     
   // Check for compatible firmware
@@ -102,11 +130,10 @@ uint8_t retries;
 }*/
 
 
-/**************************************************************************/
-/*!
-    @brief  Tries to read the IP address and other connection details
-*/
-/**************************************************************************/
+///@brief Tries to read the IP address and other connection details
+///@param [in] cc3000 CC3000 to get the IP address and other connection details from
+///@param [in] LocalSerial Serial port to print out the details on.
+///@return True if the IP address could be determined and printed.
 bool displayConnectionDetails(Adafruit_CC3000 &cc3000, UARTClass &LocalSerial)
 {
   uint32_t ipAddress, netmask, gateway, dhcpserv, dnsserv;
