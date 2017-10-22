@@ -36,25 +36,103 @@ class I2CClass;
 
 class TwoWire : public Stream {
  public:
+    ///@brief Constructor that links an I2CClass to the TwoWire wrapper class.
+    ///@param [in] _i2c I2C object to link to this TwoWire object
+    ///@return TowWire object that is linked to an I2CClass
     TwoWire(I2CClass &_i2c);
+    
+    ///@brief Start the I2C connection in master mode. TwoWire currently only supports master mode.
     void begin();
+    
+    ///@brief Currently unsupported function for starting TwoWire in slave mode
+    ///@param [in] uint8_t Slave address
     void begin(uint8_t);
+    ///@brief Currently unsupported function for starting TwoWire in slave mode
+    ///@param [in] int Slave address
     void begin(int);
+    
+    ///@brief Start a transmission between this TwoWire and one of the slaves
+    ///@param [in] uint8_t Address of the slave to transmit to
     void beginTransmission(uint8_t);
+    ///@brief Start a transmission between this TwoWire and one of the slaves
+    ///@param [in] int Address of the slave to transmit to
     void beginTransmission(int);
-    uint8_t endTransmission(void);
+    
+      ///@brief End a currently running transmission
+      ///@return Result of the transfer call to the I2CClass
+      uint8_t endTransmission(void);
+    
+    
+      ///@brief End a currently running transmission
+      ///@param [in] sendStop Should this transmission be ended with a stop bit
+      ///@return Result of the transfer call to the I2CClass
+      ///@details
+      ///	Originally, 'endTransmission' was an f(void) function.
+      ///	It has been modified to take one parameter indicating
+      ///	whether or not a STOP should be performed on the bus.
+      ///	Calling endTransmission(false) allows a sketch to
+      ///	perform a repeated start.
+      ///
+      ///	WARNING: Nothing in the library keeps track of whether
+      ///	the bus tenure has been properly ended with a STOP. It
+      ///	is very possible to leave the bus in a hung state if
+      ///	no call to endTransmission(true) is made. Some I2C
+      ///	devices will behave oddly if they do not see a STOP.
+      ///
     uint8_t endTransmission(uint8_t);
+    
+    ///@brief Send a read request to a slave
+    ///@param [in] address slave address to request a read from
+    ///@param [in] quantity number of bytes to request from the slave
+    ///@return Number of bytes requested
     uint8_t requestFrom(uint8_t, uint8_t);
+    ///@brief Send a read request to a slave
+    ///@param [in] address slave address to request a read from
+    ///@param [in] quantity number of bytes to request from the slave
+    ///@param [in] sendStop should a stop bit be sent after the request
+    ///@return Number of bytes requested
     uint8_t requestFrom(uint8_t, uint8_t, uint8_t);
+    ///@brief Send a read request to a slave
+    ///@param [in] address slave address to request a read from
+    ///@param [in] quantity number of bytes to request from the slave
+    ///@return Number of bytes requested
     uint8_t requestFrom(int, int);
+    ///@brief Send a read request to a slave
+    ///@param [in] address slave address to request a read from
+    ///@param [in] quantity number of bytes to request from the slave
+    ///@param [in] sendStop should a stop bit be sent after the request
+    ///@return Number of bytes requested
     uint8_t requestFrom(int, int, int);
+    
+    ///@brief Write a single byte to the transmit buffer so it can be sent to the slave later
+    ///@param [in] data byte to send to the slave
+    ///@return Number of bytes added to the transfer buffer
     virtual size_t write(uint8_t);
+    ///@brief Write a single byte to the transmit buffer so it can be sent to the slave later
+    ///@param [in] data byte to send to the slave
+    ///@param [in] quantity number of bytes to send to the slave
+    ///@return Number of bytes added to the transfer buffer
     virtual size_t write(const uint8_t *, size_t);
+    
+    ///@brief Check to see how many bytes are avilable in the read buffer
+    ///@return Number of available bytes
     virtual int available(void);
+    
+    ///@brief Read and remove from the buffer the next available byte.
+    ///@return Byte read off of the read buffer or -1 if it was not read.
     virtual int read(void);
+    
+    ///@brief Read but don't remove from the buffer the next available byte.
+    ///@return Next available byte in the read buffer. 
+    ///@details More details
     virtual int peek(void);
+    
+    ///@brief Currently not implemented 
     virtual void flush(void);
+    
+    ///@brief Currently unused but in the future may be used for handling data in a callback
     void onReceive(void(*)(int));
+    ///@brief Currently unused but in the future may be used for handling data in a callback
     void onRequest(void(*)(void));
 
     inline size_t write(unsigned long n) { return write((uint8_t)n); }
