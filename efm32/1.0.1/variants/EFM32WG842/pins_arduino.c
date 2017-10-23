@@ -24,9 +24,9 @@
 #include "pins_arduino.h"
 
 // LED Pins                    Red,  Blue,  Green
-const uint8_t ledPorts[3]  = {PORTA, PORTA, PORTA};
-const uint8_t ledPins[3]   = { 14,    13,    12  };
-const uint8_t ledId[3] = { 19, 18, 17};
+const uint8_t ledPorts[LED_COUNT]  = {PORTA, PORTA, PORTA};
+const uint8_t ledPins[LED_COUNT]   = { 14,    13,    12  };
+const uint8_t ledId[LED_COUNT] = { 19, 18, 17};
 
 //Debug Pins
 const uint8_t debugPinId[3] = {49,50,51}; //SWCLK, SWDIO, SWO

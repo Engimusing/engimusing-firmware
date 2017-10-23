@@ -57,6 +57,8 @@ extern const uint32_t timerRoutes[];
 extern const uint32_t adcChannel[];
 extern const ADC_SingleInput_TypeDef adcChannelNum[];
 
+#define LED_COUNT 1
+
 extern const uint8_t ledPorts[];
 extern const uint8_t ledPins[];
 extern const uint8_t ledId[];

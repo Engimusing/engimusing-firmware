@@ -83,9 +83,9 @@ const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0,adcSingleInpCh
 														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh6, 
 														   adcSingleInpCh7, adcSingleInpCh0};
 //                                 0,     1,     2,     3,     4,     5,     6,     7,     8,     9,     A,     B,     C,     D,    #,      *
-const uint8_t ledPorts[16]  = {PORTD, PORTD, PORTF, PORTB, PORTB, PORTF, PORTB, PORTA, PORTF, PORTA, PORTE, PORTE, PORTE, PORTE, PORTA, PORTA};
-const uint8_t ledPins[16]   = {    5,     4,     4,     8,    11,     3,     7,    10,     5,     2,    10,    11,    12,    13,     1,     9};
-const uint8_t ledId[16]     = {   25,    24,    41,     12,   17,    40,    11,    15,    42,     3,    45,    46,    47,    48,     2,    14};
+const uint8_t ledPorts[LED_COUNT]  = {PORTD, PORTD, PORTF, PORTB, PORTB, PORTF, PORTB, PORTA, PORTF, PORTA, PORTE, PORTE, PORTE, PORTE, PORTA, PORTA};
+const uint8_t ledPins[LED_COUNT]   = {    5,     4,     4,     8,    11,     3,     7,    10,     5,     2,    10,    11,    12,    13,     1,     9};
+const uint8_t ledId[LED_COUNT]     = {   25,    24,    41,     12,   17,    40,    11,    15,    42,     3,    45,    46,    47,    48,     2,    14};
 														   
 // ------------------------------------------------------------------------------------------------------------
 

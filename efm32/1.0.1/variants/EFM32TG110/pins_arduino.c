@@ -76,9 +76,9 @@ const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0,adcSingleInpCh
 														   adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh6, 
 														   adcSingleInpCh7, adcSingleInpCh0};
 
-const uint8_t ledPorts[1]  = {PORTB};
-const uint8_t ledPins[1]   = { 11 };
-const uint8_t ledId[1] = {13};
+const uint8_t ledPorts[LED_COUNT]  = {PORTB};
+const uint8_t ledPins[LED_COUNT]   = { 11 };
+const uint8_t ledId[LED_COUNT] = {13};
 														   
 // ------------------------------------------------------------------------------------------------------------
 

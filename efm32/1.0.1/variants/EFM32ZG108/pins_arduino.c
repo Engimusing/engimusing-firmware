@@ -74,9 +74,9 @@ const uint32_t timerRoutes[] = {0, // 0
 
 // ------------------------------------------------------------------------------------------------------------
 
-const uint8_t ledPorts[1]  = {PORTB};
-const uint8_t ledPins[1]   = { 11 };
-const uint8_t ledId[1] = {13};
+const uint8_t ledPorts[LED_COUNT]  = {PORTB};
+const uint8_t ledPins[LED_COUNT]   = { 11 };
+const uint8_t ledId[LED_COUNT] = {13};
 
 //Debug Pins
 const uint8_t debugPinId[3] = {15,16,9}; //SWCLK, SWDIO, SWO
