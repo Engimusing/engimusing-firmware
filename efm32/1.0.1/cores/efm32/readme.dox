@@ -1,0 +1,231 @@
+/** \mainpage Engimusing Library API Documentation
+# Welcome to the Engimusing Support Library Documentation for the Arduino IDE 
+Start by reading this main page to get a brief summary of some of the unique features of the Engimusing support library for using the Ardunio IDE to write software for Energy Micro based boards.
+
+Overall we have tried to support all of the example sketches included with the Arduino IDE in addition to including many extra examples that show how to write sketches for the Engimusing boards.
+
+# Predefined Pin Variables
+There are a few variables that have been defined for each of the different Engimusing boards that help with accessing LED's and Debug pins.
+
+LED_BUILTIN - can be used to connect to the default LED on the Engimusing boards. 
+
+LED_COUNT - Number of predefined LED's on a particular Engimusing board.
+
+ledId[LED_COUNT] - an array of size LED_COUNT that contains all the LED pins that are on a particular Engimusing board. 
+
+debugPinId[3] - an array that contains the 3 debug pins for a particular Engimusing board.
+
+# Preset Communication Global Objects
+There are multiple global communication objects that are available to communicate with things connected to the energy micro. Some of are available in the base Ardunio libraries for other device types, like the Serial, and Serial1 objects. The Engimusing Energy Micro implementation adds on to this and implements Serial and Serial1 just like the Ardunio libraries but also implements Serial2, Serial3, Serial4, SerialDF11_0, SerialDF11_1, SerialDF11_2, and SerialDF11_3. Only some of these are available on certain boards, please refer to the variant.cpp for the specific board to find out which are implemented for the particular board you are interested in. 
+
+In addition to the Serial port objects, there are also global objects for other important communication devices. The TwoWire class has global objects called Wire0, Wire1, Wire2, and Wire3 which allow for access to the I2C ports on the device. The variant.h has the defines for a particular device so you can see which ones are available on what device.
+
+# I2CClass / TwoWire
+The I2CClass and TwoWire class work together to allow access to I2C communication on the Energy Micro. There are four available TwoWire global objects for accessing the I2C ports (Wire0-Wire4). There are four I2CClass objects as well but they should not be used in sketches and the TwoWire objects should be used instead.
+
+TwoWire should match the default Arduino IDE implementation accessing an I2C port. At this point only the energy micro sketches will only work over I2C as the master device.
+
+# Timeout
+Timeout class allows for timing a length of time. Here is a simple example of how it could be used.
+
+\code
+Timeout timer1;
+
+void setup()
+{
+    timer1.begin(2000, true); //every 2 seconds update will return true.
+}
+
+void loop()
+{
+    
+    
+    if(timer1.update())
+    {
+        Serial.print("Timeout expired!"); //print every 2 seconds.
+    }
+}
+\endcode
+
+# TogglePin
+TogglePin class can be used to control a pin and have it toggle between high and low periodically. Here is an example of how it can be used.
+
+\code
+TogglePin togglePin;
+
+void setup()
+{
+    togglePin.begin(ledId[0], 2000, 1000, HIGH); //turn the LED on for 1 second every 3 seconds
+}
+
+void loop()
+{
+    togglePin.update();//run update() as often as possible and it will turn the led on for 1 second every 3 seconds.
+}
+\endcode
+
+# CapSenseClass
+Class for accessing the LESENSE peripheral on an Energy Micro board. The CapSenseClass is mainly for accessing it as a capacitance touch sensor but can also be used to read the capacitance of the wire connected to a pin.
+
+There is a single CapSenseClass global object which allow access to any of the available LESENSE channels. A better way of using the CapSenseClass is to define a CapSenseDevice which is used to access the state of a single channel.
+
+For example:
+
+\code
+CapSenseDevice capTouchSensor;
+
+void setup()
+{
+    capTouchSensor.begin(1, 50.0); //connect the capTouchSensor to channel 1 of LESENSE with a sensitivity of 50.0%
+}
+
+void loop()
+{
+    if(capTouchSensor.state()) 
+    {
+        Serial.println("Currently registering a touch event on channel 1.");
+    }
+    else
+    {
+        Serial.println("Not currently registering a touch event on channel 1.");
+    }
+}
+
+\endcode
+
+# RingBuffer
+Class for representing a buffer object that is a set amount of memory and reused once the buffer reaches the full size. Is a first on first off queue and always the same size of SERIAL_BUFFER_SIZE bytes which is defined in RingBuffer.h.
+
+This class is used internally by the Serial port objects.
+
+# Device Interface 
+Device class is an interface class that defines a set of functions to allow for access to reading and writing state to a device. There are multiple functions that are available to override in a derrived class.
+
+## Reading Values From a Device 
+readValue(int index) allows the derived class to specify a list of values that can be read from the state of the device. numValues() is used in conjunction with readValue() and specifies how many values are available to read from the device. 
+
+For example in the TMP102Device, numValues() returns 1 since there is only one value to read from the state which is the current temperature. readValue() returns a ValueStruct object which contains both the data and the type that the data is. This allows readValue() to return multiple types of data without the interface knowing anything about the data being sent.
+
+### ValueStruct
+Used to return data from the readValue() function. When creating a Device derived class it should be filled in by readValue for each available state value that can be read. The value union is used to hold the data. Here is an example for each of the data types:
+
+\code 
+
+//floating point example:
+ValueStruct floatValue;
+floatValue.type = Device::TypeFloat;
+floatValue.value.decimal = 123.123f;
+floatValue.name = "FLOAT_EXAMPLE";
+
+//integer example:
+ValueStruct intValue;
+intValue.type = Device::TypeInt;
+intValue.value.integer = 123123;
+intValue.name = "INT_EXAMPLE";
+
+//boolean example
+ValueStruct boolValue;
+boolValue.type = Device::TypeBool;
+boolValue.value.boolean = true;
+boolValue.name = "BOOL_EXAMPLE";
+
+//character array example;
+ValueStruct charValue;
+charValue.type = Device::TypeCharArray;
+charValue.value.charArray = "Char Array Data!!";
+charValue.name = "CHAR_ARRAY_EXAMPLE";
+
+\endcode
+
+Then on the other end the data can be accessed by using the value union variable that matches the type the was specified in type.
+
+## Writing Values to a Device
+In addition to reading the state from a Device, there is also an interface function for writing to the device. 
+
+writeValue(const char *valueName, const char *value) allow writing to the state using a name value pair. This is built around the MQTT protocol so the value name would be the topic and the value is the payload. Then internally the Device derived class should convert the value to the type of data it is looking for.
+
+Here is a simple example from the onOffCtrlDevice Class:
+
+\code
+
+bool OnOffCtrlDevice::writeValue(const char *valueName, const char *value)
+{
+    bool processed = false;
+    if(compare_string(valueName, "CTL")) //check for the CTL topic
+    {
+        if(compare_string(value, "ON")) //If payload is ON then turn on the pin this device controls.
+        {
+            setState(true);
+            processed = true;
+        }  
+        else if(compare_string(value, "OFF")) //If payload is OFF then turn on the pin this device controls.
+        {
+            setState(false);
+            processed = true;
+        }
+    }
+    return processed;
+}
+
+\endcode
+
+## update()
+The last function that the Device interface derived classes should implement is the update() function. If the device is connected to an MqttSimpleModule then the update() function will be called automatically when the MqttHub::update() function is called. This means the update() function should contain any logic that the device needs to have run periodically.
+
+## DevicePrinter
+The DevicePrinter class is a simple way to periodically print the values of a Device to a Serial port automatically. Here is a simple example:
+
+\code
+TMP102Device TMP102;
+DevicePrinter TMP102Printer;
+
+void setup()
+{
+  Serial.begin(115200);
+  
+  //connect the printer to the device and serial port.
+  TMP102Printer.begin(Serial, TMP102, 5000, "TMP102");
+  Serial.println("Simple TMP102 example 0");
+  
+  TMP102.begin(Wire0, 5, true);
+
+}
+
+void loop()
+{
+  //update the device and the printer.
+  TMP102.update();
+  TMP102Printer.update();
+}
+\endcode
+
+That example will print out the current temperature read from the TMP102 device every 5 seconds to the Serial port.
+
+# MQTT Support Library
+The Engimusing version of the Arduino IDE contains a few classes for connecting devices to an MQTTServer. This allows simpler integration with the OpenHAB smart home platform or any other platform that supports the MQTT protocol.
+
+## MqttHub
+Main Mqtt class. The usual way to use this class is to create a single global object for the hub and connect all MqttPorts and MqttModules to it. All MqttModules and MqttPorts connected to the same Hub will be able to send messages to/from each other.
+
+Objects are connected to the MqttHub by getting the MqttHub object passed to their begin function. 
+
+## MqttPort
+MqttPort objects represent a way for Mqtt messages to be sent and received to/from the Energy Micro device. There are a couple derived classes available to use which use the Serial port or a WiFi Module to connect to the Mqtt Server or other Energy Micro boards that are also using the Mqtt libraries.
+
+MqttSerialPort is the simplest port type and connects a Serial port to the other ports and modules. If it is connected to a PC then the PC will need to use the EFM_Serial2Mqtt script to convert the serial messages to a MQTT message that can be received by an MQTT server.
+
+There are also two WiFi port classes currently supported. The MqttESP8266Port and MqttCC3000Port. These require either an ESP8266 or CC3000 module connected in order to work.
+
+## MqttModule
+MqttModule is a base class for creating classes that can be connected to an MqttHub. 
+
+### SimpleMqttModule
+Instead of creating a bunch of module classes, there is a single SimpleMqttModule class which can be used with any object that is derived from the Device interface. This class periodically sends the current state of the device to the MqttHub which distributes it to all the attached MqttPorts.
+
+### MessageInputModule and MessageInputStringModule
+The message input classes can be used to receive data from other modules or from the MQTT server itself. Each instance of these classes can be associated with a specific MQTT topic and when that topic is sent a payload then the instances input date will be updated.
+
+### NotificationModule
+The NotificationModule class is used to receive an event from another module or the MQTT server. The event is an MQTT message that has a specific topic and payload. If the message is received then the NotificationModule objects getState() function will return true.
+
+*/

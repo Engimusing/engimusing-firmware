@@ -31,14 +31,14 @@ void OnOffCtrlDevice::begin(int32_t pin, bool defaultState, int32_t onLevel)
 bool OnOffCtrlDevice::writeValue(const char *valueName, const char *value)
 {
     bool processed = false;
-    if(compare_string(valueName, "CTL"))
+    if(compare_string(valueName, "CTL")) //check for the CTL topic
     {
-        if(compare_string(value, "ON"))
+        if(compare_string(value, "ON")) //If payload is ON then turn on the pin this device controls.
         {
             setState(true);
             processed = true;
         }  
-        else if(compare_string(value, "OFF"))
+        else if(compare_string(value, "OFF")) //If payload is OFF then turn on the pin this device controls.
         {
             setState(false);
             processed = true;
