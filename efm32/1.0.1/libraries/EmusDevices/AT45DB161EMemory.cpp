@@ -114,8 +114,8 @@ void AT45DB161EMemory::saveBuffer(uint8_t buffer)
     {
         selectDevice();
         mySpi->transfer(bufferOpCode);
-        mySpi->transfer((uint8_t) myBufferPage[buffer - 1] >> (16 - myPageBits));
-        mySpi->transfer((uint8_t) myBufferPage[buffer - 1] << (myPageBits - 8));
+        mySpi->transfer((uint8_t) (myBufferPage[buffer - 1] >> (16 - myPageBits)));
+        mySpi->transfer((uint8_t) (myBufferPage[buffer - 1] << (myPageBits - 8)));
         mySpi->transfer(DummyOp);
         deselectDevice();    
         
@@ -144,8 +144,8 @@ void AT45DB161EMemory::processData(bool write, uint32_t address, uint16_t len, u
 {
     while(len > 0)
     {
-        uint16_t pageAddress = (uint16_t)(address >> (myPageBits - 1)); 
-        uint16_t bufferAddress = (uint16_t) address & ~(0xFFFF << (myPageBits - 1));
+        uint16_t pageAddress = (uint16_t) (address >> (myPageBits - 1)); 
+        uint16_t bufferAddress = (uint16_t) (address & ~(0xFFFF << (myPageBits - 1)));
         
         uint8_t bufferToUse = 0;
         if(pageAddress == myBufferPage[0])
@@ -212,8 +212,8 @@ void AT45DB161EMemory::putPageInBuffer(uint16_t pageAddress, uint8_t buffer)
     }
     
     mySpi->transfer(opcode);
-    mySpi->transfer((uint8_t)pageAddress >> (16 - myPageBits));
-    mySpi->transfer((uint8_t)pageAddress << (myPageBits - 8));
+    mySpi->transfer((uint8_t)(pageAddress >> (16 - myPageBits)));
+    mySpi->transfer((uint8_t)(pageAddress << (myPageBits - 8)));
     mySpi->transfer(DummyOp);
     
     deselectDevice();    
