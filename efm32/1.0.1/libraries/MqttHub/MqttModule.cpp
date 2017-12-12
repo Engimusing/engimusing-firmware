@@ -373,7 +373,7 @@ uint8_t OnOffCtlModule::pinState()
 
 
 // ------------------------------- Detector Switch Class -------------------------
-void DetectorSwitchModule::begin(MqttHub &hub, uint8_t pin, const char* mod, uint8_t bounceCount)
+void DetectorSwitchModule::begin(MqttHub &hub, uint8_t pin, const char* mod, uint8_t bounceCount, uint32_t updateDelay)
 {
 	
   myPin = pin;
@@ -381,6 +381,7 @@ void DetectorSwitchModule::begin(MqttHub &hub, uint8_t pin, const char* mod, uin
   pinMode(pin, INPUT_PU_FILTER);
   mySwitchState = (~digitalRead(pin) & 0x01);
   myEventInProgress = 0;
+  myUpdateDelay = updateDelay;
   
   MqttModule::begin(hub, mod, true);
   
@@ -390,7 +391,7 @@ void DetectorSwitchModule::begin(MqttHub &hub, uint8_t pin, const char* mod, uin
 
 void DetectorSwitchModule::update(void)
 {
-  if(millis() > myTick + 100) {
+  if(millis() > myTick + myUpdateDelay) {
     myTick = millis();
     uint8_t currentSwitch = (~digitalRead(myPin) & 0x01);
 

@@ -322,7 +322,7 @@ class DetectorSwitchModule : public MqttModule
 {
  
  public:
-  virtual void  begin(MqttHub &hub, uint8_t pin, const char* module, uint8_t bounceCount);
+  virtual void  begin(MqttHub &hub, uint8_t pin, const char* module, uint8_t bounceCount, uint32_t updateDelay = 100);
   virtual void  update(void); // publish changes in switch state
   virtual uint8_t decode(const char* topic, const char* payload);
   virtual uint32_t switchState(void);
@@ -336,7 +336,7 @@ class DetectorSwitchModule : public MqttModule
   uint8_t myEventInProgress; // switch event in progress
   uint32_t mySwitchState;
   uint8_t myBounceCnt; // bounce filter value, 0 = no filter, 0xff = momentary
-  
+  uint32_t myUpdateDelay;
 };
 
 
