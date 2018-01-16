@@ -22,9 +22,11 @@
 #include "pins_arduino.h"
 
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
-// Digital Pins             0  1   2     3     4     5     6     7     8     9    10    11  12  13    14    15
-const uint8_t dPorts[]   = {0, 0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE,  PORTA,PORTA,PORTA,PORTA,PORTA, PORTF, PORTF};
-const uint8_t dPins[]    = {0, 0, 15,   12,    8,    7,   11,    1,    0,    2,   13,    0,  1,  8,    9,    10, 0, 1};
+
+// Digital Pins             0  1   2     3     4     5     6     7     8     9    10      11    12    13    14    15   16    17     18    19    20    21    22   23    24    25    26    27    28    29    30    31    32    33
+const uint8_t dPorts[]   = {0, 0,PORTC,PORTE,PORTB,PORTB,PORTB,PORTC,PORTC,PORTF,PORTE, PORTA,PORTA,PORTA,PORTA,PORTA,PORTF,PORTF,PORTF,PORTF,PORTF,PORTE,PORTE,PORTE,PORTD,PORTD,PORTD,PORTD,PORTC,PORTC,PORTC,PORTC,PORTC,PORTC};
+const uint8_t dPins[]    = {0, 0, 15,   12,    8,    7,   11,    1,    0,    2,   13,      0,    1,    8,    9,   10,   0,    1,    5,    4,    3,    13,  11,    10,   7,    6,    5,     4,    15,   14,   13,   11,   10,  4};
+
 
 // GPIO Interrupt Pins      0 1   2     3     4     5     6     7     8     9    10
 const uint8_t iPorts[11] = {0,0,PORTC,PORTE,PORTC,PORTC,PORTB,PORTA,PORTA,  0,  PORTC};
@@ -34,15 +36,11 @@ const uint8_t iPins[11]  = {0,0, 15,   12,    3,    2,   11,    1,    0,    0,  
 const uint8_t adcPorts[11]  = {0,0,PORTD,PORTD, 0, 0, 0, 0, 0, 0, PORTD};
 const uint8_t adcPins[11]   = {0,0,  4,    6,   0, 0, 0, 0, 0, 0,   7  };
 
-
 const uint32_t adcChannel[] =  {-1,-1,EM_ADC4,EM_ADC6,-1,-1,-1,EM_DAC0,-1,-1, -1, EM_ADC7};
 const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh4,
 						  adcSingleInpCh6,adcSingleInpCh0,adcSingleInpCh0,
 						  adcSingleInpCh0,adcSingleInpCh0,adcSingleInpCh0,
 						  adcSingleInpCh0,adcSingleInpCh0, adcSingleInpCh7};
-
-
-
 // ACMP Pins                    0  1  2  3   4     5     6     7     8    9  10   
 const uint8_t acmpPorts[11] = {0, 0, 0, 0,PORTC,PORTC,PORTC,PORTC,PORTC, 0,PORTE};
 const uint8_t acmpPins[11]  = {0, 0, 0, 0,  3,    2,    4,    1,    0,   0, 13  };
@@ -50,6 +48,7 @@ const uint8_t acmpPins[11]  = {0, 0, 0, 0,  3,    2,    4,    1,    0,   0, 13  
 // DAC Pins                    0  1  2  3  4  5   6    7  8  9 10   
 const uint8_t dacPorts[11] = {0, 0, 0, 0, 0, 0,PORTB, 0, 0, 0, 0};
 const uint8_t dacPins[11]  = {0, 0, 0, 0, 0, 0,  11,  0, 0, 0, 0};
+
 
 // Timer Pins                      0 1   2     3     4     5     6     7     8   9   10   
 const uint8_t timerPorts[11]    = {0,0,PORTC,PORTD,PORTB,PORTB,PORTB,PORTA,PORTA,0,PORTE};
@@ -80,7 +79,7 @@ const uint8_t debugPinId[3] = {15,16,9}; //SWCLK, SWDIO, SWO
 
 // This function verifies the pin is valid for this variant
 uint8_t valid_pin(uint8_t pin) {
-  if((pin < 2) || (pin > 15)) {
+  if((pin < 2) || (pin > PINS_COUNT)) {
     return 0;
   } else {
     return 1;
