@@ -19,7 +19,7 @@
 #include <ACS716Device.h>
 #include <Arduino.h>
 
-void ACS716Device::begin(ACS716MODEL model, int32_t powerPin, int32_t analogPowerFeedbackPin, int32_t analogInputPin, uint32_t numSamples)
+void ACS716Device::begin(ACS716MODEL model, int32_t powerPin, int32_t analogPowerFeedbackPin, int32_t analogInputPin, uint32_t numSamples, bool useMinMaxForRMS)
 {    
     myPowerPin = powerPin;
     myAnalogPowerFeedbackPin = analogPowerFeedbackPin;
@@ -31,8 +31,8 @@ void ACS716Device::begin(ACS716MODEL model, int32_t powerPin, int32_t analogPowe
     myNumSamples = numSamples;
     myCurrentSampleCount = 0;
 
-    myCurrentAveragedValue = 0;
-    myCurrentRunningAverage = 0;
+    myCurrentRmsCurrentValue = 0;
+    myCurrentRunningAverageSquared = 0;
 
     if(myPowerPin > 0)
     {
@@ -59,6 +59,10 @@ void ACS716Device::begin(ACS716MODEL model, int32_t powerPin, int32_t analogPowe
         my3_3Sensitivity = .0185;
     }
 
+    myCurrentRunningMax = -1000.0;
+    myCurrentRunningMin = 1000.0;
+    myUseMinMaxForRMS = useMinMaxForRMS;
+    
     delay(50);
 }
 
@@ -66,14 +70,44 @@ void ACS716Device::update(void)
 {
     float current =  instantCurrent();
    
-    myCurrentRunningAverage += current/myNumSamples;
+    if(myUseMinMaxForRMS)
+    {
+        if(current < myCurrentRunningMin)
+        {
+            myCurrentRunningMin = current;
+        }
+        
+        if(current > myCurrentRunningMax)
+        {
+            myCurrentRunningMax = current;
+        }
+    }
+    else
+    {
+        myCurrentRunningAverageSquared += (current * current)/myNumSamples;
+    }
+   
     myCurrentSampleCount++;
+     
+    
     
     if(myCurrentSampleCount == myNumSamples)
     {
-        myCurrentAveragedValue = myCurrentRunningAverage;
+        if(myUseMinMaxForRMS)
+        {
+            myCurrentRmsCurrentValue = (myCurrentRunningMax - myCurrentRunningMin) / 2.0 * 0.707;
+        }
+        else
+        {        
+            myCurrentRmsCurrentValue = sqrt(myCurrentRunningAverageSquared);
+        }
+        
+        myCurrentRunningMax = -1000.0;
+        myCurrentRunningMin = 1000.0;
+    
+        
         myCurrentSampleCount = 0;
-        myCurrentRunningAverage = 0;
+        myCurrentRunningAverageSquared = 0;
     }
 }
 
@@ -87,13 +121,13 @@ float ACS716Device::instantCurrent()
     if(myAnalogPowerFeedbackPin > 0)
    {   
         //read the power pin so we can calculate the sensitivity and midpoint
-        float vddVoltage = (((float)analogRead(myAnalogPowerFeedbackPin)) / 1024.0 * 3.3);
+        float vddVoltage = (((float)analogRead(myAnalogPowerFeedbackPin)) / 1023.0 * 3.3);
 
         sensitivity = my3_3Sensitivity * vddVoltage / 3.3;
         zeroAmpVoltage = vddVoltage / 2.0;
    }
    
-    float inputVoltage = (((float)analogRead(myAnalogInputPin)) / 1024.0 * 3.3);
+    float inputVoltage = (((float)analogRead(myAnalogInputPin)) / 1023.0 * 3.3);
       
     float current =  (inputVoltage - zeroAmpVoltage) / sensitivity;
    
@@ -103,7 +137,7 @@ float ACS716Device::instantCurrent()
 
 float ACS716Device::averageCurrent()
 {
-    return myCurrentAveragedValue;
+    return myCurrentRmsCurrentValue;
 }
 
 

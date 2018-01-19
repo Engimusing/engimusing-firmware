@@ -51,13 +51,15 @@ class ACS716Device : public Device
         ///@param [in] analogPowerFeedbackPin Pin that reads back the power pin to find out the exact VDD for the device.
         ///@param [in] analogInputPin Pin that is connected to the Devices VOUT pin.
         ///@param [in] numSamples Number of samples to average out when calculating the current.
-        virtual void begin(ACS716MODEL model, int32_t powerPin, int32_t analogPowerFeedbackPin, int32_t analogInputPin, uint32_t numSamples);
+        ///@param [in] useMinMaxForRMS set to true the RMS calculation will only take into account the min/max values of current
+        /// This removes the inaccuracy of the center value for the current.
+        virtual void begin(ACS716MODEL model, int32_t powerPin, int32_t analogPowerFeedbackPin, int32_t analogInputPin, uint32_t numSamples, bool useMinMaxForRMS = true);
         
         ///@brief Update the device. Should be run periodically since it takes a measurement of the current and updates the current running average.
         virtual void update();
         
         ///@brief Averaged current value for the last numSamples current measurements.
-        ///@return Current in Amps
+        ///@return Current in RMS Amps
         virtual float averageCurrent();
         
         ///@brief Single read of the current from the ACS716
@@ -81,9 +83,13 @@ class ACS716Device : public Device
 
         uint32_t myNumSamples;
         uint32_t myCurrentSampleCount;
-        float myCurrentAveragedValue;
-        float myCurrentRunningAverage;
+        float myCurrentRmsCurrentValue;
+        float myCurrentRunningAverageSquared;
 
+        bool myUseMinMaxForRMS;
+        float myCurrentRunningMax;
+        float myCurrentRunningMin;
+        
         ACS716MODEL myModel;
       
 };
