@@ -37,8 +37,9 @@ void setup() {
   devices[0].update();
   
 }
-
-int ledIdMap[] = {2, 3, 11, 12, 41, 24, 17, 15, 14, 40, 42, 25};
+//    switch        7  9  6    3  2    1   4  #  *  5  8  0
+int ledIdMap[] =  {15, 3, 11, 12, 41, 24, 17, 2, 14, 40, 42, 25}; // 2->#,
+//int ledIdMap[] = {2, 3, 11, 12, 41, 24, 17, 15, 14, 40, 42, 25};
 
 int i = 0;
 int ledBlinkDelay = 1000;
