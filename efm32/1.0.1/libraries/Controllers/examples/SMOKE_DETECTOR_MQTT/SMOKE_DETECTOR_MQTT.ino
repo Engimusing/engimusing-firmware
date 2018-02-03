@@ -26,13 +26,14 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
  
- 
 //Include the MqttModule to get the MQTT client classes
 #include <MqttHub.h>
 #include <MqttPort.h>
 #include <MqttModule.h>
 
 #include <OnOffCtrlDevice.h>
+#include <TMP102Device.h>
+#include <Wire.h>
 
 extern INTRClass INTR;
 
@@ -48,10 +49,16 @@ extern INTRClass INTR;
   
   {"TOP":"SMOKE/BOARD/PGOODPIN","PLD":"STATUS"}
   {"TOP":"SMOKE/BOARD/IOPIN","PLD":"STATUS"}
-  {"TOP":"SMOKE/BOARD/LEDPIN","PLD":"STATUS"}
+  {"TOP":"SMOKE/BOARD/SmokeLEDPin","PLD":"STATUS"}
   
   {"TOP":"SMOKE/BOARD/AUTOTEST","PLD":"START"}
 
+  {"TOP":"SMOKE/BOARD/LED/CTL","PLD":"ON"}
+  {"TOP":"SMOKE/BOARD/LED/CTL","PLD":"OFF"}
+  {"TOP":"SMOKE/BOARD/LED/CTL","PLD":"STATUS"}
+
+  {"TOP":"SMOKE/BOARD/TMP102/CTL","PLD":"STATUS"}
+  
   SMOKE Responses
   Sent when smoke is actually detected
   {"TOP":"SMOKE/BOARD/ALERT","PLD":"SMOKEDETECTED"}
@@ -80,17 +87,19 @@ MqttSerialPort serialPort2;
 // The MqttModule classes are automatically registered with the COMM 
 // object when begin() is called so they can be updated 
 // whenever HUB.update() is called.
-OnOffCtrlDevice PwmPinDevice;
-SimpleMqttModule PwmPinMod;
 OnOffCtrlDevice TestSwitchDevice;
 SimpleMqttModule TestSwitchMod;
 
 //monitor the monitor lines to know the state of sensors attached to the MON wires
-DetectorSwitchModule PGoodPinMod;
 DetectorSwitchModule IoPinMod;
-DetectorSwitchModule LedPinMod;
+DetectorSwitchModule SmokeLEDPinMod;
 
 NotificationModule AutoTestEvent;
+
+TMP102Device TMP102;
+SimpleMqttModule TMP102MqttMod;
+
+OnOffCtlModule LEDCtrl;
 
 enum AutoTestState
 {
@@ -115,26 +124,40 @@ uint32_t testResultCode;
 
 uint32_t lastAlert;
 
+uint32_t SmokeLEDPin = 8;
+uint32_t ControllerLEDPin = 12;
+uint32_t BDINPin = 2;
+uint32_t BEN1Pin = 3;
+uint32_t BEN2Pin = 11;
+
 void setup()
 {
   serialPort1.begin(HUB, Serial);
   serialPort2.begin(HUB, Serial1);
 
-  PwmPinDevice.begin(8, false, HIGH);
-  PwmPinMod.begin(HUB, PwmPinDevice, "SMOKE/BOARD/PWMPIN", 100000);
-  
   TestSwitchDevice.begin(4, false, LOW);
   TestSwitchMod.begin(HUB, TestSwitchDevice, "SMOKE/BOARD/TESTSWITCH", 100000);
   
-  PGoodPinMod.begin(HUB, 7, "SMOKE/BOARD/PGOODPIN", 10);
   IoPinMod.begin(HUB, 5, "SMOKE/BOARD/IOPIN", 10, 10);
-  LedPinMod.begin(HUB, 6, "SMOKE/BOARD/LEDPIN", 1, 0);
+  SmokeLEDPinMod.begin(HUB, SmokeLEDPin, "SMOKE/BOARD/SmokeLEDPin", 1, 0);
+
+  TMP102.begin(Wire1, 0, true);
+  TMP102MqttMod.begin(HUB, TMP102, "SMOKE/BOARD/TMP102", 1000);
+
+  LEDCtrl.begin(HUB, ControllerLEDPin, "SMOKE/BOARD/LED", HIGH);
   
   AutoTestEvent.begin(HUB, "SMOKE/BOARD", "AUTOTEST", "START");
-
   autoTestState = TEST_IDLE;
   autoTestStartTime = 0;
 
+  //initialize the piezo driver pins.
+  pinMode(BDINPin, OUTPUT);
+  digitalWrite(BDINPin, LOW); 
+  pinMode(BEN1Pin, OUTPUT);
+  digitalWrite(BEN1Pin, LOW); 
+  pinMode(BEN2Pin, OUTPUT);
+  digitalWrite(BEN2Pin, LOW); 
+  
   lastAlert = 0;
 }
 
@@ -146,11 +169,58 @@ void loop()
   
   if(AutoTestEvent.getState())
   {
+
+/* Working piezo driver code.
+    //turn on the piezo driver to the 1x voltage level.
+    digitalWrite(BEN1Pin, LOW); 
+    digitalWrite(BEN2Pin, HIGH);
+   
+    int start = millis(); 
+    int i = 0;
+
+    //toggle the DIN pin to set the tone
+    // Run for 10 seconds.
+    while(millis() < start + 10000)
+    {
+      digitalWrite(BDINPin, HIGH);
+      delayMicroseconds(200); // 2.5Khz frequency
+      digitalWrite(BDINPin, LOW); 
+      delayMicroseconds(200);
+      i++;
+    }
+    
+    digitalWrite(BEN1Pin, LOW); 
+    digitalWrite(BEN2Pin, LOW); 
+ */   
+/* This didn't seem to work for whatever reason. It requires the pitches.h header file to compile.
+ *  See toneMelody example.
+    // iterate over the notes of the melody:
+    for (int thisNote = 0; thisNote < 8; thisNote++) {
+
+    // to calculate the note duration, take one second
+    // divided by the note type.
+    //e.g. quarter note = 1000 / 4, eighth note = 1000/8, etc.
+    int noteDuration = 1000 / noteDurations[thisNote];
+    //tone(2, melody[thisNote],noteDuration);
+    tone(BDINPin, 10, 5000);//noteDuration);
+    
+    // to distinguish the notes, set a minimum time between them.
+    // the note's duration + 30% seems to work well:
+    int pauseBetweenNotes = 5000;//noteDuration * 1.30;
+    delay(pauseBetweenNotes);
+    // stop the tone playing:
+    noTone(BDINPin);
+  }
+    digitalWrite(BEN1Pin, LOW); 
+    digitalWrite(BEN2Pin, LOW); 
+    
+  */
+    //Setup the auto test
     autoTestState = TEST_RUNNING;
     TestSwitchDevice.setState(HIGH);
     autoTestStartTime = millis();
-    INTR.attachIntrCounter(6, RISING);
-    INTR.read_clr_nints(6); // clear the counter
+    INTR.attachIntrCounter(SmokeLEDPin, RISING);
+    INTR.read_clr_nints(SmokeLEDPin); // clear the counter
     ioPinHighTime = -1;
     testResultCode = TEST_FAILED_IO_NEVER_HIGH;
   }
@@ -178,7 +248,7 @@ void loop()
        
     if(autoTestStartTime + 10000 < millis())
     {
-      ledToggleCount = INTR.read_clr_nints(6);       
+      ledToggleCount = INTR.read_clr_nints(SmokeLEDPin);       
       TestSwitchDevice.setState(LOW);
       autoTestState = TEST_FINAL_CHECK;
     }

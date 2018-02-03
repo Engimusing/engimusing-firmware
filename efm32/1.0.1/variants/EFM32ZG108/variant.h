@@ -38,7 +38,7 @@
 
 // Wire Interfaces (I2C)
 
-#define WIRE_INTERFACES_COUNT 1
+#define WIRE_INTERFACES_COUNT 2
 
 #define PIN_WIRE0_SDA         (11u) //PD6
 #define PIN_WIRE0_SCL         (12u) //PD7
@@ -47,10 +47,10 @@
 #define WIRE0_ISR_HANDLER     I2C0_Handler
 #define WIRE0_CLOCK				cmuClock_I2C0
 
-#define PIN_WIRE1_SDA         (11u) //PD6
-#define PIN_WIRE1_SCL         (12u) //PD7
+#define PIN_WIRE1_SDA         (6u) //PE12
+#define PIN_WIRE1_SCL         (7u) //PE13
 #define WIRE1_INTERFACE       I2C0
-#define WIRE1_LOC    1
+#define WIRE1_LOC    6
 #define WIRE1_ISR_HANDLER     I2C0_Handler
 #define WIRE1_CLOCK				cmuClock_I2C0
 
