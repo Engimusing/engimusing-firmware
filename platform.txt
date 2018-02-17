@@ -16,7 +16,7 @@
 
 # Engimusing EFM32 cores and boards
 name=Engimusing EFM32 Boards
-version=1.0.2
+version=1.0.3
 
 # Compile variables
 # -----------------
