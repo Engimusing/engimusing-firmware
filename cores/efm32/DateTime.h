@@ -48,18 +48,18 @@ class DateTime
         
         ///@brief Set the month
         ///@param [in] month month
-        ///@details Month of the year where January is 0
+        ///@details Month of the year where January is 1
         void setMonth(unsigned int month);
         ///@brief Get the month after updating the current time.
         ///@return Month
-        ///@details Month of the year where January is 0
+        ///@details Month of the year where January is 1
         unsigned int month();
         
         ///@brief Set the day
-        ///@param [in] day day
+        ///@param [in] day indexed starting at 1 to match conventional date format
         void setDay(unsigned int day);
         ///@brief Get the day after updating the current time.
-        ///@return day
+        ///@return day indexed starting at 1 to match conventional date format
         unsigned int day();
         
         ///@brief Set the hour
@@ -99,9 +99,23 @@ class DateTime
         ///@return number of days in February for the current year
         unsigned int daysInFeburary();
         
+        enum DayOfWeek
+        {
+            DAY_MON = 0,
+            DAY_TUE = 1,
+            DAY_WED = 2,
+            DAY_THU = 3,
+            DAY_FRI = 4,
+            DAY_SAT = 5,
+            DAY_SUN = 6
+        };
+        
+        
     protected:
         unsigned int myYear;
-        unsigned int myMonth;
+        //internally stored indexed at 0 for easier calculations but returned indexed at 1 to match date conventions
+        unsigned int myMonth; 
+        //internally stored indexed at 0 for easier calculations but returned indexed at 1 to match date conventions
         unsigned int myDay;
         unsigned int myHour;
         unsigned int myMinute;

@@ -59,26 +59,34 @@ unsigned int DateTime::year()
 
 void DateTime::setMonth(unsigned int month)
 {
-    myMonth = month;
+    if(month == 0)
+    {
+        return;
+    }
+    myMonth = month - 1;
     myLastUpdateTime = millis();
 }
 
 unsigned int DateTime::month()
 {
     updateCurrentTime();
-    return myMonth;
+    return myMonth + 1;
 }
 
 void DateTime::setDay(unsigned int day)
 {
-    myDay = day;
+    if(day == 0)
+    {
+        return;
+    }
+    myDay = day - 1;
     myLastUpdateTime = millis();
 }
 
 unsigned int DateTime::day()
 {
     updateCurrentTime();
-    return myDay;
+    return myDay + 1;
 }
 
 void DateTime::setHour(unsigned int hour)
