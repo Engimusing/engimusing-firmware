@@ -65,6 +65,48 @@ void MqttTimeModule::uintToCharArray(uint32_t value, char *output, uint32_t numD
     }
 }
 
+void MqttTimeModule::sendCurrentDateTime(const char* module)
+{
+    char date[11] = {'Y','Y','Y','Y',':','M','M',':','D','D','\0'};
+        uintToCharArray(myDateTime.year(), &(date[0]), 4);
+        uintToCharArray(myDateTime.month(), &(date[5]), 2);
+        uintToCharArray(myDateTime.day(), &(date[8]), 2);
+        myHub->sendMessage(module, "DATE", date);
+        
+        char time[6] = {'H','H',':','M','M','\0'};
+        uintToCharArray(myDateTime.hour(), &(time[0]), 2);
+        uintToCharArray(myDateTime.minute(), &(time[3]), 2);
+        myHub->sendMessage(module, "TIME", time);
+        
+        switch(myDateTime.dayOfWeek())
+        {
+            case 0:
+                myHub->sendMessage(module, "DAY", "MON");
+                break;
+            case 1:
+                myHub->sendMessage(module, "DAY", "TUE");
+                break;
+            case 2:
+                myHub->sendMessage(module, "DAY", "WED");
+                break;
+            case 3:
+                myHub->sendMessage(module, "DAY", "THU");
+                break;
+            case 4:
+                myHub->sendMessage(module, "DAY", "FRI");
+                break;
+            case 5:
+                myHub->sendMessage(module, "DAY", "SAT");
+                break;
+            case 6:
+                myHub->sendMessage(module, "DAY", "SUN");
+                break;
+            default:
+                //If the day of the week is invalid then noop
+                break;
+        }
+}
+
 uint8_t MqttTimeModule::decode(const char* topic, const char* payload)
 {
     int8_t j = isTopicThisModule(topic);
@@ -75,44 +117,7 @@ uint8_t MqttTimeModule::decode(const char* topic, const char* payload)
     
     if(compare_token(payload,"STATUS"))
     {
-        char date[11] = {'Y','Y','Y','Y',':','M','M',':','D','D','\0'};
-        uintToCharArray(myDateTime.year(), &(date[0]), 4);
-        uintToCharArray(myDateTime.month(), &(date[5]), 2);
-        uintToCharArray(myDateTime.day(), &(date[8]), 2);
-        myHub->sendMessage((const char*)myModule, "DATE", date);
-        
-        char time[6] = {'H','H',':','M','M','\0'};
-        uintToCharArray(myDateTime.hour(), &(time[0]), 2);
-        uintToCharArray(myDateTime.minute(), &(time[3]), 2);
-        myHub->sendMessage((const char*)myModule, "TIME", time);
-        
-        switch(myDateTime.dayOfWeek())
-        {
-            case 0:
-                myHub->sendMessage((const char*)myModule, "DAY", "MON");
-                break;
-            case 1:
-                myHub->sendMessage((const char*)myModule, "DAY", "TUE");
-                break;
-            case 2:
-                myHub->sendMessage((const char*)myModule, "DAY", "WED");
-                break;
-            case 3:
-                myHub->sendMessage((const char*)myModule, "DAY", "THU");
-                break;
-            case 4:
-                myHub->sendMessage((const char*)myModule, "DAY", "FRI");
-                break;
-            case 5:
-                myHub->sendMessage((const char*)myModule, "DAY", "SAT");
-                break;
-            case 6:
-                myHub->sendMessage((const char*)myModule, "DAY", "SUN");
-                break;
-            default:
-                //If the day of the week is invalid then noop
-                break;
-        }
+        sendCurrentDateTime(myModule);
     }
 }
 

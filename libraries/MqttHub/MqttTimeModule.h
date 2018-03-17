@@ -60,6 +60,10 @@ class MqttTimeModule : public MqttModule
         ///@param [in] numDigits Number of digits of the value to convert to the char array
         static void uintToCharArray(uint32_t value, char *output, uint32_t numDigits);
 
+        ///@brief Send the current date and time over MQTT 
+        ///@param [in] module module/topic to use for this send of the date/time
+        void sendCurrentDateTime(const char* module);
+        
     protected:
         
         ///@brief Parse the current string from the date input string module
