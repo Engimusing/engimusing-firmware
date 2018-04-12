@@ -36,6 +36,7 @@ void MqttModule::begin(MqttHub &hub, const char* module, bool subOnHeartbeat)
   myNextModule = 0;
   hub.registerModule(this);
   hub.subscribe((const char*)myModule);
+  myWildcardedTopic[0] = '\0';
 }
 
 void MqttModule::update(void)
@@ -86,26 +87,33 @@ uint8_t MqttModule::isTopicThisModuleWildcard(const char* topic)
     uint8_t j = 0;
     uint8_t mlen = strlen((char*)myModule);
     uint8_t tlen = strlen((char*)topic);
+    uint8_t wildcardIdx = 0;
         
     bool wildCardActive = false;
-    bool lastCharWasDelim = false;
+    bool lastCharWasDelim = true;
+    bool firstWildcard = true;
     
-    if(myModule[i] == '+')
-    {
-        wildCardActive = true;
-        i++;
-    }
+    char wildcardedTopic[NUM_WILDCARD_TOPIC_CHARS];
     
     // compare module
-    for(j = 0; i < mlen && j < tlen; j++) {
+    for(j = 0; (i < mlen || wildCardActive) && j < tlen; j++) 
+    {
+      
       if(!wildCardActive)
       {
           if(myModule[i] == '+' && lastCharWasDelim)
           {
+              if(firstWildcard)
+              {
+                wildcardedTopic[wildcardIdx] = topic[j];
+                wildcardIdx++;
+              }
+              
               wildCardActive = true;
           }
           else if(topic[j] != myModule[i]) 
           {
+            //Not a match so return.
             return 0;
           }
           
@@ -122,19 +130,41 @@ uint8_t MqttModule::isTopicThisModuleWildcard(const char* topic)
       }
       else
       {
-          if(myModule[i] != '/') 
+          if(firstWildcard)
+          {
+            wildcardedTopic[wildcardIdx] = topic[j];
+          }
+          
+          if(i != mlen && myModule[i] != '/') 
           {
               //Invaild use of '+' character in module name
               return 0;
           }
           else
           {
-            if(topic[j] == '/' && myModule[i] == '/')
+            if(topic[j] == '/' && (i == mlen || myModule[i] == '/'))
             {
-              wildCardActive = false;
-              lastCharWasDelim = true;
-               i++;
+                if(firstWildcard)
+                {
+                    wildcardedTopic[wildcardIdx] = '\0';
+                }
+                wildCardActive = false;
+                firstWildcard = false;
+              
+                lastCharWasDelim = true;
+   
+                if(i == mlen)
+                {
+                    break;
+                }
+                
+                i++;
             }
+          }
+          
+          if(wildcardIdx + 1 < NUM_WILDCARD_TOPIC_CHARS && firstWildcard)
+          {
+              wildcardIdx++;
           }
       }
     }
@@ -143,8 +173,20 @@ uint8_t MqttModule::isTopicThisModuleWildcard(const char* topic)
         return 0;
     }
 
+    //since it is a match copy over the wildcarded topic to the member variable
+    for(i = 0; i <= wildcardIdx; i++)
+    {
+        myWildcardedTopic[i] = wildcardedTopic[i];
+    }
+
     return j+1;
 }
+
+const char *MqttModule::lastWildcardedTopic()
+{
+    return myWildcardedTopic;
+}
+
 
 // ------------------------------- Simple Module Class ------------------------
 void SimpleMqttModule::begin(MqttHub &hub, Device &device, const char* mod, uint32_t updateDelay)

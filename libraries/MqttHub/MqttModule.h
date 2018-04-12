@@ -51,6 +51,11 @@ class MqttModule
         ///@details Used by the derived classes to handle messages from the MqttHub. This base class always just returns 0.
         virtual uint8_t decode(const char* topic, const char* payload);
 
+        ///@brief Get the wildcarded portion of the last topic that matched this module's topic
+        ///@return The potion of the decoded topic that was matched by a wildcard
+        ///@details Only returns the first portion of the topic that was wildcarded out.
+        virtual const char *lastWildcardedTopic();
+
     protected:
         ///@brief Checks to see if the topic matches this modules name.
         ///@param [in] topic Topic to compare against the module name.
@@ -74,6 +79,8 @@ class MqttModule
         bool mySubOnHeartbeat;
         uint32_t myTick;
         MqttModule* myNextModule;
+        static const int NUM_WILDCARD_TOPIC_CHARS = 16;
+        char myWildcardedTopic[NUM_WILDCARD_TOPIC_CHARS];//limited to 
 };
 
 // ------------------------------- Message Input Class -------------------------
@@ -250,7 +257,6 @@ class NotificationModule : public MqttModule
         uint8_t myState;
         const char* myControl;
         const char* myPayload;
-  
 };
 
 // ------------------------------- SimpleMqttModule -------------------------
