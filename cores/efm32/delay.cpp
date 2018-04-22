@@ -106,15 +106,15 @@ extern "C" {
     // https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#Volatile
   }
 
-  void yield(void) {}
+  void yield(void) 
+  {
+      EMU_EnterEM1();
+  }
 
   void delay( uint32_t ms )
   {
     uint32_t start = _ulTickCount ;
 
-    if ( ms == 0 ) {
-      return ;
-    }
     do {
       yield() ;
     } while ( _ulTickCount - start <= ms ) ;
