@@ -26,6 +26,8 @@
 // Tick Counter united by ms
 static volatile uint32_t _ulTickCount = 0;
 
+static volatile uint32_t _energySavingDelay = 0;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -126,7 +128,20 @@ extern "C" {
     _ulTickCount++;    // Increment tick count each ms
     //  tickReset();
   }
+    
+  void setEnergySavingDelay(uint32_t maxMillisecondDelay)
+  {
+      _energySavingDelay = maxMillisecondDelay;
+  }
 
+  void energySavingDelay()
+  {
+      if(_energySavingDelay > 0)
+      {
+          delay(_energySavingDelay - 1);
+      }
+  }
+ 
 #ifdef __cplusplus
 }
 #endif

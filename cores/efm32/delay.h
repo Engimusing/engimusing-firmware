@@ -47,6 +47,13 @@ extern void delay( uint32_t dwMs ) ;
 ///@param [in] usec the number of microseconds to pause (uint32_t)
 extern void delayMicroseconds( uint32_t usec );
 
+///@brief Set an energy saving delay
+///@param [in] maxMillisecondDelay maximum number of milliseconds the loop() will wait every time around the loop
+///@details This will cause the processor to delay between times that loop() is called. It will wait for within 1 ms of maxMillisecondDelay. 
+extern void setEnergySavingDelay(uint32_t maxMillisecondDelay);
+
+///@brief Called by main.cpp between every call to loop()
+extern void energySavingDelay();
 
 #ifdef __cplusplus
 }

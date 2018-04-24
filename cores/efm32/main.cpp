@@ -33,7 +33,6 @@ extern void check_for_reset ( void ) __attribute__((weak));
 
 
 // Main entry point of Arduino application
-
 int main( void )
 {
   init();
@@ -51,6 +50,7 @@ int main( void )
     loop();
     if (serialEventRun) serialEventRun();
 	if(check_for_reset) check_for_reset();
+    energySavingDelay();
   }
 
   return 0;
