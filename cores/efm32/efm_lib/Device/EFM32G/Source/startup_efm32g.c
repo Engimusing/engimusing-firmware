@@ -140,67 +140,6 @@ void LCD_IRQHandler(void) __attribute__ ((weak, alias("Default_Handler")));
 void MSC_IRQHandler(void) __attribute__ ((weak, alias("Default_Handler")));
 void AES_IRQHandler(void) __attribute__ ((weak, alias("Default_Handler")));
 
-
-
-/*----------------------------------------------------------------------------
-  Exception / Interrupt Vector table
- *----------------------------------------------------------------------------*/
-const pFunc __Vectors[] __attribute__ ((section(".vectors"))) = {
-  /* Cortex-M Exception Handlers */
-  (pFunc)&__StackTop,                       /*      Initial Stack Pointer     */
-  Reset_Handler,                            /*      Reset Handler             */
-  NMI_Handler,                              /*      NMI Handler               */
-  HardFault_Handler,                        /*      Hard Fault Handler        */
-  MemManage_Handler,                        /*      MPU Fault Handler         */
-  BusFault_Handler,                         /*      Bus Fault Handler         */
-  UsageFault_Handler,                       /*      Usage Fault Handler       */
-  Default_Handler,                          /*      Reserved                  */
-  Default_Handler,                          /*      Reserved                  */
-  Default_Handler,                          /*      Reserved                  */
-  Default_Handler,                          /*      Reserved                  */
-  SVC_Handler,                              /*      SVCall Handler            */
-  DebugMon_Handler,                         /*      Debug Monitor Handler     */
-  Default_Handler,                          /*      Reserved                  */
-  PendSV_Handler,                           /*      PendSV Handler            */
-  SysTick_Handler,                          /*      SysTick Handler           */
-
-  /* External interrupts */
-
-  DMA_IRQHandler,                       /*  0 - DMA       */
-  GPIO_EVEN_IRQHandler,                       /*  1 - GPIO_EVEN       */
-  TIMER0_IRQHandler,                       /*  2 - TIMER0       */
-  USART0_RX_IRQHandler,                       /*  3 - USART0_RX       */
-  USART0_TX_IRQHandler,                       /*  4 - USART0_TX       */
-  ACMP0_IRQHandler,                       /*  5 - ACMP0       */
-  ADC0_IRQHandler,                       /*  6 - ADC0       */
-  DAC0_IRQHandler,                       /*  7 - DAC0       */
-  I2C0_IRQHandler,                       /*  8 - I2C0       */
-  GPIO_ODD_IRQHandler,                       /*  9 - GPIO_ODD       */
-  TIMER1_IRQHandler,                       /*  10 - TIMER1       */
-  TIMER2_IRQHandler,                       /*  11 - TIMER2       */
-  USART1_RX_IRQHandler,                       /*  12 - USART1_RX       */
-  USART1_TX_IRQHandler,                       /*  13 - USART1_TX       */
-  USART2_RX_IRQHandler,                       /*  14 - USART2_RX       */
-  USART2_TX_IRQHandler,                       /*  15 - USART2_TX       */
-  UART0_RX_IRQHandler,                       /*  16 - UART0_RX       */
-  UART0_TX_IRQHandler,                       /*  17 - UART0_TX       */
-  LEUART0_IRQHandler,                       /*  18 - LEUART0       */
-  LEUART1_IRQHandler,                       /*  19 - LEUART1       */
-  LETIMER0_IRQHandler,                       /*  20 - LETIMER0       */
-  PCNT0_IRQHandler,                       /*  21 - PCNT0       */
-  PCNT1_IRQHandler,                       /*  22 - PCNT1       */
-  PCNT2_IRQHandler,                       /*  23 - PCNT2       */
-  RTC_IRQHandler,                       /*  24 - RTC       */
-  CMU_IRQHandler,                       /*  25 - CMU       */
-  VCMP_IRQHandler,                       /*  26 - VCMP       */
-  LCD_IRQHandler,                       /*  27 - LCD       */
-  MSC_IRQHandler,                       /*  28 - MSC       */
-  AES_IRQHandler,                       /*  29 - AES       */
-  Default_Handler,                          /*  30 - Reserved      */
-
-};
-
-
 /*----------------------------------------------------------------------------
   Reset Handler called on controller reset
  *----------------------------------------------------------------------------*/
