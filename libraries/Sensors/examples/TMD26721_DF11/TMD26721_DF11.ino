@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,21 +24,17 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <TMD26721Device.h>
 #include <Wire.h>
 TMD26721Device TMD26721;
-DevicePrinter TMD26721Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  TMD26721Printer.begin(Serial, TMD26721, 5000, "TMD26721");
+  serialTimer.begin(1000,true);
   Serial.println("Simple TMD26721 example 0");
   
   //Initialize the TMD26721 which will report the proximity every 10 seconds
@@ -46,13 +42,18 @@ void setup()
   // If it is 0 then it will act more like a light detector than a proximity detector.
   
   TMD26721.begin(Wire, 5, 4);
-
+  
 }
 
 void loop()
 {
   TMD26721.update();
-  TMD26721Printer.update();
-  
+
+  if(serialTimer.update())
+  { 
+    uint32_t proximity = TMD26721.proximityData();
+    Serial.print("proximity = ");
+    Serial.println(proximity);
+  }
   led.update();
 }

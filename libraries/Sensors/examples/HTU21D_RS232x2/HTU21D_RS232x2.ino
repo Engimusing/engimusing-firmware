@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,12 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <HTU21DDevice.h>
 #include <Wire.h>
 
 HTU21DDevice HTU21D;
-DevicePrinter HTU21DPrinter0;
-DevicePrinter HTU21DPrinter1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -42,9 +39,8 @@ void setup()
   Serial.println("Simple HTU21D example 0");
   Serial1.println("Simple HTU21D example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  HTU21DPrinter0.begin(Serial, HTU21D, 5000, "HTU21D");
-  HTU21DPrinter1.begin(Serial1, HTU21D, 5000, "HTU21D");
   
   HTU21D.begin(Wire0, 2);
 }
@@ -55,9 +51,23 @@ void loop()
 
   HTU21D.update();
 
-  HTU21DPrinter0.update();
-  HTU21DPrinter1.update();
   
   
+  if(serialTimer.update())
+  { 
+    float hum = HTU21D.calcHumidity(HTU21D.readHumidity());
+    float temp = HTU21D.calcTemp(HTU21D.readTemp());
+    delay(1000);                       // wait for a second
+    Serial.print("temperature = ");
+    Serial.print(temp);
+    Serial.print("   humidity = ");
+    Serial.println(hum);
+  
+    Serial1.print("temperature = ");
+    Serial1.print(temp);
+    Serial1.print("   humidity = ");
+    Serial1.println(hum);
+  
+  }
   led.update();
 }

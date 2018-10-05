@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,21 +24,17 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <ADXL362Device.h>
 #include <SPI.h>
 ADXL362Device ADXL362;
-DevicePrinter ADXL362Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  ADXL362Printer.begin(Serial, ADXL362, 5000, "ADXL362");
+  serialTimer.begin(1000,true);
   Serial.println("Simple ADXL362 example 0");
   //Initialize the Accelerometer sensor
   //pins are:
@@ -46,13 +42,30 @@ void setup()
   //  3 - VS
   //  4 - CS 
   ADXL362.begin(2, 3, 4, &SPI);
-
+  
 }
 
 void loop()
 {
   ADXL362.update();
-  ADXL362Printer.update();
-  
+
+  if(serialTimer.update())
+  { 
+    float xData;
+    float yData;
+    float zData;
+    ADXL362.sampleXYZT();
+    xData = ADXL362.getXGees();
+    yData = ADXL362.getYGees();
+    zData = ADXL362.getZGees();
+
+    Serial.print("X = ");
+    Serial.print(xData);
+    Serial.print(" g Y = ");
+    Serial.print(yData);
+    Serial.print(" g Z = ");
+    Serial.print(zData);
+    Serial.println(" g");
+  }
   led.update();
 }

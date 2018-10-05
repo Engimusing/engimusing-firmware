@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,37 +24,67 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <QRE1113Device.h>
 
 QRE1113Device ReflectiveSensor0;
-DevicePrinter ReflectiveSensor0Printer;
 QRE1113Device ReflectiveSensor1;
-DevicePrinter ReflectiveSensor1Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  ReflectiveSensor0Printer.begin(Serial, ReflectiveSensor0, 5000, "ReflectiveSensor0");
-  ReflectiveSensor1Printer.begin(Serial, ReflectiveSensor1, 5000, "ReflectiveSensor1");
+  serialTimer.begin(1000,true);
   Serial.println("Simple DualQRE1113 example 0");
   
   ReflectiveSensor0.begin(7,2,10);
   ReflectiveSensor1.begin(4,3,10);
-
+  
 }
 
 void loop()
 {
   ReflectiveSensor0.update();
   ReflectiveSensor1.update();
-  ReflectiveSensor0Printer.update();
-  ReflectiveSensor1Printer.update();
-  
+
+  if(serialTimer.update())
+  { 
+    bool switchState[2];
+    bool risingEdge[2];
+    bool fallingEdge[2];
+    switchState[0] = ReflectiveSensor0.switchState();
+    risingEdge[0] = ReflectiveSensor0.risingEdge();
+    fallingEdge[0] = ReflectiveSensor0.fallingEdge();
+    switchState[1] = ReflectiveSensor1.switchState();
+    risingEdge[1] = ReflectiveSensor1.risingEdge();
+    fallingEdge[1] = ReflectiveSensor1.fallingEdge();
+    
+    for(int i = 0; i < 2; i++)
+    {
+      
+      Serial.print("Switch ");
+      Serial.print(i + 1);
+        
+      if(switchState[i])
+      {      
+        Serial.println(" state = on");
+      }
+      else
+      {
+        Serial.println(" state = off");
+      }
+      
+      if(risingEdge[i])
+      {
+        Serial.println("Rising Edge");
+      }
+      
+      if(fallingEdge[i])
+      {
+        Serial.println("Falling Edge");
+      }
+    }
+  }
   led.update();
 }

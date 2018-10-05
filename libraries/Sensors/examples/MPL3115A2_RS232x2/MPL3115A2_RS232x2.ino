@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,12 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <MPL3115A2Device.h>
 #include <Wire.h>
 
 MPL3115A2Device MPL3115A2;
-DevicePrinter MPL3115A2Printer0;
-DevicePrinter MPL3115A2Printer1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -42,9 +39,8 @@ void setup()
   Serial.println("Simple MPL3115A2 example 0");
   Serial1.println("Simple MPL3115A2 example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  MPL3115A2Printer0.begin(Serial, MPL3115A2, 5000, "MPL3115A2");
-  MPL3115A2Printer1.begin(Serial1, MPL3115A2, 5000, "MPL3115A2");
   
   MPL3115A2.begin(Wire0, 3);
 }
@@ -55,9 +51,29 @@ void loop()
 
   MPL3115A2.update();
 
-  MPL3115A2Printer0.update();
-  MPL3115A2Printer1.update();
   
   
+  if(serialTimer.update())
+  { 
+    float pressue = MPL3115A2.readPressure();
+    float altitude = MPL3115A2.readAltitude();
+    float temp = MPL3115A2.readTemp();
+    Serial.print("Pressure = ");
+    Serial.print(pressue);
+    Serial.print(" Pa Altitude = ");
+    Serial.print(altitude);
+    Serial.print(" M temperature = ");
+    Serial.print(temp);
+    Serial.println(" C");
+  
+    Serial1.print("Pressure = ");
+    Serial1.print(pressue);
+    Serial1.print(" Pa Altitude = ");
+    Serial1.print(altitude);
+    Serial1.print(" M temperature = ");
+    Serial1.print(temp);
+    Serial1.println(" C");
+  
+  }
   led.update();
 }

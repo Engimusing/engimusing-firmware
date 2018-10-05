@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,12 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <SSCDNNN150PG2A3Device.h>
 #include <Wire.h>
 
 SSCDNNN150PG2A3Device SSCDNNN150PG2A3;
-DevicePrinter SSCDNNN150PG2A3Printer0;
-DevicePrinter SSCDNNN150PG2A3Printer1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -42,9 +39,8 @@ void setup()
   Serial.println("Simple SSCDNNN150PG2A3 example 0");
   Serial1.println("Simple SSCDNNN150PG2A3 example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  SSCDNNN150PG2A3Printer0.begin(Serial, SSCDNNN150PG2A3, 5000, "SSCDNNN150PG2A3");
-  SSCDNNN150PG2A3Printer1.begin(Serial1, SSCDNNN150PG2A3, 5000, "SSCDNNN150PG2A3");
   
   SSCDNNN150PG2A3.begin(Wire0, 0);
 }
@@ -55,9 +51,17 @@ void loop()
 
   SSCDNNN150PG2A3.update();
 
-  SSCDNNN150PG2A3Printer0.update();
-  SSCDNNN150PG2A3Printer1.update();
   
   
+  if(serialTimer.update())
+  { 
+    float pressure = SSCDNNN150PG2A3.readPressure();
+    Serial.print("Pressure = ");
+    Serial.println(pressure);
+  
+    Serial1.print("Pressure = ");
+    Serial1.println(pressure);
+  
+  }
   led.update();
 }

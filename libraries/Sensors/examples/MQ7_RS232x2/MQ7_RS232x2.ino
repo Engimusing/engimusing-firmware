@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,12 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <MQ7Device.h>
 
 
 MQ7Device MQ7;
-DevicePrinter MQ7Printer0;
-DevicePrinter MQ7Printer1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -42,9 +39,8 @@ void setup()
   Serial.println("Simple MQ7 example 0");
   Serial1.println("Simple MQ7 example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  MQ7Printer0.begin(Serial, MQ7, 5000, "MQ7");
-  MQ7Printer1.begin(Serial1, MQ7, 5000, "MQ7");
   
   //Initialize the MQ7 CO Sensor
   //Pins:
@@ -60,9 +56,22 @@ void loop()
 
   MQ7.update();
 
-  MQ7Printer0.update();
-  MQ7Printer1.update();
   
   
+  if(serialTimer.update())
+  { 
+    uint32_t alertValue = MQ7.currentAlertValue();
+    const char * state = MQ7.currentAlertText();
+    Serial.print("value = ");
+    Serial.print(alertValue);
+    Serial.print(" state = ");
+    Serial.println(state);
+  
+    Serial1.print("value = ");
+    Serial1.print(alertValue);
+    Serial1.print(" state = ");
+    Serial1.println(state);
+  
+  }
   led.update();
 }

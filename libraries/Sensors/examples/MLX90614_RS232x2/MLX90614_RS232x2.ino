@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,12 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <MLX90614Device.h>
 #include <Wire.h>
 
 MLX90614Device MLX90614;
-DevicePrinter MLX90614Printer0;
-DevicePrinter MLX90614Printer1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -42,9 +39,8 @@ void setup()
   Serial.println("Simple MLX90614 example 0");
   Serial1.println("Simple MLX90614 example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  MLX90614Printer0.begin(Serial, MLX90614, 5000, "MLX90614");
-  MLX90614Printer1.begin(Serial1, MLX90614, 5000, "MLX90614");
   
   MLX90614.begin(Wire0, -1);
 }
@@ -55,9 +51,19 @@ void loop()
 
   MLX90614.update();
 
-  MLX90614Printer0.update();
-  MLX90614Printer1.update();
   
   
+  if(serialTimer.update())
+  { 
+    float temp = MLX90614.temperature();
+    Serial.print("temperature = ");
+    Serial.print(temp);
+    Serial.println(" C");
+  
+    Serial1.print("temperature = ");
+    Serial1.print(temp);
+    Serial1.println(" C");
+  
+  }
   led.update();
 }

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,12 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <ADXL362Device.h>
 #include <SPI.h>
 
 ADXL362Device ADXL362;
-DevicePrinter ADXL362Printer0;
-DevicePrinter ADXL362Printer1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -42,9 +39,8 @@ void setup()
   Serial.println("Simple ADXL362 example 0");
   Serial1.println("Simple ADXL362 example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  ADXL362Printer0.begin(Serial, ADXL362, 5000, "ADXL362");
-  ADXL362Printer1.begin(Serial1, ADXL362, 5000, "ADXL362");
   //Initialize the Accelerometer sensor
   //pins are:
   //  2 - VIO
@@ -59,9 +55,34 @@ void loop()
 
   ADXL362.update();
 
-  ADXL362Printer0.update();
-  ADXL362Printer1.update();
   
   
+  if(serialTimer.update())
+  { 
+    float xData;
+    float yData;
+    float zData;
+    ADXL362.sampleXYZT();
+    xData = ADXL362.getXGees();
+    yData = ADXL362.getYGees();
+    zData = ADXL362.getZGees();
+
+    Serial.print("X = ");
+    Serial.print(xData);
+    Serial.print(" g Y = ");
+    Serial.print(yData);
+    Serial.print(" g Z = ");
+    Serial.print(zData);
+    Serial.println(" g");
+  
+    Serial1.print("X = ");
+    Serial1.print(xData);
+    Serial1.print(" g Y = ");
+    Serial1.print(yData);
+    Serial1.print(" g Z = ");
+    Serial1.print(zData);
+    Serial1.println(" g");
+  
+  }
   led.update();
 }

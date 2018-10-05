@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,21 +24,17 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <ACS716Device.h>
 
 ACS716Device ACS716;
-DevicePrinter ACS716Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  ACS716Printer.begin(Serial, ACS716, 5000, "ACS716");
+  serialTimer.begin(1000,true);
   Serial.println("Simple ACS716 example 0");
   
   //Initialize the ACS716 which will report the current every 10 seconds
@@ -46,13 +42,18 @@ void setup()
   // other implementations they may not be the same and can both be -1 which means neither is connected
   // The A0 parameter is the ADC pin that is connected to the ACS716 output pin.
   ACS716.begin(ACS716Device::ACS716_6BB, A1, A1, A0, 100);
-
+  
 }
 
 void loop()
 {
   ACS716.update();
-  ACS716Printer.update();
-  
+
+  if(serialTimer.update())
+  { 
+    float current = ACS716.instantCurrent();
+    Serial.print("Current Amperage = ");
+    Serial.println(current);
+  }
   led.update();
 }

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,32 +24,63 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <RPI1031Device.h>
 
 RPI1031Device RPI1031;
-DevicePrinter RPI1031Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  RPI1031Printer.begin(Serial, RPI1031, 5000, "RPI1031");
+  serialTimer.begin(1000,true);
   Serial.println("Simple RPI1031 example 0");
   
   //sets up the 5 pins needed to setup and communicate with the RPI1031
   RPI1031.begin(3,4,5,6,7,10);
-
+  
 }
 
 void loop()
 {
   RPI1031.update();
-  RPI1031Printer.update();
-  
+
+  if(serialTimer.update())
+  { 
+    bool switchState[2];
+    bool risingEdge[2];
+    bool fallingEdge[2];
+      
+    for(int i = 0; i < 2; i++)
+    {
+      switchState[i] = RPI1031.switchState(i);
+      risingEdge[i] = RPI1031.risingEdge(i);
+      fallingEdge[i] = RPI1031.fallingEdge(i);
+      
+      Serial.print("Switch ");
+      Serial.print(i + 1);
+        
+      if(switchState[i])
+      {
+        
+        Serial.println(" state = on");
+      }
+      else
+      {
+        Serial.println(" state = off");
+      }
+      
+      if(risingEdge[i])
+      {
+        Serial.println("Rising Edge");
+      }
+      
+      if(fallingEdge[i])
+      {
+        Serial.println("Falling Edge");
+      }
+    }
+  }
   led.update();
 }

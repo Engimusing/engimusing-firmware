@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,18 +24,13 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <CT101530Device.h>
 
 
 CT101530Device ReedSwitch0;
-DevicePrinter ReedSwitch0Printer0;
-DevicePrinter ReedSwitch0Printer1;
 CT101530Device ReedSwitch1;
-DevicePrinter ReedSwitch1Printer0;
-DevicePrinter ReedSwitch1Printer1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -45,11 +40,8 @@ void setup()
   Serial.println("Simple DualCT101530 example 0");
   Serial1.println("Simple DualCT101530 example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  ReedSwitch0Printer0.begin(Serial, ReedSwitch0, 5000, "ReedSwitch0");
-  ReedSwitch0Printer1.begin(Serial1, ReedSwitch0, 5000, "ReedSwitch0");
-  ReedSwitch1Printer0.begin(Serial, ReedSwitch1, 5000, "ReedSwitch1");
-  ReedSwitch1Printer1.begin(Serial1, ReedSwitch1, 5000, "ReedSwitch1");
   
   ReedSwitch0.begin(6,-1,50);
   ReedSwitch1.begin(7,-1,50);
@@ -62,11 +54,73 @@ void loop()
   ReedSwitch0.update();
   ReedSwitch1.update();
 
-  ReedSwitch0Printer0.update();
-  ReedSwitch0Printer1.update();
-  ReedSwitch1Printer0.update();
-  ReedSwitch1Printer1.update();
   
   
+  if(serialTimer.update())
+  { 
+    bool switchState[2];
+    bool risingEdge[2];
+    bool fallingEdge[2];
+    
+    switchState[0] = ReedSwitch0.switchState();
+    risingEdge[0] = ReedSwitch0.risingEdge();
+    fallingEdge[0] = ReedSwitch0.fallingEdge();
+      
+    switchState[1] = ReedSwitch1.switchState();
+    risingEdge[1] = ReedSwitch1.risingEdge();
+    fallingEdge[1] = ReedSwitch1.fallingEdge();
+        
+    for(int i = 0; i < 2; i++)
+    {
+      Serial.print("Switch ");
+      Serial.print(i + 1);
+        
+      if(switchState[i])
+      {
+        
+        Serial.println(" state = on");
+      }
+      else
+      {
+        Serial.println(" state = off");
+      }
+      
+      if(risingEdge[i])
+      {
+        Serial.println("Rising Edge");
+      }
+      
+      if(fallingEdge[i])
+      {
+        Serial.println("Falling Edge");
+      }
+    }
+  
+    for(int i = 0; i < 2; i++)
+    {
+      Serial1.print("Switch ");
+      Serial1.print(i + 1);
+        
+      if(switchState[i])
+      {      
+        Serial1.println(" state = on");
+      }
+      else
+      {
+        Serial1.println(" state = off");
+      }
+      
+      if(risingEdge[i])
+      {
+        Serial1.println("Rising Edge");
+      }
+      
+      if(fallingEdge[i])
+      {
+        Serial1.println("Falling Edge");
+      }
+    }
+  
+  }
   led.update();
 }

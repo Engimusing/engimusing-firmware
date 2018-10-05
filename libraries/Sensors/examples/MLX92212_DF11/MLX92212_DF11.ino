@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,31 +24,51 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <MLX92212Device.h>
 
 MLX92212Device MLX92212;
-DevicePrinter MLX92212Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  MLX92212Printer.begin(Serial, MLX92212, 5000, "MLX92212");
+  serialTimer.begin(1000,true);
   Serial.println("Simple MLX92212 example 0");
   
   MLX92212.begin(7, 10, 20);
-
+  
 }
 
 void loop()
 {
   MLX92212.update();
-  MLX92212Printer.update();
-  
+
+  if(serialTimer.update())
+  { 
+    bool switchState = MLX92212.switchState();
+    bool risingEdge = MLX92212.risingEdge();
+    bool fallingEdge = MLX92212.fallingEdge();
+
+    if(switchState)
+    {
+      Serial.println("state = on");
+    }
+    else
+    {
+      Serial.println("state = off");
+    }
+
+    if(risingEdge)
+    {
+      Serial.println("Rising Edge");
+    }
+
+    if(fallingEdge)
+    {
+      Serial.println("Falling Edge");
+    }
+  }
   led.update();
 }

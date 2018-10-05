@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,12 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <MLX92212Device.h>
 
 
 MLX92212Device MLX92212;
-DevicePrinter MLX92212Printer0;
-DevicePrinter MLX92212Printer1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -42,9 +39,8 @@ void setup()
   Serial.println("Simple MLX92212 example 0");
   Serial1.println("Simple MLX92212 example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  MLX92212Printer0.begin(Serial, MLX92212, 5000, "MLX92212");
-  MLX92212Printer1.begin(Serial1, MLX92212, 5000, "MLX92212");
   
   MLX92212.begin(8, 7, 20);
 }
@@ -55,9 +51,52 @@ void loop()
 
   MLX92212.update();
 
-  MLX92212Printer0.update();
-  MLX92212Printer1.update();
   
   
+  if(serialTimer.update())
+  { 
+    bool switchState = MLX92212.switchState();
+    bool risingEdge = MLX92212.risingEdge();
+    bool fallingEdge = MLX92212.fallingEdge();
+
+    if(switchState)
+    {
+      Serial.println("state = on");
+    }
+    else
+    {
+      Serial.println("state = off");
+    }
+
+    if(risingEdge)
+    {
+      Serial.println("Rising Edge");
+    }
+
+    if(fallingEdge)
+    {
+      Serial.println("Falling Edge");
+    }
+  
+    if(switchState)
+    {
+      Serial1.println("state = on");
+    }
+    else
+    {
+      Serial1.println("state = off");
+    }
+
+    if(risingEdge)
+    {
+      Serial1.println("Rising Edge");
+    }
+
+    if(fallingEdge)
+    {
+      Serial1.println("Falling Edge");
+    }
+  
+  }
   led.update();
 }

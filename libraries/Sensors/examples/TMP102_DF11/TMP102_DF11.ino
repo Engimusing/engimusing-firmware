@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,31 +24,32 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <TMP102Device.h>
 #include <Wire.h>
 TMP102Device TMP102;
-DevicePrinter TMP102Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  TMP102Printer.begin(Serial, TMP102, 5000, "TMP102");
+  serialTimer.begin(1000,true);
   Serial.println("Simple TMP102 example 0");
   
   TMP102.begin(Wire0, 5, true);
-
+  
 }
 
 void loop()
 {
   TMP102.update();
-  TMP102Printer.update();
-  
+
+  if(serialTimer.update())
+  { 
+    float temp = TMP102.temperature();
+    Serial.print("temperature = ");
+    Serial.println(temp);
+  }
   led.update();
 }

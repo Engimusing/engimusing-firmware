@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,38 +24,30 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <OnOffCtrlDevice.h>
 
 OnOffCtrlDevice CPC1002N_0;
-DevicePrinter CPC1002N_0Printer;
 OnOffCtrlDevice CPC1002N_1;
-DevicePrinter CPC1002N_1Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  CPC1002N_0Printer.begin(Serial, CPC1002N_0, 5000, "CPC1002N_0");
-  CPC1002N_1Printer.begin(Serial, CPC1002N_1, 5000, "CPC1002N_1");
+  serialTimer.begin(1000,true);
   Serial.println("Simple DualCPC1002N example 0");
   
   CPC1002N_0.begin(6, false, HIGH);
   CPC1002N_1.begin(10, false, LOW);
-
+  
 }
 
 void loop()
 {
   CPC1002N_0.update();
   CPC1002N_1.update();
-  CPC1002N_0Printer.update();
-  CPC1002N_1Printer.update();
-  
+
   static char buffer[4];
   //Parse Serial port and if 0:ON, 0:OF, 1:ON, or 1:OF are sent  then turn on or of the DC relays
   if(Serial.available())
@@ -72,22 +64,22 @@ void loop()
   {
     if(buffer[2] == 'O' && buffer[3] == 'N')
     {
-        CPC1002N_0.setState(true);
+      CPC1002N_0.setState(true);
     }
     else if(buffer[2] == 'O' && buffer[3] == 'F')
     {
-        CPC1002N_0.setState(false);
+      CPC1002N_0.setState(false);
     }
   }
   if(buffer[0] == '1')
   {
     if(buffer[2] == 'O' && buffer[3] == 'N')
     {
-        CPC1002N_1.setState(true);
+      CPC1002N_1.setState(true);
     }
     else if(buffer[2] == 'O' && buffer[3] == 'F')
     {
-        CPC1002N_1.setState(false);
+      CPC1002N_1.setState(false);
     }
   }
   led.update();

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,18 +24,13 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZG108 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <OnOffCtrlDevice.h>
 
 
 OnOffCtrlDevice CPC1002N_0;
-DevicePrinter CPC1002N_0Printer0;
-DevicePrinter CPC1002N_0Printer1;
 OnOffCtrlDevice CPC1002N_1;
-DevicePrinter CPC1002N_1Printer0;
-DevicePrinter CPC1002N_1Printer1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -45,11 +40,8 @@ void setup()
   Serial.println("Simple DualCPC1002N example 0");
   Serial1.println("Simple DualCPC1002N example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  CPC1002N_0Printer0.begin(Serial, CPC1002N_0, 5000, "CPC1002N_0");
-  CPC1002N_0Printer1.begin(Serial1, CPC1002N_0, 5000, "CPC1002N_0");
-  CPC1002N_1Printer0.begin(Serial, CPC1002N_1, 5000, "CPC1002N_1");
-  CPC1002N_1Printer1.begin(Serial1, CPC1002N_1, 5000, "CPC1002N_1");
   
   CPC1002N_0.begin(7, false, HIGH);
   CPC1002N_1.begin(8, false, LOW);
@@ -62,10 +54,6 @@ void loop()
   CPC1002N_0.update();
   CPC1002N_1.update();
 
-  CPC1002N_0Printer0.update();
-  CPC1002N_0Printer1.update();
-  CPC1002N_1Printer0.update();
-  CPC1002N_1Printer1.update();
   
   static char buffer[4];
   //Parse Serial port and if 0:ON, 0:OF, 1:ON, or 1:OF are sent  then turn on or of the DC relays
@@ -83,22 +71,22 @@ void loop()
   {
     if(buffer[2] == 'O' && buffer[3] == 'N')
     {
-        CPC1002N_0.setState(true);
+      CPC1002N_0.setState(true);
     }
     else if(buffer[2] == 'O' && buffer[3] == 'F')
     {
-        CPC1002N_0.setState(false);
+      CPC1002N_0.setState(false);
     }
   }
   if(buffer[0] == '1')
   {
     if(buffer[2] == 'O' && buffer[3] == 'N')
     {
-        CPC1002N_1.setState(true);
+      CPC1002N_1.setState(true);
     }
     else if(buffer[2] == 'O' && buffer[3] == 'F')
     {
-        CPC1002N_1.setState(false);
+      CPC1002N_1.setState(false);
     }
   }
   
@@ -107,35 +95,36 @@ void loop()
   //Parse Serial1 port and if 0:ON, 0:OF, 1:ON, or 1:OF are sent  then turn on or of the DC relays
   if(Serial1.available())
   {
-      for(int i = 0; i < 3; i++)
-      {
-        buffer1[i] = buffer1[i+1];
-      }
-      
-      buffer1[3] = Serial1.read();
+    for(int i = 0; i < 3; i++)
+    {
+      buffer1[i] = buffer1[i+1];
+    }
+    
+    buffer1[3] = Serial1.read();
   }
   
   if(buffer1[0] == '0')
   {
     if(buffer1[2] == 'O' && buffer1[3] == 'N')
     {
-        CPC1002N_0.setState(true);
+      CPC1002N_0.setState(true);
     }
     else if(buffer1[2] == 'O' && buffer1[3] == 'F')
     {
-        CPC1002N_0.setState(false);
+      CPC1002N_0.setState(false);
     }
   }
   if(buffer1[0] == '1')
   {
     if(buffer1[2] == 'O' && buffer1[3] == 'N')
     {
-        CPC1002N_1.setState(true);
+      CPC1002N_1.setState(true);
     }
     else if(buffer1[2] == 'O' && buffer1[3] == 'F')
     {
-        CPC1002N_1.setState(false);
+      CPC1002N_1.setState(false);
     }
   }
+  
   led.update();
 }

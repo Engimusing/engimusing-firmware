@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,18 +24,13 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32TG110 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <QRE1113Device.h>
 
 
 QRE1113Device ReflectiveSensor0;
-DevicePrinter ReflectiveSensor0Printer0;
-DevicePrinter ReflectiveSensor0Printer1;
 QRE1113Device ReflectiveSensor1;
-DevicePrinter ReflectiveSensor1Printer0;
-DevicePrinter ReflectiveSensor1Printer1;
 TogglePin led;
+Timeout serialTimer;
 
 void setup()
 {
@@ -45,11 +40,8 @@ void setup()
   Serial.println("Simple DualQRE1113 example 0");
   Serial1.println("Simple DualQRE1113 example 1");
   led.begin(1000);
+  serialTimer.begin(1000,true);
  
-  ReflectiveSensor0Printer0.begin(Serial, ReflectiveSensor0, 5000, "ReflectiveSensor0");
-  ReflectiveSensor0Printer1.begin(Serial1, ReflectiveSensor0, 5000, "ReflectiveSensor0");
-  ReflectiveSensor1Printer0.begin(Serial, ReflectiveSensor1, 5000, "ReflectiveSensor1");
-  ReflectiveSensor1Printer1.begin(Serial1, ReflectiveSensor1, 5000, "ReflectiveSensor1");
   
   ReflectiveSensor0.begin(7,12,10);
   ReflectiveSensor1.begin(4,11,10);
@@ -62,11 +54,71 @@ void loop()
   ReflectiveSensor0.update();
   ReflectiveSensor1.update();
 
-  ReflectiveSensor0Printer0.update();
-  ReflectiveSensor0Printer1.update();
-  ReflectiveSensor1Printer0.update();
-  ReflectiveSensor1Printer1.update();
   
   
+  if(serialTimer.update())
+  { 
+    bool switchState[2];
+    bool risingEdge[2];
+    bool fallingEdge[2];
+    switchState[0] = ReflectiveSensor0.switchState();
+    risingEdge[0] = ReflectiveSensor0.risingEdge();
+    fallingEdge[0] = ReflectiveSensor0.fallingEdge();
+    switchState[1] = ReflectiveSensor1.switchState();
+    risingEdge[1] = ReflectiveSensor1.risingEdge();
+    fallingEdge[1] = ReflectiveSensor1.fallingEdge();
+    
+    for(int i = 0; i < 2; i++)
+    {
+      
+      Serial.print("Switch ");
+      Serial.print(i + 1);
+        
+      if(switchState[i])
+      {      
+        Serial.println(" state = on");
+      }
+      else
+      {
+        Serial.println(" state = off");
+      }
+      
+      if(risingEdge[i])
+      {
+        Serial.println("Rising Edge");
+      }
+      
+      if(fallingEdge[i])
+      {
+        Serial.println("Falling Edge");
+      }
+    }
+  
+    for(int i = 0; i < 2; i++)
+    {
+      Serial1.print("Switch ");
+      Serial1.print(i + 1);
+        
+      if(switchState[i])
+      {      
+        Serial1.println(" state = on");
+      }
+      else
+      {
+        Serial1.println(" state = off");
+      }
+      
+      if(risingEdge[i])
+      {
+        Serial1.println("Rising Edge");
+      }
+      
+      if(fallingEdge[i])
+      {
+        Serial1.println("Falling Edge");
+      }
+    }
+  
+  }
   led.update();
 }

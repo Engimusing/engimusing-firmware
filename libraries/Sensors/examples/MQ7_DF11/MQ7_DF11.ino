@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,21 +24,17 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32WG840 from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <MQ7Device.h>
 
 MQ7Device MQ7;
-DevicePrinter MQ7Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  MQ7Printer.begin(Serial, MQ7, 5000, "MQ7");
+  serialTimer.begin(1000,true);
   Serial.println("Simple MQ7 example 0");
   
   //Initialize the MQ7 CO Sensor
@@ -47,13 +43,21 @@ void setup()
   // Analog Sensor Input
   
   MQ7.begin(34, A2);
-
+  
 }
 
 void loop()
 {
   MQ7.update();
-  MQ7Printer.update();
-  
+
+  if(serialTimer.update())
+  { 
+    uint32_t alertValue = MQ7.currentAlertValue();
+    const char * state = MQ7.currentAlertText();
+    Serial.print("value = ");
+    Serial.print(alertValue);
+    Serial.print(" state = ");
+    Serial.println(state);
+  }
   led.update();
 }

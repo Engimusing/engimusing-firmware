@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2016-2017 Engimusing LLC.  All right reserved.
+  Copyright (c) 2016-2018 Engimusing LLC.  All right reserved.
   
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -24,31 +24,36 @@
 #error Incorrect Board Selected! Please select Engimusing EFM32ZGUSB from the Tools->Board: menu.
 #endif
 
-#include <DevicePrinter.h>
-
 #include <MPL115A1Device.h>
 #include <SPI.h>
 MPL115A1Device MPL115A1;
-DevicePrinter MPL115A1Printer;
 TogglePin led;
-
+Timeout serialTimer;
 
 void setup()
 {
   Serial.begin(115200);
   led.begin(1000);
-
-  MPL115A1Printer.begin(Serial, MPL115A1, 5000, "MPL115A1");
+  serialTimer.begin(1000,true);
   Serial.println("Simple MPL115A1 example 0");
   
   MPL115A1.begin(10, 6, 4, SPI);
-
+  
 }
 
 void loop()
 {
   MPL115A1.update();
-  MPL115A1Printer.update();
-  
+
+  if(serialTimer.update())
+  { 
+    float temp = MPL115A1.calculateTemperatureC();
+    float pressure = MPL115A1.calculatePressurekPa();
+    Serial.print("temperature = ");
+    Serial.print(temp);
+    Serial.print(" C    Pressure = ");
+    Serial.print(pressure);
+    Serial.println(" kPa");
+  }
   led.update();
 }
