@@ -20,7 +20,7 @@
 
 #if SPI_INTERFACES_COUNT > 0
 
-#include <spi.h>
+#include "SPI.h"
 
 
 LS013B7DH03Display::LS013B7DH03Display()
