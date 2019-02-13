@@ -179,3 +179,21 @@ engimusing_efm32wg842F64.compiler.mcu=-DCORTEX_M4
 engimusing_efm32wg842F64.compiler.efm=-DEFM32WG
 engimusing_efm32wg842F64.build.family=EFM32WG
 
+engimusing_efm32wg842D.name=Engimusing EFM32WG842D
+engimusing_efm32wg842D.upload.tool=efm_upload
+engimusing_efm32wg842D.upload.protocol=xmodem
+engimusing_efm32wg842D.upload.maximum_size=60416
+engimusing_efm32wg842D.upload.device=EFM32WG842USB
+engimusing_efm32wg842D.bootloader.tool=
+engimusing_efm32wg842D.bootloader.file=
+engimusing_efm32wg842D.build.mcu=cortex-m4
+engimusing_efm32wg842D.build.board=EFM32WG842
+engimusing_efm32wg842D.build.core=efm32
+engimusing_efm32wg842D.build.ldscript=efm32wg.ld
+engimusing_efm32wg842D.build.variant=EFM32WG842D
+engimusing_efm32wg842D.build.variant_system_lib=
+engimusing_efm32wg842D.compiler.device=-DEFM32WG842D -DEFM32WG842
+engimusing_efm32wg842D.compiler.mcu=-DCORTEX_M4
+engimusing_efm32wg842D.compiler.efm=-DEFM32WG
+engimusing_efm32wg842D.build.family=EFM32WG
+
