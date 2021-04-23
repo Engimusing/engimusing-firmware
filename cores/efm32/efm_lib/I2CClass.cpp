@@ -16,7 +16,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "I2CClass.h"
+
 
 #include "Arduino.h"
 
@@ -25,6 +25,9 @@
 // Includes Atmel CMSIS
 #include <em_device.h>
 #include <em_cmu.h>
+
+#if WIRE_INTERFACES_COUNT > 0
+#include "I2CClass.h"
 
 static I2C_Init_TypeDef i2cInit = I2C_INIT_DEFAULT;
 
@@ -193,7 +196,7 @@ void I2CClass::onService(void) {
   }
   */
 }
-
+#endif 
 //setup the static globals
 // these are used by the TwoWire class to initialize the Wire static globals
 

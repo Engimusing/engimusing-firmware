@@ -197,3 +197,21 @@ engimusing_efm32wg842D.compiler.mcu=-DCORTEX_M4
 engimusing_efm32wg842D.compiler.efm=-DEFM32WG
 engimusing_efm32wg842D.build.family=EFM32WG
 
+engimusing_efm32gg12b110f1024.name=Engimusing EFM32GG12b110F1024
+engimusing_efm32gg12b110f1024.upload.tool=efm_upload
+engimusing_efm32gg12b110f1024.upload.protocol=xmodem
+engimusing_efm32gg12b110f1024.upload.maximum_size=1044480
+engimusing_efm32gg12b110f1024.upload.device=EFM32GG12B110F1024GQ64
+engimusing_efm32gg12b110f1024.bootloader.tool=
+engimusing_efm32gg12b110f1024.bootloader.file=
+engimusing_efm32gg12b110f1024.build.mcu=cortex-m4
+engimusing_efm32gg12b110f1024.build.board=EFM32GG12B110F1024GQ64
+engimusing_efm32gg12b110f1024.build.core=efm32
+engimusing_efm32gg12b110f1024.build.ldscript=efm32gg12b.ld
+engimusing_efm32gg12b110f1024.build.variant=EFM32GG12B
+engimusing_efm32gg12b110f1024.build.variant_system_lib=
+engimusing_efm32gg12b110f1024.compiler.device=-DEFM32GG12B110F1024GQ64 -DEFM32GG12B110
+engimusing_efm32gg12b110f1024.compiler.mcu=-DCORTEX_M4
+engimusing_efm32gg12b110f1024.compiler.efm=-DEFM32GG12B
+engimusing_efm32gg12b110f1024.build.family=EFM32GG12B
+

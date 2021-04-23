@@ -16,6 +16,8 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#if !defined(EFM32GG12B110F1024GQ64)
+
 #include "timer.h"
 #include "Tone.h"
 #include "pins_arduino.h"
@@ -651,4 +653,4 @@ void print_timer_regs(int timer)
 
   Serial.println("");
 }
-
+#endif 

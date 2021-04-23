@@ -29,7 +29,11 @@
 
 uint32_t cmu_hfper_freq_get(void)
 {
+#if !defined(EFM32GG12B110F1024GQ64)
   return VARIANT_MCK >> (CMU->HFPERCLKDIV & 0xF);
+  #else
+      return 0;
+  #endif
 }
 
 

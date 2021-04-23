@@ -41,7 +41,10 @@ int main( void )
 
   delay(1);
    
-  enableDebugPins();
+   digitalWrite(LED_BUILTIN, HIGH);   // Green LED off
+   
+  //Lets make sure everthing else is working before we allow for using the debug pins for something besides debug.
+  //enableDebugPins();
     
   setup();
 

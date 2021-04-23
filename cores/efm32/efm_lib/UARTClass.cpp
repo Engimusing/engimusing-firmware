@@ -108,8 +108,13 @@ void UARTClass::begin( const uint32_t dwBaudRate )
       USART_InitAsync(_pUart, &uartInit);
   
       // Enable receiver and transmitter
-      _pUart->ROUTE = USART_ROUTE_RXPEN | USART_ROUTE_TXPEN | 
-	_UartLoc;
+#if defined(_UART_ROUTEPEN_MASK)
+      _pUart->ROUTEPEN   =  UART_ROUTEPEN_RXPEN | UART_ROUTEPEN_TXPEN;
+      _pUart->ROUTELOC0  = _UartLoc;
+#else
+      _pUart->ROUTE      = USART_ROUTE_RXPEN | USART_ROUTE_TXPEN | _UartLoc;
+#endif
+      
       if(_loopback)
 	{
 	  _pUart->CTRL |=  USART_CTRL_LOOPBK;
@@ -139,7 +144,7 @@ void UARTClass::begin( const uint32_t dwBaudRate )
 
 		if(dwBaudRate > 9600) //baudrate will = 115200 if it is greater than 9600
 		{
-			CMU_ClockSelectSet( cmuClock_LFB, cmuSelect_CORELEDIV2 );
+			CMU_ClockSelectSet( cmuClock_LFB, cmuSelect_HFCLKLE );
 		}  else //Baudrates between 300 and 9600 should work with the low frequency clock
 		{
 			/* Enable LFRCO oscillator */
@@ -163,9 +168,13 @@ void UARTClass::begin( const uint32_t dwBaudRate )
 		LEUART_Init(_pLeuart, &leuartInit);
 
 		// Enable receiver and transmitter
-
-		_pLeuart->ROUTE = LEUART_ROUTE_RXPEN | LEUART_ROUTE_TXPEN | _UartLoc;
-
+#if defined(_LEUART_ROUTEPEN_MASK)
+      _pLeuart->ROUTEPEN   =  LEUART_ROUTEPEN_RXPEN | LEUART_ROUTEPEN_TXPEN;
+      _pLeuart->ROUTELOC0  = _UartLoc;
+#else
+      _pLeuart->ROUTE      = LEUART_ROUTE_RXPEN | LEUART_ROUTE_TXPEN | _UartLoc;
+#endif
+      
 		LEUART_IntEnable(_pLeuart,LEUART_IF_RXDATAV);
 		LEUART_IntClear(_pLeuart,LEUART_IF_RXDATAV);
 		NVIC_ClearPendingIRQ(_dwIrq);
