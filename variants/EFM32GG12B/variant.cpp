@@ -74,7 +74,7 @@
 
 
 
-/*
+
 RingBuffer rx_buffer1;
 RingBuffer rx_buffer2;
 RingBuffer rx_buffer3;
@@ -82,10 +82,10 @@ RingBuffer rx_buffer4;
 RingBuffer rx_buffer5;
 RingBuffer rx_buffer6;
 
-UARTClass Serial(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTE_LOCATION_LOC2, cmuClock_LEUART0);
-UARTClass Serial1(LEUART1, LEUART1_IRQn, &rx_buffer1, LEUART_ROUTE_LOCATION_LOC0, cmuClock_LEUART1);
+UARTClass Serial(LEUART0, LEUART0_IRQn, &rx_buffer2, LEUART_ROUTELOC0_RXLOC_LOC5 | LEUART_ROUTELOC0_TXLOC_LOC5, cmuClock_LEUART0);
+UARTClass Serial1(LEUART1, LEUART1_IRQn, &rx_buffer1, LEUART_ROUTELOC0_RXLOC_LOC0 | LEUART_ROUTELOC0_TXLOC_LOC0, cmuClock_LEUART1);
 
-
+/*
 UARTClass SerialDF11_0(USART2, USART2_RX_IRQn, &rx_buffer3, USART_ROUTE_LOCATION_LOC1, cmuClock_USART2, PIN_SPI0_MOSI, PIN_SPI0_MISO);
 UARTClass SerialDF11_1(USART0, USART0_RX_IRQn, &rx_buffer4, USART_ROUTE_LOCATION_LOC4, cmuClock_USART0, PIN_SPI1_MOSI, PIN_SPI1_MISO);
 UARTClass SerialDF11_2(USART0, USART0_RX_IRQn, &rx_buffer5, USART_ROUTE_LOCATION_LOC1, cmuClock_USART0, PIN_SPI2_MOSI, PIN_SPI2_MISO);
@@ -95,12 +95,12 @@ UARTClass SerialDF11_3(USART0, USART0_RX_IRQn, &rx_buffer6, USART_ROUTE_LOCATION
 // IT handlers
 void LEUART0_IRQHandler(void)
 {
-  //Serial.IrqHandler();
+  Serial.IrqHandler();
 }
 
 void LEUART1_IRQHandler(void)
 {
-  //Serial1.IrqHandler();
+  Serial1.IrqHandler();
 }
 
 void USART2_RX_IRQHandler(void)
@@ -124,18 +124,18 @@ void USART0_RX_IRQHandler(void)
   }*/
 }
 void check_for_reset()
-  {
-	/*if(Serial.isResetReceived() || Serial1.isResetReceived())
+{
+	if(Serial.isResetReceived() || Serial1.isResetReceived())
 	{
 		SCB->AIRCR = 0x05FA0004;
 		//BOOT_reset();
-	}*/
-  }
+	}
+}
 
 void initVariant() 
 { 
-/*	Serial.begin(115200);
-	Serial1.begin(115200);*/
+	Serial.begin(115200);
+	Serial1.begin(115200);
 }
 
 // -------------------------------------------------------------------------------------------------------------
@@ -167,9 +167,9 @@ extern void serialEventRun(void) __attribute__((weak));
 extern void serialEvent() __attribute__((weak));
 void serialEventRun(void)
 {
-/*if (Serial.available() && serialEvent) serialEvent();
+if (Serial.available() && serialEvent) serialEvent();
 if (Serial1.available() && serialEvent) serialEvent();
-if (SerialDF11_0.available() && serialEvent) serialEvent();
+/*if (SerialDF11_0.available() && serialEvent) serialEvent();
 if (SerialDF11_1.available() && serialEvent) serialEvent();
 if (SerialDF11_2.available() && serialEvent) serialEvent();
 if (SerialDF11_3.available() && serialEvent) serialEvent();*/
