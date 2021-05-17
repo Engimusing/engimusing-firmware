@@ -102,7 +102,7 @@ tools.efm_upload.device=/dev/{serial.port.file}
 tools.efm_upload.device.windows={serial.port.file}
 tools.efm_upload.upload.params.quiet=
 
-tools.efm_upload.upload.pattern.windows="{path}/windows/{cmd}" "{build.path}/{build.project_name}.bin" {device} {build.project_name} {upload.device}
-tools.efm_upload.upload.pattern.linux="{path}/linux/{cmd}" "{build.path}/{build.project_name}.bin" {device} {build.project_name} {upload.device}
-tools.efm_upload.upload.pattern.macosx="{path}/macosx/{cmd}" "{build.path}/{build.project_name}.bin" {device} {build.project_name} {upload.device}
-#tools.efm_upload.upload.pattern.windows=python "{path}/{cmd}.py" "{build.path}/{build.project_name}.bin" {device} {build.project_name}
+tools.efm_upload.upload.pattern.windows="{path}/windows/{cmd}" "{build.path}/{build.project_name}.bin" {device} "{build.project_name}" {upload.device}
+tools.efm_upload.upload.pattern.linux="{path}/linux/{cmd}" "{build.path}/{build.project_name}.bin" {device} "{build.project_name}" {upload.device}
+tools.efm_upload.upload.pattern.macosx="{path}/macosx/{cmd}" "{build.path}/{build.project_name}.bin" {device} "{build.project_name}" {upload.device}
+#tools.efm_upload.upload.pattern.windows=python "{path}/{cmd}.py" "{build.path}/{build.project_name}.bin" {device} "{build.project_name}"
