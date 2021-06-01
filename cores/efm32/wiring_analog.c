@@ -96,19 +96,24 @@ extern "C" {
   {
 #if defined(ADC_COUNT)
     uint32_t ulValue = 0;
+#if defined(_ADC_SINGLECTRL_INPUTSEL_MASK)
     ADC_SingleInput_TypeDef ulChannel;
+#elif defined(_ADC_SINGLECTRL_POSSEL_MASK)
+	ADC_PosSel_TypeDef ulChannel;
+#endif
     static int init = 0;
     if (ulPin < A0)
       ulPin += A0;
 
     ulChannel = adcChannelNum[ulPin] ;
+
     if(!init)
       {
 	analogInit();
 	init = 1;
       }
 	
-
+#if defined(_ADC_SINGLECTRL_INPUTSEL_MASK)
     switch ( adcChannel[ulPin] )
       {
 	// Handling ADC 12 bits channels
@@ -125,13 +130,21 @@ extern "C" {
       case EM_ADC10 :
       case EM_ADC11 :
 	{
+		#endif
 	  ADC_InitSingle_TypeDef sInit = ADC_INITSINGLE_DEFAULT;
 	
 	  sInit.reference = adcRefVDD;
 	  //sInit.reference = adcRef2V5;
 	  sInit.acqTime   = adcAcqTime32;
+	
+#if defined(_ADC_SINGLECTRL_INPUTSEL_MASK)
 	  sInit.input     = ulChannel;
-
+#endif
+	 
+#if defined(_ADC_SINGLECTRL_POSSEL_MASK)
+	  sInit.posSel = ulChannel;
+#endif
+	  
 	  ADC_InitSingle(ADC0, &sInit);
 		
 	  /* Start one ADC sample */
@@ -152,7 +165,7 @@ extern "C" {
 			
 	  ulValue = ADC_DataSingleGet(ADC0);
 	  ulValue = mapResolution(ulValue, ADC_RESOLUTION, _readResolution);
-
+#if defined(_ADC_SINGLECTRL_INPUTSEL_MASK)
 	  break;
 	}
 	// Compiler could yell because we don't handle DAC pins
@@ -160,7 +173,7 @@ extern "C" {
 	ulValue=0;
 	break;
       }
-
+#endif
     return ulValue;
 #endif
   }

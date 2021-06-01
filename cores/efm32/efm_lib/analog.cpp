@@ -57,13 +57,17 @@ uint32_t AnalogLP::analogRead(uint32_t sel)
     hfperFreq -= 1;
 
     ADC0->CTRL = ADC_CTRL_WARMUPMODE_NORMAL
+#if defined(_ADC_SINGLECTRL_INPUTSEL_MASK)
       | ADC_CTRL_LPFMODE_BYPASS
-      | (3 << _ADC_CTRL_PRESC_SHIFT)  // set ADC frequency = HFPerClk divided by 3
+#endif
+	  | (3 << _ADC_CTRL_PRESC_SHIFT)  // set ADC frequency = HFPerClk divided by 3
       | (hfperFreq <<  _ADC_CTRL_TIMEBASE_SHIFT)
       | adc_oversampling; // oversampling rate if enabled
 
     ADC0->SINGLECTRL = adc_resolution
+#if defined(_ADC_SINGLECTRL_INPUTSEL_MASK)
       | (sel << _ADC_SINGLECTRL_INPUTSEL_SHIFT)
+#endif
       | adc_reference
       | ADC_SINGLECTRL_AT_32CYCLES;
 
@@ -117,7 +121,7 @@ void AnalogLP::commVDD(void)
 
 temperature AnalogLP::analogReadTemp(void)
 {
-#if defined(ADC_COUNT)
+#if defined(ADC_COUNT) && defined(_ADC_SINGLECTRL_INPUTSEL_MASK)
   adc_reference = INTERNAL1V25; // set up reference
   adc_resolution = ADC_SINGLECTRL_RES_12BIT;
 

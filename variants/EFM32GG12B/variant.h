@@ -37,18 +37,36 @@
 #define ADC_RESOLUTION		0
 
 
-/*
-static const uint8_t A0  = 28;
-static const uint8_t A1  = 29;
-static const uint8_t A2  = 30;
-static const uint8_t A3  = 31;
-static const uint8_t A4  = 32;
-static const uint8_t A5  = 33;
-static const uint8_t A6  = 34;
-static const uint8_t A7  = 35;
+
+static const uint8_t A0  = 1; //A0
+static const uint8_t A1  = 2; //A1
+static const uint8_t A2  = 3; //A2
+static const uint8_t A3  = 4; //A3
+static const uint8_t A4  = 5; //A4
+static const uint8_t A5  = 6; //A5 //Pins C0-C5 did not work on the first try so skipping for now
+static const uint8_t A6  = 17; //A8
+static const uint8_t A7  = 18; //A9
+static const uint8_t A8  = 19; //A10
+static const uint8_t A9  = 21; //B11
+static const uint8_t A10  = 24; //B13
+static const uint8_t A11  = 25; //B14
+static const uint8_t A12  = 49; //F0 //DBG connection pin
+static const uint8_t A13  = 50; //F1 //DBG connection pin
+static const uint8_t A14  = 51; //F2 //DBG connection pin
+static const uint8_t A15  = 52; //F3
+static const uint8_t A16  = 53; //F4
+static const uint8_t A17  = 54; //F5
+static const uint8_t A18  = 57; //E8
+static const uint8_t A19  = 58; //E9
+static const uint8_t A20  = 59; //E10
+static const uint8_t A21  = 60; //E11
+static const uint8_t A22  = 61; //E12
+static const uint8_t A23  = 62; //E13
+static const uint8_t A24  = 63; //E14
+static const uint8_t A25  = 64; //E15
 
 #define ADC_RESOLUTION		12
-
+/*
 // DACC
 
 #define DACC_INTERFACE		DACC

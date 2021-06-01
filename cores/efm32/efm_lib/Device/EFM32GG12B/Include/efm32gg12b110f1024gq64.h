@@ -311,7 +311,7 @@ typedef enum IRQn{
 #define I2C_PRESENT             /**< I2C is available in this part */
 #define I2C_COUNT             2 /**< 2 I2Cs available  */
 #define ADC_PRESENT             /**< ADC is available in this part */
-//#define ADC_COUNT             2 /**< 2 ADCs available  */
+#define ADC_COUNT             2 /**< 2 ADCs available  */
 #define ACMP_PRESENT            /**< ACMP is available in this part */
 #define ACMP_COUNT            3 /**< 3 ACMPs available  */
 #define VDAC_PRESENT            /**< VDAC is available in this part */

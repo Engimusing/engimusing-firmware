@@ -25,9 +25,9 @@
 
 // ----------------- Pin and Port Arrays -----------------------------------------------------------------------
 // Digital Ports            0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
-const uint8_t dPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,  0,PORTC,PORTC,PORTC,PORTC,PORTC,PORTC,PORTB,
+const uint8_t dPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,0,  0,PORTC,PORTC,PORTC,PORTC,PORTC,PORTC,PORTB,
 //                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31
-                         PORTB,PORTA,PORTA,PORTA,  0  ,PORTB,PORTB,  0  ,PORTB,PORTB,  0  ,  0  ,PORTD,PORTD,PORTD,PORTD,
+                         PORTB,PORTA,PORTA,PORTA,  0  ,PORTB,0,  0  ,PORTB,PORTB,  0  ,  0  ,PORTD,PORTD,PORTD,PORTD,
 //                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
 			 PORTD,PORTD,PORTD,PORTD,PORTD,PORTC,PORTC,  0  ,  0  ,PORTC,PORTC,PORTC,PORTC,PORTC,PORTC,PORTC,
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
@@ -36,9 +36,9 @@ const uint8_t dPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,  0,POR
                          PORTE};
 
 // Digital Pins             0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
-const uint8_t dPins[]    = {0,   0,    1,    2,    3,    4,    5,    6,    0,    0,    1,    2,    3,    4,    5,    7,
+const uint8_t dPins[]    = {0,   0,    1,    2,    3,    4,    5,    0,    0,    0,    1,    2,    3,    4,    5,    7,
 //                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31
-			    8,  8,   9,   10,    0,   11,   12,    0,   13,   14,    0,    0,    0,    1,    2,    3,
+			    8,  8,   9,   10,    0,   11,   0,    0,   13,   14,    0,    0,    0,    1,    2,    3,
 //                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
 			    4,   5,    6,    7,    8,    6,    7,    0,    0,    8,    9,    10,    11,   12,   13,   14,
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
@@ -47,9 +47,9 @@ const uint8_t dPins[]    = {0,   0,    1,    2,    3,    4,    5,    6,    0,   
 			    15};
 
 // GPIO Interrupt Ports     0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
-const uint8_t iPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,  0,PORTC,PORTC,PORTC,PORTC,PORTC,PORTC,PORTB,
+const uint8_t iPorts[]   = {0, PORTA,PORTA,PORTA,PORTA,PORTA,PORTA,0,  0,PORTC,PORTC,PORTC,PORTC,PORTC,PORTC,PORTB,
 //                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31
-                         PORTB,PORTA,PORTA,PORTA,  0  ,PORTB,PORTB,  0  ,PORTB,PORTB,  0  ,  0  ,PORTD,PORTD,PORTD,PORTD,
+                         PORTB,PORTA,PORTA,PORTA,  0  ,PORTB,0,  0  ,PORTB,PORTB,  0  ,  0  ,PORTD,PORTD,PORTD,PORTD,
 //                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
 			 PORTD,PORTD,PORTD,PORTD,PORTD,PORTC,PORTC,  0  ,  0  ,PORTC,PORTC,PORTC,PORTC,PORTC,PORTC,PORTC,
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
@@ -101,17 +101,17 @@ const uint32_t adcChannel[] =  {-1,   -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  
 //                         64
                            -1  };
 
-                           
-/*const ADC_SingleInput_TypeDef adcChannelNum[] =  {adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0,
+                          
+const ADC_PosSel_TypeDef adcChannelNum[] =  {0, adcPosSelAPORT2YCH0, adcPosSelAPORT1YCH1, adcPosSelAPORT2YCH2, adcPosSelAPORT1YCH3, adcPosSelAPORT2YCH4, adcPosSelAPORT1YCH5, 0, 0, adcPosSelAPORT0YCH0, adcPosSelAPORT0YCH1, adcPosSelAPORT0YCH2, adcPosSelAPORT0YCH3, adcPosSelAPORT0YCH4, adcPosSelAPORT0YCH5, 0,
 //                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31
-			    adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh1, adcSingleInpCh2, adcSingleInpCh3,
+			    0, adcPosSelAPORT2YCH8, adcPosSelAPORT1YCH9, adcPosSelAPORT2YCH10, 0, adcPosSelAPORT1YCH27, 0, 0, adcPosSelAPORT1YCH29, adcPosSelAPORT2YCH30, 0, 0, 0, 0, 0, 0,
 //                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
-			    adcSingleInpCh4, adcSingleInpCh5, adcSingleInpCh6, adcSingleInpCh7, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0,
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
-			    adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0, adcSingleInpCh0,
+			    0, adcPosSelAPORT4YCH16, adcPosSelAPORT3YCH17, adcPosSelAPORT4YCH18, adcPosSelAPORT3YCH19, adcPosSelAPORT4YCH20, adcPosSelAPORT3YCH21, 0, 0, adcPosSelAPORT4YCH8, adcPosSelAPORT3YCH9, adcPosSelAPORT4YCH10, adcPosSelAPORT3YCH11, adcPosSelAPORT4YCH12, adcPosSelAPORT3YCH13, adcPosSelAPORT4YCH14,
 //                         64
-			    adcSingleInpCh0};
-		*/		
+			    adcPosSelAPORT3YCH15};
+		
 // ACMP Ports               0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
 const uint8_t acmpPorts[]= {0,   0  ,  0  ,  0  ,  0  ,  0  ,  PORTA ,  PORTA ,  0  ,  0  ,  0  ,  0  ,  0  ,0,0,  0  ,
 //                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31

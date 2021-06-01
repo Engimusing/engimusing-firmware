@@ -65,7 +65,7 @@ extern const uint8_t ledPins[];
 extern const uint8_t ledId[];
 extern const uint8_t debugPinId[];
 extern const uint32_t adcChannel[];
-//extern const ADC_SingleInput_TypeDef adcChannelNum[];
+extern const ADC_PosSel_TypeDef adcChannelNum[];
 
 #ifdef __cplusplus
 extern "C" {
