@@ -36,6 +36,13 @@
 
 #define ADC_RESOLUTION		0
 
+// DACC
+
+#define VDACC_INTERFACE		VDACC
+#define VDACC_INTERFACE_ID	ID_VDACC
+#define VDACC_RESOLUTION		12
+#define VDACC_ISR_HANDLER    VDACC_Handler
+#define VDACC_ISR_ID         VDACC_IRQn
 
 
 static const uint8_t A0  = 1; //A0
@@ -64,6 +71,8 @@ static const uint8_t A22  = 61; //E12
 static const uint8_t A23  = 62; //E13
 static const uint8_t A24  = 63; //E14
 static const uint8_t A25  = 64; //E15
+
+static const uint8_t VDACPin0 = 24;
 
 #define ADC_RESOLUTION		12
 /*

@@ -20,6 +20,8 @@
 
 #include "Arduino.h"
 #include "em_adc.h"
+#include "em_vdac.h"
+#include "em_opamp.h"
 
 typedef void (*voidFuncPtr)(void);
 
@@ -66,6 +68,7 @@ extern const uint8_t ledId[];
 extern const uint8_t debugPinId[];
 extern const uint32_t adcChannel[];
 extern const ADC_PosSel_TypeDef adcChannelNum[];
+extern const OPAMP_OutMode_TypeDef vdacChannelNum[];
 
 #ifdef __cplusplus
 extern "C" {

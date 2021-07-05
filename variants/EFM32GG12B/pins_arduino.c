@@ -93,7 +93,7 @@ const uint8_t adcPins[]  = {0,   0,    0,    0,    0,    0,    0,    0,    0,   
 				
 const uint32_t adcChannel[] =  {-1,   -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,
 //                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31
-                           -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  EM_DAC0  ,  EM_DAC1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1 , -1,-1,-1,-1,
+                           -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  EM_VDAC0  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1 , -1,-1,-1,-1,
 //                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
 			 -1, -1, EM_ADC0, EM_ADC1,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1 ,  -1  ,  -1  ,  -1  ,
 //                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
@@ -101,7 +101,6 @@ const uint32_t adcChannel[] =  {-1,   -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  -1  ,  
 //                         64
                            -1  };
 
-                          
 const ADC_PosSel_TypeDef adcChannelNum[] =  {0, adcPosSelAPORT2YCH0, adcPosSelAPORT1YCH1, adcPosSelAPORT2YCH2, adcPosSelAPORT1YCH3, adcPosSelAPORT2YCH4, adcPosSelAPORT1YCH5, 0, 0, adcPosSelAPORT0YCH0, adcPosSelAPORT0YCH1, adcPosSelAPORT0YCH2, adcPosSelAPORT0YCH3, adcPosSelAPORT0YCH4, adcPosSelAPORT0YCH5, 0,
 //                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31
 			    0, adcPosSelAPORT2YCH8, adcPosSelAPORT1YCH9, adcPosSelAPORT2YCH10, 0, adcPosSelAPORT1YCH27, 0, 0, adcPosSelAPORT1YCH29, adcPosSelAPORT2YCH30, 0, 0, 0, 0, 0, 0,
@@ -111,6 +110,17 @@ const ADC_PosSel_TypeDef adcChannelNum[] =  {0, adcPosSelAPORT2YCH0, adcPosSelAP
 			    0, adcPosSelAPORT4YCH16, adcPosSelAPORT3YCH17, adcPosSelAPORT4YCH18, adcPosSelAPORT3YCH19, adcPosSelAPORT4YCH20, adcPosSelAPORT3YCH21, 0, 0, adcPosSelAPORT4YCH8, adcPosSelAPORT3YCH9, adcPosSelAPORT4YCH10, adcPosSelAPORT3YCH11, adcPosSelAPORT4YCH12, adcPosSelAPORT3YCH13, adcPosSelAPORT4YCH14,
 //                         64
 			    adcPosSelAPORT3YCH15};
+				
+                          
+const OPAMP_OutMode_TypeDef vdacChannelNum[] =  {0, VDAC_OPA_OUT_APORTOUTSEL_APORT2YCH0, VDAC_OPA_OUT_APORTOUTSEL_APORT1YCH1, VDAC_OPA_OUT_APORTOUTSEL_APORT2YCH2, VDAC_OPA_OUT_APORTOUTSEL_APORT1YCH3, VDAC_OPA_OUT_APORTOUTSEL_APORT2YCH4, VDAC_OPA_OUT_APORTOUTSEL_APORT1YCH5, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//                         16   17    18    19    20    21    22    23    24    25    26    27    28    29    30    31
+			    0, VDAC_OPA_OUT_APORTOUTSEL_APORT2YCH8, VDAC_OPA_OUT_APORTOUTSEL_APORT1YCH9, VDAC_OPA_OUT_APORTOUTSEL_APORT2YCH10, 0, VDAC_OPA_OUT_APORTOUTSEL_APORT1YCH27, 0, 0, VDAC_OPA_OUT_APORTOUTSEL_APORT1YCH29, VDAC_OPA_OUT_APORTOUTSEL_APORT2YCH30, 0, 0, 0, 0, 0, 0,
+//                         32   33    34    35    36    37    38    39    40    41    42    43    44    45    46    47
+			    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+//                         48   49    50    51    52    53    54    55    56    57    58    59    60    61    62    63
+			    0, VDAC_OPA_OUT_APORTOUTSEL_APORT4YCH16, VDAC_OPA_OUT_APORTOUTSEL_APORT3YCH17, VDAC_OPA_OUT_APORTOUTSEL_APORT4YCH18, VDAC_OPA_OUT_APORTOUTSEL_APORT3YCH19, VDAC_OPA_OUT_APORTOUTSEL_APORT4YCH20, VDAC_OPA_OUT_APORTOUTSEL_APORT3YCH21, 0, 0, VDAC_OPA_OUT_APORTOUTSEL_APORT4YCH8, VDAC_OPA_OUT_APORTOUTSEL_APORT3YCH9, VDAC_OPA_OUT_APORTOUTSEL_APORT4YCH10, VDAC_OPA_OUT_APORTOUTSEL_APORT3YCH11, VDAC_OPA_OUT_APORTOUTSEL_APORT4YCH12, VDAC_OPA_OUT_APORTOUTSEL_APORT3YCH13, VDAC_OPA_OUT_APORTOUTSEL_APORT4YCH14,
+//                         64
+			    VDAC_OPA_OUT_APORTOUTSEL_APORT3YCH15};
 		
 // ACMP Ports               0    1     2     3     4     5     6     7     8     9    10    11    12    13    14    15
 const uint8_t acmpPorts[]= {0,   0  ,  0  ,  0  ,  0  ,  0  ,  PORTA ,  PORTA ,  0  ,  0  ,  0  ,  0  ,  0  ,0,0,  0  ,

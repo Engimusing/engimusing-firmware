@@ -193,7 +193,9 @@ typedef enum _EAnalogChannel
   EM_ADC14,
   EM_ADC15,
   EM_DAC0,
-  EM_DAC1
+  EM_DAC1,
+  EM_VDAC0,
+  EM_VDAC1
 } EAnalogChannel ;
 
 /// Definitions for PWM channels

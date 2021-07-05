@@ -20,7 +20,10 @@
 #include "Arduino.h"
 #include "variant.h"
 #include "em_adc.h"
+
 #include "em_dac.h"
+#include "em_vdac.h"
+
 #include "em_timer.h"
 #include "em_cmu.h"
 #include "pins_arduino.h"
@@ -208,9 +211,11 @@ extern "C" {
 
     //uint32_t attr = g_APinDescription[ulPin].ulPinAttribute;
 
-    if (adcChannel[ulPin] != NO_ADC) {
+    
 		
 #if defined(EFM32TG) || defined(EFM32WG840)
+
+if (adcChannel[ulPin] != NO_ADC) {
       EAnalogChannel channel = adcChannel[ulPin];
       if (channel == EM_DAC0 || channel == EM_DAC1) {
 			
@@ -254,12 +259,66 @@ extern "C" {
 	DAC_InitChannel(DAC0, &initChannel, chDACC);
 
 	//DAC_Enable(DAC0, chDACC, true);
-			
+	
+	
 	*chDACDATA = mapResolution(ulValue, _writeResolution, DACC_RESOLUTION);
 	return;
       }
+	  }
+#else if defined(EFM32GG12B110F1024GQ64)
+	
+		//Currently only support 1 VDAC channel. There are two available. 
+		//The OPA[0], VDAC0, and a few other 0s below would need to change to support dual dacs
+		OPAMP_OutMode_TypeDef channel = vdacChannelNum[ulPin];
+		if (channel != 0) 
+		{
+			//CMU_ClockEnable(cmuClock_HFPER, true);
+			CMU_ClockEnable(cmuClock_VDAC0, true);
+
+
+			VDAC_Init_TypeDef init = VDAC_INIT_DEFAULT;
+
+			
+			// Set reference to internal 2.5V low noise reference
+			init.reference = vdacRef2V5;
+  
+			init.asyncClockMode = true;
+		    // Calculate the VDAC clock prescaler value resulting in a 1 MHz VDAC clock
+			init.prescaler = VDAC_PrescaleCalc(1000000, false, 0);
+
+			VDAC_Init(VDAC0, &init);
+
+			VDAC_InitChannel_TypeDef initChannel = VDAC_INITCHANNEL_DEFAULT;
+
+			initChannel.enable = true;
+		
+			
+			VDAC_InitChannel(VDAC0, &initChannel, 0);
+
+						
+			VDAC0->OPA[0].OUT &= ~(VDAC_OPA_OUT_MAINOUTEN | VDAC_OPA_OUT_ALTOUTEN);
+
+			VDAC0->OPA[0].OUT |= VDAC_OPA_OUT_APORTOUTEN + channel;
+
+			
+		    // Enable DAC channel 0. See readme.txt or Datasheet for VDAC0_OUT0 pin location.
+			//if((channel == EM_VDAC0))
+			{
+				VDAC_Enable(VDAC0, 0, true);
+			}
+			
+			/*else
+			{
+				// Enable DAC channel 0. See readme.txt or Datasheet for VDAC0_OUT0 pin location.
+				VDAC_Enable(VDAC0, 1, true);
+			}*/
+			
+			VDAC0->CH0DATA = ulValue;//mapResolution(ulValue, _writeResolution, VDACC_RESOLUTION);
+			return;
+		}
+
 #endif 
-    }
+    
 
 #if defined(EFM32WG842) || defined(EFM32WG840) || defined(EFM32G232)
 
