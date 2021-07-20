@@ -97,7 +97,7 @@ static const uint8_t VDACPin0 = 24;
 
 // Wire Interfaces (I2C)
 
-#define WIRE_INTERFACES_COUNT 0
+#define WIRE_INTERFACES_COUNT 1
 
 #define PIN_WIRE0_SDA         (13u) //PD6
 #define PIN_WIRE0_SCL         (14u) //PD7

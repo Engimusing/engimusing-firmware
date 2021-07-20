@@ -64,12 +64,19 @@ void I2CClass::begin(void)
 	  digitalWrite(myPinScl, 0);
 	  digitalWrite(myPinScl, 1);
   }
-  
+
+#ifndef EFM32GG12B110F1024GQ64
   myI2c.ROUTE = I2C_ROUTE_SDAPEN |
     I2C_ROUTE_SCLPEN |
     (myLocation << _I2C_ROUTE_LOCATION_SHIFT);
+#else
+  myI2c.ROUTEPEN = I2C_ROUTEPEN_SDAPEN |
+    I2C_ROUTEPEN_SCLPEN;
+  myI2c.ROUTELOC0 = 
+    (myLocation << _I2C_ROUTELOC0_SDALOC_SHIFT) | 
+	(myLocation << _I2C_ROUTELOC0_SCLLOC_SHIFT);
 	
-				
+#endif				
   I2C_Init(&myI2c, &i2cInit);
   I2C_Enable(&myI2c, true);
 }
